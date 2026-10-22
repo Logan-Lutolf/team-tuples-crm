@@ -1,21 +1,161 @@
 // use prisma-8
 
-model User {
+//---------------------------TYPES AND ENUMS---------------------------//
+type Address {
+  street  String
+  city    String
+  country String
+  zipCode String
+}
+
+enum Region {
+  ONE
+  TWO
+  THREE
+  FOUR
+  FIVE
+  SIX
+  SEVEN
+  EIGHT
+  NINE
+  TEN
+  ELEVEN
+  TWELVE
+  THIRTEEN
+  FOURTEEN
+}
+
+enum Branch {
+  ONE
+  TWO
+  THREE
+  FOUR
+  FIVE
+  SIX
+  SEVEN
+  EIGHT
+}
+
+enum SchoolType {
+  PRIMARY
+  SECONDARY
+  UNDERGRADUATE
+  GRADUATE
+  POSTGRADUATE
+}
+
+enum RelationshipType {
+  POOR
+  AVERAGE
+  EXCELLENT
+}
+
+enum Role {
+  ADMIN
+  WORKSHOPS_COORDINATOR
+  SCHOOL_NETWORK_COORDINATOR
+  STORIES_OF_OUR_NEIGHBORS_COORDINATOR
+  VETERANS_DAY_COORDINATOR
+  NEWSLETTER_COORDINATOR
+}
+
+//---------------------------MODELS---------------------------//
+model Employee {
   id        Int      @id @default(autoincrement())
+  name      String
   email     String   @unique
-  username  String?
-  name      String?
-  posts     Post[]
+  phone     String?
+  address   Address
+  region   Region?
+
+  is_online  Boolean  @default(false)
+  role      Role 
+
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
 }
 
-model Post {
+model Contact {
   id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
+  name      String
+  email     String   @unique
+  phone     String?
+  address   Address?
+  region   Region?
+  subject  String?
+  last_contacted TimestamptzString @default(now())
+
+  last_contacted_by Employee? @relation(fields: [last_contacted_byId], references: [id])
+  last_contacted_byId Int?
+
+  school   School? @relation(fields: [schoolId], references: [id])
+  schoolId Int?
+
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
 }
+
+model School {
+  id        Int      @id
+  name      String
+  address   Address
+  type      SchoolType
+  relationship RelationshipType
+  region   Region
+  
+  contacts Contact[]
+  employees Employee[]
+  participations Particpation[]
+  }
+
+model Particpation {
+  id        Int      @id @default(autoincrement())
+  
+  startDate TimestamptzString
+  endDate   TimestamptzString?
+
+  school   School @relation(fields: [schoolId], references: [id])
+  schoolId Int
+
+  employee Employee[]
+
+  program Program @relation(fields: [programId], references: [id])
+  programId Int
+}
+
+
+model ParticipationEmployees {
+  participationId Uuid
+  employeeId Uuid
+
+  participation Particpation @relation(fields: [participationId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  @@id([participationId, employeeId])
+}
+
+model SchoolEmployees {
+  schoolId Uuid
+  employeeId Uuid
+
+  school School @relation(fields: [schoolId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  @@id([schoolId, employeeId])
+}
+
+model Program {
+  id        Int      @id @default(autoincrement())
+  name      String
+  description String?
+  
+
+  participations Particpation[]
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+}
+
+
+
+
+
