@@ -125,8 +125,8 @@ model Particpation {
 
 
 model ParticipationEmployees {
-  participationId Uuid
-  employeeId Uuid
+  participationId Int
+  employeeId Int
 
   participation Particpation @relation(fields: [participationId], references: [id])
   employee Employee @relation(fields: [employeeId], references: [id])
@@ -135,8 +135,8 @@ model ParticipationEmployees {
 }
 
 model SchoolEmployees {
-  schoolId Uuid
-  employeeId Uuid
+  schoolId Int
+  employeeId Int
 
   school School @relation(fields: [schoolId], references: [id])
   employee Employee @relation(fields: [employeeId], references: [id])
