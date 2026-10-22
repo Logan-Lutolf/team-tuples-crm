@@ -1,26 +1,5 @@
 // use prisma-8
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String?
-  name      String?
-  posts     Post[]
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
-}
-
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
-}
-
-
 //---------------------------TYPES AND ENUMS---------------------------//
 type Address {
   street  String
@@ -29,32 +8,32 @@ type Address {
   zipCode String
 }
 
-enum Role {
-  ADMIN
-  USER
-}
-
 enum Region {
-  NORTH
-  SOUTH
-  EAST
-  WEST
+  ONE
+  TWO
+  THREE
+  FOUR
+  FIVE
+  SIX
+  SEVEN
+  EIGHT
+  NINE
+  TEN
+  ELEVEN
+  TWELVE
+  THIRTEEN
+  FOURTEEN
 }
 
-enum TaskStatus {
-  PENDING
-  IN_PROGRESS
-  IN_REVIEW
-  COMPLETED
-  CANCELLED
-}
-
-enum TaskPriority {
-  LOWEST
-  LOW
-  MEDIUM
-  HIGH
-  HIGHEST
+enum Branch {
+  ONE
+  TWO
+  THREE
+  FOUR
+  FIVE
+  SIX
+  SEVEN
+  EIGHT
 }
 
 enum SchoolType {
@@ -68,16 +47,16 @@ enum SchoolType {
 enum RelationshipType {
   POOR
   AVERAGE
-  GOOD
   EXCELLENT
 }
 
-enum CoordinatorType {
-  WORKSHOPS
-  SCHOOL NETWORK
-  STORIES OF OUR NEIGHBORS
-  VETERANS DAY
-  NEWSLETTER
+enum Role {
+  ADMIN
+  WORKSHOPS_COORDINATOR
+  SCHOOL_NETWORK_COORDINATOR
+  STORIES_OF_OUR_NEIGHBORS_COORDINATOR
+  VETERANS_DAY_COORDINATOR
+  NEWSLETTER_COORDINATOR
 }
 
 //---------------------------MODELS---------------------------//
@@ -90,22 +69,7 @@ model Employee {
   region   Region?
 
   is_online  Boolean  @default(false)
-  role      Role     @default(USER)
-  tasks     Task[]
-
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
-}
-
-model Task {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  status      TaskStatus @default(PENDING)
-  priority    TaskPriority?
-
-  employee    Employee @relation(fields: [employeeId], references: [id])
-  employeeId  Int
+  role      Role 
 
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
@@ -119,7 +83,7 @@ model Contact {
   address   Address?
   region   Region?
   subject  String?
-  last_contacted TimestamptzString?
+  last_contacted TimestamptzString @default(now())
 
   last_contacted_by Employee? @relation(fields: [last_contacted_byId], references: [id])
   last_contacted_byId Int?
@@ -132,23 +96,64 @@ model Contact {
 }
 
 model School {
-  id        Int      @id @default(autoincrement())
+  id        Int      @id
   name      String
   address   Address
   type      SchoolType
   relationship RelationshipType
-  region   Region?
+  region   Region
   
   contacts Contact[]
-}
+  employees Employee[]
+  participations Particpation[]
+  }
 
 model Particpation {
   id        Int      @id @default(autoincrement())
   
+  startDate TimestamptzString
+  endDate   TimestamptzString?
+
+  school   School @relation(fields: [schoolId], references: [id])
+  schoolId Int
+
+  employee Employee[]
+
+  program Program @relation(fields: [programId], references: [id])
+  programId Int
 }
 
 
+model ParticipationEmployees {
+  participationId Uuid
+  employeeId Uuid
 
+  participation Particpation @relation(fields: [participationId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  @@id([participationId, employeeId])
+}
+
+model SchoolEmployees {
+  schoolId Uuid
+  employeeId Uuid
+
+  school School @relation(fields: [schoolId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  @@id([schoolId, employeeId])
+}
+
+model Program {
+  id        Int      @id @default(autoincrement())
+  name      String
+  description String?
+  
+
+  participations Particpation[]
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+}
 
 
 
