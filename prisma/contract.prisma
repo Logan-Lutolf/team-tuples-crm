@@ -19,3 +19,138 @@ model Post {
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
 }
+
+
+//---------------------------TYPES AND ENUMS---------------------------//
+type Address {
+  street  String
+  city    String
+  country String
+  zipCode String
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Region {
+  NORTH
+  SOUTH
+  EAST
+  WEST
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  IN_REVIEW
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOWEST
+  LOW
+  MEDIUM
+  HIGH
+  HIGHEST
+}
+
+enum SchoolType {
+  PRIMARY
+  SECONDARY
+  UNDERGRADUATE
+  GRADUATE
+  POSTGRADUATE
+}
+
+enum RelationshipType {
+  POOR
+  AVERAGE
+  GOOD
+  EXCELLENT
+}
+
+enum CoordinatorType {
+  WORKSHOPS
+  SCHOOL NETWORK
+  STORIES OF OUR NEIGHBORS
+  VETERANS DAY
+  NEWSLETTER
+}
+
+//---------------------------MODELS---------------------------//
+model Employee {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  phone     String?
+  address   Address
+  region   Region?
+
+  is_online  Boolean  @default(false)
+  role      Role     @default(USER)
+  tasks     Task[]
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  status      TaskStatus @default(PENDING)
+  priority    TaskPriority?
+
+  employee    Employee @relation(fields: [employeeId], references: [id])
+  employeeId  Int
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  phone     String?
+  address   Address?
+  region   Region?
+  subject  String?
+  last_contacted TimestamptzString?
+
+  last_contacted_by Employee? @relation(fields: [last_contacted_byId], references: [id])
+  last_contacted_byId Int?
+
+  school   School? @relation(fields: [schoolId], references: [id])
+  schoolId Int?
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+}
+
+model School {
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   Address
+  type      SchoolType
+  relationship RelationshipType
+  region   Region?
+  
+  contacts Contact[]
+}
+
+model Particpation {
+  id        Int      @id @default(autoincrement())
+  
+}
+
+
+
+
+
+
+
+
