@@ -101,3 +101,10 @@ function generateRandomSchool() {
         type: randomType,
     })        
 }
+
+
+for (let i = 0; i < 50; i++) {
+    generateRandomEmployee();
+    generateRandomContact();
+    generateRandomSchool();
+}
