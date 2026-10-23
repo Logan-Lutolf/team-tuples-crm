@@ -54,6 +54,7 @@ function generateRandomEmployee() {
         },
         name: faker.person.fullName(),
         email: faker.internet.email(),
+        phone: faker.phone.number(),
         role: randomRole,
     })
 }
