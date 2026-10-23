@@ -6,43 +6,28 @@ import { Input } from "../../components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { DialogClose } from "@/components/ui/dialog"
+import { postEmployee } from "../actions"
+import { Scalars } from "@prisma/orm-postgres/components"
+import { Models } from "@/prisma/contract"
+import { useState } from "react"
 
-/* Probs need to change this */
-enum Role { 
-ADMIN = "ADMIN",
-WORKSHOPS_COORDINATOR = "WORKSHOPS_COORDINATOR",
-SCHOOL_NETWORK_COORDINATOR = "SCHOOL_NETWORK_COORDINATOR",
-STORIES_OF_OUR_NEIGHBORS_COORDINATOR = "STORIES_OF_OUR_NEIGHBORS_COORDINATOR",
-VETERANS_DAY_COORDINATOR = "VETERANS_DAY_COORDINATOR",
-NEWSLETTER_COORDINATOR = "NEWSLETTER_COORDINATOR"
-}
 
-/* Probs need to change this */
-const role = [
-    {label: "Admin", value: Role.ADMIN},
-    {label: "Workshops Coordinator", value: Role.WORKSHOPS_COORDINATOR},
-    {label: "School Network Coordinator", value: Role.SCHOOL_NETWORK_COORDINATOR},
-    {label: "Stories of our Neighbors Coordinator", value: Role.STORIES_OF_OUR_NEIGHBORS_COORDINATOR},
-    {label: "Veterans Day Coordinator", value: Role.VETERANS_DAY_COORDINATOR},
-    {label: "Newsletter Coordinator", value: Role.NEWSLETTER_COORDINATOR}
+type Role = Scalars<Models.public_Employee>["role"]
+const roles = [
+    { label: "Admin", value: "ADMIN" },
+    { label: "Workshops Coordinator", value: "WORKSHOPS_COORDINATOR" },
+    { label: "School Network Coordinator", value: "SCHOOL_NETWORK_COORDINATOR" },
+    { label: "Stories of our Neighbors Coordinator", value: "STORIES_OF_OUR_NEIGHBORS_COORDINATOR" },
+    { label: "Veterans Day Coordinator", value: "VETERANS_DAY_COORDINATOR" },
+    { label: "Newsletter Coordinator", value: "NEWSLETTER_COORDINATOR" },
 ]
-
-const addressInfo = [
-    { name: "city", label: "City:" },
-    { name: "country", label: "Country:" },
-    { name: "zipCode", label: "Zip Code:" },
-] as const
 
 
 interface AddEmployeeFormValues {
     name: string
     email: string
     phone: string
-    role: Role | null // Double check that this actually works
-    street: string
-    city: string
-    country: string
-    zipCode: string
+    role: Role
 }
 
 
@@ -57,21 +42,19 @@ export function AddEmployeeForm() {
             name: "",
             email: "",
             phone: "",
-            role: null,
-            street: "",
-            city: "",
-            country: "",
-            zipCode: ""
+            role: "WORKSHOPS_COORDINATOR"
         } as AddEmployeeFormValues,
-        onSubmit: () => {}
+        onSubmit: async ({ value }) => {
+            // Need to have some checks here!
+            const result = await postEmployee(value)
+        },
     })
-
+    
     return (
         <form className="flex flex-col gap-3"
             onSubmit={(e) => {
                 e.preventDefault()
                 form.handleSubmit()
-                
             }}
         >
             <h1> Add an Employee </h1>
@@ -156,14 +139,14 @@ export function AddEmployeeForm() {
                 {(field) => {
                     return(
                         <Field>
-                            <FieldLabel>Enter email:</FieldLabel>
-                            <Select items={role} defaultValue="">
+                            <FieldLabel>Enter role:</FieldLabel>
+                            <Select items={roles} defaultValue="">
                                 <SelectTrigger id="role">
                                     <SelectValue/>
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        {role.map((r) => {
+                                        {roles.map((r) => {
                                             return (
                                             <SelectItem key={r.value} value={r.value}>
                                                 {r.label}
@@ -178,53 +161,6 @@ export function AddEmployeeForm() {
             </form.Field>
 
 
-
-            <form.Field name="street" validators={{
-                onChange: ({value}) => {
-                    // Put validators here
-                }
-            }}>
-                {(field) => {
-                    return(
-                        <Field>
-                            <FieldLabel htmlFor="street">Street Address:</FieldLabel>
-                            <Input
-                                type="text"
-                                id="street"
-                                name="street"
-                                value={field.state.value}
-                                onChange={(e) => field.handleChange(e.target.value)}
-                            />
-                            {field.state.meta.errors.length > 0 && (
-                                <em>{field.state.meta.errors.join(", ")}</em>
-                            )}
-                        </Field>
-                    )
-                }}
-            </form.Field>
-            <div className="flex flex-row gap-2">
-                {addressInfo.map(({name, label}) => {
-                    return (
-                        <form.Field name={name} key={name}>
-                            {(field) => {
-                                return(
-                                    <Field>
-                                        <FieldLabel htmlFor={name}>{label}</FieldLabel>
-                                        <Input
-                                            type="text"
-                                            id={name}
-                                            name={name}
-                                            value={field.state.value}
-                                            onChange={(e) => field.handleChange(e.target.value)}
-                                        />
-                                    </Field>
-                                )
-                            }}
-                        </form.Field>
-                    )
-                })}
-            </div>
-            
             <div className="flex flex-row gap-3 justify-end">
             <DialogClose render= {<Button> Cancel </Button>}/>
             <DialogClose render={
