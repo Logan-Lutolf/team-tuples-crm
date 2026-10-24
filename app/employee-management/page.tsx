@@ -1,20 +1,37 @@
-import { EmployeeTable } from "@/components/custom/employee-table";
 import { db } from "@/prisma/db";
 import { AddEmployeeForm } from "./add-employee-form";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Contract } from "@/prisma/contract";
+import { DefaultModelRow } from "@prisma/orm-postgres/orm-client";
+import { Filter } from "lucide-react";
+import { Search } from "@/components/custom/search";
+import { EmployeeTableContainer } from "./employee-table-container";
 
 
 // Add pagination to employee list
 // Add employee functionality
 // Edit employee functionality
 // Delete employee functionality
-// Search functionality (basic)
+// Filtering by role
 
 
-export default async function EmployeeManagementPage() {
+export default async function EmployeeManagementPage(
+    {searchParams} : {
+        searchParams?: Promise<{ query?: string; page?: string }>
+    }
+) {
+    const params = await searchParams
+    const query = params?.query ?? ''
+
+
+    const RECORDS_PER_PAGE = 20 
+
+
     
-    const employees = await db.orm.public.Employee.all();
 
     return (
         <div className="flex flex-col gap-4 m-10">
@@ -25,7 +42,31 @@ export default async function EmployeeManagementPage() {
                     <AddEmployeeForm />
                 </DialogContent>
             </Dialog>
-            <EmployeeTable employees={employees} />
+            
+            <Search placeholder={""}/>
+
+            <EmployeeTableContainer query={query} page={1} />
+
+            <Pagination>
+                <PaginationContent>
+                    <PaginationItem>
+                        <PaginationPrevious></PaginationPrevious>
+                    </PaginationItem>
+
+                    <PaginationItem>
+                        <PaginationEllipsis></PaginationEllipsis>
+                    </PaginationItem>
+
+                    <PaginationItem>
+                        <PaginationNext></PaginationNext>
+                    </PaginationItem>
+                </PaginationContent>
+            </Pagination>
         </div>
     )
 }
+
+// 20 records per page
+
+
+
