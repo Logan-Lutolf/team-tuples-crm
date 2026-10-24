@@ -15,8 +15,6 @@ export async function EmployeeTableContainer({query, page} : EmployeeTableContai
         });
     }
 
-
-    
     const employees = await getEmployees(query, page)
 
     return (
