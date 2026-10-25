@@ -3,13 +3,15 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AuthControls } from "@/components/auth-controls";
+// import this after CL makes auth-controls (sign-in/sign-out button)
+// import { AuthControls } from "@/app/components/auth-controls";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { NotebookPen} from "lucide-react"
+import { cn } from "cn";
+import { NotebookPen} from "lucide-react";
 
 const links = [
     { href: "/dashboard", label: "Dashboard" },
+    { href: "/map", label: "Map" },
     { href: "/profile", label: "Profile" }
 ];
 
@@ -18,7 +20,7 @@ export function Navbar() {
 
     return (
         <header className="justify-center">
-            <div className="max-w-3xl mx-auto flex items-center justify-between">
+            <div className="max-w-3xl mx-auto flex-row">
                 <Link href="/dashboard">
                     <NotebookPen />
                 </Link>
@@ -33,7 +35,7 @@ export function Navbar() {
                     })}
                 </nav>
                 <Suspense fallback={<Button type="button" variant="outline" disabled aria-busy="true">Loading…</Button>}>
-                    <AuthControls />
+                    {/* <AuthControls /> */}
                 </Suspense>
             </div>
         </header>

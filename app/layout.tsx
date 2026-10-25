@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/app/components/navbar";
+import { Navbar } from "@/components/navbar";
 import { Toaster } from "react-hot-toast"
 import "./globals.css";
 
@@ -30,8 +30,8 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
+    >    %
+      <body className="min-h-full flex">
         < Navbar />
           {children}
         <Toaster />
