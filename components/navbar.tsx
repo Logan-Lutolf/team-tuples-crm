@@ -19,16 +19,16 @@ export function Navbar() {
     const pathname = usePathname();
 
     return (
-        <header className="justify-center">
-            <div className="max-w-3xl mx-auto flex-row">
+        <header className="h-screen w-40 shrink-0 border-r p-6">
+            <div className="max-w-3xl mx-auto">
                 <Link href="/dashboard">
                     <NotebookPen />
                 </Link>
-                <nav className="flex gap-6">
+                <nav className="flex flex-col gap-6 absolute top-1/2 -translate-y-1/2 ">
                     {links.map(({href, label }) => {
                         const active = pathname === href || (href === "/dashboard" && pathname.startsWith("/blog"));
                         return (
-                            <Link key={href} href={href} className={ active ? "text-black" : "text-gray-500"}>
+                            <Link key={href} href={href} className={active ? "font-bold" : ""}>
                                 {label}
                             </Link>
                         )
