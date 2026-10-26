@@ -24,7 +24,7 @@ export function EmployeeTable({data} : {data: Employee[]}) {
             </TableHeader>
 
             <TableBody>
-                {data.map((employee) => (
+                {data.map((employee: Employee) => (
                     <TableRow key={employee.id} className="border border-black">
                         <TableCell>{employee.name}</TableCell>
                         <TableCell>{employee.email}</TableCell>
@@ -33,7 +33,14 @@ export function EmployeeTable({data} : {data: Employee[]}) {
                         <TableCell className="flex flex-row gap-2">
                             <ActionDialog 
                                 icon={<Pencil />} 
-                                content={<EditEmployeeForm employee={employee as Employee}/>}
+                                content={
+                                    <EditEmployeeForm 
+                                        name={employee.name}
+                                        email={employee.email}
+                                        phone={employee.phone ? employee.phone : ""}  // Might change this later
+                                        role={employee.role}
+                                    />
+                                }
                             />
                             <ActionDialog
                                 icon={<Trash />}

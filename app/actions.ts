@@ -35,7 +35,7 @@ export async function createEmployee(formData: FormData) {
             }
         })
 
-        if(employee != undefined)
+        if(employee)
             console.log("Create employee successful.")
             revalidatePath("/employee-management")
 
@@ -47,6 +47,34 @@ export async function createEmployee(formData: FormData) {
 }
 
 export async function editEmployee(formData: FormData) {
+    const name = formData.get("full-name") as string
+    const email = formData.get("email") as string
+    const phone = formData.get("phone-num") as string
+    const role = formData.get("role") as Role
+
+    if (name == null || email == null){
+        console.log("Update employee failed: name or email is null")
+        return
+    }
+
+    try {
+        const employee = await db.orm.public.Employee
+            .where({ email: email})
+            .update({
+                name: name,
+                email: email,
+                phone: phone,
+                role: role,
+            })
+        
+        if (employee) {
+            console.log("Edit employee successful.")
+            revalidatePath("/employee-management")
+        }
+    }
+    catch (error) {
+        console.log("Update employee faield: ", error)
+    }
 
 }
 

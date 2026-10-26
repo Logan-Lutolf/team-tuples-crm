@@ -18,13 +18,20 @@ const roles = [
     { label: "Newsletter Coordinator", value: "NEWSLETTER_COORDINATOR" },
 ]
 
+type Role = Scalars<Models.public_Employee>["role"]
 
 
-type Employee = Scalars<Models.public_Employee>
+interface EditEmployeeFormProps {
+    name: string,
+    email: string
+    phone: string,
+    role: Role
+}
+
 
 
 // TODO: Add form validation
-export function EditEmployeeForm(employee: Employee) {    
+export function EditEmployeeForm(employee: EditEmployeeFormProps) {    // Add actual type later T_T
     return (
         <form className="flex flex-col gap-3" action={editEmployee}>
             <Field>
@@ -33,7 +40,7 @@ export function EditEmployeeForm(employee: Employee) {
                     name="full-name"
                     type="text"
                     required
-                    placeholder=""
+                    value={employee.name}
                 />
             </Field>
 
@@ -42,6 +49,7 @@ export function EditEmployeeForm(employee: Employee) {
                 <Input 
                     name="email"
                     type="email"
+                    value={employee.email}
                     required
                 />
             </Field>
@@ -51,6 +59,7 @@ export function EditEmployeeForm(employee: Employee) {
                 <Input 
                     name="phone-num"
                     type="text"
+                    value={employee.phone}
                 />
             </Field>
 
@@ -58,7 +67,9 @@ export function EditEmployeeForm(employee: Employee) {
                 <FieldLabel htmlFor="role">Role</FieldLabel>
                 <Select items={roles} defaultValue="" name="role">
                     <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue 
+                            placeholder={employee.role}
+                        />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
