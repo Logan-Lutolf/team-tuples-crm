@@ -13,9 +13,7 @@ import { EmployeeTableContainer } from "./employee-table-container";
 
 
 // Add pagination to employee list
-// Add employee functionality
 // Edit employee functionality
-// Delete employee functionality
 // Filtering by role
 
 
@@ -65,8 +63,5 @@ export default async function EmployeeManagementPage(
         </div>
     )
 }
-
-// 20 records per page
-
 
 
