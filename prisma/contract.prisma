@@ -25,7 +25,7 @@ enum Region {
   FOURTEEN
 }
 
-enum Branch {
+enum Branches {
   ONE
   TWO
   THREE
@@ -71,6 +71,7 @@ model Employee {
   is_online  Boolean  @default(false)
   role      Role 
 
+  schools SchoolEmployees[]
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
 }
@@ -84,12 +85,16 @@ model Contact {
   region   Region?
   subject  String?
   last_contacted TimestamptzString @default(now())
+  branchRole String
 
   last_contacted_by Employee? @relation(fields: [last_contacted_byId], references: [id])
   last_contacted_byId Int?
 
   school   School? @relation(fields: [schoolId], references: [id])
   schoolId Int?
+
+  branchId Int
+  branch   Branch @relation(fields: [branchId], references: [id])
 
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
@@ -102,9 +107,12 @@ model School {
   type      SchoolType
   relationship RelationshipType
   region   Region
+
+  branchId Int
+  branch Branch
   
   contacts Contact[]
-  employees Employee[]
+  employees schoolEmployees[]
   participations Particpation[]
   }
 
@@ -123,7 +131,7 @@ model Particpation {
   programId Int
 }
 
-
+// do we need this? programs <-> participations <-> employees
 model ParticipationEmployees {
   participationId Int
   employeeId Int
@@ -149,13 +157,37 @@ model Program {
   name      String
   description String?
   
+  // the municipality funding the program (optional)
+  sponsor MunicipalityPrograms[]
 
   participations Particpation[]
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
 }
 
+ 
+model Branch {
+  id Int @id @default(autoincrement())
+  name Branches
+  region Region 
+  
+  contacts Contact[]
+  schools School[]
+}
 
+model Municipality {
+  id Int 
+  name String
+  mayor String
 
+  program MunicipalityPrograms[]
 
+}
 
+model MunicipalityPrograms {
+  MunicipalityId Int
+  ProgramId Int
+
+  program Program @relation(fields: [programId], references: [id])
+  municipality Municipality @relation(fields: [municipalityId], references: [id])
+}
