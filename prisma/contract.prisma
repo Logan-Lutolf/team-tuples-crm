@@ -65,7 +65,7 @@ model Employee {
   name      String
   email     String   @unique
   phone     String?
-  address   Address
+  address   Address?
   region   Region?
 
   is_online  Boolean  @default(false)
@@ -133,8 +133,8 @@ model Particpation {
 
 // do we need this? programs <-> participations <-> employees
 model ParticipationEmployees {
-  participationId Uuid
-  employeeId Uuid
+  participationId Int
+  employeeId Int
 
   participation Particpation @relation(fields: [participationId], references: [id])
   employee Employee @relation(fields: [employeeId], references: [id])
