@@ -44,22 +44,6 @@ export default async function EmployeeManagementPage(
             <Search placeholder={""}/>
 
             <EmployeeTableContainer query={query} page={1} />
-
-            <Pagination>
-                <PaginationContent>
-                    <PaginationItem>
-                        <PaginationPrevious></PaginationPrevious>
-                    </PaginationItem>
-
-                    <PaginationItem>
-                        <PaginationEllipsis></PaginationEllipsis>
-                    </PaginationItem>
-
-                    <PaginationItem>
-                        <PaginationNext></PaginationNext>
-                    </PaginationItem>
-                </PaginationContent>
-            </Pagination>
         </div>
     )
 }
