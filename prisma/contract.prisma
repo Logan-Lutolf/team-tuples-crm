@@ -59,6 +59,13 @@ enum Role {
   NEWSLETTER_COORDINATOR
 }
 
+enum ProgramStatus {
+  PLANNED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
 //---------------------------MODELS---------------------------//
 model Employee {
   id        Int      @id @default(autoincrement())
@@ -72,6 +79,7 @@ model Employee {
   role      Role 
 
   schools SchoolEmployees[]
+  participations ParticipationEmployees[]
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
 }
@@ -109,39 +117,42 @@ model School {
   region   Region
 
   branchId Int
-  branch Branch
+  branch Branch @relation(fields: [branchId], references: [id])
   
   contacts Contact[]
-  employees schoolEmployees[]
-  participations Particpation[]
+  employees SchoolEmployees[]
+  participations Participation[]
   }
 
-model Particpation {
+// between program and school
+model Participation {
   id        Int      @id @default(autoincrement())
   
   startDate TimestamptzString
   endDate   TimestamptzString?
+  status    ProgramStatus @default(PLANNED)
 
   school   School @relation(fields: [schoolId], references: [id])
   schoolId Int
 
-  employee Employee[]
+  employee ParticipationEmployees[]
 
   program Program @relation(fields: [programId], references: [id])
   programId Int
 }
 
-// do we need this? programs <-> participations <-> employees
+// shows an employee is working on a participation
 model ParticipationEmployees {
   participationId Int
   employeeId Int
 
-  participation Particpation @relation(fields: [participationId], references: [id])
+  participation Participation @relation(fields: [participationId], references: [id])
   employee Employee @relation(fields: [employeeId], references: [id])
 
   @@id([participationId, employeeId])
 }
 
+// employees maintaining contact with this school
 model SchoolEmployees {
   schoolId Int
   employeeId Int
@@ -160,7 +171,7 @@ model Program {
   // the municipality funding the program (optional)
   sponsor MunicipalityPrograms[]
 
-  participations Particpation[]
+  participations Participation[]
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
 }
@@ -176,7 +187,7 @@ model Branch {
 }
 
 model Municipality {
-  id Int 
+  id Int @id @default(autoincrement())
   name String
   mayor String
 
@@ -185,9 +196,12 @@ model Municipality {
 }
 
 model MunicipalityPrograms {
-  MunicipalityId Int
-  ProgramId Int
+  municipalityId Int
+  programId Int
 
   program Program @relation(fields: [programId], references: [id])
   municipality Municipality @relation(fields: [municipalityId], references: [id])
+
+  @@id([municipalityId, programId])
 }
+

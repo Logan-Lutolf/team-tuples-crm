@@ -4,6 +4,10 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "Branch": {
+      "model": "Branch",
+      "namespace": "public"
+    },
     "Contact": {
       "model": "Contact",
       "namespace": "public"
@@ -12,12 +16,20 @@
       "model": "Employee",
       "namespace": "public"
     },
-    "ParticipationEmployees": {
-      "model": "ParticipationEmployees",
+    "Municipality": {
+      "model": "Municipality",
       "namespace": "public"
     },
-    "Particpation": {
-      "model": "Particpation",
+    "MunicipalityPrograms": {
+      "model": "MunicipalityPrograms",
+      "namespace": "public"
+    },
+    "Participation": {
+      "model": "Participation",
+      "namespace": "public"
+    },
+    "ParticipationEmployees": {
+      "model": "ParticipationEmployees",
       "namespace": "public"
     },
     "Program": {
@@ -37,7 +49,7 @@
     "namespaces": {
       "public": {
         "enum": {
-          "Branch": {
+          "Branches": {
             "codecId": "pg/text@1",
             "members": [
               {
@@ -71,6 +83,27 @@
               {
                 "name": "EIGHT",
                 "value": "EIGHT"
+              }
+            ]
+          },
+          "ProgramStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PLANNED",
+                "value": "PLANNED"
+              },
+              {
+                "name": "ONGOING",
+                "value": "ONGOING"
+              },
+              {
+                "name": "COMPLETED",
+                "value": "COMPLETED"
+              },
+              {
+                "name": "CANCELLED",
+                "value": "CANCELLED"
               }
             ]
           },
@@ -208,6 +241,90 @@
           }
         },
         "models": {
+          "Branch": {
+            "fields": {
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Branches",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "region": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Region",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "contacts": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "branchId"
+                  ]
+                },
+                "to": {
+                  "model": "Contact",
+                  "namespace": "public"
+                }
+              },
+              "schools": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "branchId"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "id": {
+                  "column": "id"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "region": {
+                  "column": "region"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Branch"
+            }
+          },
           "Contact": {
             "fields": {
               "address": {
@@ -215,6 +332,20 @@
                 "type": {
                   "kind": "valueObject",
                   "name": "Address"
+                }
+              },
+              "branchId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "branchRole": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
                 }
               },
               "createdAt": {
@@ -302,6 +433,22 @@
               }
             },
             "relations": {
+              "branch": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "branchId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Branch",
+                  "namespace": "public"
+                }
+              },
               "last_contacted_by": {
                 "cardinality": "N:1",
                 "nullable": true,
@@ -339,6 +486,12 @@
               "fields": {
                 "address": {
                   "column": "address"
+                },
+                "branchId": {
+                  "column": "branchId"
+                },
+                "branchRole": {
+                  "column": "branchRole"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -381,7 +534,7 @@
           "Employee": {
             "fields": {
               "address": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "kind": "valueObject",
                   "name": "Address"
@@ -463,7 +616,38 @@
                 }
               }
             },
-            "relations": {},
+            "relations": {
+              "participations": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "employeeId"
+                  ]
+                },
+                "to": {
+                  "model": "ParticipationEmployees",
+                  "namespace": "public"
+                }
+              },
+              "schools": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "employeeId"
+                  ]
+                },
+                "to": {
+                  "model": "SchoolEmployees",
+                  "namespace": "public"
+                }
+              }
+            },
             "storage": {
               "fields": {
                 "address": {
@@ -501,16 +685,73 @@
               "table": "Employee"
             }
           },
-          "ParticipationEmployees": {
+          "Municipality": {
             "fields": {
-              "employeeId": {
+              "id": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
-              "participationId": {
+              "mayor": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "program": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "municipalityId"
+                  ]
+                },
+                "to": {
+                  "model": "MunicipalityPrograms",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "id": {
+                  "column": "id"
+                },
+                "mayor": {
+                  "column": "mayor"
+                },
+                "name": {
+                  "column": "name"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Municipality"
+            }
+          },
+          "MunicipalityPrograms": {
+            "fields": {
+              "municipalityId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "programId": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
@@ -519,53 +760,53 @@
               }
             },
             "relations": {
-              "employee": {
+              "municipality": {
                 "cardinality": "N:1",
                 "nullable": false,
                 "on": {
                   "localFields": [
-                    "employeeId"
+                    "municipalityId"
                   ],
                   "targetFields": [
                     "id"
                   ]
                 },
                 "to": {
-                  "model": "Employee",
+                  "model": "Municipality",
                   "namespace": "public"
                 }
               },
-              "participation": {
+              "program": {
                 "cardinality": "N:1",
                 "nullable": false,
                 "on": {
                   "localFields": [
-                    "participationId"
+                    "programId"
                   ],
                   "targetFields": [
                     "id"
                   ]
                 },
                 "to": {
-                  "model": "Particpation",
+                  "model": "Program",
                   "namespace": "public"
                 }
               }
             },
             "storage": {
               "fields": {
-                "employeeId": {
-                  "column": "employeeId"
+                "municipalityId": {
+                  "column": "municipalityId"
                 },
-                "participationId": {
-                  "column": "participationId"
+                "programId": {
+                  "column": "programId"
                 }
               },
               "namespaceId": "public",
-              "table": "ParticipationEmployees"
+              "table": "MunicipalityPrograms"
             }
           },
-          "Particpation": {
+          "Participation": {
             "fields": {
               "endDate": {
                 "nullable": true,
@@ -601,11 +842,24 @@
                   "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ProgramStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
               }
             },
             "relations": {
               "employee": {
-                "cardinality": "N:M",
+                "cardinality": "1:N",
                 "on": {
                   "localFields": [
                     "id"
@@ -614,21 +868,8 @@
                     "participationId"
                   ]
                 },
-                "through": {
-                  "childColumns": [
-                    "employeeId"
-                  ],
-                  "namespaceId": "public",
-                  "parentColumns": [
-                    "participationId"
-                  ],
-                  "table": "ParticipationEmployees",
-                  "targetColumns": [
-                    "id"
-                  ]
-                },
                 "to": {
-                  "model": "Employee",
+                  "model": "ParticipationEmployees",
                   "namespace": "public"
                 }
               },
@@ -681,10 +922,77 @@
                 },
                 "startDate": {
                   "column": "startDate"
+                },
+                "status": {
+                  "column": "status"
                 }
               },
               "namespaceId": "public",
-              "table": "Particpation"
+              "table": "Participation"
+            }
+          },
+          "ParticipationEmployees": {
+            "fields": {
+              "employeeId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "participationId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "employee": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "employeeId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Employee",
+                  "namespace": "public"
+                }
+              },
+              "participation": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "participationId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Participation",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "employeeId": {
+                  "column": "employeeId"
+                },
+                "participationId": {
+                  "column": "participationId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ParticipationEmployees"
             }
           },
           "Program": {
@@ -737,7 +1045,22 @@
                   ]
                 },
                 "to": {
-                  "model": "Particpation",
+                  "model": "Participation",
+                  "namespace": "public"
+                }
+              },
+              "sponsor": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "programId"
+                  ]
+                },
+                "to": {
+                  "model": "MunicipalityPrograms",
                   "namespace": "public"
                 }
               }
@@ -771,6 +1094,13 @@
                 "type": {
                   "kind": "valueObject",
                   "name": "Address"
+                }
+              },
+              "branchId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
                 }
               },
               "id": {
@@ -828,6 +1158,22 @@
               }
             },
             "relations": {
+              "branch": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "branchId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Branch",
+                  "namespace": "public"
+                }
+              },
               "contacts": {
                 "cardinality": "1:N",
                 "on": {
@@ -844,7 +1190,7 @@
                 }
               },
               "employees": {
-                "cardinality": "N:M",
+                "cardinality": "1:N",
                 "on": {
                   "localFields": [
                     "id"
@@ -853,21 +1199,8 @@
                     "schoolId"
                   ]
                 },
-                "through": {
-                  "childColumns": [
-                    "employeeId"
-                  ],
-                  "namespaceId": "public",
-                  "parentColumns": [
-                    "schoolId"
-                  ],
-                  "table": "SchoolEmployees",
-                  "targetColumns": [
-                    "id"
-                  ]
-                },
                 "to": {
-                  "model": "Employee",
+                  "model": "SchoolEmployees",
                   "namespace": "public"
                 }
               },
@@ -882,7 +1215,7 @@
                   ]
                 },
                 "to": {
-                  "model": "Particpation",
+                  "model": "Participation",
                   "namespace": "public"
                 }
               }
@@ -891,6 +1224,9 @@
               "fields": {
                 "address": {
                   "column": "address"
+                },
+                "branchId": {
+                  "column": "branchId"
                 },
                 "id": {
                   "column": "id"
@@ -1019,6 +1355,61 @@
       "public": {
         "entries": {
           "table": {
+            "Branch": {
+              "checks": [
+                {
+                  "expression": "\"name\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT')",
+                  "name": "Branch_name_check_ca88058c",
+                  "prefix": "Branch_name_check"
+                },
+                {
+                  "expression": "\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN')",
+                  "name": "Branch_region_check_de154a3d",
+                  "prefix": "Branch_region_check"
+                }
+              ],
+              "columns": {
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Branches",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "region": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Region",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Contact": {
               "checks": [
                 {
@@ -1032,6 +1423,16 @@
                   "codecId": "pg/jsonb@1",
                   "nativeType": "jsonb",
                   "nullable": true
+                },
+                "branchId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "branchRole": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -1139,9 +1540,33 @@
                     "namespaceId": "public",
                     "tableName": "School"
                   }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "branchId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Contact"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Branch"
+                  }
                 }
               ],
               "indexes": [
+                {
+                  "columns": [
+                    "branchId"
+                  ],
+                  "name": "Contact_branchId_idx_d04da5bb",
+                  "prefix": "Contact_branchId_idx",
+                  "unique": false
+                },
                 {
                   "columns": [
                     "last_contacted_byId"
@@ -1189,7 +1614,7 @@
                 "address": {
                   "codecId": "pg/jsonb@1",
                   "nativeType": "jsonb",
-                  "nullable": false
+                  "nullable": true
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -1276,6 +1701,223 @@
                 }
               ]
             },
+            "Municipality": {
+              "columns": {
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "mayor": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "MunicipalityPrograms": {
+              "columns": {
+                "municipalityId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "programId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "programId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "MunicipalityPrograms"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Program"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "municipalityId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "MunicipalityPrograms"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Municipality"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "municipalityId"
+                  ],
+                  "name": "MunicipalityPrograms_municipalityId_idx_0a7c35cd",
+                  "prefix": "MunicipalityPrograms_municipalityId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "programId"
+                  ],
+                  "name": "MunicipalityPrograms_programId_idx_4e50c706",
+                  "prefix": "MunicipalityPrograms_programId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "municipalityId",
+                  "programId"
+                ]
+              },
+              "uniques": []
+            },
+            "Participation": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('PLANNED', 'ONGOING', 'COMPLETED', 'CANCELLED')",
+                  "name": "Participation_status_check_07ec6707",
+                  "prefix": "Participation_status_check"
+                }
+              ],
+              "columns": {
+                "endDate": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "programId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "startDate": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "PLANNED"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ProgramStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Participation"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                },
+                {
+                  "source": {
+                    "columns": [
+                      "programId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Participation"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Program"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "programId"
+                  ],
+                  "name": "Participation_programId_idx_4e50c706",
+                  "prefix": "Participation_programId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId"
+                  ],
+                  "name": "Participation_schoolId_idx_82b454d7",
+                  "prefix": "Participation_schoolId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "ParticipationEmployees": {
               "columns": {
                 "employeeId": {
@@ -1303,7 +1945,7 @@
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "Particpation"
+                    "tableName": "Participation"
                   }
                 },
                 {
@@ -1345,97 +1987,6 @@
                 "columns": [
                   "participationId",
                   "employeeId"
-                ]
-              },
-              "uniques": []
-            },
-            "Particpation": {
-              "columns": {
-                "endDate": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": true
-                },
-                "id": {
-                  "codecId": "pg/int4@1",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "programId": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "schoolId": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "startDate": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "source": {
-                    "columns": [
-                      "schoolId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Particpation"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "School"
-                  }
-                },
-                {
-                  "source": {
-                    "columns": [
-                      "programId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Particpation"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Program"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "programId"
-                  ],
-                  "name": "Particpation_programId_idx_4e50c706",
-                  "prefix": "Particpation_programId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "schoolId"
-                  ],
-                  "name": "Particpation_schoolId_idx_82b454d7",
-                  "prefix": "Particpation_schoolId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "id"
                 ]
               },
               "uniques": []
@@ -1509,6 +2060,11 @@
                   "nativeType": "jsonb",
                   "nullable": false
                 },
+                "branchId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "nativeType": "int4",
@@ -1553,8 +2109,34 @@
                   }
                 }
               },
-              "foreignKeys": [],
-              "indexes": [],
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "branchId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Branch"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "branchId"
+                  ],
+                  "name": "School_branchId_idx_d04da5bb",
+                  "prefix": "School_branchId_idx",
+                  "unique": false
+                }
+              ],
               "primaryKey": {
                 "columns": [
                   "id"
@@ -1637,7 +2219,7 @@
             }
           },
           "valueSet": {
-            "Branch": {
+            "Branches": {
               "kind": "valueSet",
               "values": [
                 "ONE",
@@ -1648,6 +2230,15 @@
                 "SIX",
                 "SEVEN",
                 "EIGHT"
+              ]
+            },
+            "ProgramStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PLANNED",
+                "ONGOING",
+                "COMPLETED",
+                "CANCELLED"
               ]
             },
             "Region": {
@@ -1704,7 +2295,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "c6499c14153a1408c4de0221aa7274f0b6b148ffcc6d6290066dcb3d2b17cfe8"
+    "storageHash": "a00ecb7e827561ed0116c2d5efc6c7b17419c371fe31f5b85178459389b6d352"
   },
   "execution": {
     "executionHash": "0fd40b19d5bd8a8d2527a8f9a4030d8f7fe0634840abb04486573b61d0f5386b",
