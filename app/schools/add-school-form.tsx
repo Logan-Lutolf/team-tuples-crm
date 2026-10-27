@@ -5,7 +5,7 @@ import { DialogClose } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createSchool } from "../schools/school_actions"
+import { createSchool } from "./actions_schools"
 
 const regions = [
     { label: "ONE", value: "ONE" },
@@ -38,6 +38,17 @@ const relationships = [
     { label: "EXCELLENT", value: "EXCELLENT"},
 ]
 
+const branch = [
+    { label: "ONE", value: "ONE" },
+    { label: "TWO", value: "TWO" },
+    { label: "THREE", value: "THREE" },
+    { label: "FOUR", value: "FOUR" },
+    { label: "FIVE", value: "FIVE" },
+    { label: "SIX", value: "SIX" },
+    { label: "SEVEN", value: "SEVEN" },
+    { label: "EIGHT", value: "EIGHT" },
+]
+
 // TODO: Add form validation
 export function AddSchoolForm() {    
     return (
@@ -52,12 +63,23 @@ export function AddSchoolForm() {
             </Field>
 
             <Field>
-                <FieldLabel htmlFor="address">Address</FieldLabel>
-                <Input 
-                    name="address"
-                    type="text"
-                    required
-                />
+                <FieldLabel htmlFor="street">Street address</FieldLabel>
+                <Input id="street" name="street" />
+            </Field>
+
+            <Field>
+                <FieldLabel htmlFor="city">City</FieldLabel>
+                <Input id="city" name="city" />
+            </Field>
+
+            <Field>
+                <FieldLabel htmlFor="country">Country</FieldLabel>
+                <Input id="country" name="country" />
+            </Field>
+
+            <Field>
+                <FieldLabel htmlFor="zipCode">Postal code</FieldLabel>
+                <Input id="zipCode" name="zipCode" />
             </Field>
             
             <Field>
@@ -99,7 +121,7 @@ export function AddSchoolForm() {
 
             <Field>
                 <FieldLabel htmlFor="relationship">Relationship</FieldLabel>
-                <Select items={relationships} defaultValue="" name="region">
+                <Select items={relationships} defaultValue="" name="relationship">
                     <SelectTrigger>
                         <SelectValue />
                     </SelectTrigger>
@@ -128,6 +150,25 @@ export function AddSchoolForm() {
                                 return (
                                 <SelectItem key={r.value} value={r.value}>
                                     {r.label}
+                                </SelectItem>
+                            )})}
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </Field>
+
+            <Field>
+                <FieldLabel htmlFor="role">Branch</FieldLabel>
+                <Select items={regions} defaultValue="" name="branch">
+                    <SelectTrigger>
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            {regions.map((b) => {
+                                return (
+                                <SelectItem key={b.value} value={b.value}>
+                                    {b.label}
                                 </SelectItem>
                             )})}
                         </SelectGroup>

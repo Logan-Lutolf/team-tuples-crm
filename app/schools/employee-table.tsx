@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Scalars } from "@prisma/orm-postgres/components";
 import { Pencil, Trash, Ellipsis } from "lucide-react";
 import { ActionDialog } from "@/components/custom/action-dialog";
-import { DeleteEmployeeForm } from "./delete-form";
-import { EditEmployeeForm } from "./edit-employee-form";
+import { DeleteSchoolForm } from "./delete-form";
+import { EditSchoolForm } from "./edit-employee-form";
 
 type School = Scalars<Models.public_School>
 
 
-export function EmployeeTable({data} : {data: School[]}) {
+export function SchoolTable({data} : {data: School[]}) {
     return(
         <Table className="border border-black">
             <TableHeader className="rounded-4xl">
@@ -34,17 +34,17 @@ export function EmployeeTable({data} : {data: School[]}) {
                             <ActionDialog 
                                 icon={<Pencil />} 
                                 content={
-                                    <EditEmployeeForm 
-                                        name={employee.name}
-                                        email={employee.email}
-                                        phone={employee.phone ? employee.phone : ""}  // Might change this later
-                                        role={employee.role}
+                                    <EditSchoolForm 
+                                        name={school.name}
+                                        email={school.email}
+                                        phone={school.phone ? school.phone : ""}  // Might change this later
+                                        role={school.address}
                                     />
                                 }
                             />
                             <ActionDialog
                                 icon={<Trash />}
-                                content={<DeleteEmployeeForm employeeId={employee.id} employeeName={employee.name} />}
+                                content={<DeleteSchoolForm schoolId={school.id} schoolName={school.name} />}
                                 variant="destructive"
                             />
                             <Button size='sm' variant="ghost">
