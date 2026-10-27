@@ -4,8 +4,10 @@ import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
 import { revalidatePath } from "next/cache"
 
-type Role = Scalars<Models.public_Employee>["role"]
-
+type SchoolFields = Scalars<Models.public_School>
+type Region = SchoolFields["region"]
+type SchoolType = SchoolFields["type"]
+type Relationship = SchoolFields["relationship"]
 
 // TODO: Only ADMIN should be able to create new employee
 
@@ -14,10 +16,10 @@ export async function createSchool(formData: FormData) {
     const address = formData.get("address") as string
     const email = formData.get("email") as string
     const phone = formData.get("phone-num") as string
-    const type = formData.get("type") as string
-    const relationship = formData.get("role") as Role
+    const type = formData.get("type") as SchoolType
+    const relationship = formData.get("role") as Relationship
     const region = formData.get("region") as Region
-    
+    const branchId = Number(formData.get("branch"))
     
     if (name == null || email == null){
         console.log("Create employee failed: name or email is null")
@@ -38,12 +40,13 @@ export async function createSchool(formData: FormData) {
             email: email, 
             relationship: relationship,
             region: region,
+            branchId: branchId,
         })
 
-        if(employee)
+        if(employee) {
             console.log("Create employee successful.")
             revalidatePath("/employee-management")
-
+        }
         
     }
     catch (error) {
