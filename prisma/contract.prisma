@@ -113,6 +113,8 @@ model School {
   name      String
   address   Address
   type      SchoolType
+  phone String?
+  email String @unique
   relationship RelationshipType
   region   Region
 

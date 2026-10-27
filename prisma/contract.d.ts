@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'a00ecb7e827561ed0116c2d5efc6c7b17419c371fe31f5b85178459389b6d352'>;
+  StorageHashBase<'fd110db52d3709a08f72a58242b1e0cb968cfff46a57823c333625af66e874db'>;
 export type ExecutionHash =
   ExecutionHashBase<'0fd40b19d5bd8a8d2527a8f9a4030d8f7fe0634840abb04486573b61d0f5386b'>;
 export type ProfileHash =
@@ -375,8 +375,10 @@ export type FieldOutputTypes = {
     readonly School: {
       readonly address: AddressOutput;
       readonly branchId: CodecTypes['pg/int4@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
+      readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly region:
         | 'ONE'
         | 'TWO'
@@ -517,8 +519,10 @@ export type FieldInputTypes = {
     readonly School: {
       readonly address: AddressInput;
       readonly branchId: CodecTypes['pg/int4@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly region:
         | 'ONE'
         | 'TWO'
@@ -659,8 +663,10 @@ export type StorageColumnTypes = {
     readonly School: {
       readonly address: CodecTypes['pg/jsonb@1']['output'];
       readonly branchId: CodecTypes['pg/int4@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
+      readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly region:
         | 'ONE'
         | 'TWO'
@@ -801,8 +807,10 @@ export type StorageColumnInputTypes = {
     readonly School: {
       readonly address: CodecTypes['pg/jsonb@1']['input'];
       readonly branchId: CodecTypes['pg/int4@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly region:
         | 'ONE'
         | 'TWO'
@@ -968,8 +976,10 @@ export namespace Models {
   export type public_School = {
     address: AddressOutput;
     branchId: CodecTypes['pg/int4@1']['output'];
+    email: CodecTypes['pg/text@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
+    phone: CodecTypes['pg/text@1']['output'] | null;
     region:
       | 'ONE'
       | 'TWO'
@@ -1542,6 +1552,11 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
                 };
+                readonly email: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
                 readonly id: {
                   readonly nativeType: 'int4';
                   readonly codecId: 'pg/int4@1';
@@ -1551,6 +1566,11 @@ type ContractBase = Omit<
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
+                };
+                readonly phone: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                 };
                 readonly region: {
                   readonly nativeType: 'text';
@@ -1569,7 +1589,7 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
+              uniques: readonly [{ readonly columns: readonly ['email'] }];
               indexes: readonly [
                 {
                   readonly name: 'School_branchId_idx_d04da5bb';
@@ -2307,12 +2327,20 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly email: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly name: {
                 readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly phone: {
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly region: {
@@ -2381,8 +2409,10 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly address: { readonly column: 'address' };
                 readonly branchId: { readonly column: 'branchId' };
+                readonly email: { readonly column: 'email' };
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
+                readonly phone: { readonly column: 'phone' };
                 readonly region: { readonly column: 'region' };
                 readonly relationship: { readonly column: 'relationship' };
                 readonly type: { readonly column: 'type' };

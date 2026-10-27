@@ -1,7 +1,7 @@
 'use client'
 
 import { Field, FieldLabel } from "@/components/ui/field";
-import { deleteEmployee } from "../actions";
+import { deleteEmployee } from "./actions";
 import { Input } from "@/components/ui/input";
 import { DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";

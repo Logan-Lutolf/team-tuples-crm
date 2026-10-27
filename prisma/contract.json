@@ -1103,6 +1103,13 @@
                   "kind": "scalar"
                 }
               },
+              "email": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -1112,6 +1119,13 @@
               },
               "name": {
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "phone": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -1228,11 +1242,17 @@
                 "branchId": {
                   "column": "branchId"
                 },
+                "email": {
+                  "column": "email"
+                },
                 "id": {
                   "column": "id"
                 },
                 "name": {
                   "column": "name"
+                },
+                "phone": {
+                  "column": "phone"
                 },
                 "region": {
                   "column": "region"
@@ -2065,6 +2085,11 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "email": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "nativeType": "int4",
@@ -2074,6 +2099,11 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "phone": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "region": {
                   "codecId": "pg/text@1",
@@ -2142,7 +2172,13 @@
                   "id"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "email"
+                  ]
+                }
+              ]
             },
             "SchoolEmployees": {
               "columns": {
@@ -2295,7 +2331,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "a00ecb7e827561ed0116c2d5efc6c7b17419c371fe31f5b85178459389b6d352"
+    "storageHash": "fd110db52d3709a08f72a58242b1e0cb968cfff46a57823c333625af66e874db"
   },
   "execution": {
     "executionHash": "0fd40b19d5bd8a8d2527a8f9a4030d8f7fe0634840abb04486573b61d0f5386b",
