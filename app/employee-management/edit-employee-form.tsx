@@ -40,7 +40,7 @@ export function EditEmployeeForm(employee: EditEmployeeFormProps) {    // Add ac
                     name="full-name"
                     type="text"
                     required
-                    value={employee.name}
+                    defaultValue={employee.name}
                 />
             </Field>
 
@@ -49,7 +49,7 @@ export function EditEmployeeForm(employee: EditEmployeeFormProps) {    // Add ac
                 <Input 
                     name="email"
                     type="email"
-                    value={employee.email}
+                    defaultValue={employee.email}
                     required
                 />
             </Field>
@@ -59,17 +59,15 @@ export function EditEmployeeForm(employee: EditEmployeeFormProps) {    // Add ac
                 <Input 
                     name="phone-num"
                     type="text"
-                    value={employee.phone}
+                    defaultValue={employee.phone}
                 />
             </Field>
 
             <Field>
                 <FieldLabel htmlFor="role">Role</FieldLabel>
-                <Select items={roles} defaultValue="" name="role">
+                <Select items={roles} defaultValue={employee.role} name="role">
                     <SelectTrigger>
-                        <SelectValue 
-                            placeholder={employee.role}
-                        />
+                        <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
