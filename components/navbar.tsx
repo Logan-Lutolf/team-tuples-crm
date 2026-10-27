@@ -11,7 +11,7 @@ import { NotebookPen} from "lucide-react";
 
 const links = [
     { href: "/dashboard", label: "Dashboard" },
-    { href: "/schools", label: "Schools" },
+    { href: "/school-management", label: "Schools" },
     { href: "/employee-management", label: "Employees"},
     { href: "/map", label: "Map" },
     { href: "/profile", label: "Profile" },

@@ -44,13 +44,13 @@ export async function createSchool(formData: FormData) {
         })
 
         if(employee) {
-            console.log("Create employee successful.")
+            console.log("Create school successful.")
             revalidatePath("/employee-management")
         }
         
     }
     catch (error) {
-        console.log("Create employee failed: ", error)
+        console.log("Create school failed: ", error)
     }
 }
 
@@ -86,23 +86,23 @@ export async function editEmployee(formData: FormData) {
 
 }
 
-export async function deleteEmployee(formData: FormData) {
-    const id = formData.get('employee-id')
+export async function deleteSchool(formData: FormData) {
+    const id = formData.get('school-id')
 
     if (id == null) 
-        console.log("Delete employee failed: Employee ID does not exist.")
+        console.log("Delete school failed: School ID does not exist.")
 
-    const emp = Number(id)
+    const sch = Number(id)
     try {
-        const deleted = await db.orm.public.Employee
-            .where({id: emp})
+        const deleted = await db.orm.public.School
+            .where({id: sch})
             .delete()
         
         if (deleted)
             console.log("Deletion successful.")
-            revalidatePath("/employee-management")
+            revalidatePath("/school-management")
     }
     catch (error) {
-        console.log("Delete employee failed: ", error)
+        console.log("Delete school failed: ", error)
     }
 }
