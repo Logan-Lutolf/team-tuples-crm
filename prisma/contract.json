@@ -1343,13 +1343,6 @@
                   "kind": "scalar"
                 }
               },
-              "country": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
               "street": {
                 "nullable": false,
                 "type": {

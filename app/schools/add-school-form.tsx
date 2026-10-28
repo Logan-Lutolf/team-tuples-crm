@@ -72,11 +72,7 @@ export function AddSchoolForm() {
                 <Input id="city" name="city" />
             </Field>
 
-            <Field>
-                <FieldLabel htmlFor="country">Country</FieldLabel>
-                <Input id="country" name="country" />
-            </Field>
-
+        
             <Field>
                 <FieldLabel htmlFor="zipCode">Postal code</FieldLabel>
                 <Input id="zipCode" name="zipCode" />

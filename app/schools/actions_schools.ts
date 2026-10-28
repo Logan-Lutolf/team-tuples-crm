@@ -31,7 +31,6 @@ export async function createSchool(formData: FormData) {
             address: {
                 street: formData.get("street") as string,
                 city: formData.get("city") as string,
-                country: formData.get("country") as string,
                 zipCode: formData.get("zipCode") as string,
             },
             type: type,
@@ -54,7 +53,13 @@ export async function createSchool(formData: FormData) {
 }
 
 export async function editSchool(formData: FormData) {
-    
+    const name = formData.get("full-name") as string
+    const type = formData.get("type") as SchoolType
+    const phone = formData.get("phone-num") as string
+    const email = formData.get("email") as string
+    const relationship = formData.get("role") as Relationship
+    const region = formData.get("region") as Region
+    const branchId = Number(formData.get("branch"))
 
 
     if (name == null || email == null){
@@ -73,6 +78,11 @@ export async function editSchool(formData: FormData) {
                 relationship: relationship,
                 region: region,
                 branchId: branchId,
+                address: {
+                    street: formData.get("street") as string,
+                    city: formData.get("city") as string,
+                    zipCode: formData.get("zipCode") as string,
+                },
             })
         
         if (school) {

@@ -12,7 +12,6 @@ const enums = db.enums.public;
 const address = () => ({
   street: faker.location.streetAddress(),
   city: faker.location.city(),
-  country: faker.location.country(),
   zipCode: faker.location.zipCode(),
 });
 const now = Date.now();

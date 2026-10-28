@@ -30,7 +30,6 @@ export async function createEmployee(formData: FormData) {
             address: {   // This shouldn't be required by prisma contract; look into this
                 street: '',
                 city: '',
-                country: '',
                 zipCode: ''
             }
         })
