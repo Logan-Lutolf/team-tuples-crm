@@ -8,6 +8,9 @@ interface SchoolTableContainerProps {
 }
 
 export async function SchoolTableContainer({query, page} : SchoolTableContainerProps) {
+    // Capture one server timestamp so both sections use the same time during hydration.
+    // eslint-disable-next-line react-hooks/purity
+    const participationAsOf = Date.now()
     const recordsPerPage = 20
     const currentPage = Number.isSafeInteger(page) && page > 0 ? page : 1
     // Escape LIKE wildcards so searching keeps its literal substring behavior.
@@ -36,8 +39,23 @@ export async function SchoolTableContainer({query, page} : SchoolTableContainerP
             .select("id", "schoolId", "programId", "startDate", "endDate", "status").all().toArray(),
     ]) : [[], [], []]
 
+    const participationIds = participations.map((participation) => participation.id)
+    const participantAssignments = participationIds.length
+        ? await db.orm.public.ParticipationEmployees
+            .where((assignment) => assignment.participationId.in(participationIds))
+            .select("participationId", "employeeId").all().toArray()
+        : []
+
     const relationsBySchool: ComponentProps<typeof SchoolTable>["relationsBySchool"] = {}
     const employeesById = new Map(employees.map((employee) => [employee.id, employee]))
+    const participantsByParticipation = new Map<number, typeof employees>()
+    for (const assignment of participantAssignments) {
+        const employee = employeesById.get(assignment.employeeId)
+        if (!employee) continue
+        const participants = participantsByParticipation.get(assignment.participationId) ?? []
+        participants.push(employee)
+        participantsByParticipation.set(assignment.participationId, participants)
+    }
     for (const school of filteredSchools) {
         relationsBySchool[school.id] = { contacts: [], employees: [], participations: [] }
     }
@@ -52,12 +70,16 @@ export async function SchoolTableContainer({query, page} : SchoolTableContainerP
         if (employee) relationsBySchool[assignment.schoolId].employees.push(employee)
     }
     for (const { schoolId, ...participation } of participations) {
-        relationsBySchool[schoolId].participations.push(participation)
+        relationsBySchool[schoolId].participations.push({
+            ...participation,
+            employees: participantsByParticipation.get(participation.id) ?? [],
+        })
     }
 
     return (
         <SchoolTable
             data={filteredSchools}
+            participationAsOf={participationAsOf}
             branches={branches}
             programs={programs}
             availableContacts={availableContacts}

@@ -15,10 +15,11 @@ type Option = { id: number; name: string }
 type Participation = Pick<
     Scalars<Models.public_Participation>,
     "id" | "programId" | "startDate" | "endDate" | "status"
->
+> & { employees: SchoolEmployee[] }
 
 interface SchoolTableProps {
     data: School[]
+    participationAsOf: number
     branches: Option[]
     programs: Option[]
     availableContacts: Option[]
@@ -32,6 +33,7 @@ interface SchoolTableProps {
 
 export function SchoolTable({
     data,
+    participationAsOf,
     branches,
     programs,
     availableContacts,
@@ -65,6 +67,7 @@ export function SchoolTable({
                                 icon={<Pencil />} 
                                 content={
                                     <EditSchoolForm
+                                        participationAsOf={participationAsOf}
                                         id={school.id}
                                         name={school.name}
                                         email={school.email}

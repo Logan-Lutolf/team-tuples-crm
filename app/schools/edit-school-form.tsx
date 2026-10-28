@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState, Fragment } from "react"
 import { SchoolActionForm, type SchoolFormAction } from "./school-action-form"
 import { Button } from "@/components/ui/button"
-import { DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { DialogHeader } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -54,9 +54,10 @@ type Region = SchoolFields["region"]
 type SchoolType = SchoolFields["type"]
 type Relationship = SchoolFields["relationship"]
 type Participation = Pick<Scalars<Models.public_Participation>,
-    "id" | "programId" | "startDate" | "endDate" | "status">
+    "id" | "programId" | "startDate" | "endDate" | "status"> & { employees: SchoolEmployee[] }
 
 interface EditSchoolFormProps {
+    participationAsOf: number
     id: number
     name: string,
     type: SchoolType,
@@ -79,11 +80,21 @@ interface EditSchoolFormProps {
 
 // TODO: Add form validation
 export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual type later T_T
+    const [viewingParticipants, setViewingParticipants] = useState<number | null>(null)
     const [editingParticipation, setEditingParticipation] = useState<number | null>(null)
     const branchOptions = school.branches.map((branch) => ({
         label: branch.name,
         value: String(branch.id),
     }))
+
+    const upcoming = school.participations.filter((participation) =>
+        participation.status === "PLANNED" && Date.parse(participation.startDate) > school.participationAsOf)
+        .sort((a, b) => Date.parse(a.startDate) - Date.parse(b.startDate))
+    const upcomingIds = new Set(upcoming.map((participation) => participation.id))
+    const participationSections = [
+        { title: "Upcoming participations", items: upcoming, empty: "No upcoming participations." },
+        { title: "Past participations", items: school.participations.filter((participation) => !upcomingIds.has(participation.id)), empty: "No other participations yet." },
+    ]
 
     return (
         <div className="flex flex-col gap-6">
@@ -239,7 +250,9 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
         />
 
         <section className="flex flex-col gap-3">
-            <h3 className="font-semibold">Participations</h3>
+            {participationSections.map(({ title, items, empty }) => (
+            <section key={title} className="flex flex-col gap-3">
+            <h3 className="font-semibold">{title}</h3>
             <Table className="border rounded-md">
                 <TableHeader>
                     <TableRow>
@@ -251,8 +264,8 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {school.participations.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">No participations yet.</TableCell></TableRow>}
-                    {school.participations.map((participation) => (
+                    {items.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">{empty}</TableCell></TableRow>}
+                    {items.map((participation) => (
                         <Fragment key={participation.id}>
                             <TableRow>
                                 <TableCell className="font-medium">{school.programs.find((program) => program.id === participation.programId)?.name ?? `Program ${participation.programId}`}</TableCell>
@@ -261,6 +274,12 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
                                 <TableCell><span className="rounded-md bg-muted px-2 py-1 text-xs">{participation.status.charAt(0) + participation.status.slice(1).toLowerCase()}</span></TableCell>
                                 <TableCell>
                                     <div className="flex items-start justify-end gap-2">
+                                        <Button type="button" size="sm" variant="outline"
+                                            aria-expanded={viewingParticipants === participation.id}
+                                            aria-controls={`participation-${participation.id}-participants`}
+                                            onClick={() => setViewingParticipants(viewingParticipants === participation.id ? null : participation.id)}>
+                                            {viewingParticipants === participation.id ? "Hide participants" : "View participants"}
+                                        </Button>
                                         <Button type="button" size="sm" variant="outline" aria-expanded={editingParticipation === participation.id}
                                             onClick={() => setEditingParticipation(editingParticipation === participation.id ? null : participation.id)}>
                                             {editingParticipation === participation.id ? "Close edit" : "Edit"}
@@ -273,6 +292,31 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
                                     </div>
                                 </TableCell>
                             </TableRow>
+                            {viewingParticipants === participation.id && <TableRow>
+                                <TableCell colSpan={5} className="bg-muted/30 p-4 whitespace-normal">
+                                    <section id={`participation-${participation.id}-participants`} className="flex flex-col gap-3" aria-label="Participation employees">
+                                        <h4 className="font-semibold">Participation employees</h4>
+                                        <Table className="border bg-background">
+                                            <TableHeader><TableRow>
+                                                <TableHead>Name</TableHead><TableHead>Email</TableHead>
+                                                <TableHead>Phone</TableHead><TableHead>Role</TableHead><TableHead>Region</TableHead>
+                                            </TableRow></TableHeader>
+                                            <TableBody>
+                                                {participation.employees.length === 0 && <TableRow>
+                                                    <TableCell colSpan={5} className="text-center text-muted-foreground">No employees assigned to this participation.</TableCell>
+                                                </TableRow>}
+                                                {participation.employees.map((employee) => <TableRow key={employee.id}>
+                                                    <TableCell className="font-medium">{employee.name}</TableCell>
+                                                    <TableCell><a className="underline underline-offset-4" href={`mailto:${employee.email}`}>{employee.email}</a></TableCell>
+                                                    <TableCell>{employee.phone ? <a href={`tel:${employee.phone}`}>{employee.phone}</a> : "—"}</TableCell>
+                                                    <TableCell className="whitespace-normal">{employee.role.replaceAll("_", " ")}</TableCell>
+                                                    <TableCell>{employee.region}</TableCell>
+                                                </TableRow>)}
+                                            </TableBody>
+                                        </Table>
+                                    </section>
+                                </TableCell>
+                            </TableRow>}
                             {editingParticipation === participation.id && <TableRow>
                                 <TableCell colSpan={5} className="bg-muted/30 p-4 whitespace-normal">
                                     <SchoolParticipationForm schoolId={school.id} programs={school.programs} participation={participation} />
@@ -282,7 +326,9 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
                     ))}
                 </TableBody>
             </Table>
-
+            </section>
+            ))}
+            <h3 className="font-semibold">Add participation</h3>
             {school.programs.length > 0
                 ? <SchoolParticipationForm schoolId={school.id} programs={school.programs} />
                 : <p>No programs available.</p>}
