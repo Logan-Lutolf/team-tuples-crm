@@ -5,7 +5,7 @@ import { DialogClose } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createEmployee } from "../actions"
+import { createEmployee } from "../../actions"
 
 const roles = [
     { label: "Admin", value: "ADMIN" },

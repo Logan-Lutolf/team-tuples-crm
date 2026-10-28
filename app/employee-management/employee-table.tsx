@@ -2,10 +2,12 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Models } from "@/prisma/contract";
 import { Button } from "@/components/ui/button"
 import { Scalars } from "@prisma/orm-postgres/components";
-import { Pencil, Trash, Ellipsis } from "lucide-react";
+import { Pencil, Trash, Ellipsis, SquareArrowOutUpRight } from "lucide-react";
 import { ActionDialog } from "@/components/custom/action-dialog";
-import { DeleteEmployeeForm } from "./delete-form";
-import { EditEmployeeForm } from "./edit-employee-form";
+import { DeleteEmployeeForm } from "./forms/delete-form";
+import { EditEmployeeForm } from "./forms/edit-employee-form";
+import { ExtendedEmployee } from "./extended-employee";
+import { BigActionDialog } from "@/components/custom/action-dialog";
 
 type Employee = Scalars<Models.public_Employee>
 
@@ -17,7 +19,6 @@ export function EmployeeTable({data} : {data: Employee[]}) {
                 <TableRow className="border border-black">
                     <TableHead>Name</TableHead>
                     <TableHead>Email</TableHead>
-                    <TableHead>Phone #</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Actions</TableHead>
                 </TableRow>
@@ -28,28 +29,41 @@ export function EmployeeTable({data} : {data: Employee[]}) {
                     <TableRow key={employee.id} className="border border-black">
                         <TableCell>{employee.name}</TableCell>
                         <TableCell>{employee.email}</TableCell>
-                        <TableCell>{employee.phone}</TableCell>
                         <TableCell>{employee.role}</TableCell>
-                        <TableCell className="flex flex-row gap-2">
-                            <ActionDialog 
-                                icon={<Pencil />} 
-                                content={
-                                    <EditEmployeeForm 
-                                        name={employee.name}
-                                        email={employee.email}
-                                        phone={employee.phone ? employee.phone : ""}  // Might change this later
-                                        role={employee.role}
-                                    />
-                                }
-                            />
-                            <ActionDialog
-                                icon={<Trash />}
-                                content={<DeleteEmployeeForm employeeId={employee.id} employeeName={employee.name} />}
-                                variant="destructive"
-                            />
-                            <Button size='sm' variant="ghost">
-                                <Ellipsis/>
-                            </Button>
+                        <TableCell>
+                            <div className="flex flex-row gap-2">
+                                <ActionDialog 
+                                    icon={<Pencil />} 
+                                    content={
+                                        <EditEmployeeForm 
+                                            name={employee.name}
+                                            email={employee.email}
+                                            phone={employee.phone ? employee.phone : ""}  // Might change this later
+                                            role={employee.role}
+                                        />
+                                    }
+                                />
+                                <ActionDialog
+                                    icon={<Trash />}
+                                    content={<DeleteEmployeeForm employeeId={employee.id} employeeName={employee.name} />}
+                                    variant="destructive"
+                                />
+                                <BigActionDialog
+                                    className="w-3/5"
+                                    icon={ <SquareArrowOutUpRight />}
+                                    content={
+                                        <ExtendedEmployee 
+                                            name={employee.name}
+                                            role={employee.role}
+                                            email={employee.email}
+                                            phone={employee.phone ? employee.phone : "Unknown Phone Number"}
+                                            region={employee.region ? employee.region : "Unkown Branch"} 
+                                            id={employee.id}                                    />
+                                    }
+                                >
+                                </BigActionDialog>
+                            </div>
+                            
                         </TableCell>
                     </TableRow>
                 ))}

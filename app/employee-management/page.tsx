@@ -1,20 +1,8 @@
-import { db } from "@/prisma/db";
-import { AddEmployeeForm } from "./add-employee-form";
+import { AddEmployeeForm } from "./forms/add-employee-form";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Field } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Contract } from "@/prisma/contract";
-import { DefaultModelRow } from "@prisma/orm-postgres/orm-client";
-import { Filter } from "lucide-react";
 import { Search } from "@/components/custom/search";
 import { EmployeeTableContainer } from "./employee-table-container";
-
-
-// Add pagination to employee list
-// Edit employee functionality
-// Filtering by role
 
 
 export default async function EmployeeManagementPage(
@@ -32,7 +20,7 @@ export default async function EmployeeManagementPage(
     
 
     return (
-        <div className="flex flex-col gap-4 m-10">
+        <div className="mx-auto flex h-full min-h-0 w-full min-w-0 max-w-6xl flex-col gap-4 p-10">
             <Dialog>
                 <DialogTrigger render={<Button>Add an Employee</Button>}/>
 
@@ -40,26 +28,13 @@ export default async function EmployeeManagementPage(
                     <AddEmployeeForm />
                 </DialogContent>
             </Dialog>
-            
-            <Search placeholder={""}/>
-
-            <EmployeeTableContainer query={query} page={1} />
-
-            <Pagination>
-                <PaginationContent>
-                    <PaginationItem>
-                        <PaginationPrevious></PaginationPrevious>
-                    </PaginationItem>
-
-                    <PaginationItem>
-                        <PaginationEllipsis></PaginationEllipsis>
-                    </PaginationItem>
-
-                    <PaginationItem>
-                        <PaginationNext></PaginationNext>
-                    </PaginationItem>
-                </PaginationContent>
-            </Pagination>
+            <div>
+                <Search placeholder={""}/>
+                <div className="min-h-0 min-w-0 flex-1 overflow-auto">
+                    <EmployeeTableContainer query={query} page={1} />
+                </div>
+            </div>
+        
         </div>
     )
 }
