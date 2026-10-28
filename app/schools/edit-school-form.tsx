@@ -1,6 +1,9 @@
 'use client'
 
+import { useEffect, useId, useRef } from "react"
+import { SchoolActionForm, type SchoolFormAction } from "./school-action-form"
 import { Button } from "@/components/ui/button"
+import { DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -82,7 +85,10 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
 
     return (
         <div className="flex flex-col gap-6">
-        <form className="flex flex-col gap-3" action={editSchool}>
+        <DialogHeader>
+            <DialogTitle>Edit School</DialogTitle>
+        </DialogHeader>
+        <SchoolActionForm className="grid grid-cols-1 gap-4 sm:grid-cols-2 [&_[data-slot=select-trigger]]:w-full [&>[role=alert]]:col-span-full [&>[role=status]]:col-span-full" action={editSchool}>
             <input type="hidden" name="school-id" value={school.id} />
 
             <Field>
@@ -217,8 +223,8 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
                 </Select>
             </Field>
 
-            <Button type="submit">Save school</Button>
-        </form>
+            <Button type="submit" className="sm:col-span-2">Save school</Button>
+        </SchoolActionForm>
 
         <SchoolAssignments
             schoolId={school.id} label="Contacts" field="contact-id"
@@ -237,11 +243,11 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
             {school.participations.map((participation) => (
                 <div key={participation.id} className="flex flex-col gap-3 rounded-md border p-3">
                     <SchoolParticipationForm schoolId={school.id} programs={school.programs} participation={participation} />
-                    <form action={deleteSchoolParticipation}>
+                    <SchoolActionForm action={deleteSchoolParticipation}>
                         <input type="hidden" name="school-id" value={school.id} />
                         <input type="hidden" name="participation-id" value={participation.id} />
                         <Button type="submit">Delete participation</Button>
-                    </form>
+                    </SchoolActionForm>
                 </div>
             ))}
             <h4>Add participation</h4>
@@ -260,8 +266,8 @@ function SchoolAssignments({ schoolId, label, field, assigned, available, addAct
     field: string
     assigned: Option[]
     available: Option[]
-    addAction: (data: FormData) => Promise<void>
-    removeAction: (data: FormData) => Promise<void>
+    addAction: SchoolFormAction
+    removeAction: SchoolFormAction
 }) {
     const options = available.filter((option) => !assigned.some((item) => item.id === option.id))
     return (
@@ -269,15 +275,15 @@ function SchoolAssignments({ schoolId, label, field, assigned, available, addAct
             <h3 className="font-semibold">{label}</h3>
             {assigned.length === 0 && <p>No {label.toLowerCase()} assigned.</p>}
             {assigned.map((item) => (
-                <form key={item.id} action={removeAction} className="flex items-center gap-3">
+                <SchoolActionForm key={item.id} action={removeAction} className="flex items-center gap-3">
                     <input type="hidden" name="school-id" value={schoolId} />
                     <input type="hidden" name={field} value={item.id} />
                     <span>{item.name}</span>
                     <Button type="submit" aria-label={`Remove ${item.name}`}>Remove</Button>
-                </form>
+                </SchoolActionForm>
             ))}
             {options.length > 0 ? (
-                <form action={addAction} className="flex flex-col gap-3">
+                <SchoolActionForm action={addAction} className="flex flex-col gap-3">
                     <input type="hidden" name="school-id" value={schoolId} />
                     <Select name={field} defaultValue="" required
                         items={options.map((item) => ({ label: item.name, value: String(item.id) }))}>
@@ -291,9 +297,35 @@ function SchoolAssignments({ schoolId, label, field, assigned, available, addAct
                         </SelectContent>
                     </Select>
                     <Button type="submit">Assign</Button>
-                </form>
+                </SchoolActionForm>
             ) : <p>No additional {label.toLowerCase()} available.</p>}
         </section>
+    )
+}
+
+function DateTimeField({ name, label, value, required = false }: {
+    name: string
+    label: string
+    value?: string | null
+    required?: boolean
+}) {
+    const id = useId()
+    const input = useRef<HTMLInputElement>(null)
+    useEffect(() => {
+        if (!input.current) return
+        if (!value) {
+            input.current.value = ""
+            return
+        }
+        const date = new Date(value)
+        const pad = (part: number) => String(part).padStart(2, "0")
+        input.current.value = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+    }, [value])
+    return (
+        <Field>
+            <FieldLabel htmlFor={id}>{label}</FieldLabel>
+            <Input ref={input} id={id} name={`${name}-local`} type="datetime-local" step="1" required={required} />
+        </Field>
     )
 }
 
@@ -307,8 +339,20 @@ function SchoolParticipationForm({ schoolId, programs, participation }: {
         programOptions.push({ label: `Program ${participation.programId}`, value: String(participation.programId) })
     }
     const statuses: Participation["status"][] = ["PLANNED", "ONGOING", "COMPLETED", "CANCELLED"]
+    async function submit(data: FormData) {
+        for (const name of ["start-date", "end-date"]) {
+            const value = String(data.get(`${name}-local`) ?? "")
+            const date = value ? new Date(value) : null
+            if (date && !Number.isFinite(date.getTime())) {
+                return { error: "Choose a valid date and time." }
+            }
+            data.set(name, date ? date.toISOString() : "")
+            data.delete(`${name}-local`)
+        }
+        return participation ? editSchoolParticipation(data) : createSchoolParticipation(data)
+    }
     return (
-        <form action={participation ? editSchoolParticipation : createSchoolParticipation} className="flex flex-col gap-3">
+        <SchoolActionForm action={submit} className="flex flex-col gap-3">
             <input type="hidden" name="school-id" value={schoolId} />
             {participation && <input type="hidden" name="participation-id" value={participation.id} />}
             <Field>
@@ -325,16 +369,8 @@ function SchoolParticipationForm({ schoolId, programs, participation }: {
                     </SelectContent>
                 </Select>
             </Field>
-            <Field>
-                <FieldLabel>Start date and time (include timezone)</FieldLabel>
-                <Input name="start-date" aria-label="Start date and time" required
-                    placeholder="2026-10-28T09:00:00Z" defaultValue={participation?.startDate} />
-            </Field>
-            <Field>
-                <FieldLabel>End date and time (optional, include timezone)</FieldLabel>
-                <Input name="end-date" aria-label="End date and time"
-                    placeholder="2026-10-28T10:00:00Z" defaultValue={participation?.endDate ?? ""} />
-            </Field>
+            <DateTimeField name="start-date" label="Start date and time" value={participation?.startDate} required />
+            <DateTimeField name="end-date" label="End date and time (optional)" value={participation?.endDate} />
             <Field>
                 <FieldLabel>Status</FieldLabel>
                 <Select name="status" defaultValue={participation?.status ?? "PLANNED"}
@@ -348,6 +384,6 @@ function SchoolParticipationForm({ schoolId, programs, participation }: {
                 </Select>
             </Field>
             <Button type="submit">{participation ? "Save participation" : "Add participation"}</Button>
-        </form>
+        </SchoolActionForm>
     )
 }

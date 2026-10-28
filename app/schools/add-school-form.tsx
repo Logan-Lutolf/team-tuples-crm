@@ -1,7 +1,8 @@
 'use client'
 
 import { Button } from "@/components/ui/button"
-import { DialogClose } from "@/components/ui/dialog"
+import { useState } from "react"
+import { useFormStatus } from "react-dom"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -38,24 +39,32 @@ const relationships = [
     { label: "EXCELLENT", value: "EXCELLENT"},
 ]
 
-const branch = [
-    { label: "ONE", value: "ONE" },
-    { label: "TWO", value: "TWO" },
-    { label: "THREE", value: "THREE" },
-    { label: "FOUR", value: "FOUR" },
-    { label: "FIVE", value: "FIVE" },
-    { label: "SIX", value: "SIX" },
-    { label: "SEVEN", value: "SEVEN" },
-    { label: "EIGHT", value: "EIGHT" },
-]
+function SubmitButton() {
+    const { pending } = useFormStatus()
+    return <Button type="submit" disabled={pending} className="sm:col-span-2">{pending ? "Saving…" : "Submit"}</Button>
+}
 
-// TODO: Add form validation
-export function AddSchoolForm() {    
+export function AddSchoolForm({ branches }: { branches: { id: number; name: string }[] }) {
+    const [saved, setSaved] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const branchOptions = branches.map((branch) => ({ label: branch.name, value: String(branch.id) }))
+    async function submit(formData: FormData) {
+        setError(null)
+        setSaved(false)
+        try {
+            const result = await createSchool(formData)
+            if (result?.error) setError(result.error)
+            else setSaved(true)
+        } catch (error) {
+            setError(error instanceof Error ? error.message : "Could not create school. Please try again.")
+        }
+    }
     return (
-        <form className="grid grid-cols-1 gap-4 sm:grid-cols-2 [&_[data-slot=select-trigger]]:w-full" action={createSchool}>
+        <form className="grid grid-cols-1 gap-4 sm:grid-cols-2 [&_[data-slot=select-trigger]]:w-full" action={submit}>
             <Field>
                 <FieldLabel htmlFor="name">Name</FieldLabel>
                 <Input 
+                    id="name"
                     name="name"
                     type="text"
                     required
@@ -64,23 +73,23 @@ export function AddSchoolForm() {
 
             <Field>
                 <FieldLabel htmlFor="street">Street address</FieldLabel>
-                <Input id="street" name="street" />
+                <Input id="street" name="street" required />
             </Field>
 
             <Field>
                 <FieldLabel htmlFor="city">City</FieldLabel>
-                <Input id="city" name="city" />
+                <Input id="city" name="city" required />
             </Field>
 
         
             <Field>
                 <FieldLabel htmlFor="zipCode">Postal code</FieldLabel>
-                <Input id="zipCode" name="zipCode" />
+                <Input id="zipCode" name="zipCode" required />
             </Field>
             
             <Field>
                 <FieldLabel htmlFor="type">Type</FieldLabel>
-                <Select items={types} defaultValue="" name="types">
+                <Select required items={types} defaultValue="" name="type">
                     <SelectTrigger>
                         <SelectValue />
                     </SelectTrigger>
@@ -112,12 +121,13 @@ export function AddSchoolForm() {
                 <Input 
                     name="email"
                     type="email"
+                    required
                 />
             </Field>
 
             <Field>
                 <FieldLabel htmlFor="relationship">Relationship</FieldLabel>
-                <Select items={relationships} defaultValue="" name="relationship">
+                <Select required items={relationships} defaultValue="" name="relationship">
                     <SelectTrigger>
                         <SelectValue />
                     </SelectTrigger>
@@ -135,8 +145,8 @@ export function AddSchoolForm() {
             </Field>
 
             <Field>
-                <FieldLabel htmlFor="role">Region</FieldLabel>
-                <Select items={regions} defaultValue="" name="region">
+                <FieldLabel htmlFor="region">Region</FieldLabel>
+                <Select required items={regions} defaultValue="" name="region">
                     <SelectTrigger>
                         <SelectValue />
                     </SelectTrigger>
@@ -154,14 +164,14 @@ export function AddSchoolForm() {
             </Field>
 
             <Field>
-                <FieldLabel htmlFor="role">Branch</FieldLabel>
-                <Select items={regions} defaultValue="" name="branch">
+                <FieldLabel htmlFor="branch">Branch</FieldLabel>
+                <Select required items={branchOptions} defaultValue="" name="branch">
                     <SelectTrigger>
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            {regions.map((b) => {
+                            {branchOptions.map((b) => {
                                 return (
                                 <SelectItem key={b.value} value={b.value}>
                                     {b.label}
@@ -172,7 +182,9 @@ export function AddSchoolForm() {
                 </Select>
             </Field>
 
-            <DialogClose render={<Button type="submit" className="sm:col-span-2">Submit</Button>}/>
+            {saved && <p role="status" className="text-green-700 dark:text-green-400 sm:col-span-2">School created successfully.</p>}
+            {error && <p role="alert" className="text-destructive sm:col-span-2">{error}</p>}
+            <SubmitButton />
         </form>
     )
 }

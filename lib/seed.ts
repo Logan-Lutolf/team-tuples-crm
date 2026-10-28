@@ -19,11 +19,33 @@ const date = (days: number) => new Date(now + days * 86_400_000).toISOString();
 
 try {
   await db.connect();
-  // Roll back all seed inserts if any record fails.
+  // Roll back cleanup and inserts together if any record fails.
   await db.transaction(async (tx) => {
     const orm = tx.orm.public;
     const runId = faker.string.uuid();
     const existingSchools = await orm.School.all().toArray();
+    const schoolsWithoutPhone = existingSchools
+      .filter((school) => !school.phone?.trim())
+      .map((school) => school.id);
+
+    if (schoolsWithoutPhone.length) {
+      const participations = await orm.Participation
+        .where((participation) => participation.schoolId.in(schoolsWithoutPhone))
+        .select("id").all().toArray();
+      const participationIds = participations.map((participation) => participation.id);
+      if (participationIds.length) {
+        await orm.ParticipationEmployees
+          .where((assignment) => assignment.participationId.in(participationIds)).deleteAndCount();
+      }
+      await orm.Participation
+        .where((participation) => participation.schoolId.in(schoolsWithoutPhone)).deleteAndCount();
+      await orm.SchoolEmployees
+        .where((assignment) => assignment.schoolId.in(schoolsWithoutPhone)).deleteAndCount();
+      // Keep contacts available to assign to another school.
+      await orm.Contact.where((contact) => contact.schoolId.in(schoolsWithoutPhone))
+        .updateAndCount({ schoolId: null });
+      await orm.School.where((school) => school.id.in(schoolsWithoutPhone)).deleteAndCount();
+    }
     // School IDs are required because School has no auto-increment default.
     const firstSchoolId = existingSchools.reduce((max, s) => Math.max(max, s.id), 0) + 1;
 
@@ -72,6 +94,7 @@ try {
         id: firstSchoolId + i,
         name: `${faker.company.name()} School`,
         email: `school-${runId}-${i}@example.com`,
+        phone: faker.phone.number(),
         address: address(),
         type: faker.helpers.arrayElement(enums.SchoolType.values),
         relationship: faker.helpers.arrayElement(enums.RelationshipType.values),
@@ -119,7 +142,7 @@ try {
   });
   console.log("Seed complete: 8 branches, 50 employees, 50 schools, 50 contacts, 4 programs, 200 participations, 3 municipalities, and their relationships.");
 } catch (error) {
-  console.error("Seed failed; no seed inserts were committed.");
+  console.error("Seed failed; no cleanup or seed inserts were committed.");
   console.error(error);
   process.exitCode = 1;
 } finally {

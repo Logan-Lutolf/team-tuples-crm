@@ -24,8 +24,16 @@ export default async function EmployeeManagementPage(
 ) {
     const params = await searchParams
     const query = params?.query ?? ''
+    const branches = await db.orm.public.Branch.select("id", "name").all().toArray()
 
 
+    const requestedPage = Number(params?.page ?? 1)
+    const currentPage = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
+    function pageHref(page: number) {
+        const search = new URLSearchParams({ page: String(page) })
+        if (query) search.set("query", query)
+        return `/schools?${search}`
+    }
     const RECORDS_PER_PAGE = 20 
 
 
@@ -40,18 +48,18 @@ export default async function EmployeeManagementPage(
                     <DialogHeader>
                         <DialogTitle>Add a School</DialogTitle>
                     </DialogHeader>
-                    <AddSchoolForm />
+                    <AddSchoolForm branches={branches} />
                 </DialogContent>
             </Dialog>
             
             <Search placeholder={""}/>
 
-            <SchoolTableContainer query={query} page={Number(params?.page ?? 1)} />
+            <SchoolTableContainer query={query} page={currentPage} />
 
             <Pagination>
                 <PaginationContent>
                     <PaginationItem>
-                        <PaginationPrevious></PaginationPrevious>
+                        <PaginationPrevious href={pageHref(Math.max(1, currentPage - 1))} aria-disabled={currentPage === 1} className={currentPage === 1 ? "pointer-events-none opacity-50" : undefined} tabIndex={currentPage === 1 ? -1 : undefined} />
                     </PaginationItem>
 
                     <PaginationItem>
@@ -59,7 +67,7 @@ export default async function EmployeeManagementPage(
                     </PaginationItem>
 
                     <PaginationItem>
-                        <PaginationNext></PaginationNext>
+                        <PaginationNext href={pageHref(currentPage + 1)} />
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>

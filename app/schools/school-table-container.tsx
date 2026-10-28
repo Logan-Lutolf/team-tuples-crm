@@ -8,50 +8,59 @@ interface SchoolTableContainerProps {
 }
 
 export async function SchoolTableContainer({query, page} : SchoolTableContainerProps) {
-    const [schools, branches, programs, contacts, employees, assignments, participations] = await Promise.all([
-        db.orm.public.School.all().toArray(),
-        db.orm.public.Branch.all().toArray(),
-        db.orm.public.Program.all().toArray(),
-        db.orm.public.Contact.all().toArray(),
-        db.orm.public.Employee.all().toArray(),
-        db.orm.public.SchoolEmployees.all().toArray(),
-        db.orm.public.Participation.all().toArray(),
-    ])
-
     const recordsPerPage = 20
     const currentPage = Number.isSafeInteger(page) && page > 0 ? page : 1
-    const filteredSchools = schools
-        .filter((school) => school.name.toLowerCase().includes(query.toLowerCase()))
-        .sort((a, b) => a.id - b.id)
-        .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
+    // Escape LIKE wildcards so searching keeps its literal substring behavior.
+    const pattern = `%${query.replace(/[\\%_]/g, "\\$&")}%`
+    const schoolQuery = query
+        ? db.orm.public.School.where((school) => school.name.ilike(pattern))
+        : db.orm.public.School
+
+    const [filteredSchools, branches, programs, availableContacts, employees] = await Promise.all([
+        schoolQuery.orderBy((school) => school.id.desc())
+            .offset((currentPage - 1) * recordsPerPage)
+            .limit(recordsPerPage).all().toArray(),
+        db.orm.public.Branch.select("id", "name").all().toArray(),
+        db.orm.public.Program.select("id", "name").all().toArray(),
+        db.orm.public.Contact.where({ schoolId: null }).select("id", "name").all().toArray(),
+        db.orm.public.Employee.select("id", "name").all().toArray(),
+    ])
+
+    const schoolIds = filteredSchools.map((school) => school.id)
+    const [contacts, assignments, participations] = schoolIds.length ? await Promise.all([
+        db.orm.public.Contact.where((contact) => contact.schoolId.in(schoolIds))
+            .select("id", "name", "schoolId").all().toArray(),
+        db.orm.public.SchoolEmployees.where((assignment) => assignment.schoolId.in(schoolIds))
+            .select("schoolId", "employeeId").all().toArray(),
+        db.orm.public.Participation.where((participation) => participation.schoolId.in(schoolIds))
+            .select("id", "schoolId", "programId", "startDate", "endDate", "status").all().toArray(),
+    ]) : [[], [], []]
 
     const relationsBySchool: ComponentProps<typeof SchoolTable>["relationsBySchool"] = {}
     const employeesById = new Map(employees.map((employee) => [employee.id, employee]))
-
     for (const school of filteredSchools) {
-        relationsBySchool[school.id] = {
-            contacts: contacts.filter((contact) => contact.schoolId === school.id)
-                .map(({ id, name }) => ({ id, name })),
-            employees: assignments.filter((assignment) => assignment.schoolId === school.id)
-                .flatMap((assignment) => {
-                    const employee = employeesById.get(assignment.employeeId)
-                    return employee ? [{ id: employee.id, name: employee.name }] : []
-                }),
-            participations: participations.filter((participation) => participation.schoolId === school.id)
-                .map(({ id, programId, startDate, endDate, status }) => ({
-                    id, programId, startDate, endDate, status,
-                })),
+        relationsBySchool[school.id] = { contacts: [], employees: [], participations: [] }
+    }
+    for (const contact of contacts) {
+        if (contact.schoolId !== null) {
+            relationsBySchool[contact.schoolId].contacts.push({ id: contact.id, name: contact.name })
         }
+    }
+    for (const assignment of assignments) {
+        const employee = employeesById.get(assignment.employeeId)
+        if (employee) relationsBySchool[assignment.schoolId].employees.push(employee)
+    }
+    for (const { schoolId, ...participation } of participations) {
+        relationsBySchool[schoolId].participations.push(participation)
     }
 
     return (
         <SchoolTable
             data={filteredSchools}
-            branches={branches.map(({ id, name }) => ({ id, name }))}
-            programs={programs.map(({ id, name }) => ({ id, name }))}
-            availableContacts={contacts.filter((contact) => contact.schoolId === null)
-                .map(({ id, name }) => ({ id, name }))}
-            availableEmployees={employees.map(({ id, name }) => ({ id, name }))}
+            branches={branches}
+            programs={programs}
+            availableContacts={availableContacts}
+            availableEmployees={employees}
             relationsBySchool={relationsBySchool}
         />
     )

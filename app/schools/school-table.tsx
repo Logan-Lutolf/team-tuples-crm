@@ -55,10 +55,11 @@ export function SchoolTable({
                         <TableCell>{school.email}</TableCell>
                         <TableCell>{school.phone}</TableCell>
                         <TableCell>
-                            {school.address.street}, , {school.address.zipCode}
+                            {school.address.street}, {school.address.zipCode}
                         </TableCell>
                         <TableCell className="flex flex-row gap-2">
-                            <ActionDialog 
+                            <ActionDialog
+                                contentClassName="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-3xl"
                                 icon={<Pencil />} 
                                 content={
                                     <EditSchoolForm

@@ -1,5 +1,6 @@
 'use client'
 
+import { SchoolActionForm } from "./school-action-form";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { deleteSchool } from "./actions_schools";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,7 @@ interface DeleteSchoolFormProps {
 
 export function DeleteSchoolForm({ schoolId, schoolName }: DeleteSchoolFormProps) {
     return(
-        <form action={deleteSchool}>
+        <SchoolActionForm action={deleteSchool}>
             <Input type="hidden" name="school-id" value={schoolId} />
             <Field>
                 <FieldLabel>
@@ -27,11 +28,11 @@ export function DeleteSchoolForm({ schoolId, schoolName }: DeleteSchoolFormProps
                 />
             </Field>
             <div className="flex flex-row justify-end gap-4 mt-3">
-                <DialogClose render={<Button>Cancel</Button>}/>
-                <DialogClose render={<Button type='submit' variant={"destructive"}>Delete</Button>}/>
+                <DialogClose render={<Button type="button">Cancel</Button>}/>
+                <Button type="submit" variant="destructive">Delete</Button>
             </div>
             
             
-        </form>
+        </SchoolActionForm>
     )
 }

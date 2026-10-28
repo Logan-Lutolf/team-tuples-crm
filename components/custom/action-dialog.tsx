@@ -5,14 +5,15 @@ import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 interface ActionDialogProps {
     icon: React.ReactNode
     content: React.ReactNode,
+    contentClassName?: string,
     variant?: "link" | "default" | "outline" | "secondary" | "ghost" | "destructive" | null | undefined
 }
 
-export function ActionDialog({icon, content, variant} : ActionDialogProps) {
+export function ActionDialog({icon, content, variant, contentClassName} : ActionDialogProps) {
     return(
         <Dialog>
             <DialogTrigger render={<Button variant={variant}>{icon}</Button>}/>
-            <DialogContent>
+            <DialogContent className={contentClassName}>
                 {content}
             </DialogContent>
         </Dialog>
