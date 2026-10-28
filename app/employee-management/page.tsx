@@ -1,5 +1,5 @@
 import { db } from "@/prisma/db";
-import { AddEmployeeForm } from "./add-employee-form";
+import { AddEmployeeForm } from "./forms/add-employee-form";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";

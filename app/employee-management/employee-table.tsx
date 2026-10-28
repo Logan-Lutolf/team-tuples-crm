@@ -2,10 +2,12 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Models } from "@/prisma/contract";
 import { Button } from "@/components/ui/button"
 import { Scalars } from "@prisma/orm-postgres/components";
-import { Pencil, Trash, Ellipsis } from "lucide-react";
+import { Pencil, Trash, Ellipsis, SquareArrowOutUpRight } from "lucide-react";
 import { ActionDialog } from "@/components/custom/action-dialog";
-import { DeleteEmployeeForm } from "./delete-form";
-import { EditEmployeeForm } from "./edit-employee-form";
+import { DeleteEmployeeForm } from "./forms/delete-form";
+import { EditEmployeeForm } from "./forms/edit-employee-form";
+import { ExtendedEmployee } from "./extended-employee";
+import { BigActionDialog } from "@/components/custom/action-dialog";
 
 type Employee = Scalars<Models.public_Employee>
 
@@ -47,9 +49,20 @@ export function EmployeeTable({data} : {data: Employee[]}) {
                                 content={<DeleteEmployeeForm employeeId={employee.id} employeeName={employee.name} />}
                                 variant="destructive"
                             />
-                            <Button size='sm' variant="ghost">
-                                <Ellipsis/>
-                            </Button>
+                            <BigActionDialog
+                                className="w-3/5"
+                                icon={ <SquareArrowOutUpRight />}
+                                content={
+                                    <ExtendedEmployee 
+                                        name={employee.name}
+                                        role={employee.role}
+                                        email={employee.email}
+                                        phone={employee.phone ? employee.phone : "Unknown Phone Number"}
+                                        region={employee.region ? employee.region : "Unkown Branch"} 
+                                        id={employee.id}                                    />
+                                }
+                            >
+                            </BigActionDialog>
                         </TableCell>
                     </TableRow>
                 ))}
