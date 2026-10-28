@@ -5,6 +5,7 @@ interface ActionDialogProps {
     icon: React.ReactNode
     content: React.ReactNode,
     variant?: "link" | "default" | "outline" | "secondary" | "ghost" | "destructive" | null | undefined
+    className?: string
 }
 
 export function ActionDialog({icon, content, variant} : ActionDialogProps) {
@@ -18,11 +19,11 @@ export function ActionDialog({icon, content, variant} : ActionDialogProps) {
     )
 }
 
-export function BigActionDialog({icon, content, variant} : ActionDialogProps) {
+export function BigActionDialog({icon, content, variant, className} : ActionDialogProps) {
     return(
         <Dialog>
             <DialogTrigger render={<Button variant={variant}>{icon}</Button>}/>
-            <BigDialogContent>
+            <BigDialogContent className={className}>
                 {content}
             </BigDialogContent>
         </Dialog>
