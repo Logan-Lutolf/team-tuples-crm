@@ -1,6 +1,5 @@
-import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { BigDialogContent, Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 
 interface ActionDialogProps {
     icon: React.ReactNode
@@ -15,6 +14,17 @@ export function ActionDialog({icon, content, variant} : ActionDialogProps) {
             <DialogContent>
                 {content}
             </DialogContent>
+        </Dialog>
+    )
+}
+
+export function BigActionDialog({icon, content, variant} : ActionDialogProps) {
+    return(
+        <Dialog>
+            <DialogTrigger render={<Button variant={variant}>{icon}</Button>}/>
+            <BigDialogContent>
+                {content}
+            </BigDialogContent>
         </Dialog>
     )
 }
