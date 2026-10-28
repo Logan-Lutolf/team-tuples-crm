@@ -13,10 +13,9 @@ type Relationship = SchoolFields["relationship"]
 
 export async function createSchool(formData: FormData) {
     const name = formData.get("full-name") as string
-    const address = formData.get("address") as string
-    const email = formData.get("email") as string
-    const phone = formData.get("phone-num") as string
     const type = formData.get("type") as SchoolType
+    const phone = formData.get("phone-num") as string
+    const email = formData.get("email") as string
     const relationship = formData.get("role") as Relationship
     const region = formData.get("region") as Region
     const branchId = Number(formData.get("branch"))
@@ -54,30 +53,31 @@ export async function createSchool(formData: FormData) {
     }
 }
 
-export async function editEmployee(formData: FormData) {
-    const name = formData.get("full-name") as string
-    const email = formData.get("email") as string
-    const phone = formData.get("phone-num") as string
-    const role = formData.get("role") as Role
+export async function editSchool(formData: FormData) {
+    
+
 
     if (name == null || email == null){
-        console.log("Update employee failed: name or email is null")
+        console.log("Update school failed: name or email is null")
         return
     }
 
     try {
-        const employee = await db.orm.public.Employee
+        const school = await db.orm.public.School
             .where({ email: email})
             .update({
                 name: name,
                 email: email,
                 phone: phone,
-                role: role,
+                type: type,
+                relationship: relationship,
+                region: region,
+                branchId: branchId,
             })
         
-        if (employee) {
-            console.log("Edit employee successful.")
-            revalidatePath("/employee-management")
+        if (school) {
+            console.log("Edit school successful.")
+            revalidatePath("/school-management")
         }
     }
     catch (error) {
