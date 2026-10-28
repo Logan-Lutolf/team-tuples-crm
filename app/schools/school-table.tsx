@@ -7,6 +7,8 @@ import { ActionDialog } from "@/components/custom/action-dialog";
 import { DeleteSchoolForm } from "./delete-form";
 import { EditSchoolForm } from "./edit-school-form";
 
+import type { SchoolContact, SchoolEmployee } from "./school-form-types";
+
 type School = Scalars<Models.public_School>
 type Option = { id: number; name: string }
 
@@ -22,8 +24,8 @@ interface SchoolTableProps {
     availableContacts: Option[]
     availableEmployees: Option[]
     relationsBySchool: Record<number, {
-        contacts: Option[]
-        employees: Option[]
+        contacts: SchoolContact[]
+        employees: SchoolEmployee[]
         participations: Participation[]
     }>
 }
@@ -59,7 +61,7 @@ export function SchoolTable({
                         </TableCell>
                         <TableCell className="flex flex-row gap-2">
                             <ActionDialog
-                                contentClassName="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-3xl"
+                                contentClassName="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[min(90vw,80rem)]"
                                 icon={<Pencil />} 
                                 content={
                                     <EditSchoolForm

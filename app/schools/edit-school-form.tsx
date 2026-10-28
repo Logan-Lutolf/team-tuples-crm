@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useId, useRef } from "react"
+import { useEffect, useId, useRef, useState, Fragment } from "react"
 import { SchoolActionForm, type SchoolFormAction } from "./school-action-form"
 import { Button } from "@/components/ui/button"
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -12,7 +12,8 @@ import {
     addSchoolEmployee, removeSchoolEmployee,
     createSchoolParticipation, editSchoolParticipation, deleteSchoolParticipation,
 } from "./actions_schools"
-import type { Option } from "./school-form-types"
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
+import type { Option, SchoolContact, SchoolEmployee } from "./school-form-types"
 import type { Scalars } from "@prisma/orm-postgres/components"
 import type { Models } from "@/prisma/contract"
 
@@ -66,9 +67,9 @@ interface EditSchoolFormProps {
     address: SchoolFields["address"], 
     branchId: SchoolFields["branchId"]
     branches: { id: number; name: string }[]
-    contacts: Option[]
+    contacts: SchoolContact[]
     availableContacts: Option[] // Contacts not assigned to any school.
-    employees: Option[] // Assigned employee records, rather than join records.
+    employees: SchoolEmployee[] // Assigned employee records, rather than join records.
     availableEmployees: Option[]
     participations: Participation[]
     programs: Option[]
@@ -78,6 +79,7 @@ interface EditSchoolFormProps {
 
 // TODO: Add form validation
 export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual type later T_T
+    const [editingParticipation, setEditingParticipation] = useState<number | null>(null)
     const branchOptions = school.branches.map((branch) => ({
         label: branch.name,
         value: String(branch.id),
@@ -86,7 +88,6 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
     return (
         <div className="flex flex-col gap-6">
         <DialogHeader>
-            <DialogTitle>Edit School</DialogTitle>
         </DialogHeader>
         <SchoolActionForm className="grid grid-cols-1 gap-4 sm:grid-cols-2 [&_[data-slot=select-trigger]]:w-full [&>[role=alert]]:col-span-full [&>[role=status]]:col-span-full" action={editSchool}>
             <input type="hidden" name="school-id" value={school.id} />
@@ -227,30 +228,61 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
         </SchoolActionForm>
 
         <SchoolAssignments
-            schoolId={school.id} label="Contacts" field="contact-id"
-            assigned={school.contacts} available={school.availableContacts}
+            schoolId={school.id} label="School Contacts" field="contact-id"
+            assigned={school.contacts} available={school.availableContacts} contactDetails={school.contacts}
             addAction={addSchoolContact} removeAction={removeSchoolContact}
         />
         <SchoolAssignments
-            schoolId={school.id} label="Employees" field="employee-id"
-            assigned={school.employees} available={school.availableEmployees}
+            schoolId={school.id} label="Post Bellum Employees" field="employee-id"
+            assigned={school.employees} available={school.availableEmployees} employeeDetails={school.employees}
             addAction={addSchoolEmployee} removeAction={removeSchoolEmployee}
         />
 
         <section className="flex flex-col gap-3">
             <h3 className="font-semibold">Participations</h3>
-            {school.participations.length === 0 && <p>No participations yet.</p>}
-            {school.participations.map((participation) => (
-                <div key={participation.id} className="flex flex-col gap-3 rounded-md border p-3">
-                    <SchoolParticipationForm schoolId={school.id} programs={school.programs} participation={participation} />
-                    <SchoolActionForm action={deleteSchoolParticipation}>
-                        <input type="hidden" name="school-id" value={school.id} />
-                        <input type="hidden" name="participation-id" value={participation.id} />
-                        <Button type="submit">Delete participation</Button>
-                    </SchoolActionForm>
-                </div>
-            ))}
-            <h4>Add participation</h4>
+            <Table className="border rounded-md">
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Program</TableHead>
+                        <TableHead>Start</TableHead>
+                        <TableHead>End</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {school.participations.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">No participations yet.</TableCell></TableRow>}
+                    {school.participations.map((participation) => (
+                        <Fragment key={participation.id}>
+                            <TableRow>
+                                <TableCell className="font-medium">{school.programs.find((program) => program.id === participation.programId)?.name ?? `Program ${participation.programId}`}</TableCell>
+                                <TableCell><LocalDateTime value={participation.startDate} /></TableCell>
+                                <TableCell>{participation.endDate ? <LocalDateTime value={participation.endDate} /> : "—"}</TableCell>
+                                <TableCell><span className="rounded-md bg-muted px-2 py-1 text-xs">{participation.status.charAt(0) + participation.status.slice(1).toLowerCase()}</span></TableCell>
+                                <TableCell>
+                                    <div className="flex items-start justify-end gap-2">
+                                        <Button type="button" size="sm" variant="outline" aria-expanded={editingParticipation === participation.id}
+                                            onClick={() => setEditingParticipation(editingParticipation === participation.id ? null : participation.id)}>
+                                            {editingParticipation === participation.id ? "Close edit" : "Edit"}
+                                        </Button>
+                                        <SchoolActionForm action={deleteSchoolParticipation}>
+                                            <input type="hidden" name="school-id" value={school.id} />
+                                            <input type="hidden" name="participation-id" value={participation.id} />
+                                            <Button type="submit" size="sm" variant="destructive">Delete</Button>
+                                        </SchoolActionForm>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                            {editingParticipation === participation.id && <TableRow>
+                                <TableCell colSpan={5} className="bg-muted/30 p-4 whitespace-normal">
+                                    <SchoolParticipationForm schoolId={school.id} programs={school.programs} participation={participation} />
+                                </TableCell>
+                            </TableRow>}
+                        </Fragment>
+                    ))}
+                </TableBody>
+            </Table>
+
             {school.programs.length > 0
                 ? <SchoolParticipationForm schoolId={school.id} programs={school.programs} />
                 : <p>No programs available.</p>}
@@ -260,12 +292,14 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
 }
 
 // Separate forms keep relationship changes independent of school details.
-function SchoolAssignments({ schoolId, label, field, assigned, available, addAction, removeAction }: {
+function SchoolAssignments({ schoolId, label, field, assigned, available, addAction, removeAction, contactDetails, employeeDetails }: {
     schoolId: number
     label: string
     field: string
     assigned: Option[]
     available: Option[]
+    contactDetails?: SchoolContact[]
+    employeeDetails?: SchoolEmployee[]
     addAction: SchoolFormAction
     removeAction: SchoolFormAction
 }) {
@@ -273,21 +307,72 @@ function SchoolAssignments({ schoolId, label, field, assigned, available, addAct
     return (
         <section className="flex flex-col gap-3">
             <h3 className="font-semibold">{label}</h3>
-            {assigned.length === 0 && <p>No {label.toLowerCase()} assigned.</p>}
-            {assigned.map((item) => (
-                <SchoolActionForm key={item.id} action={removeAction} className="flex items-center gap-3">
-                    <input type="hidden" name="school-id" value={schoolId} />
-                    <input type="hidden" name={field} value={item.id} />
-                    <span>{item.name}</span>
-                    <Button type="submit" aria-label={`Remove ${item.name}`}>Remove</Button>
-                </SchoolActionForm>
-            ))}
+            {contactDetails ? (
+                <Table className="border rounded-md">
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Phone</TableHead>
+                            <TableHead>Role / subject</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {contactDetails.length === 0 && (
+                            <TableRow><TableCell colSpan={5} className="text-muted-foreground text-center">No contacts assigned.</TableCell></TableRow>
+                        )}
+                        {contactDetails.map((contact) => (
+                            <TableRow key={contact.id}>
+                                <TableCell className="font-medium">{contact.name}</TableCell>
+                                <TableCell><a className="underline underline-offset-4" href={`mailto:${contact.email}`}>{contact.email}</a></TableCell>
+                                <TableCell>{contact.phone ? <a href={`tel:${contact.phone}`}>{contact.phone}</a> : "—"}</TableCell>
+                                <TableCell>
+                                    <div>{contact.branchRole || "—"}</div>
+                                    {contact.subject && <div className="text-muted-foreground text-xs">{contact.subject}</div>}
+                                </TableCell>
+                                <TableCell>
+                                    <SchoolActionForm action={removeAction} className="flex flex-col items-end gap-2">
+                                        <input type="hidden" name="school-id" value={schoolId} />
+                                        <input type="hidden" name={field} value={contact.id} />
+                                        <Button type="submit" size="sm" variant="outline" aria-label={`Remove ${contact.name}`}>Remove</Button>
+                                    </SchoolActionForm>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            ) : (
+                <Table className="border rounded-md">
+                    <TableHeader><TableRow>
+                        <TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>Phone</TableHead>
+                        <TableHead>Role</TableHead><TableHead>Region</TableHead><TableHead className="text-right">Actions</TableHead>
+                    </TableRow></TableHeader>
+                    <TableBody>
+                        {employeeDetails?.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">No employees assigned.</TableCell></TableRow>}
+                        {employeeDetails?.map((employee) => <TableRow key={employee.id}>
+                            <TableCell className="font-medium">{employee.name}</TableCell>
+                            <TableCell><a className="underline underline-offset-4" href={`mailto:${employee.email}`}>{employee.email}</a></TableCell>
+                            <TableCell>{employee.phone ? <a href={`tel:${employee.phone}`}>{employee.phone}</a> : "—"}</TableCell>
+                            <TableCell className="whitespace-normal">{employee.role.replaceAll("_", " ")}</TableCell>
+                            <TableCell>{employee.region}</TableCell>
+                            <TableCell>
+                                <SchoolActionForm action={removeAction} className="flex flex-col items-end gap-2">
+                                    <input type="hidden" name="school-id" value={schoolId} />
+                                    <input type="hidden" name={field} value={employee.id} />
+                                    <Button type="submit" size="sm" variant="outline" aria-label={`Remove ${employee.name}`}>Remove</Button>
+                                </SchoolActionForm>
+                            </TableCell>
+                        </TableRow>)}
+                    </TableBody>
+                </Table>
+            )}
             {options.length > 0 ? (
-                <SchoolActionForm action={addAction} className="flex flex-col gap-3">
+                <SchoolActionForm action={addAction} className="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <input type="hidden" name="school-id" value={schoolId} />
                     <Select name={field} defaultValue="" required
                         items={options.map((item) => ({ label: item.name, value: String(item.id) }))}>
-                        <SelectTrigger aria-label={`Assign ${label.toLowerCase()}`}><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="w-full sm:flex-1" aria-label={`Assign ${label.toLowerCase()}`}><SelectValue placeholder={`Select ${label.toLowerCase()}`} /></SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
                                 {options.map((item) => (
@@ -301,6 +386,14 @@ function SchoolAssignments({ schoolId, label, field, assigned, available, addAct
             ) : <p>No additional {label.toLowerCase()} available.</p>}
         </section>
     )
+}
+
+function LocalDateTime({ value }: { value: string }) {
+    const element = useRef<HTMLTimeElement>(null)
+    useEffect(() => {
+        if (element.current) element.current.textContent = new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })
+    }, [value])
+    return <time ref={element} dateTime={value}>{value.replace("T", " ").slice(0, 16)}</time>
 }
 
 function DateTimeField({ name, label, value, required = false }: {

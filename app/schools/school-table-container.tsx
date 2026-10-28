@@ -23,13 +23,13 @@ export async function SchoolTableContainer({query, page} : SchoolTableContainerP
         db.orm.public.Branch.select("id", "name").all().toArray(),
         db.orm.public.Program.select("id", "name").all().toArray(),
         db.orm.public.Contact.where({ schoolId: null }).select("id", "name").all().toArray(),
-        db.orm.public.Employee.select("id", "name").all().toArray(),
+        db.orm.public.Employee.select("id", "name", "email", "phone", "role", "region").all().toArray(),
     ])
 
     const schoolIds = filteredSchools.map((school) => school.id)
     const [contacts, assignments, participations] = schoolIds.length ? await Promise.all([
         db.orm.public.Contact.where((contact) => contact.schoolId.in(schoolIds))
-            .select("id", "name", "schoolId").all().toArray(),
+            .select("id", "name", "schoolId", "email", "phone", "branchRole", "subject").all().toArray(),
         db.orm.public.SchoolEmployees.where((assignment) => assignment.schoolId.in(schoolIds))
             .select("schoolId", "employeeId").all().toArray(),
         db.orm.public.Participation.where((participation) => participation.schoolId.in(schoolIds))
@@ -43,7 +43,8 @@ export async function SchoolTableContainer({query, page} : SchoolTableContainerP
     }
     for (const contact of contacts) {
         if (contact.schoolId !== null) {
-            relationsBySchool[contact.schoolId].contacts.push({ id: contact.id, name: contact.name })
+            const { schoolId, ...details } = contact
+            relationsBySchool[schoolId].contacts.push(details)
         }
     }
     for (const assignment of assignments) {
