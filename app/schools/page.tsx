@@ -1,6 +1,6 @@
 import { db } from "@/prisma/db";
 import { AddSchoolForm } from "./add-school-form";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { Contract } from "@/prisma/contract";
 import { DefaultModelRow } from "@prisma/orm-postgres/orm-client";
 import { Filter } from "lucide-react";
 import { Search } from "@/components/custom/search";
-import { EmployeeTableContainer } from "./employee-table-container";
+import { SchoolTableContainer } from "./school-table-container";
 
 
 // Add pagination to employee list
@@ -32,18 +32,21 @@ export default async function EmployeeManagementPage(
     
 
     return (
-        <div className="flex flex-col gap-4 m-10">
+        <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
             <Dialog>
-                <DialogTrigger render={<Button>Add an Employee</Button>}/>
+                <DialogTrigger render={<Button>Add a School</Button>}/>
 
-                <DialogContent>
-                    <AddEmployeeForm />
+                <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-3xl">
+                    <DialogHeader>
+                        <DialogTitle>Add a School</DialogTitle>
+                    </DialogHeader>
+                    <AddSchoolForm />
                 </DialogContent>
             </Dialog>
             
             <Search placeholder={""}/>
 
-            <EmployeeTableContainer query={query} page={1} />
+            <SchoolTableContainer query={query} page={Number(params?.page ?? 1)} />
 
             <Pagination>
                 <PaginationContent>

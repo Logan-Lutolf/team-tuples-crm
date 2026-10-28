@@ -1,16 +1,41 @@
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { Models } from "@/prisma/contract";
+import type { Models } from "@/prisma/contract";
 import { Button } from "@/components/ui/button"
-import { Scalars } from "@prisma/orm-postgres/components";
+import type { Scalars } from "@prisma/orm-postgres/components";
 import { Pencil, Trash, Ellipsis } from "lucide-react";
 import { ActionDialog } from "@/components/custom/action-dialog";
 import { DeleteSchoolForm } from "./delete-form";
-import { EditSchoolForm } from "./edit-employee-form";
+import { EditSchoolForm } from "./edit-school-form";
 
 type School = Scalars<Models.public_School>
+type Option = { id: number; name: string }
 
+type Participation = Pick<
+    Scalars<Models.public_Participation>,
+    "id" | "programId" | "startDate" | "endDate" | "status"
+>
 
-export function SchoolTable({data} : {data: School[]}) {
+interface SchoolTableProps {
+    data: School[]
+    branches: Option[]
+    programs: Option[]
+    availableContacts: Option[]
+    availableEmployees: Option[]
+    relationsBySchool: Record<number, {
+        contacts: Option[]
+        employees: Option[]
+        participations: Participation[]
+    }>
+}
+
+export function SchoolTable({
+    data,
+    branches,
+    programs,
+    availableContacts,
+    availableEmployees,
+    relationsBySchool,
+}: SchoolTableProps) {
     return(
         <Table className="border border-black">
             <TableHeader className="rounded-4xl">
@@ -29,17 +54,31 @@ export function SchoolTable({data} : {data: School[]}) {
                         <TableCell>{school.name}</TableCell>
                         <TableCell>{school.email}</TableCell>
                         <TableCell>{school.phone}</TableCell>
-                        <TableCell>{school.address}</TableCell>
+                        <TableCell>
+                            {school.address.street}, , {school.address.zipCode}
+                        </TableCell>
                         <TableCell className="flex flex-row gap-2">
                             <ActionDialog 
                                 icon={<Pencil />} 
                                 content={
-                                    <EditSchoolForm 
+                                    <EditSchoolForm
+                                        id={school.id}
                                         name={school.name}
                                         email={school.email}
-                                        phone={school.phone ? school.phone : ""}  // Might change this later
-                                        role={school.address}
-                                    />
+                                        phone={school.phone}
+                                        address={school.address}
+                                        type={school.type}
+                                        relationship={school.relationship}
+                                        region={school.region}
+                                        branchId={school.branchId}
+                                        branches={branches}
+                                        programs={programs}
+                                        availableContacts={availableContacts}
+                                        availableEmployees={availableEmployees}
+                                        contacts={relationsBySchool[school.id].contacts}
+                                        employees={relationsBySchool[school.id].employees}
+                                        participations={relationsBySchool[school.id].participations}
+                                        />
                                 }
                             />
                             <ActionDialog

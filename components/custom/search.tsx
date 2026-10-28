@@ -21,11 +21,12 @@ export function Search({placeholder}: {placeholder: string}) {
     }
 
     return (
-        <Field>
-            <FieldLabel htmlFor="search">Search Employee Database</FieldLabel>
+        <Field orientation="horizontal" className="*:data-[slot=field-label]:flex-none">
+            <FieldLabel htmlFor="search" className="whitespace-nowrap">Search Database</FieldLabel>
 
             <Input
                 id="search"
+                className="min-w-0 flex-1"
                 type="search"
                 placeholder={placeholder}
                 onChange={(e) => handleSearch(e.target.value)}

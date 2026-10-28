@@ -1,7 +1,7 @@
 'use client'
 
 import { Field, FieldLabel } from "@/components/ui/field";
-import { deleteEmployee } from "./actions";
+import { deleteSchool } from "./actions_schools";
 import { Input } from "@/components/ui/input";
 import { DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ interface DeleteSchoolFormProps {
     schoolName: string;
 }
 
-export function DeleteEmployeeForm({ schoolId, schoolName }: DeleteSchoolFormProps) {
+export function DeleteSchoolForm({ schoolId, schoolName }: DeleteSchoolFormProps) {
     return(
         <form action={deleteSchool}>
             <Input type="hidden" name="school-id" value={schoolId} />

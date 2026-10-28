@@ -52,7 +52,7 @@ const branch = [
 // TODO: Add form validation
 export function AddSchoolForm() {    
     return (
-        <form className="flex flex-col gap-3" action={createSchool}>
+        <form className="grid grid-cols-1 gap-4 sm:grid-cols-2 [&_[data-slot=select-trigger]]:w-full" action={createSchool}>
             <Field>
                 <FieldLabel htmlFor="name">Name</FieldLabel>
                 <Input 
@@ -172,7 +172,7 @@ export function AddSchoolForm() {
                 </Select>
             </Field>
 
-            <DialogClose render={<Button type="submit">Submit</Button>}/>
+            <DialogClose render={<Button type="submit" className="sm:col-span-2">Submit</Button>}/>
         </form>
     )
 }

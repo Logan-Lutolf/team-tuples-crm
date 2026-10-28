@@ -71,6 +71,7 @@ try {
       const school = await orm.School.create({
         id: firstSchoolId + i,
         name: `${faker.company.name()} School`,
+        email: `school-${runId}-${i}@example.com`,
         address: address(),
         type: faker.helpers.arrayElement(enums.SchoolType.values),
         relationship: faker.helpers.arrayElement(enums.RelationshipType.values),
