@@ -16,7 +16,6 @@ export function SmallContactTable({data} : {data: Contact[]}) {
                     <TableRow>
                         <TableHead>Name</TableHead>
                         <TableHead>Email</TableHead>
-                        <TableHead>Phone</TableHead>
                         <TableHead>Region</TableHead>
                         <TableHead>School ID</TableHead>
                     </TableRow>
@@ -27,7 +26,6 @@ export function SmallContactTable({data} : {data: Contact[]}) {
                             <TableRow>
                                 <TableCell>{contact.name}</TableCell>
                                 <TableCell>{contact.email}</TableCell>
-                                <TableCell>{contact.phone ? contact.phone : "N/A"}</TableCell>
                                 <TableCell>{contact.region ? contact.region : "N/A"}</TableCell>
                                 <TableCell>{contact.schoolId ? contact.schoolId : "N/A"}</TableCell>
                             </TableRow>
