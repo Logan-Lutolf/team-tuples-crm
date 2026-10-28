@@ -1,13 +1,17 @@
 'use client'
 
 import { Button } from "@/components/ui/button"
-import { DialogClose } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { editSchool } from "./actions_schools"
-import { Scalars } from "@prisma/orm-postgres/components"
-import { Models } from "@/prisma/contract"
+import {
+    editSchool, addSchoolContact, removeSchoolContact,
+    addSchoolEmployee, removeSchoolEmployee,
+    createSchoolParticipation, editSchoolParticipation, deleteSchoolParticipation,
+} from "./actions_schools"
+import type { Option } from "./school-form-types"
+import type { Scalars } from "@prisma/orm-postgres/components"
+import type { Models } from "@/prisma/contract"
 
 const regions = [
     { label: "ONE", value: "ONE" },
@@ -45,7 +49,8 @@ type SchoolFields = Scalars<Models.public_School>
 type Region = SchoolFields["region"]
 type SchoolType = SchoolFields["type"]
 type Relationship = SchoolFields["relationship"]
-type BranchId = SchoolFields["branchId"] // number
+type Participation = Pick<Scalars<Models.public_Participation>,
+    "id" | "programId" | "startDate" | "endDate" | "status">
 
 interface EditSchoolFormProps {
     id: number
@@ -58,6 +63,12 @@ interface EditSchoolFormProps {
     address: SchoolFields["address"], 
     branchId: SchoolFields["branchId"]
     branches: { id: number; name: string }[]
+    contacts: Option[]
+    availableContacts: Option[] // Contacts not assigned to any school.
+    employees: Option[] // Assigned employee records, rather than join records.
+    availableEmployees: Option[]
+    participations: Participation[]
+    programs: Option[]
 }
 
 
@@ -70,6 +81,7 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
     }))
 
     return (
+        <div className="flex flex-col gap-6">
         <form className="flex flex-col gap-3" action={editSchool}>
             <input type="hidden" name="school-id" value={school.id} />
 
@@ -205,7 +217,137 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
                 </Select>
             </Field>
 
-            <DialogClose render={<Button type="submit">Submit</Button>}/>
+            <Button type="submit">Save school</Button>
+        </form>
+
+        <SchoolAssignments
+            schoolId={school.id} label="Contacts" field="contact-id"
+            assigned={school.contacts} available={school.availableContacts}
+            addAction={addSchoolContact} removeAction={removeSchoolContact}
+        />
+        <SchoolAssignments
+            schoolId={school.id} label="Employees" field="employee-id"
+            assigned={school.employees} available={school.availableEmployees}
+            addAction={addSchoolEmployee} removeAction={removeSchoolEmployee}
+        />
+
+        <section className="flex flex-col gap-3">
+            <h3 className="font-semibold">Participations</h3>
+            {school.participations.length === 0 && <p>No participations yet.</p>}
+            {school.participations.map((participation) => (
+                <div key={participation.id} className="flex flex-col gap-3 rounded-md border p-3">
+                    <SchoolParticipationForm schoolId={school.id} programs={school.programs} participation={participation} />
+                    <form action={deleteSchoolParticipation}>
+                        <input type="hidden" name="school-id" value={school.id} />
+                        <input type="hidden" name="participation-id" value={participation.id} />
+                        <Button type="submit">Delete participation</Button>
+                    </form>
+                </div>
+            ))}
+            <h4>Add participation</h4>
+            {school.programs.length > 0
+                ? <SchoolParticipationForm schoolId={school.id} programs={school.programs} />
+                : <p>No programs available.</p>}
+        </section>
+        </div>
+    )
+}
+
+// Separate forms keep relationship changes independent of school details.
+function SchoolAssignments({ schoolId, label, field, assigned, available, addAction, removeAction }: {
+    schoolId: number
+    label: string
+    field: string
+    assigned: Option[]
+    available: Option[]
+    addAction: (data: FormData) => Promise<void>
+    removeAction: (data: FormData) => Promise<void>
+}) {
+    const options = available.filter((option) => !assigned.some((item) => item.id === option.id))
+    return (
+        <section className="flex flex-col gap-3">
+            <h3 className="font-semibold">{label}</h3>
+            {assigned.length === 0 && <p>No {label.toLowerCase()} assigned.</p>}
+            {assigned.map((item) => (
+                <form key={item.id} action={removeAction} className="flex items-center gap-3">
+                    <input type="hidden" name="school-id" value={schoolId} />
+                    <input type="hidden" name={field} value={item.id} />
+                    <span>{item.name}</span>
+                    <Button type="submit" aria-label={`Remove ${item.name}`}>Remove</Button>
+                </form>
+            ))}
+            {options.length > 0 ? (
+                <form action={addAction} className="flex flex-col gap-3">
+                    <input type="hidden" name="school-id" value={schoolId} />
+                    <Select name={field} defaultValue="" required
+                        items={options.map((item) => ({ label: item.name, value: String(item.id) }))}>
+                        <SelectTrigger aria-label={`Assign ${label.toLowerCase()}`}><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                {options.map((item) => (
+                                    <SelectItem key={item.id} value={String(item.id)}>{item.name}</SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <Button type="submit">Assign</Button>
+                </form>
+            ) : <p>No additional {label.toLowerCase()} available.</p>}
+        </section>
+    )
+}
+
+function SchoolParticipationForm({ schoolId, programs, participation }: {
+    schoolId: number
+    programs: Option[]
+    participation?: Participation
+}) {
+    const programOptions = programs.map((program) => ({ label: program.name, value: String(program.id) }))
+    if (participation && !programs.some((program) => program.id === participation.programId)) {
+        programOptions.push({ label: `Program ${participation.programId}`, value: String(participation.programId) })
+    }
+    const statuses: Participation["status"][] = ["PLANNED", "ONGOING", "COMPLETED", "CANCELLED"]
+    return (
+        <form action={participation ? editSchoolParticipation : createSchoolParticipation} className="flex flex-col gap-3">
+            <input type="hidden" name="school-id" value={schoolId} />
+            {participation && <input type="hidden" name="participation-id" value={participation.id} />}
+            <Field>
+                <FieldLabel>Program</FieldLabel>
+                <Select name="program-id" items={programOptions} required
+                    defaultValue={participation ? String(participation.programId) : ""}>
+                    <SelectTrigger aria-label="Program"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            {programOptions.map((program) => (
+                                <SelectItem key={program.value} value={program.value}>{program.label}</SelectItem>
+                            ))}
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </Field>
+            <Field>
+                <FieldLabel>Start date and time (include timezone)</FieldLabel>
+                <Input name="start-date" aria-label="Start date and time" required
+                    placeholder="2026-10-28T09:00:00Z" defaultValue={participation?.startDate} />
+            </Field>
+            <Field>
+                <FieldLabel>End date and time (optional, include timezone)</FieldLabel>
+                <Input name="end-date" aria-label="End date and time"
+                    placeholder="2026-10-28T10:00:00Z" defaultValue={participation?.endDate ?? ""} />
+            </Field>
+            <Field>
+                <FieldLabel>Status</FieldLabel>
+                <Select name="status" defaultValue={participation?.status ?? "PLANNED"}
+                    items={statuses.map((status) => ({ label: status, value: status }))}>
+                    <SelectTrigger aria-label="Status"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            {statuses.map((status) => <SelectItem key={status} value={status}>{status}</SelectItem>)}
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </Field>
+            <Button type="submit">{participation ? "Save participation" : "Add participation"}</Button>
         </form>
     )
 }
