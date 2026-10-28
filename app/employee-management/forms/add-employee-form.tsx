@@ -5,9 +5,7 @@ import { DialogClose } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createEmployee, editEmployee } from "../actions"
-import { Scalars } from "@prisma/orm-postgres/components"
-import { Models } from "@/prisma/contract"
+import { createEmployee } from "../../actions"
 
 const roles = [
     { label: "Admin", value: "ADMIN" },
@@ -18,29 +16,17 @@ const roles = [
     { label: "Newsletter Coordinator", value: "NEWSLETTER_COORDINATOR" },
 ]
 
-type Role = Scalars<Models.public_Employee>["role"]
-
-
-interface EditEmployeeFormProps {
-    name: string,
-    email: string
-    phone: string,
-    role: Role
-}
-
-
 
 // TODO: Add form validation
-export function EditEmployeeForm(employee: EditEmployeeFormProps) {    // Add actual type later T_T
+export function AddEmployeeForm() {    
     return (
-        <form className="flex flex-col gap-3" action={editEmployee}>
+        <form className="flex flex-col gap-3" action={createEmployee}>
             <Field>
                 <FieldLabel htmlFor="full-name">Full Name</FieldLabel>
                 <Input 
                     name="full-name"
                     type="text"
                     required
-                    defaultValue={employee.name}
                 />
             </Field>
 
@@ -49,7 +35,6 @@ export function EditEmployeeForm(employee: EditEmployeeFormProps) {    // Add ac
                 <Input 
                     name="email"
                     type="email"
-                    defaultValue={employee.email}
                     required
                 />
             </Field>
@@ -59,13 +44,12 @@ export function EditEmployeeForm(employee: EditEmployeeFormProps) {    // Add ac
                 <Input 
                     name="phone-num"
                     type="text"
-                    defaultValue={employee.phone}
                 />
             </Field>
 
             <Field>
                 <FieldLabel htmlFor="role">Role</FieldLabel>
-                <Select items={roles} defaultValue={employee.role} name="role">
+                <Select items={roles} defaultValue="" name="role">
                     <SelectTrigger>
                         <SelectValue />
                     </SelectTrigger>
