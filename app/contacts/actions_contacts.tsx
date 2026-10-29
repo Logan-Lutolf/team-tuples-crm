@@ -13,20 +13,20 @@ export async function createContact(formData: FormData) {
     const name = formData.get("full-name") as string
     const email = formData.get("email") as string
     const phone = formData.get("phone-num") as string
-    const role = formData.get("role") as Role
+    const contactRole = formData.get("role") as Role
     
     
     if (name == null || email == null){
-        console.log("Create employee failed: name or email is null")
+        console.log("Create contact failed: name or email is null")
         return
     }
     
     try {
-        const employee = await db.orm.public.Employee.create({
+        const contact = await db.orm.public.Contact.create({
             name: name,
             email: email,
             phone: phone,
-            role: role,
+            contactRole: contactRole,
             address: {   // This shouldn't be required by prisma contract; look into this
                 street: '',
                 city: '',
@@ -34,14 +34,14 @@ export async function createContact(formData: FormData) {
             }
         })
 
-        if(employee)
-            console.log("Create employee successful.")
-            revalidatePath("/employee-management")
+        if(contact)
+            console.log("Create contact successful.")
+            revalidatePath("/contacts")
 
         
     }
     catch (error) {
-        console.log("Create employee failed: ", error)
+        console.log("Create contact failed: ", error)
     }
 }
 
@@ -77,23 +77,23 @@ export async function editEmployee(formData: FormData) {
 
 }
 
-export async function deleteEmployee(formData: FormData) {
-    const id = formData.get('employee-id')
+export async function deleteContact(formData: FormData) {
+    const id = formData.get('contact-id')
 
     if (id == null) 
-        console.log("Delete employee failed: Employee ID does not exist.")
+        console.log("Delete contact failed: Contact ID does not exist.")
 
     const emp = Number(id)
     try {
-        const deleted = await db.orm.public.Employee
+        const deleted = await db.orm.public.Contact
             .where({id: emp})
             .delete()
         
         if (deleted)
             console.log("Deletion successful.")
-            revalidatePath("/employee-management")
+            revalidatePath("/contacts")
     }
     catch (error) {
-        console.log("Delete employee failed: ", error)
+        console.log("Delete contact failed: ", error)
     }
 }
