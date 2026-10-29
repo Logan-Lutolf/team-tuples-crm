@@ -5,8 +5,7 @@ import { Models } from "@/prisma/contract"
 import { revalidatePath } from "next/cache"
 import { ContactValidationError, contactFieldLabel, contactErrorMessage } from "./contact-errors"
 
-type Role = Scalars<Models.public_Contact>["contactRole"]
-
+type ContactFields = Scalars<Models.public_Contact>
 
 // TODO: Only ADMIN should be able to create new employee
 function text(form: FormData, key: string, required = true): string {
@@ -17,44 +16,40 @@ function text(form: FormData, key: string, required = true): string {
     return result
 }
 
+function email(form: FormData): string {
+    const value = text(form, "email")
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        throw new ContactValidationError("Enter a valid email address.")
+    }
+    return value
+}
 
 export async function createContact(formData: FormData) {
-    const name = formData.get("full-name") as string
-    const email = formData.get("email") as string
-    const phone = formData.get("phone-num") as string
-    const contactRole = formData.get("role") as Role
-    
-    
-    if (name == null || email == null){
-        console.log("Create contact failed: name or email is null")
-        return
-    }
-    
     try {
-        const contact = await db.orm.public.Contact.create({
-            name: name,
-            email: email,
-            phone: phone,
-            contactRole: contactRole,
-            address: {   // This shouldn't be required by prisma contract; look into this
-                street: '',
-                city: '',
-                zipCode: ''
+        const data = { ...contactData(formData), address: addressData(formData) }
+        // School IDs have no database default. Retry if concurrent creation claims the same ID.
+        for (let attempt = 0; attempt < 3; attempt++) {
+            try {
+                await db.transaction(async (tx) => {
+                    const lastContact = await tx.orm.public.Contact
+                        .orderBy((school) => school.id.desc()).first()
+                    await tx.orm.public.Contact.create({ id: (lastContact?.id ?? 0) + 1, ...data })
+                })
+                revalidatePath("/contacts")
+                return { success: true as const }
+            } catch (error) {
+                if (attempt === 2 || !(error instanceof Error) ||
+                    !("sqlState" in error) || error.sqlState !== "23505" ||
+                    !("constraint" in error) || error.constraint !== "Contact_pkey") throw error
             }
-        })
-
-        if(contact)
-            console.log("Create contact successful.")
-            revalidatePath("/contacts")
-
-        
-    }
-    catch (error) {
-        console.log("Create contact failed: ", error)
+        }
+    } catch (error) {
+        console.error("Create contact failed:", error)
+        return { error: contactErrorMessage(error, "Create school") }
     }
 }
 
-function schoolData(form: FormData) {
+function contactData(form: FormData) {
     return {
         name: text(form, form.has("full-name") ? "full-name" : "name"),
         email: email(form),
@@ -65,7 +60,7 @@ function schoolData(form: FormData) {
         relationship: choice<SchoolFields["relationship"]>(form, "relationship", [
             "POOR", "AVERAGE", "EXCELLENT",
         ]),
-        region: choice<SchoolFields["region"]>(form, "region", [
+        region: choice<ContactFields["region"]>(form, "region", [
             "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN",
             "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN",
         ]),
