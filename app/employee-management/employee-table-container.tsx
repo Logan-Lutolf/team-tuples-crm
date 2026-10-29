@@ -9,13 +9,11 @@ interface EmployeeTableContainerProps {
 
 export async function EmployeeTableContainer({query, page} : EmployeeTableContainerProps) {
     
-    async function getEmployees(query: string, page: number) {
-        return (await db.orm.public.Employee.all().toArray()).filter((employee) => {
-            if (employee.name.toLowerCase().includes(query.toLowerCase())) return employee
-        });
-    }
-
-    const employees = await getEmployees(query, page)
+    const pattern = `%${query.replace(/[\\%_]/g, "\\$&")}%`
+    const employeeQuery = query
+        ? db.orm.public.Employee.where((employee) => employee.name.ilike(pattern))
+        : db.orm.public.Employee
+    const employees = await employeeQuery.all().toArray()
 
     return (
         <EmployeeTable data={employees}/>
