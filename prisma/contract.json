@@ -86,6 +86,55 @@
               }
             ]
           },
+          "ContactRole": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "TEACHER",
+                "value": "TEACHER"
+              },
+              {
+                "name": "PRINCIPAL",
+                "value": "PRINCIPAL"
+              },
+              {
+                "name": "SCHOOL_COORDINATOR",
+                "value": "SCHOOL_COORDINATOR"
+              },
+              {
+                "name": "STUDENT",
+                "value": "STUDENT"
+              },
+              {
+                "name": "HISTORIAN",
+                "value": "HISTORIAN"
+              },
+              {
+                "name": "GOVERNMENT_OFFICIAL",
+                "value": "GOVERNMENT_OFFICIAL"
+              },
+              {
+                "name": "DONOR",
+                "value": "DONOR"
+              },
+              {
+                "name": "SPONSOR",
+                "value": "SPONSOR"
+              },
+              {
+                "name": "PARTNER",
+                "value": "PARTNER"
+              },
+              {
+                "name": "VOLUNTEER",
+                "value": "VOLUNTEER"
+              },
+              {
+                "name": "OTHER",
+                "value": "OTHER"
+              }
+            ]
+          },
           "ProgramStatus": {
             "codecId": "pg/text@1",
             "members": [
@@ -341,11 +390,17 @@
                   "kind": "scalar"
                 }
               },
-              "branchRole": {
+              "contactRole": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ContactRole",
+                  "namespaceId": "public",
+                  "plane": "domain"
                 }
               },
               "createdAt": {
@@ -417,13 +472,6 @@
                   "kind": "scalar"
                 }
               },
-              "subject": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
               "updatedAt": {
                 "nullable": false,
                 "type": {
@@ -490,8 +538,8 @@
                 "branchId": {
                   "column": "branchId"
                 },
-                "branchRole": {
-                  "column": "branchRole"
+                "contactRole": {
+                  "column": "contactRole"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -519,9 +567,6 @@
                 },
                 "schoolId": {
                   "column": "schoolId"
-                },
-                "subject": {
-                  "column": "subject"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -1343,6 +1388,13 @@
                   "kind": "scalar"
                 }
               },
+              "country": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "street": {
                 "nullable": false,
                 "type": {
@@ -1426,6 +1478,11 @@
             "Contact": {
               "checks": [
                 {
+                  "expression": "\"contactRole\" IN ('TEACHER', 'PRINCIPAL', 'SCHOOL_COORDINATOR', 'STUDENT', 'HISTORIAN', 'GOVERNMENT_OFFICIAL', 'DONOR', 'SPONSOR', 'PARTNER', 'VOLUNTEER', 'OTHER')",
+                  "name": "Contact_contactRole_check_f2942349",
+                  "prefix": "Contact_contactRole_check"
+                },
+                {
                   "expression": "\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN')",
                   "name": "Contact_region_check_de154a3d",
                   "prefix": "Contact_region_check"
@@ -1442,10 +1499,16 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
-                "branchRole": {
+                "contactRole": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": false
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ContactRole",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -1508,11 +1571,6 @@
                 "schoolId": {
                   "codecId": "pg/int4@1",
                   "nativeType": "int4",
-                  "nullable": true
-                },
-                "subject": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
                   "nullable": true
                 },
                 "updatedAt": {
@@ -2261,6 +2319,22 @@
                 "EIGHT"
               ]
             },
+            "ContactRole": {
+              "kind": "valueSet",
+              "values": [
+                "TEACHER",
+                "PRINCIPAL",
+                "SCHOOL_COORDINATOR",
+                "STUDENT",
+                "HISTORIAN",
+                "GOVERNMENT_OFFICIAL",
+                "DONOR",
+                "SPONSOR",
+                "PARTNER",
+                "VOLUNTEER",
+                "OTHER"
+              ]
+            },
             "ProgramStatus": {
               "kind": "valueSet",
               "values": [
@@ -2324,7 +2398,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "fd110db52d3709a08f72a58242b1e0cb968cfff46a57823c333625af66e874db"
+    "storageHash": "502502e565053f81372e72e9dc3964b5c31e413d6da9291f94dcf0c1de631338"
   },
   "execution": {
     "executionHash": "0fd40b19d5bd8a8d2527a8f9a4030d8f7fe0634840abb04486573b61d0f5386b",

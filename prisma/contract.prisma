@@ -66,6 +66,23 @@ enum ProgramStatus {
   CANCELLED
 }
 
+enum ContactRole {
+  TEACHER
+  PRINCIPAL
+  SCHOOL_COORDINATOR
+  STUDENT
+
+  HISTORIAN
+
+  GOVERNMENT_OFFICIAL
+  DONOR
+  SPONSOR
+
+  PARTNER
+  VOLUNTEER
+  OTHER
+}
+
 //---------------------------MODELS---------------------------//
 model Employee {
   id        Int      @id @default(autoincrement())
@@ -91,9 +108,8 @@ model Contact {
   phone     String?
   address   Address?
   region   Region?
-  subject  String?
   last_contacted TimestamptzString @default(now())
-  branchRole String
+  contactRole ContactRole
 
   last_contacted_by Employee? @relation(fields: [last_contacted_byId], references: [id])
   last_contacted_byId Int?

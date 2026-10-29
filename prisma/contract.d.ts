@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'fd110db52d3709a08f72a58242b1e0cb968cfff46a57823c333625af66e874db'>;
+  StorageHashBase<'502502e565053f81372e72e9dc3964b5c31e413d6da9291f94dcf0c1de631338'>;
 export type ExecutionHash =
   ExecutionHashBase<'0fd40b19d5bd8a8d2527a8f9a4030d8f7fe0634840abb04486573b61d0f5386b'>;
 export type ProfileHash =
@@ -249,11 +249,13 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
   : Encoded;
 export type AddressOutput = {
   readonly city: CodecTypes['pg/text@1']['output'];
+  readonly country: CodecTypes['pg/text@1']['output'];
   readonly street: CodecTypes['pg/text@1']['output'];
   readonly zipCode: CodecTypes['pg/text@1']['output'];
 };
 export type AddressInput = {
   readonly city: CodecTypes['pg/text@1']['input'];
+  readonly country: CodecTypes['pg/text@1']['input'];
   readonly street: CodecTypes['pg/text@1']['input'];
   readonly zipCode: CodecTypes['pg/text@1']['input'];
 };
@@ -281,7 +283,18 @@ export type FieldOutputTypes = {
     readonly Contact: {
       readonly address: AddressOutput | null;
       readonly branchId: CodecTypes['pg/int4@1']['output'];
-      readonly branchRole: CodecTypes['pg/text@1']['output'];
+      readonly contactRole:
+        | 'TEACHER'
+        | 'PRINCIPAL'
+        | 'SCHOOL_COORDINATOR'
+        | 'STUDENT'
+        | 'HISTORIAN'
+        | 'GOVERNMENT_OFFICIAL'
+        | 'DONOR'
+        | 'SPONSOR'
+        | 'PARTNER'
+        | 'VOLUNTEER'
+        | 'OTHER';
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -306,7 +319,6 @@ export type FieldOutputTypes = {
         | 'FOURTEEN'
         | null;
       readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
-      readonly subject: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Employee: {
@@ -425,7 +437,18 @@ export type FieldInputTypes = {
     readonly Contact: {
       readonly address: AddressInput | null;
       readonly branchId: CodecTypes['pg/int4@1']['input'];
-      readonly branchRole: CodecTypes['pg/text@1']['input'];
+      readonly contactRole:
+        | 'TEACHER'
+        | 'PRINCIPAL'
+        | 'SCHOOL_COORDINATOR'
+        | 'STUDENT'
+        | 'HISTORIAN'
+        | 'GOVERNMENT_OFFICIAL'
+        | 'DONOR'
+        | 'SPONSOR'
+        | 'PARTNER'
+        | 'VOLUNTEER'
+        | 'OTHER';
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -450,7 +473,6 @@ export type FieldInputTypes = {
         | 'FOURTEEN'
         | null;
       readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
-      readonly subject: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Employee: {
@@ -569,7 +591,18 @@ export type StorageColumnTypes = {
     readonly Contact: {
       readonly address: CodecTypes['pg/jsonb@1']['output'] | null;
       readonly branchId: CodecTypes['pg/int4@1']['output'];
-      readonly branchRole: CodecTypes['pg/text@1']['output'];
+      readonly contactRole:
+        | 'TEACHER'
+        | 'PRINCIPAL'
+        | 'SCHOOL_COORDINATOR'
+        | 'STUDENT'
+        | 'HISTORIAN'
+        | 'GOVERNMENT_OFFICIAL'
+        | 'DONOR'
+        | 'SPONSOR'
+        | 'PARTNER'
+        | 'VOLUNTEER'
+        | 'OTHER';
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -594,7 +627,6 @@ export type StorageColumnTypes = {
         | 'FOURTEEN'
         | null;
       readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
-      readonly subject: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Employee: {
@@ -713,7 +745,18 @@ export type StorageColumnInputTypes = {
     readonly Contact: {
       readonly address: CodecTypes['pg/jsonb@1']['input'] | null;
       readonly branchId: CodecTypes['pg/int4@1']['input'];
-      readonly branchRole: CodecTypes['pg/text@1']['input'];
+      readonly contactRole:
+        | 'TEACHER'
+        | 'PRINCIPAL'
+        | 'SCHOOL_COORDINATOR'
+        | 'STUDENT'
+        | 'HISTORIAN'
+        | 'GOVERNMENT_OFFICIAL'
+        | 'DONOR'
+        | 'SPONSOR'
+        | 'PARTNER'
+        | 'VOLUNTEER'
+        | 'OTHER';
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -738,7 +781,6 @@ export type StorageColumnInputTypes = {
         | 'FOURTEEN'
         | null;
       readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
-      readonly subject: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Employee: {
@@ -860,7 +902,18 @@ export namespace Models {
   export type public_Contact = {
     address: AddressOutput | null;
     branchId: CodecTypes['pg/int4@1']['output'];
-    branchRole: CodecTypes['pg/text@1']['output'];
+    contactRole:
+      | 'TEACHER'
+      | 'PRINCIPAL'
+      | 'SCHOOL_COORDINATOR'
+      | 'STUDENT'
+      | 'HISTORIAN'
+      | 'GOVERNMENT_OFFICIAL'
+      | 'DONOR'
+      | 'SPONSOR'
+      | 'PARTNER'
+      | 'VOLUNTEER'
+      | 'OTHER';
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     email: CodecTypes['pg/text@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
@@ -885,7 +938,6 @@ export namespace Models {
       | 'FOURTEEN'
       | null;
     schoolId: CodecTypes['pg/int4@1']['output'] | null;
-    subject: CodecTypes['pg/text@1']['output'] | null;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     branch: public_Branch;
     last_contacted_by: public_Employee | null;
@@ -1082,7 +1134,7 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
                 };
-                readonly branchRole: {
+                readonly contactRole: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
@@ -1136,11 +1188,6 @@ type ContractBase = Omit<
                 readonly schoolId: {
                   readonly nativeType: 'int4';
                   readonly codecId: 'pg/int4@1';
-                  readonly nullable: true;
-                };
-                readonly subject: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
                   readonly nullable: true;
                 };
                 readonly updatedAt: {
@@ -1682,6 +1729,22 @@ type ContractBase = Omit<
                 'EIGHT',
               ];
             };
+            readonly ContactRole: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'TEACHER',
+                'PRINCIPAL',
+                'SCHOOL_COORDINATOR',
+                'STUDENT',
+                'HISTORIAN',
+                'GOVERNMENT_OFFICIAL',
+                'DONOR',
+                'SPONSOR',
+                'PARTNER',
+                'VOLUNTEER',
+                'OTHER',
+              ];
+            };
             readonly ProgramStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['PLANNED', 'ONGOING', 'COMPLETED', 'CANCELLED'];
@@ -1830,7 +1893,7 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
-              readonly branchRole: {
+              readonly contactRole: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
@@ -1875,10 +1938,6 @@ type ContractBase = Omit<
               readonly schoolId: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly subject: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly updatedAt: {
                 readonly nullable: false;
@@ -1932,7 +1991,7 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly address: { readonly column: 'address' };
                 readonly branchId: { readonly column: 'branchId' };
-                readonly branchRole: { readonly column: 'branchRole' };
+                readonly contactRole: { readonly column: 'contactRole' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly email: { readonly column: 'email' };
                 readonly id: { readonly column: 'id' };
@@ -1942,7 +2001,6 @@ type ContractBase = Omit<
                 readonly phone: { readonly column: 'phone' };
                 readonly region: { readonly column: 'region' };
                 readonly schoolId: { readonly column: 'schoolId' };
-                readonly subject: { readonly column: 'subject' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };
@@ -2471,6 +2529,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly country: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly street: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -2494,6 +2556,22 @@ type ContractBase = Omit<
               { readonly name: 'SIX'; readonly value: 'SIX' },
               { readonly name: 'SEVEN'; readonly value: 'SEVEN' },
               { readonly name: 'EIGHT'; readonly value: 'EIGHT' },
+            ];
+          };
+          readonly ContactRole: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'TEACHER'; readonly value: 'TEACHER' },
+              { readonly name: 'PRINCIPAL'; readonly value: 'PRINCIPAL' },
+              { readonly name: 'SCHOOL_COORDINATOR'; readonly value: 'SCHOOL_COORDINATOR' },
+              { readonly name: 'STUDENT'; readonly value: 'STUDENT' },
+              { readonly name: 'HISTORIAN'; readonly value: 'HISTORIAN' },
+              { readonly name: 'GOVERNMENT_OFFICIAL'; readonly value: 'GOVERNMENT_OFFICIAL' },
+              { readonly name: 'DONOR'; readonly value: 'DONOR' },
+              { readonly name: 'SPONSOR'; readonly value: 'SPONSOR' },
+              { readonly name: 'PARTNER'; readonly value: 'PARTNER' },
+              { readonly name: 'VOLUNTEER'; readonly value: 'VOLUNTEER' },
+              { readonly name: 'OTHER'; readonly value: 'OTHER' },
             ];
           };
           readonly ProgramStatus: {
@@ -2626,6 +2704,10 @@ type ContractBase = Omit<
     readonly Address: {
       readonly fields: {
         readonly city: {
+          readonly nullable: false;
+          readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+        };
+        readonly country: {
           readonly nullable: false;
           readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
         };
