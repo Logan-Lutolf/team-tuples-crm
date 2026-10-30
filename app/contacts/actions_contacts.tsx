@@ -10,7 +10,7 @@ type ContactFields = Scalars<Models.public_Contact>
 // TODO: Only ADMIN should be able to create new employee
 function text(form: FormData, key: string, required = true): string {
     const value = form.get(key)
-    if (value !== null && typeof value !== "string") throw new ContactValidationError(`Choose or enter a valid ${schoolFieldLabel(key).toLowerCase()}.`)
+    if (value !== null && typeof value !== "string") throw new ContactValidationError(`Choose or enter a valid ${contactFieldLabel(key).toLowerCase()}.`)
     const result = (value ?? "").trim()
     if (required && !result) throw new ContactValidationError(`${contactFieldLabel(key)} is required.`)
     return result
@@ -19,7 +19,7 @@ function text(form: FormData, key: string, required = true): string {
 
 function id(form: FormData, key: string): number {
     const value = Number(text(form, key))
-    if (!Number.isSafeInteger(value) || value <= 0) throw new ContactValidationError(`Choose or enter a valid ${schoolFieldLabel(key).toLowerCase()}.`)
+    if (!Number.isSafeInteger(value) || value <= 0) throw new ContactValidationError(`Choose or enter a valid ${contactFieldLabel(key).toLowerCase()}.`)
     return value
 }
 
