@@ -67,7 +67,7 @@ interface EditContactFormProps {
 
 
 // TODO: Add form validation
-export function EditContact(contact: EditContactFormProps) {    // Add actual type later T_T
+export function EditContactForm(contact: EditContactFormProps) {    // Add actual type later T_T
     const branchOptions = contact.branches.map((branch) => ({
         label: branch.name,
         value: String(branch.id),

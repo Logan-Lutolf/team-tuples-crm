@@ -13,7 +13,7 @@ interface DeleteContactFormProps {
     contactName: string;
 }
 
-export function DeleteSchoolForm({ contactId, contactName }: DeleteSchoolFormProps) {
+export function DeleteContactForm({ contactId, contactName }: DeleteSchoolFormProps) {
     return(
         <ContactActionForm action={deleteContact}>
             <Input type="hidden" name="school-id" value={contactId} />
