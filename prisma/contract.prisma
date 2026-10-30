@@ -93,6 +93,7 @@ model Employee {
   region   Region?
 
   is_online  Boolean  @default(false)
+  // remove this, because we might add EmployeeJobRole table later?
   role      Role 
 
   schools SchoolEmployees[]
@@ -109,6 +110,7 @@ model Contact {
   address   Address?
   region   Region?
   last_contacted TimestamptzString @default(now())
+  
   contactRole ContactRole
 
   last_contacted_by Employee? @relation(fields: [last_contacted_byId], references: [id])

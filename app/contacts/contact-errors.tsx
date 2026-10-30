@@ -1,10 +1,9 @@
 export class SchoolValidationError extends Error {}
 
 const fields: Record<string, string> = {
-    name: "School name", "full-name": "School name", email: "Email", "phone-num": "Phone number",
+    name: "Contact name", "full-name": "School name", email: "Email", "phone-num": "Phone number",
     street: "Street address", city: "City", zipCode: "Postal code", type: "School type",
-    relationship: "Relationship", region: "Region", branch: "Branch", branchId: "Branch",
-    phone: "Phone number", schoolId: "School", employeeId: "Employee", programId: "Program",
+    region: "Region", phone: "Phone number", last_contacted: "Last contacted", last_contacted_by: "Last contacted by", last_contacted_byId: "Last contaced by ID", schoolId: "School", 
     startDate: "Start date", endDate: "End date", "school-id": "School",
     "contact-id": "Contact", "employee-id": "Employee", "program-id": "Program",
     "participation-id": "Participation", "start-date": "Start date", "end-date": "End date", status: "Status",
