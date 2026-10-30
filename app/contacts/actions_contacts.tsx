@@ -16,6 +16,20 @@ function text(form: FormData, key: string, required = true): string {
     return result
 }
 
+
+function id(form: FormData, key: string): number {
+    const value = Number(text(form, key))
+    if (!Number.isSafeInteger(value) || value <= 0) throw new ContactValidationError(`Choose or enter a valid ${schoolFieldLabel(key).toLowerCase()}.`)
+    return value
+}
+
+function choice<T extends string>(form: FormData, key: string, values: readonly T[]): T {
+    const value = text(form, key)
+    const match = values.find((candidate) => candidate === value)
+    if (!match) throw new ContactValidationError(`Choose or enter a valid ${contactFieldLabel(key).toLowerCase()}.`)
+    return match
+}
+
 function email(form: FormData): string {
     const value = text(form, "email")
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
@@ -45,26 +59,36 @@ export async function createContact(formData: FormData) {
         }
     } catch (error) {
         console.error("Create contact failed:", error)
-        return { error: contactErrorMessage(error, "Create school") }
+        return { error: contactErrorMessage(error, "Create contact") }
     }
 }
 
 function contactData(form: FormData) {
     return {
+        // this form should only include singular fields (not like multiple contacts, employees, participations related to this)
         name: text(form, form.has("full-name") ? "full-name" : "name"),
         email: email(form),
         phone: text(form, "phone-num", false) || null,
-        type: choice<SchoolFields["type"]>(form, "type", [
-            "PRIMARY", "SECONDARY", "UNDERGRADUATE", "GRADUATE", "POSTGRADUATE",
-        ]),
-        relationship: choice<SchoolFields["relationship"]>(form, "relationship", [
-            "POOR", "AVERAGE", "EXCELLENT",
-        ]),
-        region: choice<ContactFields["region"]>(form, "region", [
+        region: choice<NonNullable<ContactFields["region"]>>(form, "region", [
             "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN",
             "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN",
         ]),
         branchId: id(form, "branch"),
+        // add contactRole
+        contactRole: choice<ContactFields["contactRole"]>(form, "contactRole", [
+            "TEACHER",
+            "PRINCIPAL",
+            "SCHOOL_COORDINATOR",
+            "STUDENT",
+            "HISTORIAN",
+            "GOVERNMENT_OFFICIAL",
+            "DONOR",
+            "SPONSOR",
+            "PARTNER",
+            "VOLUNTEER",
+            "OTHER",
+        ])
+        // done with this form
     }
 }
 
@@ -103,22 +127,27 @@ export async function editContact(formData: FormData) {
 }
 
 export async function deleteContact(formData: FormData) {
-    const id = formData.get('contact-id')
+    return contactAction("Delete school", async () => {
+        const contactId = id(formData, "school-id")
+        // Let foreign-key constraints prevent deleting schools with dependent records.
+        await db.orm.public.Contact.where({ id: contactId }).delete()
+    })
+}
 
-    if (id == null) 
-        console.log("Delete contact failed: Contact ID does not exist.")
+export async function addSchoolContact(formData: FormData) {
+    return contactAction("Assign school", async () => {
+        await db.orm.public.Contact.where({
+            id: id(formData, "contact-id"),
+            schoolId: null,
+        }).update({ schoolId: id(formData, "school-id") })
+    })
+}
 
-    const emp = Number(id)
-    try {
-        const deleted = await db.orm.public.Contact
-            .where({id: emp})
-            .delete()
-        
-        if (deleted)
-            console.log("Deletion successful.")
-            revalidatePath("/contacts")
-    }
-    catch (error) {
-        console.log("Delete contact failed: ", error)
-    }
+export async function removeSchoolContact(formData: FormData) {
+    return contactAction("Remove school", async () => {
+        await db.orm.public.Contact.where({
+            id: id(formData, "contact-id"),
+            schoolId: id(formData, "school-id"),
+        }).update({ schoolId: null })
+    })
 }
