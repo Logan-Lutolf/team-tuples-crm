@@ -1,0 +1,250 @@
+[
+  {
+    "id": "dropColumn.Contact.branchRole",
+    "label": "Drop column \"branchRole\" from \"Contact\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "branchRole",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"branchRole\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Contact",
+          "branchRole"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"branchRole\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\" DROP COLUMN \"branchRole\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"branchRole\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Contact",
+          "branchRole"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropColumn.Contact.subject",
+    "label": "Drop column \"subject\" from \"Contact\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "subject",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"subject\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Contact",
+          "subject"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"subject\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\" DROP COLUMN \"subject\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"subject\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Contact",
+          "subject"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Contact.contactRole",
+    "label": "Add column \"contactRole\" to \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "contactRole",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"contactRole\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Contact",
+          "contactRole"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"contactRole\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\" ADD COLUMN \"contactRole\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"contactRole\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Contact",
+          "contactRole"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "data_migration.backfill-Contact-contactRole",
+    "label": "Data transform: backfill-Contact-contactRole",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [
+      {
+        "description": "Check backfill-Contact-contactRole has work to do",
+        "sql": "SELECT EXISTS (SELECT \"id\" AS \"id\" FROM \"public\".\"Contact\" WHERE \"contactRole\" IS NULL LIMIT 1) AS ok",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "Run backfill-Contact-contactRole",
+        "sql": "UPDATE \"public\".\"Contact\" SET \"contactRole\" = $1, \"updatedAt\" = $2 WHERE \"contactRole\" IS NULL",
+        "params": [
+          "OTHER",
+          "2026-10-30T15:11:05.013Z"
+        ]
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "Verify backfill-Contact-contactRole resolved all violations",
+        "sql": "SELECT NOT EXISTS (SELECT \"id\" AS \"id\" FROM \"public\".\"Contact\" WHERE \"contactRole\" IS NULL LIMIT 1) AS ok",
+        "params": []
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.setNotNull.Contact.contactRole",
+    "label": "Set NOT NULL on \"Contact\".\"contactRole\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "contactRole",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"contactRole\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Contact",
+          "contactRole"
+        ]
+      },
+      {
+        "description": "ensure no NULL values in \"contactRole\"",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"public\".\"Contact\" WHERE \"contactRole\" IS NULL) AS \"result\"",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "set NOT NULL on \"contactRole\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\" ALTER COLUMN \"contactRole\" SET NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"contactRole\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Contact",
+          "contactRole",
+          "NO"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Contact.Contact_contactRole_check_f2942349",
+    "label": "Add check constraint \"Contact_contactRole_check_f2942349\" on \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Contact_contactRole_check_f2942349",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Contact_contactRole_check_f2942349\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_contactRole_check_f2942349",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Contact_contactRole_check_f2942349\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\" ADD CONSTRAINT \"Contact_contactRole_check_f2942349\" CHECK (\"contactRole\" IN ('TEACHER', 'PRINCIPAL', 'SCHOOL_COORDINATOR', 'STUDENT', 'HISTORIAN', 'GOVERNMENT_OFFICIAL', 'DONOR', 'SPONSOR', 'PARTNER', 'VOLUNTEER', 'OTHER'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Contact_contactRole_check_f2942349\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_contactRole_check_f2942349",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ]
+  }
+]

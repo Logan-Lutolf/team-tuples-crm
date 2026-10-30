@@ -127,6 +127,9 @@ model Contact {
 }
 
 model School {
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
   id        Int      @id
   name      String
   address   Address

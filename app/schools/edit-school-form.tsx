@@ -360,7 +360,7 @@ function SchoolAssignments({ schoolId, label, field, assigned, available, addAct
                             <TableHead>Name</TableHead>
                             <TableHead>Email</TableHead>
                             <TableHead>Phone</TableHead>
-                            <TableHead>Role / subject</TableHead>
+                            <TableHead>Contact role</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -374,8 +374,7 @@ function SchoolAssignments({ schoolId, label, field, assigned, available, addAct
                                 <TableCell><a className="underline underline-offset-4" href={`mailto:${contact.email}`}>{contact.email}</a></TableCell>
                                 <TableCell>{contact.phone ? <a href={`tel:${contact.phone}`}>{contact.phone}</a> : "—"}</TableCell>
                                 <TableCell>
-                                    <div>{contact.branchRole || "—"}</div>
-                                    {contact.subject && <div className="text-muted-foreground text-xs">{contact.subject}</div>}
+                                    <div>{contact.contactRole.replaceAll("_", " ")}</div>
                                 </TableCell>
                                 <TableCell>
                                     <SchoolActionForm action={removeAction} className="flex flex-col items-end gap-2">

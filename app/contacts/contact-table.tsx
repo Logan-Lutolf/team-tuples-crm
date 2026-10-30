@@ -50,30 +50,24 @@ export function ContactTable({
                                 contentClassName="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[min(90vw,80rem)]"
                                 icon={<Pencil />} 
                                 content={
-                                    <EditSchoolForm
-                                        participationAsOf={participationAsOf}
-                                        id={school.id}
-                                        name={school.name}
-                                        email={school.email}
-                                        phone={school.phone}
-                                        address={school.address}
-                                        type={school.type}
-                                        relationship={school.relationship}
-                                        region={school.region}
-                                        branchId={school.branchId}
+                                    <EditContactForm
+                                        id={contact.id}
+                                        name={contact.name}
+                                        email={contact.email}
+                                        phone={contact.phone}
+                                        address={contact.address}
+                                        region={contact.region}
+                                        contactRole={contact.contactRole}
+                                        schoolId={contact.schoolId}
+                                        branchId={contact.branchId}
                                         branches={branches}
-                                        programs={programs}
-                                        availableContacts={availableContacts}
-                                        availableEmployees={availableEmployees}
-                                        contacts={relationsBySchool[school.id].contacts}
-                                        employees={relationsBySchool[school.id].employees}
-                                        participations={relationsBySchool[school.id].participations}
-                                        />
+                                        availableSchools={availableSchools}
+                                    />
                                 }
                             />
                             <ActionDialog
                                 icon={<Trash />}
-                                content={<DeleteSchoolForm schoolId={school.id} schoolName={school.name} />}
+                                content={<DeleteContactForm contactId={contact.id} schoolName={contact.name} />}
                                 variant="destructive"
                             />
                             <Button size='sm' variant="ghost">

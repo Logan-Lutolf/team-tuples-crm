@@ -20,7 +20,7 @@ export async function SchoolTableContainer({query, page} : SchoolTableContainerP
         : db.orm.public.School
 
     const [filteredSchools, branches, programs, availableContacts, employees] = await Promise.all([
-        schoolQuery.orderBy((school) => school.id.desc())
+        schoolQuery.orderBy([(school) => school.updatedAt.desc(), (school) => school.id.desc()])
             .offset((currentPage - 1) * recordsPerPage)
             .limit(recordsPerPage).all().toArray(),
         db.orm.public.Branch.select("id", "name").all().toArray(),
@@ -32,7 +32,7 @@ export async function SchoolTableContainer({query, page} : SchoolTableContainerP
     const schoolIds = filteredSchools.map((school) => school.id)
     const [contacts, assignments, participations] = schoolIds.length ? await Promise.all([
         db.orm.public.Contact.where((contact) => contact.schoolId.in(schoolIds))
-            .select("id", "name", "schoolId", "email", "phone", "branchRole", "subject").all().toArray(),
+            .select("id", "name", "schoolId", "email", "phone", "contactRole").all().toArray(),
         db.orm.public.SchoolEmployees.where((assignment) => assignment.schoolId.in(schoolIds))
             .select("schoolId", "employeeId").all().toArray(),
         db.orm.public.Participation.where((participation) => participation.schoolId.in(schoolIds))

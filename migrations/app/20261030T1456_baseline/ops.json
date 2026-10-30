@@ -1,0 +1,1507 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.Branch",
+    "label": "Create table \"Branch\"",
+    "summary": "Creates table \"Branch\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Branch"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Branch\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Branch\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Branch\"",
+        "sql": "CREATE TABLE \"public\".\"Branch\" (\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  \"region\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Branch_name_check_ca88058c\" CHECK (\"name\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT')),\n  CONSTRAINT \"Branch_region_check_de154a3d\" CHECK (\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Branch\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Branch\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.Contact",
+    "label": "Create table \"Contact\"",
+    "summary": "Creates table \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Contact\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Contact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Contact\"",
+        "sql": "CREATE TABLE \"public\".\"Contact\" (\n  \"address\" jsonb,\n  \"branchId\" int4 NOT NULL,\n  \"branchRole\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"email\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"last_contacted\" timestamptz DEFAULT (now()) NOT NULL,\n  \"last_contacted_byId\" int4,\n  \"name\" text NOT NULL,\n  \"phone\" text,\n  \"region\" text,\n  \"schoolId\" int4,\n  \"subject\" text,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Contact_region_check_de154a3d\" CHECK (\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Contact\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Contact\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.Employee",
+    "label": "Create table \"Employee\"",
+    "summary": "Creates table \"Employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Employee\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Employee\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Employee\"",
+        "sql": "CREATE TABLE \"public\".\"Employee\" (\n  \"address\" jsonb,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"email\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"is_online\" bool DEFAULT false NOT NULL,\n  \"name\" text NOT NULL,\n  \"phone\" text,\n  \"region\" text,\n  \"role\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Employee_region_check_de154a3d\" CHECK (\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN')),\n  CONSTRAINT \"Employee_role_check_b697a84e\" CHECK (\"role\" IN ('ADMIN', 'WORKSHOPS_COORDINATOR', 'SCHOOL_NETWORK_COORDINATOR', 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR', 'VETERANS_DAY_COORDINATOR', 'NEWSLETTER_COORDINATOR'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Employee\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Employee\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.Municipality",
+    "label": "Create table \"Municipality\"",
+    "summary": "Creates table \"Municipality\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Municipality"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Municipality\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Municipality\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Municipality\"",
+        "sql": "CREATE TABLE \"public\".\"Municipality\" (\n  \"id\" SERIAL NOT NULL,\n  \"mayor\" text NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Municipality\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Municipality\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.MunicipalityPrograms",
+    "label": "Create table \"MunicipalityPrograms\"",
+    "summary": "Creates table \"MunicipalityPrograms\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "MunicipalityPrograms"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"MunicipalityPrograms\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"MunicipalityPrograms\"",
+        "sql": "CREATE TABLE \"public\".\"MunicipalityPrograms\" (\n  \"municipalityId\" int4 NOT NULL,\n  \"programId\" int4 NOT NULL,\n  PRIMARY KEY (\"municipalityId\", \"programId\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"MunicipalityPrograms\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.Participation",
+    "label": "Create table \"Participation\"",
+    "summary": "Creates table \"Participation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Participation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Participation\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Participation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Participation\"",
+        "sql": "CREATE TABLE \"public\".\"Participation\" (\n  \"endDate\" timestamptz,\n  \"id\" SERIAL NOT NULL,\n  \"programId\" int4 NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  \"startDate\" timestamptz NOT NULL,\n  \"status\" text DEFAULT 'PLANNED' NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Participation_status_check_07ec6707\" CHECK (\"status\" IN ('PLANNED', 'ONGOING', 'COMPLETED', 'CANCELLED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Participation\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Participation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.ParticipationEmployees",
+    "label": "Create table \"ParticipationEmployees\"",
+    "summary": "Creates table \"ParticipationEmployees\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "ParticipationEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"ParticipationEmployees\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"ParticipationEmployees\"",
+        "sql": "CREATE TABLE \"public\".\"ParticipationEmployees\" (\n  \"employeeId\" int4 NOT NULL,\n  \"participationId\" int4 NOT NULL,\n  PRIMARY KEY (\"participationId\", \"employeeId\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"ParticipationEmployees\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.Program",
+    "label": "Create table \"Program\"",
+    "summary": "Creates table \"Program\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Program"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Program\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Program\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Program\"",
+        "sql": "CREATE TABLE \"public\".\"Program\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Program\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Program\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.School",
+    "label": "Create table \"School\"",
+    "summary": "Creates table \"School\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "School"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"School\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"School\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"School\"",
+        "sql": "CREATE TABLE \"public\".\"School\" (\n  \"address\" jsonb NOT NULL,\n  \"branchId\" int4 NOT NULL,\n  \"email\" text NOT NULL,\n  \"id\" int4 NOT NULL,\n  \"name\" text NOT NULL,\n  \"phone\" text,\n  \"region\" text NOT NULL,\n  \"relationship\" text NOT NULL,\n  \"type\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"School_region_check_de154a3d\" CHECK (\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN')),\n  CONSTRAINT \"School_relationship_check_15167c09\" CHECK (\"relationship\" IN ('POOR', 'AVERAGE', 'EXCELLENT')),\n  CONSTRAINT \"School_type_check_b97fb405\" CHECK (\"type\" IN ('PRIMARY', 'SECONDARY', 'UNDERGRADUATE', 'GRADUATE', 'POSTGRADUATE'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"School\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"School\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.SchoolEmployees",
+    "label": "Create table \"SchoolEmployees\"",
+    "summary": "Creates table \"SchoolEmployees\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "SchoolEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"SchoolEmployees\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolEmployees\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"SchoolEmployees\"",
+        "sql": "CREATE TABLE \"public\".\"SchoolEmployees\" (\n  \"employeeId\" int4 NOT NULL,\n  \"schoolId\" int4 NOT NULL,\n  PRIMARY KEY (\"schoolId\", \"employeeId\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"SchoolEmployees\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolEmployees\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Contact.Contact_email_key",
+    "label": "Add unique constraint on \"Contact\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Contact_email_key",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Contact_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_email_key",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Contact_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\" ADD CONSTRAINT \"Contact_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Contact_email_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_email_key",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Employee.Employee_email_key",
+    "label": "Add unique constraint on \"Employee\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Employee_email_key",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Employee_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_email_key",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Employee_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ADD CONSTRAINT \"Employee_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Employee_email_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_email_key",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.School.School_email_key",
+    "label": "Add unique constraint on \"School\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "School_email_key",
+        "table": "School"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"School_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "School_email_key",
+          "public",
+          "\"public\".\"School\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"School_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"School\" ADD CONSTRAINT \"School_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"School_email_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "School_email_key",
+          "public",
+          "\"public\".\"School\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Contact.Contact_branchId_idx_d04da5bb",
+    "label": "Create index \"Contact_branchId_idx_d04da5bb\" on \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Contact_branchId_idx_d04da5bb",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Contact_branchId_idx_d04da5bb\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Contact_branchId_idx_d04da5bb\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Contact_branchId_idx_d04da5bb\"",
+        "sql": "CREATE INDEX \"Contact_branchId_idx_d04da5bb\" ON \"public\".\"Contact\" (\"branchId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Contact_branchId_idx_d04da5bb\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Contact_branchId_idx_d04da5bb\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Contact.Contact_last_contacted_byId_idx_ee2c3f80",
+    "label": "Create index \"Contact_last_contacted_byId_idx_ee2c3f80\" on \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Contact_last_contacted_byId_idx_ee2c3f80",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Contact_last_contacted_byId_idx_ee2c3f80\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Contact_last_contacted_byId_idx_ee2c3f80\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Contact_last_contacted_byId_idx_ee2c3f80\"",
+        "sql": "CREATE INDEX \"Contact_last_contacted_byId_idx_ee2c3f80\" ON \"public\".\"Contact\" (\"last_contacted_byId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Contact_last_contacted_byId_idx_ee2c3f80\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Contact_last_contacted_byId_idx_ee2c3f80\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Contact.Contact_schoolId_idx_82b454d7",
+    "label": "Create index \"Contact_schoolId_idx_82b454d7\" on \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Contact_schoolId_idx_82b454d7",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Contact_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Contact_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Contact_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"Contact_schoolId_idx_82b454d7\" ON \"public\".\"Contact\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Contact_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Contact_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.MunicipalityPrograms.MunicipalityPrograms_municipalityId_idx_0a7c35cd",
+    "label": "Create index \"MunicipalityPrograms_municipalityId_idx_0a7c35cd\" on \"MunicipalityPrograms\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "MunicipalityPrograms_municipalityId_idx_0a7c35cd",
+        "table": "MunicipalityPrograms"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"MunicipalityPrograms_municipalityId_idx_0a7c35cd\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"MunicipalityPrograms_municipalityId_idx_0a7c35cd\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"MunicipalityPrograms_municipalityId_idx_0a7c35cd\"",
+        "sql": "CREATE INDEX \"MunicipalityPrograms_municipalityId_idx_0a7c35cd\" ON \"public\".\"MunicipalityPrograms\" (\"municipalityId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"MunicipalityPrograms_municipalityId_idx_0a7c35cd\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"MunicipalityPrograms_municipalityId_idx_0a7c35cd\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.MunicipalityPrograms.MunicipalityPrograms_programId_idx_4e50c706",
+    "label": "Create index \"MunicipalityPrograms_programId_idx_4e50c706\" on \"MunicipalityPrograms\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "MunicipalityPrograms_programId_idx_4e50c706",
+        "table": "MunicipalityPrograms"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"MunicipalityPrograms_programId_idx_4e50c706\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"MunicipalityPrograms_programId_idx_4e50c706\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"MunicipalityPrograms_programId_idx_4e50c706\"",
+        "sql": "CREATE INDEX \"MunicipalityPrograms_programId_idx_4e50c706\" ON \"public\".\"MunicipalityPrograms\" (\"programId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"MunicipalityPrograms_programId_idx_4e50c706\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"MunicipalityPrograms_programId_idx_4e50c706\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Participation.Participation_programId_idx_4e50c706",
+    "label": "Create index \"Participation_programId_idx_4e50c706\" on \"Participation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Participation_programId_idx_4e50c706",
+        "table": "Participation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Participation_programId_idx_4e50c706\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Participation_programId_idx_4e50c706\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Participation_programId_idx_4e50c706\"",
+        "sql": "CREATE INDEX \"Participation_programId_idx_4e50c706\" ON \"public\".\"Participation\" (\"programId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Participation_programId_idx_4e50c706\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Participation_programId_idx_4e50c706\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Participation.Participation_schoolId_idx_82b454d7",
+    "label": "Create index \"Participation_schoolId_idx_82b454d7\" on \"Participation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Participation_schoolId_idx_82b454d7",
+        "table": "Participation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Participation_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Participation_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Participation_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"Participation_schoolId_idx_82b454d7\" ON \"public\".\"Participation\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Participation_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Participation_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ParticipationEmployees.ParticipationEmployees_employeeId_idx_087dd4a6",
+    "label": "Create index \"ParticipationEmployees_employeeId_idx_087dd4a6\" on \"ParticipationEmployees\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ParticipationEmployees_employeeId_idx_087dd4a6",
+        "table": "ParticipationEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ParticipationEmployees_employeeId_idx_087dd4a6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ParticipationEmployees_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ParticipationEmployees_employeeId_idx_087dd4a6\"",
+        "sql": "CREATE INDEX \"ParticipationEmployees_employeeId_idx_087dd4a6\" ON \"public\".\"ParticipationEmployees\" (\"employeeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ParticipationEmployees_employeeId_idx_087dd4a6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ParticipationEmployees_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ParticipationEmployees.ParticipationEmployees_participationId_idx_1840362d",
+    "label": "Create index \"ParticipationEmployees_participationId_idx_1840362d\" on \"ParticipationEmployees\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ParticipationEmployees_participationId_idx_1840362d",
+        "table": "ParticipationEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ParticipationEmployees_participationId_idx_1840362d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ParticipationEmployees_participationId_idx_1840362d\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ParticipationEmployees_participationId_idx_1840362d\"",
+        "sql": "CREATE INDEX \"ParticipationEmployees_participationId_idx_1840362d\" ON \"public\".\"ParticipationEmployees\" (\"participationId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ParticipationEmployees_participationId_idx_1840362d\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ParticipationEmployees_participationId_idx_1840362d\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.School.School_branchId_idx_d04da5bb",
+    "label": "Create index \"School_branchId_idx_d04da5bb\" on \"School\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "School_branchId_idx_d04da5bb",
+        "table": "School"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"School_branchId_idx_d04da5bb\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"School_branchId_idx_d04da5bb\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"School_branchId_idx_d04da5bb\"",
+        "sql": "CREATE INDEX \"School_branchId_idx_d04da5bb\" ON \"public\".\"School\" (\"branchId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"School_branchId_idx_d04da5bb\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"School_branchId_idx_d04da5bb\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SchoolEmployees.SchoolEmployees_employeeId_idx_087dd4a6",
+    "label": "Create index \"SchoolEmployees_employeeId_idx_087dd4a6\" on \"SchoolEmployees\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SchoolEmployees_employeeId_idx_087dd4a6",
+        "table": "SchoolEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SchoolEmployees_employeeId_idx_087dd4a6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolEmployees_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SchoolEmployees_employeeId_idx_087dd4a6\"",
+        "sql": "CREATE INDEX \"SchoolEmployees_employeeId_idx_087dd4a6\" ON \"public\".\"SchoolEmployees\" (\"employeeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SchoolEmployees_employeeId_idx_087dd4a6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolEmployees_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SchoolEmployees.SchoolEmployees_schoolId_idx_82b454d7",
+    "label": "Create index \"SchoolEmployees_schoolId_idx_82b454d7\" on \"SchoolEmployees\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SchoolEmployees_schoolId_idx_82b454d7",
+        "table": "SchoolEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SchoolEmployees_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolEmployees_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SchoolEmployees_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"SchoolEmployees_schoolId_idx_82b454d7\" ON \"public\".\"SchoolEmployees\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SchoolEmployees_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SchoolEmployees_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Contact.Contact_last_contacted_byId_fkey",
+    "label": "Add foreign key \"Contact_last_contacted_byId_fkey\" on \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Contact_last_contacted_byId_fkey",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Contact_last_contacted_byId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_last_contacted_byId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Contact_last_contacted_byId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\"\nADD CONSTRAINT \"Contact_last_contacted_byId_fkey\"\nFOREIGN KEY (\"last_contacted_byId\")\nREFERENCES \"public\".\"Employee\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Contact_last_contacted_byId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_last_contacted_byId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Contact.Contact_schoolId_fkey",
+    "label": "Add foreign key \"Contact_schoolId_fkey\" on \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Contact_schoolId_fkey",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Contact_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_schoolId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Contact_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\"\nADD CONSTRAINT \"Contact_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Contact_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_schoolId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Contact.Contact_branchId_fkey",
+    "label": "Add foreign key \"Contact_branchId_fkey\" on \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Contact_branchId_fkey",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Contact_branchId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_branchId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Contact_branchId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\"\nADD CONSTRAINT \"Contact_branchId_fkey\"\nFOREIGN KEY (\"branchId\")\nREFERENCES \"public\".\"Branch\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Contact_branchId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_branchId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.MunicipalityPrograms.MunicipalityPrograms_programId_fkey",
+    "label": "Add foreign key \"MunicipalityPrograms_programId_fkey\" on \"MunicipalityPrograms\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "MunicipalityPrograms_programId_fkey",
+        "table": "MunicipalityPrograms"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"MunicipalityPrograms_programId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MunicipalityPrograms_programId_fkey",
+          "public",
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"MunicipalityPrograms_programId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"MunicipalityPrograms\"\nADD CONSTRAINT \"MunicipalityPrograms_programId_fkey\"\nFOREIGN KEY (\"programId\")\nREFERENCES \"public\".\"Program\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"MunicipalityPrograms_programId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MunicipalityPrograms_programId_fkey",
+          "public",
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.MunicipalityPrograms.MunicipalityPrograms_municipalityId_fkey",
+    "label": "Add foreign key \"MunicipalityPrograms_municipalityId_fkey\" on \"MunicipalityPrograms\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "MunicipalityPrograms_municipalityId_fkey",
+        "table": "MunicipalityPrograms"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"MunicipalityPrograms_municipalityId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MunicipalityPrograms_municipalityId_fkey",
+          "public",
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"MunicipalityPrograms_municipalityId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"MunicipalityPrograms\"\nADD CONSTRAINT \"MunicipalityPrograms_municipalityId_fkey\"\nFOREIGN KEY (\"municipalityId\")\nREFERENCES \"public\".\"Municipality\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"MunicipalityPrograms_municipalityId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MunicipalityPrograms_municipalityId_fkey",
+          "public",
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Participation.Participation_schoolId_fkey",
+    "label": "Add foreign key \"Participation_schoolId_fkey\" on \"Participation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Participation_schoolId_fkey",
+        "table": "Participation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Participation_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Participation_schoolId_fkey",
+          "public",
+          "\"public\".\"Participation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Participation_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Participation\"\nADD CONSTRAINT \"Participation_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Participation_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Participation_schoolId_fkey",
+          "public",
+          "\"public\".\"Participation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Participation.Participation_programId_fkey",
+    "label": "Add foreign key \"Participation_programId_fkey\" on \"Participation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Participation_programId_fkey",
+        "table": "Participation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Participation_programId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Participation_programId_fkey",
+          "public",
+          "\"public\".\"Participation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Participation_programId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Participation\"\nADD CONSTRAINT \"Participation_programId_fkey\"\nFOREIGN KEY (\"programId\")\nREFERENCES \"public\".\"Program\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Participation_programId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Participation_programId_fkey",
+          "public",
+          "\"public\".\"Participation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ParticipationEmployees.ParticipationEmployees_participationId_fkey",
+    "label": "Add foreign key \"ParticipationEmployees_participationId_fkey\" on \"ParticipationEmployees\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ParticipationEmployees_participationId_fkey",
+        "table": "ParticipationEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ParticipationEmployees_participationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationEmployees_participationId_fkey",
+          "public",
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ParticipationEmployees_participationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ParticipationEmployees\"\nADD CONSTRAINT \"ParticipationEmployees_participationId_fkey\"\nFOREIGN KEY (\"participationId\")\nREFERENCES \"public\".\"Participation\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ParticipationEmployees_participationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationEmployees_participationId_fkey",
+          "public",
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ParticipationEmployees.ParticipationEmployees_employeeId_fkey",
+    "label": "Add foreign key \"ParticipationEmployees_employeeId_fkey\" on \"ParticipationEmployees\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ParticipationEmployees_employeeId_fkey",
+        "table": "ParticipationEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ParticipationEmployees_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationEmployees_employeeId_fkey",
+          "public",
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ParticipationEmployees_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ParticipationEmployees\"\nADD CONSTRAINT \"ParticipationEmployees_employeeId_fkey\"\nFOREIGN KEY (\"employeeId\")\nREFERENCES \"public\".\"Employee\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ParticipationEmployees_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationEmployees_employeeId_fkey",
+          "public",
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.School.School_branchId_fkey",
+    "label": "Add foreign key \"School_branchId_fkey\" on \"School\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "School_branchId_fkey",
+        "table": "School"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"School_branchId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "School_branchId_fkey",
+          "public",
+          "\"public\".\"School\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"School_branchId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"School\"\nADD CONSTRAINT \"School_branchId_fkey\"\nFOREIGN KEY (\"branchId\")\nREFERENCES \"public\".\"Branch\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"School_branchId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "School_branchId_fkey",
+          "public",
+          "\"public\".\"School\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.SchoolEmployees.SchoolEmployees_schoolId_fkey",
+    "label": "Add foreign key \"SchoolEmployees_schoolId_fkey\" on \"SchoolEmployees\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "SchoolEmployees_schoolId_fkey",
+        "table": "SchoolEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"SchoolEmployees_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolEmployees_schoolId_fkey",
+          "public",
+          "\"public\".\"SchoolEmployees\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"SchoolEmployees_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"SchoolEmployees\"\nADD CONSTRAINT \"SchoolEmployees_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"SchoolEmployees_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolEmployees_schoolId_fkey",
+          "public",
+          "\"public\".\"SchoolEmployees\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.SchoolEmployees.SchoolEmployees_employeeId_fkey",
+    "label": "Add foreign key \"SchoolEmployees_employeeId_fkey\" on \"SchoolEmployees\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "SchoolEmployees_employeeId_fkey",
+        "table": "SchoolEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"SchoolEmployees_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolEmployees_employeeId_fkey",
+          "public",
+          "\"public\".\"SchoolEmployees\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"SchoolEmployees_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"SchoolEmployees\"\nADD CONSTRAINT \"SchoolEmployees_employeeId_fkey\"\nFOREIGN KEY (\"employeeId\")\nREFERENCES \"public\".\"Employee\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"SchoolEmployees_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "SchoolEmployees_employeeId_fkey",
+          "public",
+          "\"public\".\"SchoolEmployees\""
+        ]
+      }
+    ]
+  }
+]

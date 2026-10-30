@@ -9,16 +9,11 @@ import { Contract } from "@/prisma/contract";
 import { DefaultModelRow } from "@prisma/orm-postgres/orm-client";
 import { Filter } from "lucide-react";
 import { Search } from "@/components/custom/search";
-import { SchoolTableContainer } from "./school-table-container";
+import { ContactTableContainer } from "./contact-table-container";
 import { Suspense } from "react";
 
 
-// Add pagination to employee list
-// Edit employee functionality
-// Filtering by role
-
-
-export default async function EmployeeManagementPage(
+export default async function ContactManagementPage(
     {searchParams} : {
         searchParams?: Promise<{ query?: string; page?: string }>
     }
@@ -26,14 +21,14 @@ export default async function EmployeeManagementPage(
     const params = await searchParams
     const query = params?.query ?? ''
     const branches = await db.orm.public.Branch.select("id", "name").all().toArray()
-
+    const schools = await db.orm.public.School.select("id", "name").all().toArray()
 
     const requestedPage = Number(params?.page ?? 1)
     const currentPage = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
     function pageHref(page: number) {
         const search = new URLSearchParams({ page: String(page) })
         if (query) search.set("query", query)
-        return `/schools?${search}`
+        return `/contacts?${search}`
     }
     const RECORDS_PER_PAGE = 20 
 
@@ -43,20 +38,20 @@ export default async function EmployeeManagementPage(
     return (
         <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
             <Dialog>
-                <DialogTrigger render={<Button>Add a School</Button>}/>
+                <DialogTrigger render={<Button>Add a Contact</Button>}/>
 
                 <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-3xl">
                     <DialogHeader>
-                        <DialogTitle>Add a School</DialogTitle>
+                        <DialogTitle>Add a Contact</DialogTitle>
                     </DialogHeader>
-                    <AddSchoolForm branches={branches} />
+                    <AddContactForm branches={branches} schools={schools}/>
                 </DialogContent>
             </Dialog>
             
             <Search placeholder={""}/>
 
-            <Suspense key={`${query}:${currentPage}`} fallback={<p role="status">Loading schools…</p>}>
-                <SchoolTableContainer query={query} page={currentPage} />
+            <Suspense key={`${query}:${currentPage}`} fallback={<p role="status">Loading contacts…</p>}>
+                <ContactTableContainer query={query} page={currentPage} />
             </Suspense>
 
             <Pagination>

@@ -39,28 +39,13 @@ function email(form: FormData): string {
 }
 
 export async function createContact(formData: FormData) {
-    try {
-        const data = { ...contactData(formData), address: addressData(formData) }
-        // School IDs have no database default. Retry if concurrent creation claims the same ID.
-        for (let attempt = 0; attempt < 3; attempt++) {
-            try {
-                await db.transaction(async (tx) => {
-                    const lastContact = await tx.orm.public.Contact
-                        .orderBy((school) => school.id.desc()).first()
-                    await tx.orm.public.Contact.create({ id: (lastContact?.id ?? 0) + 1, ...data })
-                })
-                revalidatePath("/contacts")
-                return { success: true as const }
-            } catch (error) {
-                if (attempt === 2 || !(error instanceof Error) ||
-                    !("sqlState" in error) || error.sqlState !== "23505" ||
-                    !("constraint" in error) || error.constraint !== "Contact_pkey") throw error
-            }
-        }
-    } catch (error) {
-        console.error("Create contact failed:", error)
-        return { error: contactErrorMessage(error, "Create contact") }
-    }
+    return contactAction("Create contact", async () => {
+        await db.orm.public.Contact.create({
+            ...contactData(formData),
+            address: addressData(formData),
+            schoolId: text(formData, "school-id", false) ? id(formData, "school-id") : null,
+        })
+    })
 }
 
 function contactData(form: FormData) {
@@ -69,10 +54,10 @@ function contactData(form: FormData) {
         name: text(form, form.has("full-name") ? "full-name" : "name"),
         email: email(form),
         phone: text(form, "phone-num", false) || null,
-        region: choice<NonNullable<ContactFields["region"]>>(form, "region", [
+        region: text(form, "region", false) ? choice<NonNullable<ContactFields["region"]>>(form, "region", [
             "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN",
             "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN",
-        ]),
+        ]) : null,
         branchId: id(form, "branch"),
         // add contactRole
         contactRole: choice<ContactFields["contactRole"]>(form, "contactRole", [
@@ -93,6 +78,7 @@ function contactData(form: FormData) {
 }
 
 function addressData(form: FormData) {
+    if (!["street", "city", "country", "zipCode"].some((key) => text(form, key, false))) return undefined
     return {
         street: text(form, "street"),
         city: text(form, "city"),

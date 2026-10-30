@@ -2,6 +2,24 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Apply database migrations
+
+Set `DATABASE_URL` in `.env.local` to the same PostgreSQL database used by the app, then run:
+
+```bash
+npm run db:migrations:check
+npm run db:migrate:preview
+npm run db:migrate
+```
+
+The contact-role migration adds the required `Contact.contactRole` column and assigns
+`OTHER` to existing contacts. It also drops the old `branchRole` and `subject`
+columns, including their data. Back up any values you need before applying it.
+Restart the development server after applying migrations.
+
+After editing a migration's `migration.ts`, run it with Node to regenerate its
+`ops.json` and `migration.json`; do not edit those generated files directly.
+
 First, run the development server:
 
 ```bash
