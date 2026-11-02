@@ -1,8 +1,7 @@
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Models } from "@/prisma/contract";
-import { Button } from "@/components/ui/button"
 import { Scalars } from "@prisma/orm-postgres/components";
-import { Pencil, Trash, Ellipsis, SquareArrowOutUpRight } from "lucide-react";
+import { Pencil, Trash, SquareArrowOutUpRight } from "lucide-react";
 import { ActionDialog } from "@/components/custom/action-dialog";
 import { DeleteEmployeeForm } from "./forms/delete-form";
 import { EditEmployeeForm } from "./forms/edit-employee-form";
@@ -14,6 +13,7 @@ type Employee = Scalars<Models.public_Employee>
 
 export function EmployeeTable({data} : {data: Employee[]}) {
     return(
+        <>
         <Table className="border border-black">
             <TableHeader className="rounded-4xl">
                 <TableRow className="border border-black">
@@ -69,5 +69,6 @@ export function EmployeeTable({data} : {data: Employee[]}) {
                 ))}
             </TableBody>
         </Table>
+    </>
     )
 }

@@ -13,9 +13,10 @@ export function Search({placeholder}: {placeholder: string}) {
 
     function handleSearch(term: string) {
         const params = new URLSearchParams(searchParams)
+        params.delete('cursor')
 
-        if (term) params.set('query', term)
-        else params.delete('query')
+        if (term) params.set('search', term)
+        else params.delete('search')
 
         replace(`${pathName}?${params.toString()}`)
     }

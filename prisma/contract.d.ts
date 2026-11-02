@@ -249,11 +249,13 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
   : Encoded;
 export type AddressOutput = {
   readonly city: CodecTypes['pg/text@1']['output'];
+  readonly country: CodecTypes['pg/text@1']['output'];
   readonly street: CodecTypes['pg/text@1']['output'];
   readonly zipCode: CodecTypes['pg/text@1']['output'];
 };
 export type AddressInput = {
   readonly city: CodecTypes['pg/text@1']['input'];
+  readonly country: CodecTypes['pg/text@1']['input'];
   readonly street: CodecTypes['pg/text@1']['input'];
   readonly zipCode: CodecTypes['pg/text@1']['input'];
 };
@@ -2471,6 +2473,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly country: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly street: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -2626,6 +2632,10 @@ type ContractBase = Omit<
     readonly Address: {
       readonly fields: {
         readonly city: {
+          readonly nullable: false;
+          readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+        };
+        readonly country: {
           readonly nullable: false;
           readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
         };

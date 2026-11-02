@@ -7,17 +7,13 @@ import { EmployeeTableContainer } from "./employee-table-container";
 
 export default async function EmployeeManagementPage(
     {searchParams} : {
-        searchParams?: Promise<{ query?: string; page?: string }>
+        searchParams?: Promise<{ search?: string; cursor?: string; dir?: string}>
     }
 ) {
     const params = await searchParams
-    const query = params?.query ?? ''
-
-
-    const RECORDS_PER_PAGE = 20 
-
-
-    
+    const search = params?.search ?? undefined
+    const cursor = params?.cursor ?? undefined
+    const dir = params?.dir === "prev" ? "prev" : "next"
 
     return (
         <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
@@ -31,7 +27,7 @@ export default async function EmployeeManagementPage(
             <Search placeholder={""}/>
 
             <div className="min-w-0 overflow-auto">
-                <EmployeeTableContainer query={query} page={1} />
+                <EmployeeTableContainer search={search} cursor={cursor} dir={dir} />
             </div>
         
         </div>
