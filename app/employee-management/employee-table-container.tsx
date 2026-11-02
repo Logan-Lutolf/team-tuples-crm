@@ -12,37 +12,26 @@ interface EmployeeTableContainerProps {
 
 
 export async function EmployeeTableContainer({search, cursor, dir} : EmployeeTableContainerProps) {
-        
-
-    const [c, i] = cursor?.split("|") ?? []
-    const parsed = c && i ? { createdAt: new Date(c), id: i } : undefined // Number(i) if id is numeric
-
-    const base = db.orm.public.Employee
-        .where({name: search})
-        .orderBy(dir === "prev"
-            ? [(e) => e.createdAt.asc(), (e) => e.id.asc()]
-            : [(e) => e.createdAt.desc(), (e) => e.id.desc()])
-
-    const rows = await (parsed ? base.cursor(parsed) : base)
-        .limit(20)
+    const NUM_RECORDS = 10
+    
+    const baseEmployees = await db.orm.public.Employee
+        .orderBy([(e) => e.createdAt.desc(), (e) => e.id.desc()])
+        .limit(NUM_RECORDS)
         .all()
-        .toArray()
 
-    const employees = dir === "prev" ? rows.reverse() : rows
-
-    const first = employees[0]
-    const last = employees[employees.length - 1]
+    const first = baseEmployees[0]
+    const last = baseEmployees[baseEmployees.length - 1]
 
     const prevBookmark = first ? first.createdAt + "|" + first.id.toString() : ""
     const nextBookmark = last ? last.createdAt + "|" + last.id.toString() : ""
 
-    
-
-    
+    const searchEmployees = baseEmployees.filter((e) => {
+        return e.name.toLowerCase().includes(search?.toLowerCase() ?? "")
+    })
 
     return (
         <>
-            <EmployeeTable data={employees}/>
+            <EmployeeTable data={searchEmployees}/>
 
             <Pagination>
                 <PaginationContent>
