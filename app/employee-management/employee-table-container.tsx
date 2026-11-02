@@ -19,21 +19,16 @@ export async function EmployeeTableContainer({search, cursor, dir} : EmployeeTab
         .limit(NUM_RECORDS)
         .all()
 
-    const first = baseEmployees[0]
-    const last = baseEmployees[baseEmployees.length - 1]
 
-    const prevBookmark = first ? first.createdAt + "|" + first.id.toString() : ""
-    const nextBookmark = last ? last.createdAt + "|" + last.id.toString() : ""
-
-    const searchEmployees = baseEmployees.filter((e) => {
+    const employees = baseEmployees.filter((e) => {
         return e.name.toLowerCase().includes(search?.toLowerCase() ?? "")
     })
 
     return (
         <>
-            <EmployeeTable data={searchEmployees}/>
+            <EmployeeTable data={employees}/>
 
-            <Pagination>
+            {/* <Pagination>
                 <PaginationContent>
                     <PaginationItem>
                         <PrevPage bookmark={prevBookmark}/>
@@ -45,7 +40,7 @@ export async function EmployeeTableContainer({search, cursor, dir} : EmployeeTab
                         <NextPage bookmark={nextBookmark}/>
                     </PaginationItem>
                 </PaginationContent>
-            </Pagination>
+            </Pagination> */}
         </>
         
     )

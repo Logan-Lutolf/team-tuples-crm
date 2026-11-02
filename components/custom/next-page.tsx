@@ -14,8 +14,6 @@ function buildHref(searchParams: URLSearchParams, pathName: string, bookmark: st
 export function NextPage({bookmark}: {bookmark: string}) {
     const searchParams = useSearchParams()
     const pathName = usePathname()
-    
-
 
     return (
         <PaginationNext href={buildHref(searchParams, pathName, bookmark, "next")}/>
