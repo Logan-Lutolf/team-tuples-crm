@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { createEmployee, editEmployee } from "../actions"
 import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
+import { showToast } from "@/lib/utils"
 
 const roles = [
     { label: "Admin", value: "ADMIN" },
@@ -34,8 +35,13 @@ interface EditEmployeeFormProps {
 // TODO: Add form validation
 export function EditEmployeeForm({name, email, phone, role, onSuccess}: EditEmployeeFormProps) {    // Add actual type later T_T
     async function handleSubmit(formData: FormData) { 
-            await editEmployee(formData)
-            onSuccess?.()
+            const result = await editEmployee(formData)
+            if (result.success) {
+                showToast("Employee Updated", "Employee has been updated successfully.")
+                onSuccess?.()
+            } else {
+                showToast("Failed to Update Employee", result.message)
+            }
     }
 
     return (

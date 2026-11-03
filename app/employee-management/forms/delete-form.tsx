@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Toaster, toast } from "@/components/ui/toast";
+import { showToast } from "@/lib/utils";
 
 
 
@@ -16,12 +17,7 @@ interface DeleteEmployeeFormProps {
 }
 
 export function DeleteEmployeeForm({ employeeId, employeeName, onSuccess }: DeleteEmployeeFormProps) {
-    function showToast(title: string, description: string) {
-        const toaster = toast.add({
-            title: title,
-            description: description,
-        });
-    }
+    
     
     async function handleSubmit(formData: FormData) {
         if (formData.get("confirm-delete") !== "delete") {

@@ -18,7 +18,7 @@ export async function createEmployee(formData: FormData) {
     
     if (name == null || email == null){
         console.log("Create employee failed: name or email is null")
-        return
+        return {success: false, message: "Failed to create employee. Invalid name or email."}
     }
     
     try {
@@ -50,7 +50,7 @@ export async function editEmployee(formData: FormData) {
 
     if (name == null || email == null){
         console.log("Update employee failed: name or email is null")
-        return {success: false, message: "Name or email cannot be null."}
+        return {success: false, message: "Update employee failed. Name or email cannot be null."}
     }
 
     try {
@@ -68,12 +68,13 @@ export async function editEmployee(formData: FormData) {
             revalidatePath("/employee-management")
             return {success: true, message: "Employee updated successfully."}
         }
+        else
+            return {success: false, message: "Update employee failed. Employee not found."}
     }
     catch (error) {
         console.log("Update employee failed: ", error)
         return {success: false, message: "Failed to update employee."}
     }
-
 }
 
 export async function deleteEmployee(formData: FormData) {

@@ -6,6 +6,7 @@ import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createEmployee } from "../actions"
+import { showToast } from "@/lib/utils"
 
 const roles = [
     { label: "Admin", value: "ADMIN" },
@@ -16,11 +17,26 @@ const roles = [
     { label: "Newsletter Coordinator", value: "NEWSLETTER_COORDINATOR" },
 ]
 
+interface AddEmployeeFormProps {
+    onSuccess?: () => void
+}
 
 // TODO: Add form validation
-export function AddEmployeeForm() {    
+export function AddEmployeeForm({ onSuccess }: AddEmployeeFormProps) {    
+    async function handleSubmit(formData: FormData) {
+        const result = await createEmployee(formData)
+        if (result.success == true) {
+            showToast("Employee Created", `Employee has been created successfully.`)
+            onSuccess?.()
+        }
+        else {
+            showToast("Failed to Create Employee", result.message)
+            return
+        }
+    }
+
     return (
-        <form className="flex flex-col gap-3" action={createEmployee}>
+        <form className="flex flex-col gap-3" action={handleSubmit}>
             <Field>
                 <FieldLabel htmlFor="full-name">Full Name</FieldLabel>
                 <Input 
