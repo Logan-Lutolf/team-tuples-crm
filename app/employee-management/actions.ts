@@ -27,11 +27,6 @@ export async function createEmployee(formData: FormData) {
             email: email,
             phone: phone,
             role: role,
-            address: {   // This shouldn't be required by prisma contract; look into this
-                street: '',
-                city: '',
-                zipCode: ''
-            }
         })
 
         if(employee)
