@@ -86,6 +86,55 @@
               }
             ]
           },
+          "ContactRole": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "TEACHER",
+                "value": "TEACHER"
+              },
+              {
+                "name": "PRINCIPAL",
+                "value": "PRINCIPAL"
+              },
+              {
+                "name": "SCHOOL_COORDINATOR",
+                "value": "SCHOOL_COORDINATOR"
+              },
+              {
+                "name": "STUDENT",
+                "value": "STUDENT"
+              },
+              {
+                "name": "HISTORIAN",
+                "value": "HISTORIAN"
+              },
+              {
+                "name": "GOVERNMENT_OFFICIAL",
+                "value": "GOVERNMENT_OFFICIAL"
+              },
+              {
+                "name": "DONOR",
+                "value": "DONOR"
+              },
+              {
+                "name": "SPONSOR",
+                "value": "SPONSOR"
+              },
+              {
+                "name": "PARTNER",
+                "value": "PARTNER"
+              },
+              {
+                "name": "VOLUNTEER",
+                "value": "VOLUNTEER"
+              },
+              {
+                "name": "OTHER",
+                "value": "OTHER"
+              }
+            ]
+          },
           "ProgramStatus": {
             "codecId": "pg/text@1",
             "members": [
@@ -341,11 +390,17 @@
                   "kind": "scalar"
                 }
               },
-              "branchRole": {
+              "contactRole": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ContactRole",
+                  "namespaceId": "public",
+                  "plane": "domain"
                 }
               },
               "createdAt": {
@@ -417,13 +472,6 @@
                   "kind": "scalar"
                 }
               },
-              "subject": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
               "updatedAt": {
                 "nullable": false,
                 "type": {
@@ -490,8 +538,8 @@
                 "branchId": {
                   "column": "branchId"
                 },
-                "branchRole": {
-                  "column": "branchRole"
+                "contactRole": {
+                  "column": "contactRole"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -519,9 +567,6 @@
                 },
                 "schoolId": {
                   "column": "schoolId"
-                },
-                "subject": {
-                  "column": "subject"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -1103,6 +1148,13 @@
                   "kind": "scalar"
                 }
               },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "email": {
                 "nullable": false,
                 "type": {
@@ -1168,6 +1220,13 @@
                   "entityName": "SchoolType",
                   "namespaceId": "public",
                   "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
                 }
               }
             },
@@ -1242,6 +1301,9 @@
                 "branchId": {
                   "column": "branchId"
                 },
+                "createdAt": {
+                  "column": "createdAt"
+                },
                 "email": {
                   "column": "email"
                 },
@@ -1262,6 +1324,9 @@
                 },
                 "type": {
                   "column": "type"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
                 }
               },
               "namespaceId": "public",
@@ -1391,16 +1456,16 @@
               "columns": {
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "name": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -1411,7 +1476,7 @@
                 },
                 "region": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -1433,6 +1498,11 @@
             "Contact": {
               "checks": [
                 {
+                  "expression": "\"contactRole\" IN ('TEACHER', 'PRINCIPAL', 'SCHOOL_COORDINATOR', 'STUDENT', 'HISTORIAN', 'GOVERNMENT_OFFICIAL', 'DONOR', 'SPONSOR', 'PARTNER', 'VOLUNTEER', 'OTHER')",
+                  "name": "Contact_contactRole_check_f2942349",
+                  "prefix": "Contact_contactRole_check"
+                },
+                {
                   "expression": "\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN')",
                   "name": "Contact_region_check_de154a3d",
                   "prefix": "Contact_region_check"
@@ -1441,69 +1511,75 @@
               "columns": {
                 "address": {
                   "codecId": "pg/jsonb@1",
-                  "nativeType": "jsonb",
+                  "dataType": "pg/jsonb",
                   "nullable": true
                 },
                 "branchId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
-                "branchRole": {
+                "contactRole": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ContactRole",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "email": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "last_contacted": {
                   "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "last_contacted_byId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": true
                 },
                 "name": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "phone": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "region": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -1514,22 +1590,20 @@
                 },
                 "schoolId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": true
-                },
-                "subject": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/int4",
                   "nullable": true
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
+                  "dataType": "pg/timestamptz",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "Contact_last_contacted_byId_idx_ee2c3f80"
+                  },
                   "source": {
                     "columns": [
                       "last_contacted_byId"
@@ -1546,6 +1620,9 @@
                   }
                 },
                 {
+                  "index": {
+                    "name": "Contact_schoolId_idx_82b454d7"
+                  },
                   "source": {
                     "columns": [
                       "schoolId"
@@ -1562,6 +1639,9 @@
                   }
                 },
                 {
+                  "index": {
+                    "name": "Contact_branchId_idx_d04da5bb"
+                  },
                   "source": {
                     "columns": [
                       "branchId"
@@ -1633,54 +1713,54 @@
               "columns": {
                 "address": {
                   "codecId": "pg/jsonb@1",
-                  "nativeType": "jsonb",
+                  "dataType": "pg/jsonb",
                   "nullable": true
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "email": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "is_online": {
                   "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
                   "default": {
                     "kind": "literal",
                     "value": false
                   },
-                  "nativeType": "bool",
                   "nullable": false
                 },
                 "name": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "phone": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "region": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -1691,7 +1771,7 @@
                 },
                 "role": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -1702,7 +1782,7 @@
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
+                  "dataType": "pg/timestamptz",
                   "nullable": false
                 }
               },
@@ -1725,21 +1805,21 @@
               "columns": {
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "mayor": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "name": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 }
               },
@@ -1756,17 +1836,20 @@
               "columns": {
                 "municipalityId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "programId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "MunicipalityPrograms_programId_idx_4e50c706"
+                  },
                   "source": {
                     "columns": [
                       "programId"
@@ -1783,6 +1866,9 @@
                   }
                 },
                 {
+                  "index": {
+                    "name": "MunicipalityPrograms_municipalityId_idx_0a7c35cd"
+                  },
                   "source": {
                     "columns": [
                       "municipalityId"
@@ -1836,40 +1922,40 @@
               "columns": {
                 "endDate": {
                   "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
+                  "dataType": "pg/timestamptz",
                   "nullable": true
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "programId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "schoolId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "startDate": {
                   "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
+                  "dataType": "pg/timestamptz",
                   "nullable": false
                 },
                 "status": {
                   "codecId": "pg/text@1",
+                  "dataType": "pg/text",
                   "default": {
                     "kind": "literal",
                     "value": "PLANNED"
                   },
-                  "nativeType": "text",
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -1881,6 +1967,9 @@
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "Participation_schoolId_idx_82b454d7"
+                  },
                   "source": {
                     "columns": [
                       "schoolId"
@@ -1897,6 +1986,9 @@
                   }
                 },
                 {
+                  "index": {
+                    "name": "Participation_programId_idx_4e50c706"
+                  },
                   "source": {
                     "columns": [
                       "programId"
@@ -1942,17 +2034,20 @@
               "columns": {
                 "employeeId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "participationId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "ParticipationEmployees_participationId_idx_1840362d"
+                  },
                   "source": {
                     "columns": [
                       "participationId"
@@ -1969,6 +2064,9 @@
                   }
                 },
                 {
+                  "index": {
+                    "name": "ParticipationEmployees_employeeId_idx_087dd4a6"
+                  },
                   "source": {
                     "columns": [
                       "employeeId"
@@ -2015,35 +2113,35 @@
               "columns": {
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
                   },
-                  "nativeType": "timestamptz",
                   "nullable": false
                 },
                 "description": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "id": {
                   "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
                   "default": {
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nativeType": "int4",
                   "nullable": false
                 },
                 "name": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
+                  "dataType": "pg/timestamptz",
                   "nullable": false
                 }
               },
@@ -2077,37 +2175,46 @@
               "columns": {
                 "address": {
                   "codecId": "pg/jsonb@1",
-                  "nativeType": "jsonb",
+                  "dataType": "pg/jsonb",
                   "nullable": false
                 },
                 "branchId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nullable": false
                 },
                 "email": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "name": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "phone": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": true
                 },
                 "region": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -2118,7 +2225,7 @@
                 },
                 "relationship": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -2129,7 +2236,7 @@
                 },
                 "type": {
                   "codecId": "pg/text@1",
-                  "nativeType": "text",
+                  "dataType": "pg/text",
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -2137,10 +2244,18 @@
                     "namespaceId": "public",
                     "plane": "storage"
                   }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "School_branchId_idx_d04da5bb"
+                  },
                   "source": {
                     "columns": [
                       "branchId"
@@ -2184,17 +2299,20 @@
               "columns": {
                 "employeeId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 },
                 "schoolId": {
                   "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                  "dataType": "pg/int4",
                   "nullable": false
                 }
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "SchoolEmployees_schoolId_idx_82b454d7"
+                  },
                   "source": {
                     "columns": [
                       "schoolId"
@@ -2211,6 +2329,9 @@
                   }
                 },
                 {
+                  "index": {
+                    "name": "SchoolEmployees_employeeId_idx_087dd4a6"
+                  },
                   "source": {
                     "columns": [
                       "employeeId"
@@ -2266,6 +2387,22 @@
                 "SIX",
                 "SEVEN",
                 "EIGHT"
+              ]
+            },
+            "ContactRole": {
+              "kind": "valueSet",
+              "values": [
+                "TEACHER",
+                "PRINCIPAL",
+                "SCHOOL_COORDINATOR",
+                "STUDENT",
+                "HISTORIAN",
+                "GOVERNMENT_OFFICIAL",
+                "DONOR",
+                "SPONSOR",
+                "PARTNER",
+                "VOLUNTEER",
+                "OTHER"
               ]
             },
             "ProgramStatus": {
@@ -2331,10 +2468,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "fd110db52d3709a08f72a58242b1e0cb968cfff46a57823c333625af66e874db"
+    "storageHash": "02a67ceb529292d67a3b62ee0492bca676f4642bdfffd6930837f985bc0e8552"
   },
   "execution": {
-    "executionHash": "0fd40b19d5bd8a8d2527a8f9a4030d8f7fe0634840abb04486573b61d0f5386b",
+    "executionHash": "49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353",
     "mutations": {
       "defaults": [
         {
@@ -2347,9 +2484,9 @@
             "kind": "generator"
           },
           "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "Contact"
+            "entry": "Contact",
+            "field": "updatedAt",
+            "namespace": "public"
           }
         },
         {
@@ -2362,9 +2499,9 @@
             "kind": "generator"
           },
           "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "Employee"
+            "entry": "Employee",
+            "field": "updatedAt",
+            "namespace": "public"
           }
         },
         {
@@ -2377,9 +2514,24 @@
             "kind": "generator"
           },
           "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "Program"
+            "entry": "Program",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "School",
+            "field": "updatedAt",
+            "namespace": "public"
           }
         }
       ]
@@ -2388,6 +2540,8 @@
   "capabilities": {
     "postgres": {
       "distinctOn": true,
+      "forKeyShare": true,
+      "forNoKeyUpdate": true,
       "jsonAgg": true,
       "lateral": true,
       "limit": true,
@@ -2398,9 +2552,14 @@
       "checkConstraint": true,
       "defaultInInsert": true,
       "enums": true,
+      "forShare": true,
+      "forUpdate": true,
       "insertOnConflictSkip": true,
       "insertOnConflictWithoutTarget": true,
       "lateral": true,
+      "lockNowait": true,
+      "lockOf": true,
+      "lockSkipLocked": true,
       "returning": true,
       "scalarList": true
     }

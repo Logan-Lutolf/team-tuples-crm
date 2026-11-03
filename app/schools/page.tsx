@@ -10,6 +10,7 @@ import { DefaultModelRow } from "@prisma/orm-postgres/orm-client";
 import { Filter } from "lucide-react";
 import { Search } from "@/components/custom/search";
 import { SchoolTableContainer } from "./school-table-container";
+import { Suspense } from "react";
 
 
 // Add pagination to employee list
@@ -54,7 +55,9 @@ export default async function EmployeeManagementPage(
             
             <Search placeholder={""}/>
 
-            <SchoolTableContainer query={query} page={currentPage} />
+            <Suspense key={`${query}:${currentPage}`} fallback={<p role="status">Loading schools…</p>}>
+                <SchoolTableContainer query={query} page={currentPage} />
+            </Suspense>
 
             <Pagination>
                 <PaginationContent>
