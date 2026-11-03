@@ -2,20 +2,6 @@
 
 import { createColumnHelper } from "@tanstack/react-table"
 import { type DataTableFeatures } from "../../../components/ui/data-table-features"
-import { MoreHorizontal, Pencil, Trash, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { EditEmployeeForm } from "../forms/edit-employee-form"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
-import { useState } from "react"
 import { ActionsCell } from "./actions-cell"
 
 export type Employee = {
