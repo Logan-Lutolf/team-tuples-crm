@@ -5,7 +5,6 @@ import { deleteEmployee } from "../actions";
 import { Input } from "@/components/ui/input";
 import { DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Toaster, toast } from "@/components/ui/toast";
 import { showToast } from "@/lib/utils";
 
 
@@ -21,7 +20,7 @@ export function DeleteEmployeeForm({ employeeId, employeeName, onSuccess }: Dele
     
     async function handleSubmit(formData: FormData) {
         if (formData.get("confirm-delete") !== "delete") {
-            showToast("Invalid Confirmation", "Please type 'delete' to confirm deletion.")
+            showToast("Invalid Confirmation", "Please type 'delete' to confirm deletion.", "warning");
             return;
         }
         else {
@@ -29,7 +28,7 @@ export function DeleteEmployeeForm({ employeeId, employeeName, onSuccess }: Dele
             if (result.success) {
                 showToast("Employee Deleted", `Employee ${employeeName} has been deleted successfully.`);
             } else {
-                showToast("Delete Failed", result.message);
+                showToast("Delete Failed", result.message, "error");
             }
             onSuccess?.();
         }

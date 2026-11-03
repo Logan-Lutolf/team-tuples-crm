@@ -40,7 +40,7 @@ export function EditEmployeeForm({name, email, phone, role, onSuccess}: EditEmpl
                 showToast("Employee Updated", "Employee has been updated successfully.")
                 onSuccess?.()
             } else {
-                showToast("Failed to Update Employee", result.message)
+                showToast("Failed to Update Employee", result.message, "error")
             }
     }
 

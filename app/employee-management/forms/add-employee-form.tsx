@@ -30,7 +30,7 @@ export function AddEmployeeForm({ onSuccess }: AddEmployeeFormProps) {
             onSuccess?.()
         }
         else {
-            showToast("Failed to Create Employee", result.message)
+            showToast("Failed to Create Employee", result.message, "error")
             return
         }
     }
