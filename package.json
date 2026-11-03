@@ -10,11 +10,14 @@
     "lint": "eslint",
     "seed": "node --env-file-if-exists=.env.local lib/seed.ts",
     "postinstall": "prisma skills sync || exit 0",
-    "contract:emit": "prisma contract emit"
+    "contract:emit": "prisma contract emit",
+    "db:migrate": "node --env-file-if-exists=.env.local node_modules/prisma/dist/prisma.js db migrate",
+    "db:migrate:preview": "npm run db:migrate -- --show",
+    "db:migrations:check": "node --env-file-if-exists=.env.local node_modules/prisma/dist/prisma.js migration check"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
-    "@prisma/orm-postgres": "^8.0.0-rc.12",
+    "@prisma/orm-postgres": "8.0.0-rc.17",
     "@tanstack/react-form": "^1.33.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -33,14 +36,14 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.6.0",
-    "@prisma/cli-engine": "^0.6.1",
+    "@prisma/cli-engine": "0.7.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
-    "prisma": "^8.0.0-rc.17",
+    "prisma": "8.0.0-rc.22",
     "typescript": "^5"
   }
 }

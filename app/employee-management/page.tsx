@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Search } from "@/components/custom/search";
 import { EmployeeTableContainer } from "./employee-table-container";
+import { Suspense } from "react";
 
 
 export default async function EmployeeManagementPage(
@@ -27,7 +28,9 @@ export default async function EmployeeManagementPage(
             <Search placeholder={""}/>
 
             <div className="min-w-0 overflow-auto">
-                <EmployeeTableContainer search={search} cursor={cursor} dir={dir} />
+                <Suspense key={query} fallback={<p role="status">Loading employees…</p>}>
+                    <EmployeeTableContainer query={query} page={1} />
+                </Suspense>
             </div>
         
         </div>

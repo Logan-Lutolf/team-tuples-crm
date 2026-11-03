@@ -2,7 +2,7 @@ import type { Scalars } from "@prisma/orm-postgres/components"
 import type { Models } from "@/prisma/contract"
 
 export type SchoolContact = Pick<Scalars<Models.public_Contact>,
-    "id" | "name" | "email" | "phone" | "branchRole" | "subject">
+    "id" | "name" | "email" | "phone" | "contactRole">
 
 export type Option = { id: number; name: string }
 

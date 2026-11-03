@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { TopNavbar } from "@/components/top-navbar";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -35,7 +36,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>    
       <body className="min-h-full flex">
         < Navbar />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <TopNavbar />
           {children}
+        </div>
         <Toaster />
       </body>
     </html>

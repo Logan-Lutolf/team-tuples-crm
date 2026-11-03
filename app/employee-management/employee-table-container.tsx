@@ -37,8 +37,11 @@ export async function EmployeeTableContainer({search, cursor, dir} : EmployeeTab
     const nextBookmark = last ? last.createdAt + "|" + last.id.toString() : ""
 
     
-
-    
+    const pattern = `%${query.replace(/[\\%_]/g, "\\$&")}%`
+    const employeeQuery = query
+        ? db.orm.public.Employee.where((employee) => employee.name.ilike(pattern))
+        : db.orm.public.Employee
+    const employees = await employeeQuery.all().toArray()
 
     return (
         <>
