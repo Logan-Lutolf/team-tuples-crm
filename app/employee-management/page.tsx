@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Search } from "@/components/custom/search";
 import { EmployeeTableContainer } from "./employee-table-container";
 import { Suspense } from "react";
+import SkeletonTable from "./loading";
 
 
 export default async function EmployeeManagementPage(
@@ -26,7 +27,7 @@ export default async function EmployeeManagementPage(
             <Search placeholder={""}/>
 
             <div className="min-w-0 overflow-auto">
-                <Suspense key={search} fallback={<p role="status">Loading employees…</p>}>
+                <Suspense key={search} fallback={<SkeletonTable />}>
                     <EmployeeTableContainer search={search} />
                 </Suspense>
             </div>

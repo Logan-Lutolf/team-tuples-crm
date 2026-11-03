@@ -1,6 +1,8 @@
 import { db } from "@/prisma/db";
 import { columns } from "./table/columns"
+import { columns as skeletonColumns} from "@/components/custom/loading/loading-columns" 
 import { DataTable } from "@/components/ui/data-table";
+import { LoadingDataTable } from "@/components/custom/loading/loading-data-table";
 
 interface EmployeeTableContainerProps {
     search?: string | undefined
