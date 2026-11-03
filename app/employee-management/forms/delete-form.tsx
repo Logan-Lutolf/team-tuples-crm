@@ -5,6 +5,8 @@ import { deleteEmployee } from "../actions";
 import { Input } from "@/components/ui/input";
 import { DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Toaster, toast } from "@/components/ui/toast";
+
 
 
 interface DeleteEmployeeFormProps {
@@ -14,9 +16,27 @@ interface DeleteEmployeeFormProps {
 }
 
 export function DeleteEmployeeForm({ employeeId, employeeName, onSuccess }: DeleteEmployeeFormProps) {
+    function showToast(title: string, description: string) {
+        const toaster = toast.add({
+            title: title,
+            description: description,
+        });
+    }
+    
     async function handleSubmit(formData: FormData) {
-        await deleteEmployee(formData);
-        onSuccess?.();
+        if (formData.get("confirm-delete") !== "delete") {
+            showToast("Invalid Confirmation", "Please type 'delete' to confirm deletion.")
+            return;
+        }
+        else {
+            const result = await deleteEmployee(formData);
+            if (result.success) {
+                showToast("Employee Deleted", `Employee ${employeeName} has been deleted successfully.`);
+            } else {
+                showToast("Delete Failed", result.message);
+            }
+            onSuccess?.();
+        }
     }
     
     return(

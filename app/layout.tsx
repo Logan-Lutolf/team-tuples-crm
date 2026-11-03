@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 import { Navbar } from "@/components/navbar";
-import { Toaster } from "react-hot-toast"
 import "./globals.css";
+import { ToastProvider, Toaster } from "@/components/ui/toast";
 
 
 const geistSans = Geist({
@@ -34,13 +34,15 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} h-full antialiased`}>    
-      <body className="min-h-full flex">
-        < Navbar />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <TopNavbar />
-          {children}
-        </div>
-        <Toaster />
+      <body className="min-h-full flex">  
+        <ToastProvider>
+          < Navbar />
+          <div className="flex min-w-0 flex-1 flex-col">
+            <TopNavbar />
+            {children}
+            <Toaster />
+          </div>
+        </ToastProvider>
       </body>
     </html>
   );

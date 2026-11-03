@@ -87,8 +87,10 @@ export async function deleteEmployee(formData: FormData) {
         if (deleted)
             console.log("Deletion successful.")
             revalidatePath("/employee-management")
+            return {success: true, message: "Employee deleted successfully."}
     }
     catch (error) {
         console.log("Delete employee failed: ", error)
+        return {success: false, message: "Failed to delete employee."}
     }
 }
