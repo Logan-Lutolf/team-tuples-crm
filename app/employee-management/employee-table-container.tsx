@@ -1,5 +1,7 @@
 import { db } from "@/prisma/db";
 import { EmployeeTable } from "./employee-table"
+import { columns } from "./table/columns"
+import { DataTable } from "@/components/ui/data-table";
 
 interface EmployeeTableContainerProps {
     search?: string | undefined
@@ -21,7 +23,7 @@ export async function EmployeeTableContainer({search, cursor, dir} : EmployeeTab
 
     return (
         <>
-            <EmployeeTable data={employees}/>
+            <DataTable columns={columns} data={employees} />
         </>
         
     )

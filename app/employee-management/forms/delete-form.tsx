@@ -10,11 +10,17 @@ import { Button } from "@/components/ui/button";
 interface DeleteEmployeeFormProps {
     employeeId: number;
     employeeName: string;
+    onSuccess?: () => void;
 }
 
-export function DeleteEmployeeForm({ employeeId, employeeName }: DeleteEmployeeFormProps) {
+export function DeleteEmployeeForm({ employeeId, employeeName, onSuccess }: DeleteEmployeeFormProps) {
+    async function handleSubmit(formData: FormData) {
+        await deleteEmployee(formData);
+        onSuccess?.();
+    }
+    
     return(
-        <form action={deleteEmployee}>
+        <form action={handleSubmit}>
             <Input type="hidden" name="employee-id" value={employeeId} />
             <Field>
                 <FieldLabel>
@@ -28,7 +34,7 @@ export function DeleteEmployeeForm({ employeeId, employeeName }: DeleteEmployeeF
             </Field>
             <div className="flex flex-row justify-end gap-4 mt-3">
                 <DialogClose render={<Button>Cancel</Button>}/>
-                <DialogClose render={<Button type='submit' variant={"destructive"}>Delete</Button>}/>
+                <Button type='submit' variant={"destructive"}>Delete</Button>
             </div>
             
         </form>
