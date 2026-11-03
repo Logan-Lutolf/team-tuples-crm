@@ -199,7 +199,7 @@ model Program {
   updatedAt temporal.updatedAtString()
 }
 
- 
+
 model Branch {
   id Int @id @default(autoincrement())
   name Branches
