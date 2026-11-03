@@ -18,7 +18,7 @@ export async function createEmployee(formData: FormData) {
     
     if (name == null || email == null){
         console.log("Create employee failed: name or email is null")
-        return
+        return {success: false, message: "Failed to create employee. Invalid name or email."}
     }
     
     try {
@@ -27,21 +27,18 @@ export async function createEmployee(formData: FormData) {
             email: email,
             phone: phone,
             role: role,
-            address: {   // This shouldn't be required by prisma contract; look into this
-                street: '',
-                city: '',
-                zipCode: ''
-            }
         })
 
         if(employee)
             console.log("Create employee successful.")
             revalidatePath("/employee-management")
+            return {success: true, message: "Employee created successfully."}
 
         
     }
     catch (error) {
         console.log("Create employee failed: ", error)
+        return {success: false, message: "Failed to create employee."}
     }
 }
 
@@ -53,7 +50,7 @@ export async function editEmployee(formData: FormData) {
 
     if (name == null || email == null){
         console.log("Update employee failed: name or email is null")
-        return
+        return {success: false, message: "Update employee failed. Name or email cannot be null."}
     }
 
     try {
@@ -69,12 +66,15 @@ export async function editEmployee(formData: FormData) {
         if (employee) {
             console.log("Edit employee successful.")
             revalidatePath("/employee-management")
+            return {success: true, message: "Employee updated successfully."}
         }
+        else
+            return {success: false, message: "Update employee failed. Employee not found."}
     }
     catch (error) {
-        console.log("Update employee faield: ", error)
+        console.log("Update employee failed: ", error)
+        return {success: false, message: "Failed to update employee."}
     }
-
 }
 
 export async function deleteEmployee(formData: FormData) {
@@ -92,8 +92,10 @@ export async function deleteEmployee(formData: FormData) {
         if (deleted)
             console.log("Deletion successful.")
             revalidatePath("/employee-management")
+            return {success: true, message: "Employee deleted successfully."}
     }
     catch (error) {
         console.log("Delete employee failed: ", error)
+        return {success: false, message: "Failed to delete employee."}
     }
 }

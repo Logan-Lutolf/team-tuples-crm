@@ -4,17 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Search } from "@/components/custom/search";
 import { EmployeeTableContainer } from "./employee-table-container";
 import { Suspense } from "react";
+import SkeletonTable from "./loading";
 
 
 export default async function EmployeeManagementPage(
     {searchParams} : {
-        searchParams?: Promise<{ search?: string; cursor?: string; dir?: string}>
+        searchParams?: Promise<{ search?: string; cursor?: string; dir?: "prev" | "next"}>
     }
 ) {
     const params = await searchParams
     const search = params?.search ?? undefined
-    const cursor = params?.cursor ?? undefined
-    const dir = params?.dir === "prev" ? "prev" : "next"
 
     return (
         <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
@@ -28,8 +27,8 @@ export default async function EmployeeManagementPage(
             <Search placeholder={""}/>
 
             <div className="min-w-0 overflow-auto">
-                <Suspense key={query} fallback={<p role="status">Loading employees…</p>}>
-                    <EmployeeTableContainer query={query} page={1} />
+                <Suspense key={search} fallback={<SkeletonTable />}>
+                    <EmployeeTableContainer search={search} />
                 </Suspense>
             </div>
         

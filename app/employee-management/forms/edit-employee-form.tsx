@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { createEmployee, editEmployee } from "../actions"
 import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
+import { showToast } from "@/lib/utils"
 
 const roles = [
     { label: "Admin", value: "ADMIN" },
@@ -26,21 +27,34 @@ interface EditEmployeeFormProps {
     email: string
     phone: string,
     role: Role
+    onSuccess?: () => void
 }
 
 
 
 // TODO: Add form validation
-export function EditEmployeeForm(employee: EditEmployeeFormProps) {    // Add actual type later T_T
+export function EditEmployeeForm({name, email, phone, role, onSuccess}: EditEmployeeFormProps) {    // Add actual type later T_T
+    async function handleSubmit(formData: FormData) { 
+            const result = await editEmployee(formData)
+            if (result.success) {
+                showToast("Employee Updated", "Employee has been updated successfully.")
+                onSuccess?.()
+            } else {
+                showToast("Failed to Update Employee", result.message)
+            }
+    }
+
     return (
-        <form className="flex flex-col gap-3" action={editEmployee}>
+        
+
+        <form className="flex flex-col gap-3" action={handleSubmit}>
             <Field>
                 <FieldLabel htmlFor="full-name">Full Name</FieldLabel>
                 <Input 
                     name="full-name"
                     type="text"
                     required
-                    defaultValue={employee.name}
+                    defaultValue={name}
                 />
             </Field>
 
@@ -49,7 +63,7 @@ export function EditEmployeeForm(employee: EditEmployeeFormProps) {    // Add ac
                 <Input 
                     name="email"
                     type="email"
-                    defaultValue={employee.email}
+                    defaultValue={email}
                     required
                 />
             </Field>
@@ -59,13 +73,13 @@ export function EditEmployeeForm(employee: EditEmployeeFormProps) {    // Add ac
                 <Input 
                     name="phone-num"
                     type="text"
-                    defaultValue={employee.phone}
+                    defaultValue={phone}
                 />
             </Field>
 
             <Field>
                 <FieldLabel htmlFor="role">Role</FieldLabel>
-                <Select items={roles} defaultValue={employee.role} name="role">
+                <Select items={roles} defaultValue={role} name="role">
                     <SelectTrigger>
                         <SelectValue />
                     </SelectTrigger>
@@ -82,7 +96,7 @@ export function EditEmployeeForm(employee: EditEmployeeFormProps) {    // Add ac
                 </Select>
             </Field>
 
-            <DialogClose render={<Button type="submit">Submit</Button>}/>
+            <Button type="submit">Submit</Button>
         </form>
     )
 }

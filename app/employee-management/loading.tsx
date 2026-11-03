@@ -1,3 +1,8 @@
-export default function Loading() {
-    return <p role="status" className="m-10">Loading employees…</p>
+import { columns } from "./table/columns"
+import { LoadingDataTable } from "@/components/custom/loading/loading-data-table"
+
+export default function SkeletonTable() {
+    return (
+        <LoadingDataTable columns={columns} data={[]} />
+    )
 }
