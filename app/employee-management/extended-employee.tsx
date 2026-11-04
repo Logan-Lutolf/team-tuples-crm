@@ -1,8 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { Avatar } from "@/components/ui/avatar";
 
-import { SmallContactTableContainer } from "./small-contact-table-container";
-
 
 interface ExtendedEmployeeProps {
     id: number
@@ -35,7 +33,7 @@ export function ExtendedEmployee(props: ExtendedEmployeeProps) {
             <Separator orientation="vertical"/>
 
             <div className="flex flex-col gap-4">
-                <SmallContactTableContainer employeeId={props.id}/>
+                
             </div>
         </div>
     )

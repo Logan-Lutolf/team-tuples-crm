@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
+import { TopNavbar } from "@/components/top-navbar";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 import { Navbar } from "@/components/navbar";
-import { Toaster } from "react-hot-toast"
 import "./globals.css";
+import { ToastProvider, Toaster } from "@/components/ui/toast";
 
 
 const geistSans = Geist({
@@ -32,11 +33,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>    
-      <body className="min-h-full flex">
-        < Navbar />
-          {children}
-        <Toaster />
+      className={`${inter.variable} h-full antialiased`}>    
+      <body className="min-h-full flex">  
+        <ToastProvider>
+          < Navbar />
+          <div className="flex min-w-0 flex-1 flex-col">
+            <TopNavbar />
+            {children}
+            <Toaster />
+          </div>
+        </ToastProvider>
       </body>
     </html>
   );

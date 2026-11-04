@@ -1,5 +1,3 @@
-
-
 export default async function Home() {
   // switch to better auth
   // const user = await hexclaveServerApp.getUser();
@@ -7,7 +5,7 @@ export default async function Home() {
   // get recommended schools, programs, contacts, etc. here
 
   return (
-    <main>
+    <main className="flex-1">
       <div>
         {/* 
         {user ? <section>

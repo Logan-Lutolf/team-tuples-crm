@@ -14,6 +14,7 @@ export function Search({placeholder}: {placeholder: string}) {
     function handleSearch(term: string) {
         const params = new URLSearchParams(searchParams)
         params.delete('cursor')
+        params.delete('dir')
 
         if (term) params.set('search', term)
         else params.delete('search')
