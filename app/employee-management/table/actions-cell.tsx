@@ -10,16 +10,16 @@ import { toast } from "@/components/ui/toast"
 type Role = "ADMIN" | "WORKSHOPS_COORDINATOR" | "SCHOOL_NETWORK_COORDINATOR" | "STORIES_OF_OUR_NEIGHBORS_COORDINATOR" | "VETERANS_DAY_COORDINATOR" | "NEWSLETTER_COORDINATOR"
 
 
-export function ActionsCell({employee}: {employee: { id: number, name: string, email: string, role: Role}}) {
+export function ActionsCell({employee}: {employee: { id: number, name: string, email: string, role: string, phone: string | null, globalRoles: string[]}}) {
     const [editOpen, setEditOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
             return (
-                /* 
+                /*
                     View profile will be a link to the employee's profile page using dynamic routes in Nextjs
                 */
             <>
                 <DropdownMenu>
-                    <DropdownMenuTrigger 
+                    <DropdownMenuTrigger
                         render={<Button variant="ghost" className="h-8 w-8 p-0">
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>}
@@ -50,12 +50,13 @@ export function ActionsCell({employee}: {employee: { id: number, name: string, e
                 {editOpen && (
                     <Dialog open={editOpen} onOpenChange={setEditOpen}>
                         <DialogContent>
-                            <EditEmployeeForm 
+                            <EditEmployeeForm
                                 name={employee.name}
                                 email={employee.email}
-                                role={employee.role}
-                                phone={""}    
-                                onSuccess={setEditOpen.bind(null, false)}                                
+                                id={employee.id}
+                                globalRoles={employee.globalRoles}
+                                phone={employee.phone ?? ""}
+                                onSuccess={setEditOpen.bind(null, false)}
                             />
                         </DialogContent>
                     </Dialog>
@@ -63,10 +64,10 @@ export function ActionsCell({employee}: {employee: { id: number, name: string, e
                 {deleteOpen && (
                     <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                         <DialogContent>
-                            <DeleteEmployeeForm 
+                            <DeleteEmployeeForm
                                     employeeName={employee.name}
-                                    onSuccess={setDeleteOpen.bind(null, false)} 
-                                    employeeId={employee.id}                            
+                                    onSuccess={setDeleteOpen.bind(null, false)}
+                                    employeeId={employee.id}
                             />
                         </DialogContent>
                     </Dialog>

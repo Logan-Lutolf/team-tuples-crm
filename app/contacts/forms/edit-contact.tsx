@@ -100,6 +100,10 @@ export function EditContactForm(contact: EditContactFormProps) {    // Add actua
                 <FieldLabel htmlFor="city">City</FieldLabel>
                 <Input id="city" name="city" defaultValue={contact.address?.city ?? ""}/>
             </Field>
+            <Field>
+                <FieldLabel htmlFor="country">Country</FieldLabel>
+                <Input id="country" name="country" defaultValue={contact.address?.country ?? ""} />
+            </Field>
 
             <Field>
                 <FieldLabel htmlFor="zipCode">Postal code</FieldLabel>

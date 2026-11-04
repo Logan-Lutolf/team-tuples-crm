@@ -9,11 +9,12 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
     editSchool, addSchoolContact, removeSchoolContact,
-    addSchoolEmployee, removeSchoolEmployee,
+
     createSchoolParticipation, editSchoolParticipation, deleteSchoolParticipation,
 } from "./actions_schools"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import type { Option, SchoolContact, SchoolEmployee } from "./school-form-types"
+import { SchoolInteractions } from "./school-interactions"
+import type { Option, SchoolContact, SchoolEmployee, SchoolInteraction } from "./school-form-types"
 import type { Scalars } from "@prisma/orm-postgres/components"
 import type { Models } from "@/prisma/contract"
 
@@ -54,7 +55,7 @@ type Region = SchoolFields["region"]
 type SchoolType = SchoolFields["type"]
 type Relationship = SchoolFields["relationship"]
 type Participation = Pick<Scalars<Models.public_Participation>,
-    "id" | "programId" | "startDate" | "endDate" | "status"> & { employees: SchoolEmployee[] }
+    "id" | "name" | "programId" | "startDate" | "endDate" | "status"> & { employees: SchoolEmployee[] }
 
 interface EditSchoolFormProps {
     participationAsOf: number
@@ -68,6 +69,7 @@ interface EditSchoolFormProps {
     address: SchoolFields["address"], 
     branchId: SchoolFields["branchId"]
     branches: { id: number; name: string }[]
+    interactions: SchoolInteraction[]
     contacts: SchoolContact[]
     availableContacts: Option[] // Contacts not assigned to any school.
     employees: SchoolEmployee[] // Assigned employee records, rather than join records.
@@ -122,6 +124,10 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
             <Field>
                 <FieldLabel htmlFor="city">City</FieldLabel>
                 <Input id="city" name="city" defaultValue={school.address.city}/>
+            </Field>
+            <Field>
+                <FieldLabel htmlFor="country">Country</FieldLabel>
+                <Input id="country" name="country" required defaultValue={school.address.country ?? ""} />
             </Field>
 
             <Field>
@@ -243,11 +249,7 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
             assigned={school.contacts} available={school.availableContacts} contactDetails={school.contacts}
             addAction={addSchoolContact} removeAction={removeSchoolContact}
         />
-        <SchoolAssignments
-            schoolId={school.id} label="Post Bellum Employees" field="employee-id"
-            assigned={school.employees} available={school.availableEmployees} employeeDetails={school.employees}
-            addAction={addSchoolEmployee} removeAction={removeSchoolEmployee}
-        />
+        <SchoolInteractions schoolId={school.id} contacts={school.contacts} employees={school.availableEmployees} programs={school.programs} interactions={school.interactions} />
 
         <section className="flex flex-col gap-3">
             {participationSections.map(({ title, items, empty }) => (
@@ -256,7 +258,7 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
             <Table className="border rounded-md">
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Program</TableHead>
+                        <TableHead>Participation / Program</TableHead>
                         <TableHead>Start</TableHead>
                         <TableHead>End</TableHead>
                         <TableHead>Status</TableHead>
@@ -268,7 +270,7 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
                     {items.map((participation) => (
                         <Fragment key={participation.id}>
                             <TableRow>
-                                <TableCell className="font-medium">{school.programs.find((program) => program.id === participation.programId)?.name ?? `Program ${participation.programId}`}</TableCell>
+                                <TableCell className="font-medium">{participation.name} · {school.programs.find((program) => program.id === participation.programId)?.name ?? `Program ${participation.programId}`}</TableCell>
                                 <TableCell><LocalDateTime value={participation.startDate} /></TableCell>
                                 <TableCell>{participation.endDate ? <LocalDateTime value={participation.endDate} /> : "—"}</TableCell>
                                 <TableCell><span className="rounded-md bg-muted px-2 py-1 text-xs">{participation.status.charAt(0) + participation.status.slice(1).toLowerCase()}</span></TableCell>
@@ -493,6 +495,10 @@ function SchoolParticipationForm({ schoolId, programs, participation }: {
         <SchoolActionForm action={submit} className="flex flex-col gap-3">
             <input type="hidden" name="school-id" value={schoolId} />
             {participation && <input type="hidden" name="participation-id" value={participation.id} />}
+            <Field>
+                <FieldLabel>Participation name</FieldLabel>
+                <Input name="participation-name" required defaultValue={participation?.name ?? ""} aria-label="Participation name" />
+            </Field>
             <Field>
                 <FieldLabel>Program</FieldLabel>
                 <Select name="program-id" items={programOptions} required

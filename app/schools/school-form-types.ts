@@ -23,4 +23,6 @@ export type SchoolFormState = {
 }
 
 export type SchoolEmployee = Pick<Scalars<Models.public_Employee>,
-    "id" | "name" | "email" | "phone" | "role" | "region">
+    "id" | "name" | "email" | "phone" | "region"> & { role: string }
+
+export type SchoolInteraction = Scalars<Models.public_Interaction>

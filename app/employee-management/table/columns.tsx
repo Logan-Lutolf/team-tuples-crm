@@ -8,7 +8,9 @@ export type Employee = {
     id: number,
     name: string,
     email: string,
-    role: "ADMIN" | "WORKSHOPS_COORDINATOR" | "SCHOOL_NETWORK_COORDINATOR" | "STORIES_OF_OUR_NEIGHBORS_COORDINATOR" | "VETERANS_DAY_COORDINATOR" | "NEWSLETTER_COORDINATOR",
+    role: string,
+    phone: string | null,
+    globalRoles: string[],
 }
 
 const columnHelper = createColumnHelper<DataTableFeatures, Employee>()

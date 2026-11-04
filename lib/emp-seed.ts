@@ -4,7 +4,8 @@ import { faker } from "@faker-js/faker";
 
 async function generateRandomEmployees() { 
     for (let i = 0; i < 100; i++) {
-        await db.orm.public.Employee.create({
+        await db.transaction(async tx => {
+        const employee = await tx.orm.public.Employee.create({
             name: faker.person.fullName(),
             email: faker.internet.email(),
             phone: faker.phone.number(),
@@ -14,7 +15,9 @@ async function generateRandomEmployees() {
                 zipCode: faker.location.zipCode(),
                 country: faker.location.country(),
             },
-            role: faker.helpers.arrayElement(db.enums.public.Role.values),
+
+        });
+        await tx.orm.public.EmployeeAssignment.create({ employeeId: employee.id, role: faker.helpers.arrayElement(db.enums.public.EmployeeJobRole.values) });
         });
     }
 }

@@ -15,7 +15,11 @@ export async function EmployeeTableContainer({search, cursor, dir} : EmployeeTab
         .all()
 
 
-    const employees = baseEmployees.filter((e) => {
+    const assignments = await db.orm.public.EmployeeAssignment.all().toArray()
+    const employees = baseEmployees.map(employee => ({ ...employee,
+        role: [...new Set(assignments.filter(a => a.employeeId === employee.id).map(a => a.role))].join(", "),
+        globalRoles: assignments.filter(a => a.employeeId === employee.id && a.branchId === null && a.programId === null && a.region === null).map(a => a.role),
+    })).filter((e) => {
         return e.name.toLowerCase().includes(search?.toLowerCase() ?? "")
     })
 

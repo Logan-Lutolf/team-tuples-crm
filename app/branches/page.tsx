@@ -1,0 +1,63 @@
+import Link from "next/link"
+import { db } from "@/prisma/db"
+import { Button } from "@/components/ui/button"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { BranchDialog } from "./branch-dialog"
+
+export default async function BranchesPage({ searchParams }: {
+    searchParams?: Promise<{ search?: string; page?: string }>
+}) {
+    const params = await searchParams
+    const search = params?.search?.trim() ?? ""
+    const [branches, employees] = await Promise.all([
+        db.orm.public.Branch.orderBy((branch) => branch.id.asc()).all().toArray(),
+        db.orm.public.Employee.select("id", "name", "email").orderBy((employee) => employee.name.asc()).all().toArray(),
+    ])
+    const chiefs = new Map(employees.map((employee) => [employee.id, employee.name]))
+    const filtered = branches.filter((branch) => [branch.name, branch.region, branch.institute, branch.chiefId ? chiefs.get(branch.chiefId) : ""]
+        .some((value) => value?.toLowerCase().includes(search.toLowerCase())))
+    const size = 20
+    const pages = Math.max(1, Math.ceil(filtered.length / size))
+    const requested = Number(params?.page ?? 1)
+    const page = Math.min(pages, Number.isSafeInteger(requested) && requested > 0 ? requested : 1)
+    const rows = filtered.slice((page - 1) * size, page * size)
+    const options = { employees, names: [...db.enums.public.Branches.values], regions: [...db.enums.public.Region.values] }
+    function href(next: number) {
+        return `/branches?${new URLSearchParams({ ...(search ? { search } : {}), page: String(next) })}`
+    }
+    return <div className="m-4 flex min-w-0 flex-1 flex-col gap-4 sm:m-10">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+            <h1 className="text-2xl font-semibold">Branches</h1>
+            <BranchDialog {...options} />
+        </div>
+        <form action="/branches" method="get" className="flex flex-wrap items-center gap-3">
+            <label htmlFor="branch-search">Search Database</label>
+            <input id="branch-search" name="search" type="search" defaultValue={search} placeholder="Name, region, institute, or chief" className="h-9 min-w-0 flex-1 rounded-md border border-input px-3 text-sm" />
+            <Button type="submit" variant="outline">Search</Button>
+            {search && <Link href="/branches" className="text-sm underline">Clear</Link>}
+        </form>
+        <Table className="border">
+            <TableHeader><TableRow>
+                <TableHead>Name</TableHead><TableHead>Region</TableHead><TableHead>Institute</TableHead><TableHead>Chief</TableHead><TableHead>Actions</TableHead>
+            </TableRow></TableHeader>
+            <TableBody>
+                {rows.map((branch) => <TableRow key={branch.id}>
+                    <TableCell>{branch.name}</TableCell><TableCell>{branch.region}</TableCell>
+                    <TableCell>{branch.institute || "—"}</TableCell><TableCell>{branch.chiefId ? chiefs.get(branch.chiefId) ?? "Unassigned" : "Unassigned"}</TableCell>
+                    <TableCell><div className="flex gap-2">
+                        <BranchDialog {...options} branch={branch} mode="edit" />
+                        <BranchDialog {...options} branch={branch} mode="delete" />
+                    </div></TableCell>
+                </TableRow>)}
+                {!rows.length && <TableRow><TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
+                    {search ? "No branches match your search." : "No branches yet. Add a branch to make it available in school and contact forms."}
+                </TableCell></TableRow>}
+            </TableBody>
+        </Table>
+        <nav aria-label="Branch pagination" className="flex items-center justify-between gap-4 text-sm">
+            {page > 1 ? <Link href={href(page - 1)} className="underline">Previous</Link> : <span className="text-muted-foreground">Previous</span>}
+            <span>{filtered.length} {filtered.length === 1 ? "branch" : "branches"} · Page {page} of {pages}</span>
+            {page < pages ? <Link href={href(page + 1)} className="underline">Next</Link> : <span className="text-muted-foreground">Next</span>}
+        </nav>
+    </div>
+}

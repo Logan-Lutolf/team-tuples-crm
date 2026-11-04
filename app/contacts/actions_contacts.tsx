@@ -82,6 +82,7 @@ function addressData(form: FormData) {
     return {
         street: text(form, "street"),
         city: text(form, "city"),
+        country: text(form, "country"),
         zipCode: text(form, "zipCode"),
     }
 }
