@@ -1,78 +1,47 @@
-import { db } from "@/prisma/db";
-import type { ComponentProps } from "react"
-import type { SchoolDetails } from "./school-details"
+import { db } from '@/prisma/db'
+import type { ComponentProps } from 'react'
+import type { SchoolDetails } from './school-details'
 
-export async function loadSchoolDetails(schoolId: number): Promise<ComponentProps<typeof SchoolDetails>> {
-    const participationAsOf = Date.now()
-    const [filteredSchools, branches, programs, availableContacts, employeeRows, roles] = await Promise.all([
-        db.orm.public.School.where({ id: schoolId }).all().toArray(),
-        db.orm.public.Branch.select("id", "name").all().toArray(),
-        db.orm.public.Program.select("id", "name").all().toArray(),
-        db.orm.public.Contact.where({ schoolId: null }).select("id", "name").all().toArray(),
-        db.orm.public.Employee.select("id", "name", "email", "phone", "region").all().toArray(),
-        db.orm.public.EmployeeAssignment.select("employeeId", "role").all().toArray(),
+type Details = ComponentProps<typeof SchoolDetails>
+
+export async function loadSchoolDetails(schoolId: number, editing = false): Promise<Details> {
+    const [school, contacts, participations, interactions] = await Promise.all([
+        db.orm.public.School.where({ id: schoolId }).first(),
+        db.orm.public.Contact.where({ schoolId }).select('id', 'name', 'email', 'phone', 'contactRole').all().toArray(),
+        db.orm.public.Participation.where({ schoolId }).all().toArray(),
+        db.orm.public.Interaction.where({ schoolId }).orderBy(i => i.contactedAt.desc()).all().toArray(),
     ])
-
+    if (!school) throw new Error('School not found.')
+    const participationIds = participations.map(p => p.id)
+    const programIds = [...new Set([...participations.map(p => p.programId), ...interactions.flatMap(i => i.programId === null ? [] : [i.programId])])]
+    const [participantLinks, branches, programs, availableContacts] = await Promise.all([
+        participationIds.length ? db.orm.public.ParticipationEmployees.where(a => a.participationId.in(participationIds)).select('participationId', 'employeeId').all().toArray() : [],
+        (editing ? db.orm.public.Branch : db.orm.public.Branch.where({ id: school.branchId })).select('id', 'name').all().toArray(),
+        editing ? db.orm.public.Program.select('id', 'name').all().toArray() : programIds.length ? db.orm.public.Program.where(p => p.id.in(programIds)).select('id', 'name').all().toArray() : [],
+        editing ? db.orm.public.Contact.where({ schoolId: null }).select('id', 'name').all().toArray() : [],
+    ])
+    const employeeIds = [...new Set([...participantLinks.map(a => a.employeeId), ...interactions.map(i => i.employeeId)])]
+    const [employeeRows, roles] = await Promise.all([
+        editing ? db.orm.public.Employee.select('id', 'name', 'email', 'phone', 'region').all().toArray() : employeeIds.length ? db.orm.public.Employee.where(e => e.id.in(employeeIds)).select('id', 'name', 'email', 'phone', 'region').all().toArray() : [],
+        editing ? db.orm.public.EmployeeAssignment.select('employeeId', 'role').all().toArray() : [],
+    ])
     const rolesByEmployee = new Map<number, Set<string>>()
     for (const assignment of roles) {
         const values = rolesByEmployee.get(assignment.employeeId) ?? new Set<string>()
         values.add(assignment.role)
         rolesByEmployee.set(assignment.employeeId, values)
     }
-    const employees = employeeRows.map(employee => ({ ...employee, role: [...(rolesByEmployee.get(employee.id) ?? [])].join(", ") }))
-    const schoolIds = filteredSchools.map((school) => school.id)
-    const [contacts, assignments, participations, interactions] = schoolIds.length ? await Promise.all([
-        db.orm.public.Contact.where((contact) => contact.schoolId.in(schoolIds))
-            .select("id", "name", "schoolId", "email", "phone", "contactRole").all().toArray(),
-        db.orm.public.LegacySchoolEmployees.where((assignment) => assignment.schoolId.in(schoolIds))
-            .select("schoolId", "employeeId").all().toArray(),
-        db.orm.public.Participation.where((participation) => participation.schoolId.in(schoolIds))
-            .select("id", "name", "schoolId", "programId", "startDate", "endDate", "status").all().toArray(),
-        db.orm.public.Interaction.where(interaction => interaction.schoolId.in(schoolIds)).orderBy(i => i.contactedAt.desc()).all().toArray(),
-    ]) : [[], [], [], []]
-
-    const participationIds = participations.map((participation) => participation.id)
-    const participantAssignments = participationIds.length
-        ? await db.orm.public.ParticipationEmployees
-            .where((assignment) => assignment.participationId.in(participationIds))
-            .select("participationId", "employeeId").all().toArray()
-        : []
-
-    const relationsBySchool: Record<number, Pick<ComponentProps<typeof SchoolDetails>, "contacts" | "employees" | "participations" | "interactions">> = {}
-    const employeesById = new Map(employees.map((employee) => [employee.id, employee]))
-    const participantsByParticipation = new Map<number, typeof employees>()
-    for (const assignment of participantAssignments) {
-        const employee = employeesById.get(assignment.employeeId)
+    const employees = employeeRows.map(e => ({ ...e, role: [...(rolesByEmployee.get(e.id) ?? [])].join(', ') }))
+    const employeesById = new Map(employees.map(e => [e.id, e]))
+    const participantsById = new Map<number, typeof employees>()
+    for (const link of participantLinks) {
+        const employee = employeesById.get(link.employeeId)
         if (!employee) continue
-        const participants = participantsByParticipation.get(assignment.participationId) ?? []
-        participants.push(employee)
-        participantsByParticipation.set(assignment.participationId, participants)
+        const records = participantsById.get(link.participationId) ?? []
+        records.push(employee)
+        participantsById.set(link.participationId, records)
     }
-    for (const school of filteredSchools) {
-        relationsBySchool[school.id] = { contacts: [], employees: [], participations: [], interactions: [] }
-    }
-    for (const interaction of interactions) {
-        if (interaction.schoolId !== null) relationsBySchool[interaction.schoolId].interactions.push(interaction)
-    }
-    for (const contact of contacts) {
-        if (contact.schoolId !== null) {
-            const { schoolId, ...details } = contact
-            relationsBySchool[schoolId].contacts.push(details)
-        }
-    }
-    for (const assignment of assignments) {
-        const employee = employeesById.get(assignment.employeeId)
-        if (employee) relationsBySchool[assignment.schoolId].employees.push(employee)
-    }
-    for (const { schoolId, ...participation } of participations) {
-        relationsBySchool[schoolId].participations.push({
-            ...participation,
-            employees: participantsByParticipation.get(participation.id) ?? [],
-        })
-    }
-
-    const school = filteredSchools[0]
-    if (!school) throw new Error("School not found.")
-    return { ...school, participationAsOf, branches, programs, availableContacts,
-        availableEmployees: employees, ...relationsBySchool[school.id] }
+    return { ...school, participationAsOf: Date.now(), branches, programs, availableContacts,
+        availableEmployees: employees, contacts, employees: [], interactions,
+        participations: participations.map(p => ({ ...p, employees: participantsById.get(p.id) ?? [] })) }
 }

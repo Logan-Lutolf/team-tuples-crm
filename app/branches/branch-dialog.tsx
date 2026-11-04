@@ -60,7 +60,7 @@ export function BranchDialog({ branch, employees, names, regions, mode = "create
         </Field>
     }
     return <Dialog open={open} onOpenChange={(value) => { setOpen(value); setResult(null) }}>
-        <DialogTrigger render={<Button variant={deleting ? "destructive" : mode === "edit" ? "outline" : "default"} aria-label={title} />}>
+        <DialogTrigger render={<Button className={mode === "create" ? "w-full" : undefined} variant={deleting ? "destructive" : mode === "edit" ? "outline" : "default"} aria-label={title} />}>
             {mode === "create" ? title : deleting ? <Trash className="size-4" /> : <Pencil className="size-4" />}
         </DialogTrigger>
         <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto">

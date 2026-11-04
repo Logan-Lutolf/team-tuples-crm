@@ -1,0 +1,99 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { Eye } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { EditContactForm } from './forms/edit-contact'
+import { ContactActionForm } from './forms/contact-action-form'
+import { getContactDetails, recordContactInteraction } from './actions_contacts'
+
+type Details = Awaited<ReturnType<typeof getContactDetails>>
+function name(items: { id: number; name: string }[], id: number | null) { return id === null ? '—' : items.find(i => i.id === id)?.name ?? `#${id}` }
+function date(value: string) { return `${new Date(value).toISOString().replace('T', ' ').slice(0, 19)} UTC` }
+
+function ContactHistory({ data, editing, onSaved }: { data: Details; editing: boolean; onSaved: () => Promise<void> }) {
+    const [after, setAfter] = useState('')
+    const [before, setBefore] = useState('')
+    const records = data.interactions.filter(i => (!after || i.contactedAt.slice(0, 10) >= after) && (!before || i.contactedAt.slice(0, 10) <= before))
+    return <details className="rounded-lg border">
+        <summary className="cursor-pointer p-4 font-semibold">Contact history ({data.interactions.length})</summary>
+        <div className="grid gap-4 border-t p-4">
+            <section className="grid gap-3 rounded-lg border bg-muted/20 p-4">
+                {editing && <><h3 className="font-semibold">Filter history</h3><div className="flex flex-wrap gap-3">
+                    <label>From (UTC)<Input type="date" value={after} onChange={e => setAfter(e.target.value)} /></label>
+                    <label>Through (UTC)<Input type="date" value={before} onChange={e => setBefore(e.target.value)} /></label>
+                </div></>}
+                <Table><TableHeader><TableRow><TableHead>Date</TableHead><TableHead>Employee</TableHead><TableHead>School</TableHead><TableHead>Program</TableHead><TableHead>Communication</TableHead></TableRow></TableHeader>
+                    <TableBody>{records.map(i => <TableRow key={i.id}><TableCell>{date(i.contactedAt)}</TableCell><TableCell>{name(data.employees, i.employeeId)}</TableCell><TableCell>{name(data.schools, i.schoolId)}</TableCell><TableCell>{name(data.programs, i.programId)}</TableCell><TableCell>{i.mode.replaceAll('_', ' ')}</TableCell></TableRow>)}
+                        {!records.length && <TableRow><TableCell colSpan={5}>No interactions{after || before ? ' in this date range' : ' recorded'}.</TableCell></TableRow>}
+                    </TableBody>
+                </Table>
+            </section>
+            {editing && <section className="grid gap-3 rounded-lg border p-4">
+                <h3 className="font-semibold">Record a new interaction</h3>
+                <p className="text-sm text-muted-foreground">Enter when contact was made in your local time. This records the contact’s current school, if assigned.</p>
+                {data.employees.length ? <ContactActionForm className="grid gap-3 sm:grid-cols-2" action={async form => {
+                    const timestamp = new Date(String(form.get('contacted-at-local') ?? ''))
+                    if (!Number.isFinite(timestamp.getTime())) return { error: 'Enter a valid contact date.' }
+                    form.set('contacted-at', timestamp.toISOString())
+                    const result = await recordContactInteraction(form)
+                    if ('success' in result) await onSaved()
+                    return result
+                }}>
+                    <input type="hidden" name="contact-id" value={data.contact.id} />
+                    <label>Employee<select className="block w-full rounded-md border p-2" name="employee-id" required defaultValue=""><option value="" disabled>Choose employee</option>{data.employees.map(e => <option key={e.id} value={e.id}>{e.name} ({e.email})</option>)}</select></label>
+                    <label>Program (optional)<select className="block w-full rounded-md border p-2" name="program-id"><option value="">No program</option>{data.programs.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
+                    <label>Communication<select className="block w-full rounded-md border p-2" name="mode" required>{data.modes.map(mode => <option key={mode} value={mode}>{mode.replaceAll('_', ' ')}</option>)}</select></label>
+                    <label>Date and time (local)<Input type="datetime-local" name="contacted-at-local" required /></label>
+                    <Button type="submit" className="sm:col-span-2">Record interaction</Button>
+                </ContactActionForm> : <p>Add employees on the Employees page before recording interactions.</p>}
+            </section>}
+        </div>
+    </details>
+}
+
+export function ContactDetailsDialog({ contactId, contactName }: { contactId: number; contactName: string }) {
+    const [open, setOpen] = useState(false)
+    const [editing, setEditing] = useState(false)
+    const [data, setData] = useState<Details | null>(null)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
+    const [revision, setRevision] = useState(0)
+    useEffect(() => {
+        if (!open) return
+        let active = true
+        setLoading(true)
+        setError('')
+        getContactDetails(contactId, editing).then(result => { if (active) setData(result) })
+            .catch(() => { if (active) setError('Could not load contact details.') })
+            .finally(() => { if (active) setLoading(false) })
+        return () => { active = false }
+    }, [open, contactId, editing, revision])
+    async function refresh() { setData(await getContactDetails(contactId, editing)) }
+    const contact = data?.contact
+    return <Dialog open={open} onOpenChange={value => { setOpen(value); if (!value) { setEditing(false); setData(null) } }}>
+        <DialogTrigger render={<Button aria-label={`View details for ${contactName}`} />}><Eye /> View details</DialogTrigger>
+        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[min(90vw,80rem)]">
+            <DialogHeader><DialogTitle>{editing ? 'Edit ' : ''}{contact?.name ?? contactName}</DialogTitle><DialogDescription>{editing ? 'Update contact fields, school relationships, and contact history.' : 'Contact information and related records.'}</DialogDescription></DialogHeader>
+            {error && <div role="alert">{error} <Button variant="outline" onClick={() => setRevision(r => r + 1)}>Try again</Button></div>}
+            {loading ? <p role="status">Loading {editing ? 'editing options' : 'contact details'}…</p> : data && contact && <div className="grid gap-6">
+                {editing ? <>
+                    <Button type="button" className="w-fit" variant="outline" onClick={() => setEditing(false)}>Back to details</Button>
+                    <EditContactForm {...contact} branches={data.branches} availableSchools={data.schools} onSaved={refresh} />
+                </> : <>
+                    <dl className="grid gap-4 sm:grid-cols-2">
+                        {Object.entries({ Name: contact.name, Email: contact.email, Phone: contact.phone || '—', Role: contact.contactRole.replaceAll('_', ' '), Region: contact.region || '—', 'Street address': contact.address?.street || '—', City: contact.address?.city || '—', 'Postal code': contact.address?.zipCode || '—', Country: contact.address?.country || '—', Branch: name(data.branches, contact.branchId), Created: date(contact.createdAt), Updated: date(contact.updatedAt) }).map(([label, value]) => <div key={label}><dt className="text-sm text-muted-foreground">{label}</dt><dd className="break-words">{value}</dd></div>)}
+                        <div><dt className="text-sm text-muted-foreground">Last contacted</dt><dd>{contact.last_contacted_byId ? date(contact.last_contacted) : 'No recorded contact employee'}</dd></div>
+                        <div><dt className="text-sm text-muted-foreground">Last contacted by</dt><dd>{name(data.employees, contact.last_contacted_byId)}</dd></div>
+                    </dl>
+                    <details className="rounded-lg border" open><summary className="cursor-pointer p-4 font-semibold">School</summary><div className="border-t p-4"><div className="rounded-lg border bg-muted/20 p-4">{contact.schoolId ? name(data.schools, contact.schoolId) : 'No school assigned.'}</div></div></details>
+                </>}
+                <ContactHistory data={data} editing={editing} onSaved={refresh} />
+                {!editing && <div className="flex justify-end border-t pt-4"><Button type="button" onClick={() => setEditing(true)}>Edit</Button></div>}
+            </div>}
+        </DialogContent>
+    </Dialog>
+}

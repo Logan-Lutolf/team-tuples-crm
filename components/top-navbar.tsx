@@ -9,6 +9,7 @@ const links = [
   { href: "/contacts", label: "Contacts" },
   { href: "/branches", label: "Branches" },
   { href: "/programs", label: "Programs" },
+  { href: "/municipalities", label: "Municipalities" },
 ]
 
 export function TopNavbar() {

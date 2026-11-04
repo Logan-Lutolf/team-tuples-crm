@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, type ComponentProps, type ReactNode } from 'react'
+import { Fragment, useId, useState, type ComponentProps, type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { getSchoolDetails } from './actions_schools'
 import { EditSchoolForm } from './edit-school-form'
 
 type Props = ComponentProps<typeof EditSchoolForm> & { createdAt: string; updatedAt: string; onDetailsRefresh?: () => void }
@@ -18,6 +19,20 @@ function Timestamp({ value }: { value: string | null }) {
 
 export function SchoolDetails(school: Props) {
     const [editing, setEditing] = useState(false)
+    const [expandedParticipants, setExpandedParticipants] = useState<Set<number>>(new Set())
+    const participantsPrefix = useId()
+    const [editData, setEditData] = useState<ComponentProps<typeof EditSchoolForm> | null>(null)
+    const [loadingEdit, setLoadingEdit] = useState(false)
+    const [editError, setEditError] = useState('')
+    async function openEdit() {
+        setLoadingEdit(true)
+        setEditError('')
+        try {
+            setEditData(await getSchoolDetails(school.id, true))
+            setEditing(true)
+        } catch { setEditError('Could not load editing options. Try again.') }
+        finally { setLoadingEdit(false) }
+    }
     const programName = (id: number) => school.programs.find(p => p.id === id)?.name ?? `Program #${id}`
     const employeeName = (id: number) => school.availableEmployees.find(e => e.id === id)?.name ?? `Employee #${id}`
     const contactName = (id: number) => school.contacts.find(c => c.id === id)?.name ?? `Contact #${id}`
@@ -28,7 +43,7 @@ export function SchoolDetails(school: Props) {
         </DialogHeader>
         {editing ? <>
             <Button type="button" variant="outline" className="w-fit" onClick={() => { setEditing(false); school.onDetailsRefresh?.() }}>Back to details</Button>
-            <EditSchoolForm {...school} />
+            <EditSchoolForm {...(editData ?? school)} onRelationshipsChange={async () => { setEditData(await getSchoolDetails(school.id, true)) }} />
         </> : <>
             <section className="grid gap-3" aria-label="School information">
                 <h3 className="font-semibold">School information</h3>
@@ -60,7 +75,40 @@ export function SchoolDetails(school: Props) {
                 <h3 className="font-semibold">Participations</h3>
                 {school.participations.length ? <Table>
                     <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Program</TableHead><TableHead>Start</TableHead><TableHead>End</TableHead><TableHead>Status</TableHead><TableHead>Employees</TableHead></TableRow></TableHeader>
-                    <TableBody>{school.participations.map(p => <TableRow key={p.id}><TableCell>{p.name}</TableCell><TableCell>{programName(p.programId)}</TableCell><TableCell><Timestamp value={p.startDate} /></TableCell><TableCell><Timestamp value={p.endDate} /></TableCell><TableCell>{p.status}</TableCell><TableCell className="whitespace-normal">{p.employees.map(e => e.name).join(', ') || 'No employees assigned'}</TableCell></TableRow>)}</TableBody>
+                    <TableBody>{school.participations.map(p => <Fragment key={p.id}>
+                        <TableRow>
+                            <TableCell>{p.name}</TableCell><TableCell>{programName(p.programId)}</TableCell>
+                            <TableCell><Timestamp value={p.startDate} /></TableCell><TableCell><Timestamp value={p.endDate} /></TableCell><TableCell>{p.status}</TableCell>
+                            <TableCell>
+                                <Button type="button" variant="outline" size="sm"
+                                    aria-label={`${expandedParticipants.has(p.id) ? 'Hide' : 'View'} participants for ${p.name}`}
+                                    aria-expanded={expandedParticipants.has(p.id)}
+                                    aria-controls={`${participantsPrefix}-${p.id}`}
+                                    onClick={() => setExpandedParticipants(current => {
+                                        const next = new Set(current)
+                                        if (next.has(p.id)) next.delete(p.id)
+                                        else next.add(p.id)
+                                        return next
+                                    })}>
+                                    {expandedParticipants.has(p.id) ? 'Hide participants' : 'View participants'} ({p.employees.length})
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow hidden={!expandedParticipants.has(p.id)}>
+                            <TableCell colSpan={6} className="bg-muted/20 p-4 whitespace-normal">
+                                <section id={`${participantsPrefix}-${p.id}`} aria-label={`Employees participating in ${p.name}`} className="grid gap-3">
+                                    <h4 className="font-semibold">Participation employees</h4>
+                                    {p.employees.length ? <Table>
+                                        <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>Phone</TableHead><TableHead>Region</TableHead></TableRow></TableHeader>
+                                        <TableBody>{p.employees.map(e => <TableRow key={e.id}>
+                                            <TableCell>{e.name}</TableCell><TableCell><a href={`mailto:${e.email}`}>{e.email}</a></TableCell>
+                                            <TableCell>{e.phone ? <a href={`tel:${e.phone}`}>{e.phone}</a> : '—'}</TableCell><TableCell>{e.region || '—'}</TableCell>
+                                        </TableRow>)}</TableBody>
+                                    </Table> : <p className="text-muted-foreground">No employees assigned to this participation.</p>}
+                                </section>
+                            </TableCell>
+                        </TableRow>
+                    </Fragment>)}</TableBody>
                 </Table> : <p className="text-muted-foreground">No participations recorded.</p>}
             </section>
             <section className="grid gap-3">
@@ -71,7 +119,8 @@ export function SchoolDetails(school: Props) {
                 </Table> : <p className="text-muted-foreground">No interactions recorded.</p>}
             </section>
             <div className="flex justify-end border-t pt-4">
-                <Button type="button" onClick={() => setEditing(true)}>Edit</Button>
+                {editError && <p role="alert" className="text-destructive">{editError}</p>}
+                <Button type="button" onClick={openEdit} disabled={loadingEdit}>{loadingEdit ? 'Loading editing options…' : 'Edit'}</Button>
             </div>
         </>}
     </div>

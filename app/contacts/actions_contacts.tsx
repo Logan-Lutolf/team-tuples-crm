@@ -95,6 +95,8 @@ async function contactAction(label: string, action: () => Promise<void>) {
         return { error: contactErrorMessage(error, label) }
     }
     revalidatePath("/contacts")
+    revalidatePath("/schools")
+    revalidatePath("/branches")
     return { success: true as const }
 }
 
@@ -136,5 +138,32 @@ export async function removeSchoolContact(formData: FormData) {
             id: id(formData, "contact-id"),
             schoolId: id(formData, "school-id"),
         }).update({ schoolId: null })
+    })
+}
+export async function getContactDetails(contactId: number, editing = false) {
+    if (!Number.isSafeInteger(contactId) || contactId <= 0) throw new Error('Invalid contact ID.')
+    const { loadContactDetails } = await import('./load-contact-details')
+    return loadContactDetails(contactId, editing === true)
+}
+
+export async function recordContactInteraction(form: FormData) {
+    return contactAction('Record interaction', async () => {
+        const contactId = id(form, 'contact-id')
+        const employeeId = id(form, 'employee-id')
+        const value = text(form, 'contacted-at')
+        if (!/(Z|[+-]\d{2}:\d{2})$/i.test(value) || !Number.isFinite(Date.parse(value)) || Date.parse(value) > Date.now()) {
+            throw new ContactValidationError('Enter a valid contact date that is not in the future.')
+        }
+        const contactedAt = new Date(value).toISOString()
+        const mode = choice(form, 'mode', db.enums.public.CommunicationMode.values)
+        const programId = text(form, 'program-id', false) ? id(form, 'program-id') : null
+        const { recordInteraction } = await import('@/lib/record-interaction')
+        await db.transaction(async tx => {
+            const contact = await tx.orm.public.Contact.where({ id: contactId }).forUpdate().first()
+            if (!contact) throw new ContactValidationError('This contact no longer exists.')
+            await recordInteraction(tx, { contactId, employeeId, programId, contactedAt, mode, schoolId: contact.schoolId })
+        })
+        revalidatePath('/schools')
+        revalidatePath('/programs')
     })
 }

@@ -50,6 +50,7 @@ type Region = ContactFields["region"]
 
 
 interface EditContactFormProps {
+    onSaved?: () => Promise<void>
     id: number
     name: string,
     phone: string | null,
@@ -77,7 +78,11 @@ export function EditContactForm(contact: EditContactFormProps) {    // Add actua
         <div className="flex flex-col gap-6">
         <DialogHeader>
         </DialogHeader>
-        <ContactActionForm className="grid grid-cols-1 gap-4 sm:grid-cols-2 [&_[data-slot=select-trigger]]:w-full [&>[role=alert]]:col-span-full [&>[role=status]]:col-span-full" action={editContact}>
+        <ContactActionForm className="grid grid-cols-1 gap-4 sm:grid-cols-2 [&_[data-slot=select-trigger]]:w-full [&>[role=alert]]:col-span-full [&>[role=status]]:col-span-full" action={async form => {
+            const result = await editContact(form)
+            if ('success' in result) await contact.onSaved?.()
+            return result
+        }}>
             <input type="hidden" name="contact-id" value={contact.id} />
 
             <Field>
@@ -186,17 +191,25 @@ export function EditContactForm(contact: EditContactFormProps) {    // Add actua
             <Button type="submit" className="sm:col-span-2">Save contact</Button>
         </ContactActionForm>
 
-        <section className="flex flex-col gap-3">
-            <h3 className="font-semibold">School</h3>
+        <details className="rounded-lg border">
+            <summary className="cursor-pointer p-4 font-semibold">School</summary>
+        <section className="grid gap-4 border-t p-4">
+            <div className="grid gap-3 rounded-lg border bg-muted/20 p-4">
             <p>
                 {contact.schoolId === null
                     ? "No school assigned"
                     : contact.availableSchools.find((school) => school.id === contact.schoolId)?.name
                         ?? `School ${contact.schoolId}`}
             </p>
+            </div>
+            <div className="grid gap-3 rounded-lg border p-4">
             {contact.schoolId === null ? (
                 contact.availableSchools.length > 0 ? (
-                    <ContactActionForm action={addSchoolContact} className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <ContactActionForm action={async form => {
+                        const result = await addSchoolContact(form)
+                        if ('success' in result) await contact.onSaved?.()
+                        return result
+                    }} className="flex flex-col gap-3 sm:flex-row sm:items-center">
                         <input type="hidden" name="contact-id" value={contact.id} />
                         <select name="school-id" aria-label="School" required defaultValue="" className="rounded-md border p-2">
                             <option value="" disabled>Select a school</option>
@@ -208,13 +221,19 @@ export function EditContactForm(contact: EditContactFormProps) {    // Add actua
                     </ContactActionForm>
                 ) : <p>No schools available.</p>
             ) : (
-                <ContactActionForm action={removeSchoolContact}>
+                <ContactActionForm action={async form => {
+                    const result = await removeSchoolContact(form)
+                    if ('success' in result) await contact.onSaved?.()
+                    return result
+                }}>
                     <input type="hidden" name="contact-id" value={contact.id} />
                     <input type="hidden" name="school-id" value={contact.schoolId} />
                     <Button type="submit" variant="outline">Remove school</Button>
                 </ContactActionForm>
             )}
+            </div>
         </section>
+        </details>
         </div>
     )
 }

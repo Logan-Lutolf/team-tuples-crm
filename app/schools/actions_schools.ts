@@ -171,19 +171,44 @@ function participationData(form: FormData) {
     }
 }
 
+function participationEmployees(form: FormData) {
+    return [...new Set(form.getAll('employee-ids').map(value => {
+        if (typeof value !== 'string' || !/^\d+$/.test(value)) throw new SchoolValidationError('Choose valid participating employees.')
+        const employeeId = Number(value)
+        if (!Number.isSafeInteger(employeeId) || employeeId <= 0) throw new SchoolValidationError('Choose valid participating employees.')
+        return employeeId
+    }))]
+}
+
 export async function createSchoolParticipation(formData: FormData) {
     return schoolAction("Create participation", async () => {
-        await db.orm.public.Participation.create({
-            schoolId: id(formData, "school-id"), ...participationData(formData),
+        const data = { schoolId: id(formData, "school-id"), ...participationData(formData) }
+        const employeeIds = participationEmployees(formData)
+        await db.transaction(async tx => {
+            const participation = await tx.orm.public.Participation.create(data)
+            for (const employeeId of employeeIds) {
+                await tx.orm.public.ParticipationEmployees.create({ participationId: participation.id, employeeId })
+            }
         })
+        revalidatePath('/programs')
     })
 }
 
 export async function editSchoolParticipation(formData: FormData) {
     return schoolAction("Update participation", async () => {
-        await db.orm.public.Participation.where({
-            id: id(formData, "participation-id"), schoolId: id(formData, "school-id"),
-        }).update(participationData(formData))
+        const where = { id: id(formData, "participation-id"), schoolId: id(formData, "school-id") }
+        const data = participationData(formData)
+        const employeeIds = participationEmployees(formData)
+        await db.transaction(async tx => {
+            const participation = await tx.orm.public.Participation.where(where).forUpdate().first()
+            if (!participation) throw new SchoolValidationError('This participation no longer exists for this school. Refresh the page.')
+            await tx.orm.public.Participation.where(where).update(data)
+            await tx.orm.public.ParticipationEmployees.where({ participationId: participation.id }).delete()
+            for (const employeeId of employeeIds) {
+                await tx.orm.public.ParticipationEmployees.create({ participationId: participation.id, employeeId })
+            }
+        })
+        revalidatePath('/programs')
     })
 }
 
@@ -216,8 +241,29 @@ export async function recordSchoolInteraction(form: FormData) {
     })
 }
 
-export async function getSchoolDetails(schoolId: number) {
+export async function getSchoolDetails(schoolId: number, editing = false) {
     if (!Number.isSafeInteger(schoolId) || schoolId <= 0) throw new Error("Invalid school ID.")
     const { loadSchoolDetails } = await import('./load-school-details')
-    return loadSchoolDetails(schoolId)
+    return loadSchoolDetails(schoolId, editing === true)
+}
+
+export async function createSchoolContact(form: FormData) {
+    try {
+        const schoolId = id(form, 'school-id')
+        const school = await db.orm.public.School.where({ id: schoolId }).select('id', 'branchId', 'region').first()
+        if (!school) return { error: 'This school no longer exists. Refresh the page.' }
+        // Use persisted school values, rather than trusting submitted branch/region fields.
+        const contact = new FormData()
+        for (const key of ['full-name', 'email', 'phone-num', 'contactRole']) {
+            const value = form.get(key)
+            if (typeof value === 'string') contact.set(key, value)
+        }
+        contact.set('school-id', String(school.id))
+        contact.set('branch', String(school.branchId))
+        contact.set('region', school.region)
+        const { createContact } = await import('../contacts/actions_contacts')
+        const result = await createContact(contact)
+        if ('success' in result) revalidatePath('/schools')
+        return result
+    } catch { return { error: 'Could not create this school contact. Check the fields and try again.' } }
 }

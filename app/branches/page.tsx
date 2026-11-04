@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { db } from "@/prisma/db"
-import { Button } from "@/components/ui/button"
+import { Search } from "@/components/custom/search"
+import { Suspense } from "react"
+import { BranchDetailsDialog } from "./branch-details-dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { BranchDialog } from "./branch-dialog"
 
@@ -25,17 +27,9 @@ export default async function BranchesPage({ searchParams }: {
     function href(next: number) {
         return `/branches?${new URLSearchParams({ ...(search ? { search } : {}), page: String(next) })}`
     }
-    return <div className="m-4 flex min-w-0 flex-1 flex-col gap-4 sm:m-10">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-            <h1 className="text-2xl font-semibold">Branches</h1>
-            <BranchDialog {...options} />
-        </div>
-        <form action="/branches" method="get" className="flex flex-wrap items-center gap-3">
-            <label htmlFor="branch-search">Search Database</label>
-            <input id="branch-search" name="search" type="search" defaultValue={search} placeholder="Name, region, institute, or chief" className="h-9 min-w-0 flex-1 rounded-md border border-input px-3 text-sm" />
-            <Button type="submit" variant="outline">Search</Button>
-            {search && <Link href="/branches" className="text-sm underline">Clear</Link>}
-        </form>
+    return <div className="m-10 flex min-w-0 flex-1 flex-col gap-4">
+        <BranchDialog {...options} />
+        <Suspense fallback={<p role="status">Loading search…</p>}><Search placeholder="" /></Suspense>
         <Table className="border">
             <TableHeader><TableRow>
                 <TableHead>Name</TableHead><TableHead>Region</TableHead><TableHead>Institute</TableHead><TableHead>Chief</TableHead><TableHead>Actions</TableHead>
@@ -45,7 +39,7 @@ export default async function BranchesPage({ searchParams }: {
                     <TableCell>{branch.name}</TableCell><TableCell>{branch.region}</TableCell>
                     <TableCell>{branch.institute || "—"}</TableCell><TableCell>{branch.chiefId ? chiefs.get(branch.chiefId) ?? "Unassigned" : "Unassigned"}</TableCell>
                     <TableCell><div className="flex gap-2">
-                        <BranchDialog {...options} branch={branch} mode="edit" />
+                        <BranchDetailsDialog branchId={branch.id} branchName={branch.name} />
                         <BranchDialog {...options} branch={branch} mode="delete" />
                     </div></TableCell>
                 </TableRow>)}
