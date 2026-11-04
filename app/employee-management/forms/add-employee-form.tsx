@@ -63,15 +63,26 @@ export function AddEmployeeForm({ onSuccess }: AddEmployeeFormProps) {
                 />
             </Field>
 
-            <fieldset className="grid gap-2">
-                <legend>Global roles</legend>
-                {roles.map(role => <label key={role.value} className="flex items-center gap-2">
-                    <input type="checkbox" name="role" value={role.value}  />{role.label}
-                </label>)}
-                <p className="text-sm text-muted-foreground">Branch, program, and regional assignments are kept separately.</p>
-            </fieldset>
+            <Field>
+                <FieldLabel htmlFor="role">Role</FieldLabel>
+                <Select items={roles} defaultValue="" name="role">
+                    <SelectTrigger>
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            {roles.map((r) => {
+                                return (
+                                <SelectItem key={r.value} value={r.value}>
+                                    {r.label}
+                                </SelectItem>
+                            )})}
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </Field>
 
-            <Button type="submit">Submit</Button>
+            <DialogClose render={<Button type="submit">Submit</Button>}/>
         </form>
     )
 }

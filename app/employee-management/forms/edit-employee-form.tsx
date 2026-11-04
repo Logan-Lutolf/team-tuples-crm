@@ -19,22 +19,21 @@ const roles = [
     { label: "Newsletter Coordinator", value: "NEWSLETTER_COORDINATOR" },
 ]
 
-
+type Role = Scalars<Models.public_Employee>["role"]
 
 
 interface EditEmployeeFormProps {
     name: string,
     email: string
     phone: string,
-    id: number
-    globalRoles: string[]
+    role: Role
     onSuccess?: () => void
 }
 
 
 
 // TODO: Add form validation
-export function EditEmployeeForm({id, name, email, phone, globalRoles, onSuccess}: EditEmployeeFormProps) {    // Add actual type later T_T
+export function EditEmployeeForm({name, email, phone, role, onSuccess}: EditEmployeeFormProps) {    // Add actual type later T_T
     async function handleSubmit(formData: FormData) { 
             const result = await editEmployee(formData)
             if (result.success) {
@@ -49,7 +48,6 @@ export function EditEmployeeForm({id, name, email, phone, globalRoles, onSuccess
         
 
         <form className="flex flex-col gap-3" action={handleSubmit}>
-            <input type="hidden" name="employee-id" value={id} />
             <Field>
                 <FieldLabel htmlFor="full-name">Full Name</FieldLabel>
                 <Input 
@@ -79,13 +77,24 @@ export function EditEmployeeForm({id, name, email, phone, globalRoles, onSuccess
                 />
             </Field>
 
-            <fieldset className="grid gap-2">
-                <legend>Global roles</legend>
-                {roles.map(role => <label key={role.value} className="flex items-center gap-2">
-                    <input type="checkbox" name="role" value={role.value} defaultChecked={globalRoles.includes(role.value)} />{role.label}
-                </label>)}
-                <p className="text-sm text-muted-foreground">Branch, program, and regional assignments are kept separately.</p>
-            </fieldset>
+            <Field>
+                <FieldLabel htmlFor="role">Role</FieldLabel>
+                <Select items={roles} defaultValue={role} name="role">
+                    <SelectTrigger>
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            {roles.map((r) => {
+                                return (
+                                <SelectItem key={r.value} value={r.value}>
+                                    {r.label}
+                                </SelectItem>
+                            )})}
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </Field>
 
             <Button type="submit">Submit</Button>
         </form>
