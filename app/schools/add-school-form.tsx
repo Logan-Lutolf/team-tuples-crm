@@ -80,6 +80,10 @@ export function AddSchoolForm({ branches }: { branches: { id: number; name: stri
                 <FieldLabel htmlFor="city">City</FieldLabel>
                 <Input id="city" name="city" required />
             </Field>
+            <Field>
+                <FieldLabel htmlFor="country">Country</FieldLabel>
+                <Input id="country" name="country" required />
+            </Field>
 
         
             <Field>

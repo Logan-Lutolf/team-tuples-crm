@@ -50,13 +50,23 @@ enum RelationshipType {
   EXCELLENT
 }
 
-enum Role {
+enum EmployeeJobRole {
   ADMIN
   WORKSHOPS_COORDINATOR
   SCHOOL_NETWORK_COORDINATOR
   STORIES_OF_OUR_NEIGHBORS_COORDINATOR
   VETERANS_DAY_COORDINATOR
   NEWSLETTER_COORDINATOR
+  BRANCH_DIRECTOR
+  HEAD_OF_EDUCATION
+  PROJECT_MANAGER
+  COORDINATOR
+  DEVELOPMENT_LEAD
+  PRODUCTION
+  STUDIO_LEAD
+  LECTURER
+  METHODOLOGY_LEAD
+
 }
 
 enum ProgramStatus {
@@ -83,6 +93,15 @@ enum ContactRole {
   OTHER
 }
 
+enum CommunicationMode {
+  PHONE
+  EMAIL
+  IN_PERSON
+  VIDEO_CALL
+  MESSAGE
+  OTHER
+}
+
 //---------------------------MODELS---------------------------//
 model Employee {
   id        Int      @id @default(autoincrement())
@@ -93,10 +112,10 @@ model Employee {
   region   Region?
 
   is_online  Boolean  @default(false)
-  // remove this, because we might add EmployeeJobRole table later?
-  role      Role 
-
-  schools SchoolEmployees[]
+  assignments EmployeeAssignment[]
+  interactions Interaction[]
+  chiefOf Branch[]
+  legacySchoolLinks LegacySchoolEmployees[]
   participations ParticipationEmployees[]
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
@@ -109,8 +128,11 @@ model Contact {
   phone     String?
   address   Address?
   region   Region?
+  // Cached summary of the latest interaction; maintained by application logic.
   last_contacted TimestamptzString @default(now())
   
+  interactions Interaction[]
+
   contactRole ContactRole
 
   last_contacted_by Employee? @relation(fields: [last_contacted_byId], references: [id])
@@ -143,13 +165,15 @@ model School {
   branch Branch @relation(fields: [branchId], references: [id])
   
   contacts Contact[]
-  employees SchoolEmployees[]
+  legacyEmployeeLinks LegacySchoolEmployees[]
+  interactions Interaction[]
   participations Participation[]
   }
 
 // between program and school
 model Participation {
   id        Int      @id @default(autoincrement())
+  name      String
   
   startDate TimestamptzString
   endDate   TimestamptzString?
@@ -175,15 +199,43 @@ model ParticipationEmployees {
   @@id([participationId, employeeId])
 }
 
-// employees maintaining contact with this school
-model SchoolEmployees {
-  schoolId Int
+// Roles may apply globally, or be scoped to a branch, program, and/or region.
+// Multiple rows let an employee work across multiple programs and branches.
+model EmployeeAssignment {
+  id         Int @id @default(autoincrement())
   employeeId Int
+  role       EmployeeJobRole
+  branchId   Int?
+  programId  Int?
+  region     Region?
 
-  school School @relation(fields: [schoolId], references: [id])
   employee Employee @relation(fields: [employeeId], references: [id])
+  branch   Branch? @relation(fields: [branchId], references: [id])
+  program  Program? @relation(fields: [programId], references: [id])
 
-  @@id([schoolId, employeeId])
+  @@index([employeeId])
+  @@index([branchId, programId])
+}
+
+// Each contact event is a separate row, including repeat conversations.
+model Interaction {
+  id         Int @id @default(autoincrement())
+  employeeId Int
+  contactId  Int
+  schoolId   Int?
+  programId  Int?
+  contactedAt TimestamptzString @default(now())
+  mode       CommunicationMode
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+  contact  Contact @relation(fields: [contactId], references: [id])
+  school   School? @relation(fields: [schoolId], references: [id])
+  program  Program? @relation(fields: [programId], references: [id])
+
+  @@index([employeeId, contactedAt])
+  @@index([contactId, contactedAt])
+  @@index([schoolId, contactedAt])
+  @@index([programId, contactedAt])
 }
 
 model Program {
@@ -193,6 +245,8 @@ model Program {
   
   // the municipality funding the program (optional)
   sponsor MunicipalityPrograms[]
+  assignments EmployeeAssignment[]
+  interactions Interaction[]
 
   participations Participation[]
   createdAt TimestamptzString @default(now())
@@ -203,6 +257,10 @@ model Program {
 model Branch {
   id Int @id @default(autoincrement())
   name Branches
+  institute String?
+  chiefId Int?
+  chief Employee? @relation(fields: [chiefId], references: [id])
+  assignments EmployeeAssignment[]
   region Region 
   
   contacts Contact[]
@@ -228,3 +286,15 @@ model MunicipalityPrograms {
   @@id([municipalityId, programId])
 }
 
+
+// Historical assignments are archived without inventing contact events or timestamps.
+// New contact history belongs in Interaction.
+model LegacySchoolEmployees {
+  schoolId Int
+  employeeId Int
+
+  school School @relation(fields: [schoolId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  @@id([schoolId, employeeId])
+}

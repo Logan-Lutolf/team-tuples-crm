@@ -20,19 +20,19 @@ import { Suspense } from "react";
 
 export default async function EmployeeManagementPage(
     {searchParams} : {
-        searchParams?: Promise<{ query?: string; page?: string }>
+        searchParams?: Promise<{ search?: string; query?: string; page?: string }>
     }
 ) {
     const params = await searchParams
-    const query = params?.query ?? ''
-    const branches = await db.orm.public.Branch.select("id", "name").all().toArray()
+    const query = params?.search ?? params?.query ?? ''
+
 
 
     const requestedPage = Number(params?.page ?? 1)
     const currentPage = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
     function pageHref(page: number) {
         const search = new URLSearchParams({ page: String(page) })
-        if (query) search.set("query", query)
+        if (query) search.set("search", query)
         return `/schools?${search}`
     }
     const RECORDS_PER_PAGE = 20 
@@ -42,17 +42,10 @@ export default async function EmployeeManagementPage(
 
     return (
         <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
-            <Dialog>
-                <DialogTrigger render={<Button>Add a School</Button>}/>
+            <Suspense fallback={<Button disabled>Loading…</Button>}>
+                <AddSchoolDialog />
+            </Suspense>
 
-                <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-3xl">
-                    <DialogHeader>
-                        <DialogTitle>Add a School</DialogTitle>
-                    </DialogHeader>
-                    <AddSchoolForm branches={branches} />
-                </DialogContent>
-            </Dialog>
-            
             <Search placeholder={""}/>
 
             <Suspense key={`${query}:${currentPage}`} fallback={<p role="status">Loading schools…</p>}>
@@ -79,3 +72,14 @@ export default async function EmployeeManagementPage(
 }
 
 
+
+async function AddSchoolDialog() {
+    const branches = await db.orm.public.Branch.select("id", "name").all().toArray()
+    return <Dialog>
+        <DialogTrigger render={<Button>Add a School</Button>} />
+        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-3xl">
+            <DialogHeader><DialogTitle>Add a School</DialogTitle></DialogHeader>
+            <AddSchoolForm branches={branches} />
+        </DialogContent>
+    </Dialog>
+}

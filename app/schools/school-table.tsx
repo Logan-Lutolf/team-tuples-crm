@@ -2,44 +2,14 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import type { Models } from "@/prisma/contract";
 import { Button } from "@/components/ui/button"
 import type { Scalars } from "@prisma/orm-postgres/components";
-import { Pencil, Trash, Ellipsis } from "lucide-react";
+import { Trash, Ellipsis } from "lucide-react";
 import { ActionDialog } from "@/components/custom/action-dialog";
 import { DeleteSchoolForm } from "./delete-form";
-import { EditSchoolForm } from "./edit-school-form";
+import { SchoolDetailsDialog } from "./school-details-dialog";
 
-import type { SchoolContact, SchoolEmployee } from "./school-form-types";
 
 type School = Scalars<Models.public_School>
-type Option = { id: number; name: string }
-
-type Participation = Pick<
-    Scalars<Models.public_Participation>,
-    "id" | "programId" | "startDate" | "endDate" | "status"
-> & { employees: SchoolEmployee[] }
-
-interface SchoolTableProps {
-    data: School[]
-    participationAsOf: number
-    branches: Option[]
-    programs: Option[]
-    availableContacts: Option[]
-    availableEmployees: Option[]
-    relationsBySchool: Record<number, {
-        contacts: SchoolContact[]
-        employees: SchoolEmployee[]
-        participations: Participation[]
-    }>
-}
-
-export function SchoolTable({
-    data,
-    participationAsOf,
-    branches,
-    programs,
-    availableContacts,
-    availableEmployees,
-    relationsBySchool,
-}: SchoolTableProps) {
+export function SchoolTable({ data }: { data: School[] }) {
     return(
         <Table className="border border-black">
             <TableHeader className="rounded-4xl">
@@ -62,31 +32,7 @@ export function SchoolTable({
                             {school.address.street}, {school.address.zipCode}
                         </TableCell>
                         <TableCell className="flex flex-row gap-2">
-                            <ActionDialog
-                                contentClassName="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[min(90vw,80rem)]"
-                                icon={<Pencil />} 
-                                content={
-                                    <EditSchoolForm
-                                        participationAsOf={participationAsOf}
-                                        id={school.id}
-                                        name={school.name}
-                                        email={school.email}
-                                        phone={school.phone}
-                                        address={school.address}
-                                        type={school.type}
-                                        relationship={school.relationship}
-                                        region={school.region}
-                                        branchId={school.branchId}
-                                        branches={branches}
-                                        programs={programs}
-                                        availableContacts={availableContacts}
-                                        availableEmployees={availableEmployees}
-                                        contacts={relationsBySchool[school.id].contacts}
-                                        employees={relationsBySchool[school.id].employees}
-                                        participations={relationsBySchool[school.id].participations}
-                                        />
-                                }
-                            />
+                            <SchoolDetailsDialog schoolId={school.id} schoolName={school.name} />
                             <ActionDialog
                                 icon={<Trash />}
                                 content={<DeleteSchoolForm schoolId={school.id} schoolName={school.name} />}

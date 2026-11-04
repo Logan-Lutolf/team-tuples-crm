@@ -7,13 +7,16 @@ const links = [
   { href: "/employee-management", label: "Employees" },
   { href: "/schools", label: "Schools" },
   { href: "/contacts", label: "Contacts" },
+  { href: "/branches", label: "Branches" },
+  { href: "/programs", label: "Programs" },
+  { href: "/municipalities", label: "Municipalities" },
 ]
 
 export function TopNavbar() {
   const pathname = usePathname()
 
   return (
-    <nav aria-label="Dashboard navigation" className="flex shrink-0 gap-6 border-b px-6 pt-6">
+    <nav aria-label="Dashboard navigation" className="flex shrink-0 flex-wrap gap-6 border-b px-6 pt-6">
       {links.map(({ href, label }) => {
         const active = pathname === href || pathname.startsWith(`${href}/`)
         return (

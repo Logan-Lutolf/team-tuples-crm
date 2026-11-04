@@ -9,11 +9,12 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
     editSchool, addSchoolContact, removeSchoolContact,
-    addSchoolEmployee, removeSchoolEmployee,
-    createSchoolParticipation, editSchoolParticipation, deleteSchoolParticipation,
+
+    createSchoolContact, createSchoolParticipation, editSchoolParticipation, deleteSchoolParticipation,
 } from "./actions_schools"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import type { Option, SchoolContact, SchoolEmployee } from "./school-form-types"
+import { SchoolInteractions } from "./school-interactions"
+import type { Option, SchoolContact, SchoolEmployee, SchoolInteraction } from "./school-form-types"
 import type { Scalars } from "@prisma/orm-postgres/components"
 import type { Models } from "@/prisma/contract"
 
@@ -54,9 +55,10 @@ type Region = SchoolFields["region"]
 type SchoolType = SchoolFields["type"]
 type Relationship = SchoolFields["relationship"]
 type Participation = Pick<Scalars<Models.public_Participation>,
-    "id" | "programId" | "startDate" | "endDate" | "status"> & { employees: SchoolEmployee[] }
+    "id" | "name" | "programId" | "startDate" | "endDate" | "status"> & { employees: SchoolEmployee[] }
 
 interface EditSchoolFormProps {
+    onRelationshipsChange?: () => Promise<void>
     participationAsOf: number
     id: number
     name: string,
@@ -68,6 +70,7 @@ interface EditSchoolFormProps {
     address: SchoolFields["address"], 
     branchId: SchoolFields["branchId"]
     branches: { id: number; name: string }[]
+    interactions: SchoolInteraction[]
     contacts: SchoolContact[]
     availableContacts: Option[] // Contacts not assigned to any school.
     employees: SchoolEmployee[] // Assigned employee records, rather than join records.
@@ -93,7 +96,7 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
     const upcomingIds = new Set(upcoming.map((participation) => participation.id))
     const participationSections = [
         { title: "Upcoming participations", items: upcoming, empty: "No upcoming participations." },
-        { title: "Past participations", items: school.participations.filter((participation) => !upcomingIds.has(participation.id)), empty: "No other participations yet." },
+        { title: "Past/current participations", items: school.participations.filter((participation) => !upcomingIds.has(participation.id)), empty: "No other participations yet." },
     ]
 
     return (
@@ -122,6 +125,10 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
             <Field>
                 <FieldLabel htmlFor="city">City</FieldLabel>
                 <Input id="city" name="city" defaultValue={school.address.city}/>
+            </Field>
+            <Field>
+                <FieldLabel htmlFor="country">Country</FieldLabel>
+                <Input id="country" name="country" required defaultValue={school.address.country ?? ""} />
             </Field>
 
             <Field>
@@ -238,25 +245,46 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
             <Button type="submit" className="sm:col-span-2">Save school</Button>
         </SchoolActionForm>
 
+        <RelationshipSection title="School contacts" count={school.contacts.length}>
+        <section className="grid gap-3 rounded-lg border bg-muted/20 p-4">
         <SchoolAssignments
             schoolId={school.id} label="School Contacts" field="contact-id"
             assigned={school.contacts} available={school.availableContacts} contactDetails={school.contacts}
             addAction={addSchoolContact} removeAction={removeSchoolContact}
         />
-        <SchoolAssignments
-            schoolId={school.id} label="Post Bellum Employees" field="employee-id"
-            assigned={school.employees} available={school.availableEmployees} employeeDetails={school.employees}
-            addAction={addSchoolEmployee} removeAction={removeSchoolEmployee}
-        />
+        </section>
+        <SchoolActionForm className="grid gap-3 sm:grid-cols-2 rounded-lg border p-4" action={async form => {
+            const result = await createSchoolContact(form)
+            if ("success" in result) {
+                await school.onRelationshipsChange?.()
+            }
+            return result
+        }}>
+            <input type="hidden" name="school-id" value={school.id} />
+            <label>Name<Input name="full-name" required /></label>
+            <label>Email<Input name="email" type="email" required /></label>
+            <label>Phone (optional)<Input name="phone-num" /></label>
+            <label>Contact role<select name="contactRole" required defaultValue="" className="block w-full rounded-md border border-input bg-transparent p-2">
+                <option value="" disabled>Choose role</option>
+                {["TEACHER", "PRINCIPAL", "SCHOOL_COORDINATOR", "STUDENT", "HISTORIAN", "GOVERNMENT_OFFICIAL", "DONOR", "SPONSOR", "PARTNER", "VOLUNTEER", "OTHER"].map(role => <option key={role} value={role}>{role.replaceAll("_", " ")}</option>)}
+            </select></label>
+            <p className="text-sm text-muted-foreground sm:col-span-2">The new contact will be assigned to this school and its saved branch and region.</p>
+            <Button type="submit" className="sm:col-span-2">Create contact</Button>
+        </SchoolActionForm>
+        </RelationshipSection>
+        <RelationshipSection title="Contact history" count={school.interactions.length}>
+        <SchoolInteractions schoolId={school.id} contacts={school.contacts} employees={school.availableEmployees} programs={school.programs} interactions={school.interactions} />
+        </RelationshipSection>
 
+        <RelationshipSection title="Participations" count={school.participations.length}>
         <section className="flex flex-col gap-3">
             {participationSections.map(({ title, items, empty }) => (
-            <section key={title} className="flex flex-col gap-3">
+            <section key={title} className="grid gap-3 rounded-lg border bg-muted/20 p-4">
             <h3 className="font-semibold">{title}</h3>
             <Table className="border rounded-md">
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Program</TableHead>
+                        <TableHead>Participation / Program</TableHead>
                         <TableHead>Start</TableHead>
                         <TableHead>End</TableHead>
                         <TableHead>Status</TableHead>
@@ -268,7 +296,7 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
                     {items.map((participation) => (
                         <Fragment key={participation.id}>
                             <TableRow>
-                                <TableCell className="font-medium">{school.programs.find((program) => program.id === participation.programId)?.name ?? `Program ${participation.programId}`}</TableCell>
+                                <TableCell className="font-medium">{participation.name} · {school.programs.find((program) => program.id === participation.programId)?.name ?? `Program ${participation.programId}`}</TableCell>
                                 <TableCell><LocalDateTime value={participation.startDate} /></TableCell>
                                 <TableCell>{participation.endDate ? <LocalDateTime value={participation.endDate} /> : "—"}</TableCell>
                                 <TableCell><span className="rounded-md bg-muted px-2 py-1 text-xs">{participation.status.charAt(0) + participation.status.slice(1).toLowerCase()}</span></TableCell>
@@ -319,7 +347,7 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
                             </TableRow>}
                             {editingParticipation === participation.id && <TableRow>
                                 <TableCell colSpan={5} className="bg-muted/30 p-4 whitespace-normal">
-                                    <SchoolParticipationForm schoolId={school.id} programs={school.programs} participation={participation} />
+                                    <SchoolParticipationForm schoolId={school.id} programs={school.programs} employees={school.availableEmployees} onSaved={school.onRelationshipsChange} participation={participation} />
                                 </TableCell>
                             </TableRow>}
                         </Fragment>
@@ -328,13 +356,29 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
             </Table>
             </section>
             ))}
+            <section className="mt-3 grid gap-3 rounded-lg border p-4">
             <h3 className="font-semibold">Add participation</h3>
             {school.programs.length > 0
-                ? <SchoolParticipationForm schoolId={school.id} programs={school.programs} />
+                ? <SchoolParticipationForm schoolId={school.id} programs={school.programs} employees={school.availableEmployees} onSaved={school.onRelationshipsChange} />
                 : <p>No programs available.</p>}
+            </section>
         </section>
+        </RelationshipSection>
         </div>
     )
+}
+
+function RelationshipSection({ title, count, children }: {
+    title: string
+    count?: number
+    children: React.ReactNode
+}) {
+    return <details className="group rounded-lg border sm:col-span-2">
+        <summary className="cursor-pointer rounded-lg px-4 py-3 font-semibold focus-visible:outline-2 focus-visible:outline-ring">
+            {title}{count !== undefined && <span className="ml-2 text-sm font-normal text-muted-foreground">({count})</span>}
+        </summary>
+        <div className="grid gap-4 border-t p-4">{children}</div>
+    </details>
 }
 
 // Separate forms keep relationship changes independent of school details.
@@ -467,10 +511,12 @@ function DateTimeField({ name, label, value, required = false }: {
     )
 }
 
-function SchoolParticipationForm({ schoolId, programs, participation }: {
+function SchoolParticipationForm({ schoolId, programs, participation, employees, onSaved }: {
     schoolId: number
     programs: Option[]
     participation?: Participation
+    employees: Option[]
+    onSaved?: () => Promise<void>
 }) {
     const programOptions = programs.map((program) => ({ label: program.name, value: String(program.id) }))
     if (participation && !programs.some((program) => program.id === participation.programId)) {
@@ -487,12 +533,18 @@ function SchoolParticipationForm({ schoolId, programs, participation }: {
             data.set(name, date ? date.toISOString() : "")
             data.delete(`${name}-local`)
         }
-        return participation ? editSchoolParticipation(data) : createSchoolParticipation(data)
+        const result = await (participation ? editSchoolParticipation(data) : createSchoolParticipation(data))
+        if ("success" in result) await onSaved?.()
+        return result
     }
     return (
         <SchoolActionForm action={submit} className="flex flex-col gap-3">
             <input type="hidden" name="school-id" value={schoolId} />
             {participation && <input type="hidden" name="participation-id" value={participation.id} />}
+            <Field>
+                <FieldLabel>Participation name</FieldLabel>
+                <Input name="participation-name" required defaultValue={participation?.name ?? ""} aria-label="Participation name" />
+            </Field>
             <Field>
                 <FieldLabel>Program</FieldLabel>
                 <Select name="program-id" items={programOptions} required
@@ -507,6 +559,18 @@ function SchoolParticipationForm({ schoolId, programs, participation }: {
                     </SelectContent>
                 </Select>
             </Field>
+            <fieldset className="grid gap-2 rounded-lg border p-4">
+                <legend className="px-1 font-medium">Participating employees</legend>
+                <p className="text-sm text-muted-foreground">Select everyone assigned to this participation.</p>
+                <div className="grid max-h-60 gap-2 overflow-y-auto">
+                    {employees.map(employee => <label key={employee.id} className="flex items-center gap-2">
+                        <input type="checkbox" name="employee-ids" value={employee.id}
+                            defaultChecked={participation?.employees.some(e => e.id === employee.id) ?? false} />
+                        {employee.name}
+                    </label>)}
+                    {!employees.length && <p className="text-muted-foreground">No employees available. Add employees on the Employees page first.</p>}
+                </div>
+            </fieldset>
             <DateTimeField name="start-date" label="Start date and time" value={participation?.startDate} required />
             <DateTimeField name="end-date" label="End date and time (optional)" value={participation?.endDate} />
             <Field>

@@ -1,6 +1,7 @@
 'use server'
 
 import { db } from "@/prisma/db"
+import { recordInteraction } from "@/lib/record-interaction"
 import type { Scalars } from "@prisma/orm-postgres/components"
 import type { Models } from "@/prisma/contract"
 import { revalidatePath } from "next/cache"
@@ -63,6 +64,7 @@ function addressData(form: FormData) {
     return {
         street: text(form, "street"),
         city: text(form, "city"),
+        country: text(form, "country"),
         zipCode: text(form, "zipCode"),
     }
 }
@@ -144,27 +146,6 @@ export async function removeSchoolContact(formData: FormData) {
     })
 }
 
-// Submit school-id and employee-id. Repeated assignments are safe.
-export async function addSchoolEmployee(formData: FormData) {
-    return schoolAction("Assign employee", async () => {
-        const link = {
-            schoolId: id(formData, "school-id"), employeeId: id(formData, "employee-id"),
-        }
-        await db.transaction(async (tx) => {
-            const existing = await tx.orm.public.SchoolEmployees.where(link).first()
-            if (!existing) await tx.orm.public.SchoolEmployees.create(link)
-        })
-    })
-}
-
-export async function removeSchoolEmployee(formData: FormData) {
-    return schoolAction("Remove employee assignment", async () => {
-        await db.orm.public.SchoolEmployees.where({
-            schoolId: id(formData, "school-id"), employeeId: id(formData, "employee-id"),
-        }).delete()
-    })
-}
-
 // Dates must include a timezone, e.g. 2026-10-28T09:00:00Z.
 function date(form: FormData, key: string, required: boolean): string | null {
     const value = text(form, key, required)
@@ -180,6 +161,7 @@ function participationData(form: FormData) {
     const endDate = date(form, "end-date", false)
     if (endDate && endDate < startDate) throw new SchoolValidationError("End date must be on or after the start date.")
     return {
+        name: text(form, "participation-name"),
         programId: id(form, "program-id"),
         startDate,
         endDate,
@@ -189,19 +171,44 @@ function participationData(form: FormData) {
     }
 }
 
+function participationEmployees(form: FormData) {
+    return [...new Set(form.getAll('employee-ids').map(value => {
+        if (typeof value !== 'string' || !/^\d+$/.test(value)) throw new SchoolValidationError('Choose valid participating employees.')
+        const employeeId = Number(value)
+        if (!Number.isSafeInteger(employeeId) || employeeId <= 0) throw new SchoolValidationError('Choose valid participating employees.')
+        return employeeId
+    }))]
+}
+
 export async function createSchoolParticipation(formData: FormData) {
     return schoolAction("Create participation", async () => {
-        await db.orm.public.Participation.create({
-            schoolId: id(formData, "school-id"), ...participationData(formData),
+        const data = { schoolId: id(formData, "school-id"), ...participationData(formData) }
+        const employeeIds = participationEmployees(formData)
+        await db.transaction(async tx => {
+            const participation = await tx.orm.public.Participation.create(data)
+            for (const employeeId of employeeIds) {
+                await tx.orm.public.ParticipationEmployees.create({ participationId: participation.id, employeeId })
+            }
         })
+        revalidatePath('/programs')
     })
 }
 
 export async function editSchoolParticipation(formData: FormData) {
     return schoolAction("Update participation", async () => {
-        await db.orm.public.Participation.where({
-            id: id(formData, "participation-id"), schoolId: id(formData, "school-id"),
-        }).update(participationData(formData))
+        const where = { id: id(formData, "participation-id"), schoolId: id(formData, "school-id") }
+        const data = participationData(formData)
+        const employeeIds = participationEmployees(formData)
+        await db.transaction(async tx => {
+            const participation = await tx.orm.public.Participation.where(where).forUpdate().first()
+            if (!participation) throw new SchoolValidationError('This participation no longer exists for this school. Refresh the page.')
+            await tx.orm.public.Participation.where(where).update(data)
+            await tx.orm.public.ParticipationEmployees.where({ participationId: participation.id }).delete()
+            for (const employeeId of employeeIds) {
+                await tx.orm.public.ParticipationEmployees.create({ participationId: participation.id, employeeId })
+            }
+        })
+        revalidatePath('/programs')
     })
 }
 
@@ -218,4 +225,45 @@ export async function deleteSchoolParticipation(formData: FormData) {
             await tx.orm.public.Participation.where({ id: participationId, schoolId }).delete()
         })
     })
+}
+
+export async function recordSchoolInteraction(form: FormData) {
+    return schoolAction('Record interaction', async () => {
+        const schoolId = id(form, 'school-id')
+        const employeeId = id(form, 'employee-id')
+        const contactId = id(form, 'contact-id')
+        const contactedAt = date(form, 'contacted-at', true)!
+        if (Date.parse(contactedAt) > Date.now()) throw new SchoolValidationError('Contact date cannot be in the future.')
+        const mode = choice(form, 'mode', db.enums.public.CommunicationMode.values)
+        const programId = text(form, 'program-id', false) ? id(form, 'program-id') : null
+        await db.transaction(tx => recordInteraction(tx, { schoolId, employeeId, contactId, programId, contactedAt, mode }))
+        revalidatePath('/contacts')
+    })
+}
+
+export async function getSchoolDetails(schoolId: number, editing = false) {
+    if (!Number.isSafeInteger(schoolId) || schoolId <= 0) throw new Error("Invalid school ID.")
+    const { loadSchoolDetails } = await import('./load-school-details')
+    return loadSchoolDetails(schoolId, editing === true)
+}
+
+export async function createSchoolContact(form: FormData) {
+    try {
+        const schoolId = id(form, 'school-id')
+        const school = await db.orm.public.School.where({ id: schoolId }).select('id', 'branchId', 'region').first()
+        if (!school) return { error: 'This school no longer exists. Refresh the page.' }
+        // Use persisted school values, rather than trusting submitted branch/region fields.
+        const contact = new FormData()
+        for (const key of ['full-name', 'email', 'phone-num', 'contactRole']) {
+            const value = form.get(key)
+            if (typeof value === 'string') contact.set(key, value)
+        }
+        contact.set('school-id', String(school.id))
+        contact.set('branch', String(school.branchId))
+        contact.set('region', school.region)
+        const { createContact } = await import('../contacts/actions_contacts')
+        const result = await createContact(contact)
+        if ('success' in result) revalidatePath('/schools')
+        return result
+    } catch { return { error: 'Could not create this school contact. Check the fields and try again.' } }
 }

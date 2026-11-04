@@ -2,6 +2,56 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Branch and interaction schema migration
+
+The migration `20261103T1944_branch_and_interaction_updates` is already prepared.
+Do not run `migration plan` again for these changes.
+
+It creates `EmployeeAssignment` and `Interaction`, adds optional branch institute/chief
+fields, and adds a required participation name. Existing employee roles and regions
+are copied into assignments before `Employee.role` is dropped. Branch/program scopes
+remain null because the old data did not record them. Existing participations receive
+editable names of the form `Participation #<id>`.
+
+Old `SchoolEmployees` rows are preserved by renaming the table to
+`LegacySchoolEmployees`. This archive is included in the contract; new contact history
+belongs in `Interaction`. No historical interaction timestamps, contacts, or communication
+modes are invented. Existing contact last-contacted summaries remain unchanged; future
+interaction writes must maintain these summaries in application code.
+
+Before applying, back up important data and confirm `.env.local` points to the intended
+database. Stop the development server, then run:
+
+```bash
+npm run db:migrations:check
+npm run db:migrate:preview
+# Review the route, including any earlier pending migrations, before applying:
+npm run db:migrate
+```
+
+The application now reads employee roles from `EmployeeAssignment`. Employee forms
+edit global roles while preserving branch/program/regional assignments. School forms
+show archived employee links separately and record new contact history in `Interaction`.
+Participation forms require a name. The sample seed uses the new models and no longer
+removes existing schools; it is optional and should only be used for test data.
+Restart the development server after migrating or regenerating the contract.
+
+The Next.js TypeScript check excludes historical `migrations/` sources, whose frozen
+snapshots may use older SDK types. Validate migration artifacts with
+`npm run db:migrations:check` and the integration tests below instead.
+
+Local migration integration tests use a disposable PostgreSQL instance and never read
+`DATABASE_URL`. Start a local test server and supply its port:
+
+```bash
+MIGRATION_TEST_PORT=55439 node --test tests/migrations/branch-and-interaction.mjs
+```
+
+The tests create and drop their own temporary databases. They check populated and empty
+schemas, preservation, role-copy idempotence, transactional rollback, current ORM queries,
+and contact-history summary updates. They execute
+emitted SQL and postchecks; they do not exercise the CLI's live contract-marker handling.
+
 ### Apply database migrations
 
 Set `DATABASE_URL` in `.env.local` to the same PostgreSQL database used by the app, then run:

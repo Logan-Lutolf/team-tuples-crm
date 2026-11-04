@@ -15,19 +15,8 @@ export async function ContactTableContainer({ query, page }: ContactTableContain
         ? db.orm.public.Contact.where((contact) => contact.name.ilike(pattern))
         : db.orm.public.Contact
 
-    const [contacts, branches, availableSchools] = await Promise.all([
-        contactQuery.orderBy([(contact) => contact.updatedAt.desc(), (contact) => contact.id.desc()])
-            .offset((currentPage - 1) * recordsPerPage)
-            .limit(recordsPerPage).all().toArray(),
-        db.orm.public.Branch.select("id", "name").all().toArray(),
-        db.orm.public.School.select("id", "name").all().toArray(),
-    ])
+    const contacts = await contactQuery.orderBy([(contact) => contact.updatedAt.desc(), (contact) => contact.id.desc()])
+        .offset((currentPage - 1) * recordsPerPage).limit(recordsPerPage).all().toArray()
+    return <ContactTable data={contacts} />
 
-    return (
-        <ContactTable
-            data={contacts}
-            branches={branches}
-            availableSchools={availableSchools}
-        />
-    )
 }

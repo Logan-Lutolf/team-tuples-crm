@@ -1,3 +1,3 @@
-export default function Loading() {
-    return <p role="status" className="m-10">Loading schools…</p>
+export default function SchoolsLoading() {
+    return <div className="m-10" role="status">Loading schools…</div>
 }
