@@ -26,9 +26,11 @@ export async function login(prevState: any, formData: FormData) {
     // Check db for matching email and password
     try {
         const employee = await db.orm.public.Employee
-            .where((p) => and((p.email.eq(email), p.password.eq(password))))
+            .where((p) => and(p.email.eq(email), p.password.eq(password)))
             .first()
         
+            console.log("1. DB row:", employee?.id, employee?.email, employee?.roles)
+
         if (!employee) {
             console.log("Email or password is incorrect.")
             return

@@ -3,6 +3,7 @@ import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers"
 import { Scalars } from "@prisma/orm-postgres/components";
 import { Models } from "@/prisma/contract";
+import { Session } from "inspector/promises";
 
 type Roles = Scalars<Models.public_Employee>["roles"]
 
@@ -45,7 +46,7 @@ export async function encrypt(payload: SessionPayload) {
 
 export async function decrypt(session: string | undefined = "") {
     try {
-        const { payload } = await jwtVerify(session, encodedKey, {
+        const { payload } = await jwtVerify<SessionPayload>(session, encodedKey, {
             algorithms: ["HS256"],
         });
 
