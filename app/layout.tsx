@@ -8,6 +8,7 @@ const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 import { Navbar } from "@/components/navbar";
 import "./globals.css";
 import { ToastProvider, Toaster } from "@/components/ui/toast";
+import Image from "next/image";
 
 
 const geistSans = Geist({
@@ -36,9 +37,12 @@ export default function RootLayout({
       className={`${inter.variable} h-full antialiased`}>    
       <body className="min-h-full flex">  
         <ToastProvider>
-          < Navbar />
           <div className="flex min-w-0 flex-1 flex-col">
-            <TopNavbar />
+            <div className="flex flex-row justify-between">
+              <Image width={100} height={100} src="/logo.png" alt={"Post Bellum Image"} />
+              <TopNavbar />
+            </div>
+            
             {children}
             <Toaster />
           </div>
