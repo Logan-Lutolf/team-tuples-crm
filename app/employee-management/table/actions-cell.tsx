@@ -1,6 +1,7 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, Pencil, User, Trash } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { EditEmployeeForm } from "../forms/edit-employee-form"
 import { Button } from "@/components/ui/button"
@@ -11,6 +12,7 @@ type Role = "ADMIN" | "WORKSHOPS_COORDINATOR" | "SCHOOL_NETWORK_COORDINATOR" | "
 
 
 export function ActionsCell({employee}: {employee: { id: number, name: string, email: string, role: string, phone: string | null, globalRoles: string[]}}) {
+    const router = useRouter()
     const [editOpen, setEditOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
             return (
@@ -33,7 +35,7 @@ export function ActionsCell({employee}: {employee: { id: number, name: string, e
                                 <Pencil/>
                                 Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => router.push(`/details/employees/${employee.id}`)}>
                                 <User/>
                                 View Profile
                             </DropdownMenuItem>

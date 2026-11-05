@@ -1,9 +1,12 @@
 'use client'
+import { RecordLink } from '@/components/records/record-link'
+
+import { datedParticipations } from '@/lib/participation-status'
+import { useParticipationTime } from './use-participation-time'
 
 import { useEffect, useId, useRef, useState, Fragment } from "react"
 import { SchoolActionForm, type SchoolFormAction } from "./school-action-form"
 import { Button } from "@/components/ui/button"
-import { DialogHeader } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -82,7 +85,9 @@ interface EditSchoolFormProps {
 
 
 // TODO: Add form validation
-export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual type later T_T
+export function EditSchoolForm(school: EditSchoolFormProps) {
+    const now = useParticipationTime(school.participationAsOf)
+    const participations = datedParticipations(school.participations, now)
     const [viewingParticipants, setViewingParticipants] = useState<number | null>(null)
     const [editingParticipation, setEditingParticipation] = useState<number | null>(null)
     const branchOptions = school.branches.map((branch) => ({
@@ -90,19 +95,15 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
         value: String(branch.id),
     }))
 
-    const upcoming = school.participations.filter((participation) =>
-        participation.status === "PLANNED" && Date.parse(participation.startDate) > school.participationAsOf)
-        .sort((a, b) => Date.parse(a.startDate) - Date.parse(b.startDate))
+    const upcoming = participations.filter(participation => participation.status === "PLANNED")
     const upcomingIds = new Set(upcoming.map((participation) => participation.id))
     const participationSections = [
         { title: "Upcoming participations", items: upcoming, empty: "No upcoming participations." },
-        { title: "Past/current participations", items: school.participations.filter((participation) => !upcomingIds.has(participation.id)), empty: "No other participations yet." },
+        { title: "Past/current participations", items: participations.filter((participation) => !upcomingIds.has(participation.id)), empty: "No other participations yet." },
     ]
 
     return (
         <div className="flex flex-col gap-6">
-        <DialogHeader>
-        </DialogHeader>
         <SchoolActionForm className="grid grid-cols-1 gap-4 sm:grid-cols-2 [&_[data-slot=select-trigger]]:w-full [&>[role=alert]]:col-span-full [&>[role=status]]:col-span-full" action={editSchool}>
             <input type="hidden" name="school-id" value={school.id} />
 
@@ -223,8 +224,8 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
             <Field>
                 <FieldLabel htmlFor="role">Branch</FieldLabel>
                 <Select
-                    items={branchOptions}
-                    defaultValue={String(school.branchId)}
+                    items={[{ label: "No branch assigned", value: "" }, ...branchOptions]}
+                    defaultValue={school.branchId === null ? "" : String(school.branchId)}
                     name="branch"
                 >
                     <SelectTrigger>
@@ -232,6 +233,7 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
+                            <SelectItem value="">No branch assigned</SelectItem>
                             {branchOptions.map((branch) => (
                                 <SelectItem key={branch.value} value={branch.value}>
                                     {branch.label}
@@ -296,7 +298,7 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
                     {items.map((participation) => (
                         <Fragment key={participation.id}>
                             <TableRow>
-                                <TableCell className="font-medium">{participation.name} · {school.programs.find((program) => program.id === participation.programId)?.name ?? `Program ${participation.programId}`}</TableCell>
+                                <TableCell className="font-medium">{participation.name} · <RecordLink type="programs" id={participation.programId}>{school.programs.find((program) => program.id === participation.programId)?.name ?? `Program ${participation.programId}`}</RecordLink></TableCell>
                                 <TableCell><LocalDateTime value={participation.startDate} /></TableCell>
                                 <TableCell>{participation.endDate ? <LocalDateTime value={participation.endDate} /> : "—"}</TableCell>
                                 <TableCell><span className="rounded-md bg-muted px-2 py-1 text-xs">{participation.status.charAt(0) + participation.status.slice(1).toLowerCase()}</span></TableCell>
@@ -334,7 +336,7 @@ export function EditSchoolForm(school: EditSchoolFormProps) {    // Add actual t
                                                     <TableCell colSpan={5} className="text-center text-muted-foreground">No employees assigned to this participation.</TableCell>
                                                 </TableRow>}
                                                 {participation.employees.map((employee) => <TableRow key={employee.id}>
-                                                    <TableCell className="font-medium">{employee.name}</TableCell>
+                                                    <TableCell className="font-medium"><RecordLink type="employees" id={employee.id}>{employee.name}</RecordLink></TableCell>
                                                     <TableCell><a className="underline underline-offset-4" href={`mailto:${employee.email}`}>{employee.email}</a></TableCell>
                                                     <TableCell>{employee.phone ? <a href={`tel:${employee.phone}`}>{employee.phone}</a> : "—"}</TableCell>
                                                     <TableCell className="whitespace-normal">{employee.role.replaceAll("_", " ")}</TableCell>
@@ -414,7 +416,7 @@ function SchoolAssignments({ schoolId, label, field, assigned, available, addAct
                         )}
                         {contactDetails.map((contact) => (
                             <TableRow key={contact.id}>
-                                <TableCell className="font-medium">{contact.name}</TableCell>
+                                <TableCell className="font-medium"><RecordLink type="contacts" id={contact.id}>{contact.name}</RecordLink></TableCell>
                                 <TableCell><a className="underline underline-offset-4" href={`mailto:${contact.email}`}>{contact.email}</a></TableCell>
                                 <TableCell>{contact.phone ? <a href={`tel:${contact.phone}`}>{contact.phone}</a> : "—"}</TableCell>
                                 <TableCell>
@@ -440,7 +442,7 @@ function SchoolAssignments({ schoolId, label, field, assigned, available, addAct
                     <TableBody>
                         {employeeDetails?.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">No employees assigned.</TableCell></TableRow>}
                         {employeeDetails?.map((employee) => <TableRow key={employee.id}>
-                            <TableCell className="font-medium">{employee.name}</TableCell>
+                            <TableCell className="font-medium"><RecordLink type="employees" id={employee.id}>{employee.name}</RecordLink></TableCell>
                             <TableCell><a className="underline underline-offset-4" href={`mailto:${employee.email}`}>{employee.email}</a></TableCell>
                             <TableCell>{employee.phone ? <a href={`tel:${employee.phone}`}>{employee.phone}</a> : "—"}</TableCell>
                             <TableCell className="whitespace-normal">{employee.role.replaceAll("_", " ")}</TableCell>
@@ -511,18 +513,19 @@ function DateTimeField({ name, label, value, required = false }: {
     )
 }
 
-function SchoolParticipationForm({ schoolId, programs, participation, employees, onSaved }: {
-    schoolId: number
+export function SchoolParticipationForm({ schoolId, programs, participation, employees, onSaved, schools, fixedProgramId }: {
+    schoolId?: number
+    schools?: Option[]
+    fixedProgramId?: number
     programs: Option[]
     participation?: Participation
     employees: Option[]
     onSaved?: () => Promise<void>
 }) {
     const programOptions = programs.map((program) => ({ label: program.name, value: String(program.id) }))
-    if (participation && !programs.some((program) => program.id === participation.programId)) {
+    if (participation?.programId !== null && participation && !programs.some((program) => program.id === participation.programId)) {
         programOptions.push({ label: `Program ${participation.programId}`, value: String(participation.programId) })
     }
-    const statuses: Participation["status"][] = ["PLANNED", "ONGOING", "COMPLETED", "CANCELLED"]
     async function submit(data: FormData) {
         for (const name of ["start-date", "end-date"]) {
             const value = String(data.get(`${name}-local`) ?? "")
@@ -539,19 +542,21 @@ function SchoolParticipationForm({ schoolId, programs, participation, employees,
     }
     return (
         <SchoolActionForm action={submit} className="flex flex-col gap-3">
-            <input type="hidden" name="school-id" value={schoolId} />
-            {participation && <input type="hidden" name="participation-id" value={participation.id} />}
+            {schoolId !== undefined ? <input type="hidden" name="school-id" value={schoolId} /> : <label>School<select name="school-id" required defaultValue="" className="block w-full rounded-md border p-2"><option value="" disabled>Choose school</option>{schools?.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</select></label>}
+            {participation && <><input type="hidden" name="participation-id" value={participation.id} /><input type="hidden" name="original-school-id" value={schoolId ?? ""} /></>}
             <Field>
                 <FieldLabel>Participation name</FieldLabel>
                 <Input name="participation-name" required defaultValue={participation?.name ?? ""} aria-label="Participation name" />
             </Field>
+            {fixedProgramId !== undefined ? <input type="hidden" name="program-id" value={fixedProgramId} /> : <>
             <Field>
                 <FieldLabel>Program</FieldLabel>
-                <Select name="program-id" items={programOptions} required
-                    defaultValue={participation ? String(participation.programId) : ""}>
+                <Select name="program-id" items={programOptions}
+                    defaultValue={participation?.programId ? String(participation.programId) : ""}>
                     <SelectTrigger aria-label="Program"><SelectValue /></SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
+                            <SelectItem value="">No program assigned</SelectItem>
                             {programOptions.map((program) => (
                                 <SelectItem key={program.value} value={program.value}>{program.label}</SelectItem>
                             ))}
@@ -559,6 +564,7 @@ function SchoolParticipationForm({ schoolId, programs, participation, employees,
                     </SelectContent>
                 </Select>
             </Field>
+            </>}
             <fieldset className="grid gap-2 rounded-lg border p-4">
                 <legend className="px-1 font-medium">Participating employees</legend>
                 <p className="text-sm text-muted-foreground">Select everyone assigned to this participation.</p>
@@ -573,18 +579,7 @@ function SchoolParticipationForm({ schoolId, programs, participation, employees,
             </fieldset>
             <DateTimeField name="start-date" label="Start date and time" value={participation?.startDate} required />
             <DateTimeField name="end-date" label="End date and time (optional)" value={participation?.endDate} />
-            <Field>
-                <FieldLabel>Status</FieldLabel>
-                <Select name="status" defaultValue={participation?.status ?? "PLANNED"}
-                    items={statuses.map((status) => ({ label: status, value: status }))}>
-                    <SelectTrigger aria-label="Status"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            {statuses.map((status) => <SelectItem key={status} value={status}>{status}</SelectItem>)}
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </Field>
+            {participation?.status === 'CANCELLED' && <input type="hidden" name="cancelled" value="on" />}
             <Button type="submit">{participation ? "Save participation" : "Add participation"}</Button>
         </SchoolActionForm>
     )

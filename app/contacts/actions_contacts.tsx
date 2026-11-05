@@ -58,7 +58,7 @@ function contactData(form: FormData) {
             "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN",
             "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN",
         ]) : null,
-        branchId: id(form, "branch"),
+        branchId: text(form, "branch", false) ? id(form, "branch") : null,
         // add contactRole
         contactRole: choice<ContactFields["contactRole"]>(form, "contactRole", [
             "TEACHER",

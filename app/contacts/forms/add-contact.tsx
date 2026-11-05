@@ -84,12 +84,13 @@ export function AddContactForm({
 
             <Field>
                 <FieldLabel htmlFor="branch">Branch</FieldLabel>
-                <Select required items={branchOptions} defaultValue="" name="branch">
+                <Select items={[{ label: "No branch assigned", value: "" }, ...branchOptions]} defaultValue="" name="branch">
                     <SelectTrigger>
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
+                            <SelectItem value="">No branch assigned</SelectItem>
                             {branchOptions.map((b) => {
                                 return (
                                 <SelectItem key={b.value} value={b.value}>

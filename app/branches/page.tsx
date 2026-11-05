@@ -1,10 +1,10 @@
+import { PageActionLink } from '@/components/records/page-action-link'
+import { RecordLink } from '@/components/records/record-link'
 import Link from "next/link"
 import { db } from "@/prisma/db"
 import { Search } from "@/components/custom/search"
 import { Suspense } from "react"
-import { BranchDetailsDialog } from "./branch-details-dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { BranchDialog } from "./branch-dialog"
 
 export default async function BranchesPage({ searchParams }: {
     searchParams?: Promise<{ search?: string; page?: string }>
@@ -23,12 +23,11 @@ export default async function BranchesPage({ searchParams }: {
     const requested = Number(params?.page ?? 1)
     const page = Math.min(pages, Number.isSafeInteger(requested) && requested > 0 ? requested : 1)
     const rows = filtered.slice((page - 1) * size, page * size)
-    const options = { employees, names: [...db.enums.public.Branches.values], regions: [...db.enums.public.Region.values] }
     function href(next: number) {
         return `/branches?${new URLSearchParams({ ...(search ? { search } : {}), page: String(next) })}`
     }
     return <div className="m-10 flex min-w-0 flex-1 flex-col gap-4">
-        <BranchDialog {...options} />
+        <PageActionLink href="/create/branches" fullWidth>Add a Branch</PageActionLink>
         <Suspense fallback={<p role="status">Loading search…</p>}><Search placeholder="" /></Suspense>
         <Table className="border">
             <TableHeader><TableRow>
@@ -36,11 +35,11 @@ export default async function BranchesPage({ searchParams }: {
             </TableRow></TableHeader>
             <TableBody>
                 {rows.map((branch) => <TableRow key={branch.id}>
-                    <TableCell>{branch.name}</TableCell><TableCell>{branch.region}</TableCell>
-                    <TableCell>{branch.institute || "—"}</TableCell><TableCell>{branch.chiefId ? chiefs.get(branch.chiefId) ?? "Unassigned" : "Unassigned"}</TableCell>
+                    <TableCell><RecordLink type="branches" id={branch.id}>{branch.name}</RecordLink></TableCell><TableCell>{branch.region}</TableCell>
+                    <TableCell>{branch.institute || "—"}</TableCell><TableCell><RecordLink type="employees" id={branch.chiefId}>{branch.chiefId ? chiefs.get(branch.chiefId) ?? "Unassigned" : "Unassigned"}</RecordLink></TableCell>
                     <TableCell><div className="flex gap-2">
-                        <BranchDetailsDialog branchId={branch.id} branchName={branch.name} />
-                        <BranchDialog {...options} branch={branch} mode="delete" />
+                        <PageActionLink href={`/details/branches/${branch.id}`}>View details</PageActionLink>
+                        <PageActionLink href={`/details/branches/${branch.id}/delete`} destructive>Delete</PageActionLink>
                     </div></TableCell>
                 </TableRow>)}
                 {!rows.length && <TableRow><TableCell colSpan={5} className="py-10 text-center text-muted-foreground">

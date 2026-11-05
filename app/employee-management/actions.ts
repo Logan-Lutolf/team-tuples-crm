@@ -52,10 +52,10 @@ export async function deleteEmployee(form: FormData) {
         const id = employeeId(form)
         await db.transaction(async tx => {
             await tx.orm.public.EmployeeAssignment.where({ employeeId: id }).delete()
-            // Foreign keys protect interaction history, chiefs, and participation/legacy links.
+            // Delete actions clear chiefs/history references and remove participation links.
             await tx.orm.public.Employee.where({ id }).delete()
         })
         refresh()
         return { success: true, message: 'Employee deleted.' }
-    } catch { return { success: false, message: 'Could not delete employee. They may still be referenced by contact history, a branch, or participation.' } }
+    } catch { return { success: false, message: 'Could not delete employee. Check the database connection and automatic-deletion migration.' } }
 }

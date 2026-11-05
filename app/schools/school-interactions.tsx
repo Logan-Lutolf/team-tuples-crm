@@ -1,4 +1,5 @@
 'use client'
+import { RecordLink } from '@/components/records/record-link'
 import { useState } from 'react'
 import { SchoolActionForm } from './school-action-form'
 import { recordSchoolInteraction } from './actions_schools'
@@ -22,7 +23,7 @@ export function SchoolInteractions({ schoolId, contacts, employees, programs, in
             <label>Through (UTC)<Input type="date" value={before} onChange={e => setBefore(e.target.value)} /></label>
         </div>
         {filtered.length ? <ul className="grid gap-2">{filtered.map(i => <li key={i.id}>
-            {i.contactedAt.replace('T', ' ').slice(0, 19)} UTC · {employees.find(e => e.id === i.employeeId)?.name ?? `Employee #${i.employeeId}`} → {contacts.find(c => c.id === i.contactId)?.name ?? `Contact #${i.contactId}`} · {i.mode.replaceAll('_', ' ')}{i.programId ? ` · ${programs.find(p => p.id === i.programId)?.name ?? `Program #${i.programId}`}` : ''}
+            {i.contactedAt.replace('T', ' ').slice(0, 19)} UTC · <RecordLink type="employees" id={i.employeeId}>{employees.find(e => e.id === i.employeeId)?.name ?? (i.employeeId === null ? 'Employee deleted' : `Employee #${i.employeeId}`)}</RecordLink> → <RecordLink type="contacts" id={i.contactId}>{contacts.find(c => c.id === i.contactId)?.name ?? (i.contactId === null ? 'Contact deleted' : `Contact #${i.contactId}`)}</RecordLink> · {i.mode.replaceAll('_', ' ')}{i.programId ? <> · <RecordLink type="programs" id={i.programId}>{programs.find(p => p.id === i.programId)?.name ?? `Program #${i.programId}`}</RecordLink></> : null}
         </li>)}</ul> : <p>No interactions in this date range.</p>}
         </section>
         <section aria-label="Record a new interaction" className="mt-3 grid gap-3 rounded-lg border p-4">

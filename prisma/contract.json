@@ -12,6 +12,10 @@
       "model": "Contact",
       "namespace": "public"
     },
+    "ContactEmployment": {
+      "model": "ContactEmployment",
+      "namespace": "public"
+    },
     "Employee": {
       "model": "Employee",
       "namespace": "public"
@@ -24,10 +28,6 @@
       "model": "Interaction",
       "namespace": "public"
     },
-    "LegacySchoolEmployees": {
-      "model": "LegacySchoolEmployees",
-      "namespace": "public"
-    },
     "Municipality": {
       "model": "Municipality",
       "namespace": "public"
@@ -38,6 +38,10 @@
     },
     "Participation": {
       "model": "Participation",
+      "namespace": "public"
+    },
+    "ParticipationContacts": {
+      "model": "ParticipationContacts",
       "namespace": "public"
     },
     "ParticipationEmployees": {
@@ -198,6 +202,42 @@
               {
                 "name": "NEWSLETTER_COORDINATOR",
                 "value": "NEWSLETTER_COORDINATOR"
+              },
+              {
+                "name": "BRANCH_DIRECTOR",
+                "value": "BRANCH_DIRECTOR"
+              },
+              {
+                "name": "HEAD_OF_EDUCATION",
+                "value": "HEAD_OF_EDUCATION"
+              },
+              {
+                "name": "PROJECT_MANAGER",
+                "value": "PROJECT_MANAGER"
+              },
+              {
+                "name": "COORDINATOR",
+                "value": "COORDINATOR"
+              },
+              {
+                "name": "DEVELOPMENT_LEAD",
+                "value": "DEVELOPMENT_LEAD"
+              },
+              {
+                "name": "PRODUCTION",
+                "value": "PRODUCTION"
+              },
+              {
+                "name": "STUDIO_LEAD",
+                "value": "STUDIO_LEAD"
+              },
+              {
+                "name": "LECTURER",
+                "value": "LECTURER"
+              },
+              {
+                "name": "METHODOLOGY_LEAD",
+                "value": "METHODOLOGY_LEAD"
               }
             ]
           },
@@ -472,7 +512,7 @@
                 }
               },
               "branchId": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
@@ -571,7 +611,7 @@
             "relations": {
               "branch": {
                 "cardinality": "N:1",
-                "nullable": false,
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "branchId"
@@ -582,6 +622,21 @@
                 },
                 "to": {
                   "model": "Branch",
+                  "namespace": "public"
+                }
+              },
+              "employmentHistory": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "contactId"
+                  ]
+                },
+                "to": {
+                  "model": "ContactEmployment",
                   "namespace": "public"
                 }
               },
@@ -613,6 +668,21 @@
                 },
                 "to": {
                   "model": "Employee",
+                  "namespace": "public"
+                }
+              },
+              "participations": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "contactId"
+                  ]
+                },
+                "to": {
+                  "model": "ParticipationContacts",
                   "namespace": "public"
                 }
               },
@@ -677,6 +747,120 @@
               },
               "namespaceId": "public",
               "table": "Contact"
+            }
+          },
+          "ContactEmployment": {
+            "fields": {
+              "contactId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "endDate": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "jobTitle": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "schoolId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "startDate": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "contact": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "contactId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Contact",
+                  "namespace": "public"
+                }
+              },
+              "school": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "schoolId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "School",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "contactId": {
+                  "column": "contactId"
+                },
+                "endDate": {
+                  "column": "endDate"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "jobTitle": {
+                  "column": "jobTitle"
+                },
+                "notes": {
+                  "column": "notes"
+                },
+                "schoolId": {
+                  "column": "schoolId"
+                },
+                "startDate": {
+                  "column": "startDate"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ContactEmployment"
             }
           },
           "Employee": {
@@ -794,21 +978,6 @@
                 },
                 "to": {
                   "model": "Interaction",
-                  "namespace": "public"
-                }
-              },
-              "legacySchoolLinks": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "employeeId"
-                  ]
-                },
-                "to": {
-                  "model": "LegacySchoolEmployees",
                   "namespace": "public"
                 }
               },
@@ -997,7 +1166,7 @@
           "Interaction": {
             "fields": {
               "contactId": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
@@ -1011,7 +1180,7 @@
                 }
               },
               "employeeId": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
@@ -1055,7 +1224,7 @@
             "relations": {
               "contact": {
                 "cardinality": "N:1",
-                "nullable": false,
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "contactId"
@@ -1071,7 +1240,7 @@
               },
               "employee": {
                 "cardinality": "N:1",
-                "nullable": false,
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "employeeId"
@@ -1144,70 +1313,6 @@
               },
               "namespaceId": "public",
               "table": "Interaction"
-            }
-          },
-          "LegacySchoolEmployees": {
-            "fields": {
-              "employeeId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "schoolId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "employee": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "employeeId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Employee",
-                  "namespace": "public"
-                }
-              },
-              "school": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "schoolId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "School",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "employeeId": {
-                  "column": "employeeId"
-                },
-                "schoolId": {
-                  "column": "schoolId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "LegacySchoolEmployees"
             }
           },
           "Municipality": {
@@ -1355,14 +1460,14 @@
                 }
               },
               "programId": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
               "schoolId": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
@@ -1390,6 +1495,21 @@
               }
             },
             "relations": {
+              "contacts": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "participationId"
+                  ]
+                },
+                "to": {
+                  "model": "ParticipationContacts",
+                  "namespace": "public"
+                }
+              },
               "employee": {
                 "cardinality": "1:N",
                 "on": {
@@ -1407,7 +1527,7 @@
               },
               "program": {
                 "cardinality": "N:1",
-                "nullable": false,
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "programId"
@@ -1423,7 +1543,7 @@
               },
               "school": {
                 "cardinality": "N:1",
-                "nullable": false,
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "schoolId"
@@ -1464,6 +1584,70 @@
               },
               "namespaceId": "public",
               "table": "Participation"
+            }
+          },
+          "ParticipationContacts": {
+            "fields": {
+              "contactId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "participationId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "contact": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "contactId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Contact",
+                  "namespace": "public"
+                }
+              },
+              "participation": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "participationId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Participation",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "contactId": {
+                  "column": "contactId"
+                },
+                "participationId": {
+                  "column": "participationId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ParticipationContacts"
             }
           },
           "ParticipationEmployees": {
@@ -1662,7 +1846,7 @@
                 }
               },
               "branchId": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
@@ -1753,7 +1937,7 @@
             "relations": {
               "branch": {
                 "cardinality": "N:1",
-                "nullable": false,
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "branchId"
@@ -1764,6 +1948,21 @@
                 },
                 "to": {
                   "model": "Branch",
+                  "namespace": "public"
+                }
+              },
+              "contactEmployments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "schoolId"
+                  ]
+                },
+                "to": {
+                  "model": "ContactEmployment",
                   "namespace": "public"
                 }
               },
@@ -1794,21 +1993,6 @@
                 },
                 "to": {
                   "model": "Interaction",
-                  "namespace": "public"
-                }
-              },
-              "legacyEmployeeLinks": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "schoolId"
-                  ]
-                },
-                "to": {
-                  "model": "LegacySchoolEmployees",
                   "namespace": "public"
                 }
               },
@@ -1972,6 +2156,7 @@
                   "index": {
                     "name": "Branch_chiefId_idx_3a71836f"
                   },
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "chiefId"
@@ -2027,7 +2212,7 @@
                 "branchId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
+                  "nullable": true
                 },
                 "contactRole": {
                   "codecId": "pg/text@1",
@@ -2114,6 +2299,7 @@
                   "index": {
                     "name": "Contact_last_contacted_byId_idx_ee2c3f80"
                   },
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "last_contacted_byId"
@@ -2133,6 +2319,7 @@
                   "index": {
                     "name": "Contact_schoolId_idx_82b454d7"
                   },
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "schoolId"
@@ -2152,6 +2339,7 @@
                   "index": {
                     "name": "Contact_branchId_idx_d04da5bb"
                   },
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "branchId"
@@ -2206,6 +2394,124 @@
                   ]
                 }
               ]
+            },
+            "ContactEmployment": {
+              "columns": {
+                "contactId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "endDate": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "jobTitle": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "schoolId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "startDate": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "ContactEmployment_contactId_idx_ec98db2a"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "contactId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ContactEmployment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Contact"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "ContactEmployment_schoolId_idx_82b454d7"
+                  },
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "schoolId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ContactEmployment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "School"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "contactId"
+                  ],
+                  "name": "ContactEmployment_contactId_idx_ec98db2a",
+                  "prefix": "ContactEmployment_contactId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "contactId",
+                    "startDate"
+                  ],
+                  "name": "ContactEmployment_contactId_startDate_idx_498892b0",
+                  "prefix": "ContactEmployment_contactId_startDate_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "schoolId"
+                  ],
+                  "name": "ContactEmployment_schoolId_idx_82b454d7",
+                  "prefix": "ContactEmployment_schoolId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
             },
             "Employee": {
               "checks": [
@@ -2303,8 +2609,8 @@
                   "prefix": "EmployeeAssignment_region_check"
                 },
                 {
-                  "expression": "\"role\" IN ('ADMIN', 'WORKSHOPS_COORDINATOR', 'SCHOOL_NETWORK_COORDINATOR', 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR', 'VETERANS_DAY_COORDINATOR', 'NEWSLETTER_COORDINATOR')",
-                  "name": "EmployeeAssignment_role_check_b697a84e",
+                  "expression": "\"role\" IN ('ADMIN', 'WORKSHOPS_COORDINATOR', 'SCHOOL_NETWORK_COORDINATOR', 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR', 'VETERANS_DAY_COORDINATOR', 'NEWSLETTER_COORDINATOR', 'BRANCH_DIRECTOR', 'HEAD_OF_EDUCATION', 'PROJECT_MANAGER', 'COORDINATOR', 'DEVELOPMENT_LEAD', 'PRODUCTION', 'STUDIO_LEAD', 'LECTURER', 'METHODOLOGY_LEAD')",
+                  "name": "EmployeeAssignment_role_check_2f516525",
                   "prefix": "EmployeeAssignment_role_check"
                 }
               ],
@@ -2361,6 +2667,7 @@
                   "index": {
                     "name": "EmployeeAssignment_employeeId_idx_087dd4a6"
                   },
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "employeeId"
@@ -2380,6 +2687,7 @@
                   "index": {
                     "name": "EmployeeAssignment_branchId_idx_d04da5bb"
                   },
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "branchId"
@@ -2399,6 +2707,7 @@
                   "index": {
                     "name": "EmployeeAssignment_programId_idx_4e50c706"
                   },
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "programId"
@@ -2469,7 +2778,7 @@
                 "contactId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
+                  "nullable": true
                 },
                 "contactedAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -2483,7 +2792,7 @@
                 "employeeId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
+                  "nullable": true
                 },
                 "id": {
                   "codecId": "pg/int4@1",
@@ -2521,6 +2830,7 @@
                   "index": {
                     "name": "Interaction_employeeId_idx_087dd4a6"
                   },
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "employeeId"
@@ -2540,6 +2850,7 @@
                   "index": {
                     "name": "Interaction_contactId_idx_ec98db2a"
                   },
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "contactId"
@@ -2559,6 +2870,7 @@
                   "index": {
                     "name": "Interaction_schoolId_idx_82b454d7"
                   },
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "schoolId"
@@ -2578,6 +2890,7 @@
                   "index": {
                     "name": "Interaction_programId_idx_4e50c706"
                   },
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "programId"
@@ -2671,85 +2984,6 @@
               },
               "uniques": []
             },
-            "LegacySchoolEmployees": {
-              "columns": {
-                "employeeId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                },
-                "schoolId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "index": {
-                    "name": "LegacySchoolEmployees_schoolId_idx_82b454d7"
-                  },
-                  "source": {
-                    "columns": [
-                      "schoolId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "LegacySchoolEmployees"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "School"
-                  }
-                },
-                {
-                  "index": {
-                    "name": "LegacySchoolEmployees_employeeId_idx_087dd4a6"
-                  },
-                  "source": {
-                    "columns": [
-                      "employeeId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "LegacySchoolEmployees"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Employee"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "employeeId"
-                  ],
-                  "name": "LegacySchoolEmployees_employeeId_idx_087dd4a6",
-                  "prefix": "LegacySchoolEmployees_employeeId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "schoolId"
-                  ],
-                  "name": "LegacySchoolEmployees_schoolId_idx_82b454d7",
-                  "prefix": "LegacySchoolEmployees_schoolId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "schoolId",
-                  "employeeId"
-                ]
-              },
-              "uniques": []
-            },
             "Municipality": {
               "columns": {
                 "id": {
@@ -2799,6 +3033,7 @@
                   "index": {
                     "name": "MunicipalityPrograms_programId_idx_4e50c706"
                   },
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "programId"
@@ -2818,6 +3053,7 @@
                   "index": {
                     "name": "MunicipalityPrograms_municipalityId_idx_0a7c35cd"
                   },
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "municipalityId"
@@ -2891,12 +3127,12 @@
                 "programId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
+                  "nullable": true
                 },
                 "schoolId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
+                  "nullable": true
                 },
                 "startDate": {
                   "codecId": "pg/timestamptz-string@1",
@@ -2924,6 +3160,7 @@
                   "index": {
                     "name": "Participation_schoolId_idx_82b454d7"
                   },
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "schoolId"
@@ -2943,6 +3180,7 @@
                   "index": {
                     "name": "Participation_programId_idx_4e50c706"
                   },
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "programId"
@@ -2984,6 +3222,87 @@
               },
               "uniques": []
             },
+            "ParticipationContacts": {
+              "columns": {
+                "contactId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "participationId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "ParticipationContacts_participationId_idx_1840362d"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "participationId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ParticipationContacts"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Participation"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "ParticipationContacts_contactId_idx_ec98db2a"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "contactId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ParticipationContacts"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Contact"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "contactId"
+                  ],
+                  "name": "ParticipationContacts_contactId_idx_ec98db2a",
+                  "prefix": "ParticipationContacts_contactId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "participationId"
+                  ],
+                  "name": "ParticipationContacts_participationId_idx_1840362d",
+                  "prefix": "ParticipationContacts_participationId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "participationId",
+                  "contactId"
+                ]
+              },
+              "uniques": []
+            },
             "ParticipationEmployees": {
               "columns": {
                 "employeeId": {
@@ -3002,6 +3321,7 @@
                   "index": {
                     "name": "ParticipationEmployees_participationId_idx_1840362d"
                   },
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "participationId"
@@ -3021,6 +3341,7 @@
                   "index": {
                     "name": "ParticipationEmployees_employeeId_idx_087dd4a6"
                   },
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "employeeId"
@@ -3135,7 +3456,7 @@
                 "branchId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
+                  "nullable": true
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -3210,6 +3531,7 @@
                   "index": {
                     "name": "School_branchId_idx_d04da5bb"
                   },
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "branchId"
@@ -3299,7 +3621,16 @@
                 "SCHOOL_NETWORK_COORDINATOR",
                 "STORIES_OF_OUR_NEIGHBORS_COORDINATOR",
                 "VETERANS_DAY_COORDINATOR",
-                "NEWSLETTER_COORDINATOR"
+                "NEWSLETTER_COORDINATOR",
+                "BRANCH_DIRECTOR",
+                "HEAD_OF_EDUCATION",
+                "PROJECT_MANAGER",
+                "COORDINATOR",
+                "DEVELOPMENT_LEAD",
+                "PRODUCTION",
+                "STUDIO_LEAD",
+                "LECTURER",
+                "METHODOLOGY_LEAD"
               ]
             },
             "ProgramStatus": {
@@ -3354,7 +3685,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "44099428b744912efb3e31788b6f4e70b837626f3dd35a6179f910186e4b9461"
+    "storageHash": "efffa3f8d1f973b78b7dc3e6dd41b3896a4fc50dd12e45a138b789f646cdeedc"
   },
   "execution": {
     "executionHash": "49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353",

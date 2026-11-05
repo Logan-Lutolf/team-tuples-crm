@@ -1,11 +1,11 @@
 'use client'
+import { PageContent, PageHeader, PageTitle, PageDescription } from '@/components/records/page-content'
+import { RecordLink } from '@/components/records/record-link'
 
 import { useEffect, useId, useState, type ReactNode } from 'react'
 import { useFormStatus } from 'react-dom'
-import { Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { editBranch, getBranchDetails, updateBranchRelationship } from './actions'
 import type { BranchResult } from './branch-data'
@@ -61,8 +61,7 @@ function AssignmentForm({ details, assignment, onSaved }: { details: Details; as
     </ActionForm>
 }
 
-export function BranchDetailsDialog({ branchId, branchName }: { branchId: number; branchName: string }) {
-    const [open, setOpen] = useState(false)
+export function BranchDetailsPage({ branchId, branchName }: { branchId: number; branchName: string }) {
     const [editing, setEditing] = useState(false)
     const [details, setDetails] = useState<Details | null>(null)
     const [error, setError] = useState('')
@@ -70,7 +69,6 @@ export function BranchDetailsDialog({ branchId, branchName }: { branchId: number
     const [revision, setRevision] = useState(0)
     const prefix = useId()
     useEffect(() => {
-        if (!open) return
         let active = true
         setLoading(true)
         setError('')
@@ -78,13 +76,12 @@ export function BranchDetailsDialog({ branchId, branchName }: { branchId: number
             .catch(() => { if (active) setError('Could not load branch details. Try again.') })
             .finally(() => { if (active) setLoading(false) })
         return () => { active = false }
-    }, [open, branchId, editing, revision])
+    }, [branchId, editing, revision])
     async function refresh() { setDetails(await getBranchDetails(branchId, editing)) }
     const branch = details?.branch
-    return <Dialog open={open} onOpenChange={value => { setOpen(value); if (!value) { setEditing(false); setDetails(null) } }}>
-        <DialogTrigger render={<Button variant="outline" aria-label={`View details for branch ${branchName}`} />}><Eye /> View details</DialogTrigger>
-        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[min(90vw,80rem)]">
-            <DialogHeader><DialogTitle>{editing ? `Edit branch ${branch?.name ?? branchName}` : `Branch ${branch?.name ?? branchName}`}</DialogTitle><DialogDescription>{editing ? 'Update branch information, contacts, and employee assignments.' : 'Branch information and related records.'}</DialogDescription></DialogHeader>
+    return <PageContent backHref="/branches">
+
+            <PageHeader><PageTitle>{editing ? `Edit branch ${branch?.name ?? branchName}` : `Branch ${branch?.name ?? branchName}`}</PageTitle><PageDescription>{editing ? 'Update branch information, contacts, and employee assignments.' : 'Branch information and related records.'}</PageDescription></PageHeader>
             {error && <div role="alert">{error} <Button variant="outline" onClick={() => setRevision(r => r + 1)}>Try again</Button></div>}
             {loading ? <p role="status">Loading {editing ? 'editing options' : 'branch details'}…</p> : details && branch && <div className="grid gap-6">
                 {editing ? <>
@@ -97,17 +94,17 @@ export function BranchDetailsDialog({ branchId, branchName }: { branchId: number
                         <Options name="chiefId" label="Chief (optional)" optional values={details.employees.map(e => ({ value: String(e.id), label: `${e.name} (${e.email})` }))} value={branch.chiefId ? String(branch.chiefId) : ''} />
                     </ActionForm>
                 </> : <dl className="grid gap-4 sm:grid-cols-2">
-                    {Object.entries({ Name: branch.name, Region: branch.region, Institute: branch.institute || '—', Chief: details.employees.find(e => e.id === branch.chiefId)?.name ?? 'Unassigned' }).map(([label, value]) => <div key={label}><dt className="text-sm text-muted-foreground">{label}</dt><dd>{value}</dd></div>)}
+                    {Object.entries({ Name: branch.name, Region: branch.region, Institute: branch.institute || '—', Chief: details.employees.find(e => e.id === branch.chiefId)?.name ?? 'Unassigned' }).map(([label, value]) => <div key={label}><dt className="text-sm text-muted-foreground">{label}</dt><dd>{label === 'Chief' ? <RecordLink type="employees" id={branch.chiefId}>{value}</RecordLink> : value}</dd></div>)}
                 </dl>}
                 <Section title="Contacts" count={details.contacts.length}>
                     <div className="rounded-lg border bg-muted/20 p-4">
                         <Table><TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>Phone</TableHead><TableHead>Role</TableHead></TableRow></TableHeader>
-                        <TableBody>{details.contacts.map(c => <TableRow key={c.id}><TableCell>{c.name}</TableCell><TableCell><a href={`mailto:${c.email}`}>{c.email}</a></TableCell><TableCell>{c.phone || '—'}</TableCell><TableCell>{c.contactRole.replaceAll('_', ' ')}</TableCell></TableRow>)}
+                        <TableBody>{details.contacts.map(c => <TableRow key={c.id}><TableCell><RecordLink type="contacts" id={c.id}>{c.name}</RecordLink></TableCell><TableCell><a href={`mailto:${c.email}`}>{c.email}</a></TableCell><TableCell>{c.phone || '—'}</TableCell><TableCell>{c.contactRole.replaceAll('_', ' ')}</TableCell></TableRow>)}
                         {!details.contacts.length && <TableRow><TableCell colSpan={4}>No contacts assigned to this branch.</TableCell></TableRow>}</TableBody></Table>
                     </div>
                     {editing && <>
                         {details.contacts.map(c => <div className="grid gap-3" key={c.id}>
-                            <h4 className="font-semibold">{c.name}</h4>
+                            <h4 className="font-semibold"><RecordLink type="contacts" id={c.id}>{c.name}</RecordLink></h4>
                             <ActionForm onSaved={refresh} label="Save contact">
                                 <input type="hidden" name="operation" value="edit-contact" /><input type="hidden" name="branch-id" value={branch.id} /><input type="hidden" name="contact-id" value={c.id} />
                                 <label>Name<Input name="name" required defaultValue={c.name} /></label><label>Email<Input name="email" type="email" required defaultValue={c.email} /></label><label>Phone<Input name="phone" defaultValue={c.phone ?? ''} /></label>
@@ -129,7 +126,7 @@ export function BranchDetailsDialog({ branchId, branchName }: { branchId: number
                 <Section title="Employee assignments" count={details.assignments.length}>
                     <div className="rounded-lg border bg-muted/20 p-4">
                         <Table><TableHeader><TableRow><TableHead>Employee</TableHead><TableHead>Role</TableHead><TableHead>Program</TableHead><TableHead>Region</TableHead></TableRow></TableHeader>
-                        <TableBody>{details.assignments.map(a => <TableRow key={a.id}><TableCell>{details.employees.find(e => e.id === a.employeeId)?.name ?? `Employee #${a.employeeId}`}</TableCell><TableCell>{a.role.replaceAll('_', ' ')}</TableCell><TableCell>{details.programs.find(p => p.id === a.programId)?.name ?? '—'}</TableCell><TableCell>{a.region || '—'}</TableCell></TableRow>)}
+                        <TableBody>{details.assignments.map(a => <TableRow key={a.id}><TableCell><RecordLink type="employees" id={a.employeeId}>{details.employees.find(e => e.id === a.employeeId)?.name ?? `Employee #${a.employeeId}`}</RecordLink></TableCell><TableCell>{a.role.replaceAll('_', ' ')}</TableCell><TableCell><RecordLink type="programs" id={a.programId}>{details.programs.find(p => p.id === a.programId)?.name ?? '—'}</RecordLink></TableCell><TableCell>{a.region || '—'}</TableCell></TableRow>)}
                         {!details.assignments.length && <TableRow><TableCell colSpan={4}>No employees assigned to this branch.</TableCell></TableRow>}</TableBody></Table>
                     </div>
                     {editing && <>
@@ -141,9 +138,8 @@ export function BranchDetailsDialog({ branchId, branchName }: { branchId: number
                         <AssignmentForm details={details} onSaved={refresh} />
                     </>}
                 </Section>
-                <Section title="Schools" count={details.schools.length}>{details.schools.length ? <ul>{details.schools.map(s => <li key={s.id}>{s.name}</li>)}</ul> : <p>No schools assigned.</p>}</Section>
+                <Section title="Schools" count={details.schools.length}>{details.schools.length ? <ul>{details.schools.map(s => <li key={s.id}><RecordLink type="schools" id={s.id}>{s.name}</RecordLink></li>)}</ul> : <p>No schools assigned.</p>}</Section>
                 {!editing && <div className="flex justify-end border-t pt-4"><Button aria-describedby={`${prefix}-edit-hint`} onClick={() => setEditing(true)}>Edit</Button><span id={`${prefix}-edit-hint`} className="sr-only">Edit this branch, its contacts, and employee assignments</span></div>}
             </div>}
-        </DialogContent>
-    </Dialog>
+    </PageContent>
 }

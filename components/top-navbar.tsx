@@ -18,7 +18,8 @@ export function TopNavbar() {
   return (
     <nav aria-label="Dashboard navigation" className="flex shrink-0 flex-wrap gap-6 border-b px-6 pt-6">
       {links.map(({ href, label }) => {
-        const active = pathname === href || pathname.startsWith(`${href}/`)
+        const detailType = href === "/employee-management" ? "employees" : href.slice(1)
+        const active = pathname === href || pathname.startsWith(`${href}/`) || pathname.startsWith(`/details/${detailType}/`) || pathname === `/create/${detailType}`
         return (
           <Link
             key={href}

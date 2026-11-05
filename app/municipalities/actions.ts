@@ -32,7 +32,7 @@ export async function deleteMunicipality(form: FormData) {
     if (form.get('confirmation') !== 'delete') return { error: 'Type delete to confirm.' }
     try { await db.orm.public.Municipality.where({ id: id(form.get('id')) }).delete() }
     catch (error) {
-        if (error && typeof error === 'object' && 'sqlState' in error && error.sqlState === '23503') return { error: 'Remove the sponsored program links before deleting this municipality.' }
+        if (error && typeof error === 'object' && 'sqlState' in error && error.sqlState === '23503') return { error: 'Could not clear sponsorship links. Confirm the automatic-deletion migration has been applied and try again.' }
         return { error: 'Could not delete municipality. Refresh and try again.' }
     }
     refresh()
