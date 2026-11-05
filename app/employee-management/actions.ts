@@ -4,16 +4,17 @@ import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
 import { revalidatePath } from "next/cache"
 
-type Role = Scalars<Models.public_Employee>["role"]
+type Roles = Scalars<Models.public_Employee>["roles"]
 
 
 // TODO: Only ADMIN should be able to create new employee
-
 export async function createEmployee(formData: FormData) {
     const name = formData.get("full-name") as string
     const email = formData.get("email") as string
     const phone = formData.get("phone-num") as string
-    const role = formData.get("role") as Role
+    const roles = formData.getAll("roles") as Roles
+    const otp = formData.get("otp") as string
+
     
     
     if (name == null || email == null){
@@ -26,7 +27,8 @@ export async function createEmployee(formData: FormData) {
             name: name,
             email: email,
             phone: phone,
-            role: role,
+            password: otp,
+            roles: roles,
         })
 
         if(employee)
@@ -46,7 +48,8 @@ export async function editEmployee(formData: FormData) {
     const name = formData.get("full-name") as string
     const email = formData.get("email") as string
     const phone = formData.get("phone-num") as string
-    const role = formData.get("role") as Role
+    const roles = formData.getAll("roles") as Roles
+
 
     if (name == null || email == null){
         console.log("Update employee failed: name or email is null")
@@ -60,7 +63,7 @@ export async function editEmployee(formData: FormData) {
                 name: name,
                 email: email,
                 phone: phone,
-                role: role,
+                roles: roles,
             })
         
         if (employee) {

@@ -2,13 +2,14 @@
 
 import { Button } from "@/components/ui/button"
 import { DialogClose } from "@/components/ui/dialog"
-import { Field, FieldLabel } from "@/components/ui/field"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createEmployee } from "../actions"
 import { showToast } from "@/lib/utils"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Checkbox } from "@/components/ui/checkbox"
 
-const roles = [
+const rolesobj = [
     { label: "Admin", value: "ADMIN" },
     { label: "Workshops Coordinator", value: "WORKSHOPS_COORDINATOR" },
     { label: "School Network Coordinator", value: "SCHOOL_NETWORK_COORDINATOR" },
@@ -63,24 +64,32 @@ export function AddEmployeeForm({ onSuccess }: AddEmployeeFormProps) {
                 />
             </Field>
 
-            <Field>
-                <FieldLabel htmlFor="role">Role</FieldLabel>
-                <Select items={roles} defaultValue="" name="role">
-                    <SelectTrigger>
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            {roles.map((r) => {
+            <Accordion>
+                <AccordionItem>
+                    <AccordionTrigger>Select Roles:</AccordionTrigger>
+                    <AccordionContent>
+                        <FieldGroup className="gap-2">
+                            {rolesobj.map((r) => {
                                 return (
-                                <SelectItem key={r.value} value={r.value}>
-                                    {r.label}
-                                </SelectItem>
-                            )})}
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+                                    <Field orientation="horizontal">
+                                        <Checkbox
+                                            name={"roles"}
+                                            value={r.value}
+                                        />
+                                        
+                                        <FieldLabel>{r.label}</FieldLabel>
+                                    </Field>
+                                )
+                            })}
+                        </FieldGroup>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
+            <Field>
+                <FieldLabel htmlFor="otp">One-Time Password</FieldLabel>
+                <Input type="text" required name="otp"/>
             </Field>
+            
 
             <DialogClose render={<Button type="submit">Submit</Button>}/>
         </form>
