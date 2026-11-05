@@ -5,12 +5,13 @@ import { useState } from "react"
 import { EditEmployeeForm } from "../forms/edit-employee-form"
 import { Button } from "@/components/ui/button"
 import { DeleteEmployeeForm } from "../forms/delete-form"
-import { toast } from "@/components/ui/toast"
+import { Scalars } from "@prisma/orm-postgres/components"
+import { Models } from "@/prisma/contract"
 
-type Role = "ADMIN" | "WORKSHOPS_COORDINATOR" | "SCHOOL_NETWORK_COORDINATOR" | "STORIES_OF_OUR_NEIGHBORS_COORDINATOR" | "VETERANS_DAY_COORDINATOR" | "NEWSLETTER_COORDINATOR"
+type Roles = Scalars<Models.public_Employee>["roles"]
 
 
-export function ActionsCell({employee}: {employee: { id: number, name: string, email: string, role: string, phone: string | null, globalRoles: string[]}}) {
+export function ActionsCell({employee}: {employee: { id: number, name: string, email: string, roles: Roles, phone?: string}}) {
     const [editOpen, setEditOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
             return (
@@ -53,10 +54,9 @@ export function ActionsCell({employee}: {employee: { id: number, name: string, e
                             <EditEmployeeForm
                                 name={employee.name}
                                 email={employee.email}
-                                id={employee.id}
-                                globalRoles={employee.globalRoles}
-                                phone={employee.phone ?? ""}
-                                onSuccess={setEditOpen.bind(null, false)}
+                                roles={employee.roles}
+                                phone={employee.phone ?? "N/a"}    
+                                onSuccess={setEditOpen.bind(null, false)}                                
                             />
                         </DialogContent>
                     </Dialog>
@@ -73,5 +73,5 @@ export function ActionsCell({employee}: {employee: { id: number, name: string, e
                     </Dialog>
                 )}
             </>
-            )
+)
 }

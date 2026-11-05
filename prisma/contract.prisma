@@ -50,7 +50,7 @@ enum RelationshipType {
   EXCELLENT
 }
 
-enum EmployeeJobRole {
+enum Role {
   ADMIN
   WORKSHOPS_COORDINATOR
   SCHOOL_NETWORK_COORDINATOR
@@ -107,11 +107,17 @@ model Employee {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
+  password  String
   phone     String?
   address   Address?
   region   Region?
 
+
   is_online  Boolean  @default(false)
+  // remove this, because we might add EmployeeJobRole table later?
+  roles      Role[] 
+
+  schools LegacySchoolEmployees[]
   assignments EmployeeAssignment[]
   interactions Interaction[]
   chiefOf Branch[]
@@ -204,7 +210,7 @@ model ParticipationEmployees {
 model EmployeeAssignment {
   id         Int @id @default(autoincrement())
   employeeId Int
-  role       EmployeeJobRole
+  role       Role
   branchId   Int?
   programId  Int?
   region     Region?

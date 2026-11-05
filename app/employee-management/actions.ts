@@ -1,61 +1,91 @@
 'use server'
+import { Models } from "@/prisma/contract"
 import { db } from "@/prisma/db"
+import { Scalars } from "@prisma/orm-postgres/components"
 import { revalidatePath } from "next/cache"
 
-function employeeData(form: FormData) {
-    const name = String(form.get('full-name') ?? '').trim()
-    const email = String(form.get('email') ?? '').trim()
-    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Enter a name and valid email.')
-    const roles = [...new Set(form.getAll('role'))].map(value => {
-        const role = db.enums.public.EmployeeJobRole.values.find(role => role === value)
-        if (!role) throw new Error('Choose a valid role.')
-        return role
-    })
-    return { data: { name, email, phone: String(form.get('phone-num') ?? '').trim() || null }, roles }
-}
-function employeeId(form: FormData) {
-    const id = Number(form.get('employee-id'))
-    if (!Number.isSafeInteger(id) || id <= 0) throw new Error('Invalid employee ID.')
-    return id
-}
-function refresh() {
-    for (const path of ['/employee-management', '/schools', '/contacts', '/branches']) revalidatePath(path)
-}
-export async function createEmployee(form: FormData) {
+type Roles = Scalars<Models.public_Employee>["roles"]
+
+
+// TODO: Only ADMIN should be able to create new employee
+export async function createEmployee(formData: FormData) {
+    const name = formData.get("full-name") as string
+    const email = formData.get("email") as string
+    const phone = formData.get("phone-num") as string
+    const roles = formData.getAll("roles") as Roles
+    const otp = formData.get("otp") as string
+
+    
+    
+    if (name == null || email == null){
+        console.log("Create employee failed: name or email is null")
+        return {success: false, message: "Failed to create employee. Invalid name or email."}
+    }
+    
     try {
-        const { data, roles } = employeeData(form)
-        await db.transaction(async tx => {
-            const employee = await tx.orm.public.Employee.create(data)
-            for (const role of roles) await tx.orm.public.EmployeeAssignment.create({ employeeId: employee.id, role })
+        const employee = await db.orm.public.Employee.create({
+            name: name,
+            email: email,
+            phone: phone,
+            password: otp,
+            roles: roles,
         })
-        refresh()
+        revalidatePath("/employee-management")
         return { success: true, message: 'Employee created.' }
     } catch { return { success: false, message: 'Could not create employee. Check the fields and whether the email is already in use.' } }
 }
-export async function editEmployee(form: FormData) {
+
+export async function editEmployee(formData: FormData) {
+    const name = formData.get("full-name") as string
+    const email = formData.get("email") as string
+    const phone = formData.get("phone-num") as string
+    const roles = formData.getAll("roles") as Roles
+
+
+    if (name == null || email == null){
+        console.log("Update employee failed: name or email is null")
+        return {success: false, message: "Update employee failed. Name or email cannot be null."}
+    }
+
     try {
-        const id = employeeId(form)
-        const { data, roles } = employeeData(form)
-        await db.transaction(async tx => {
-            if (!await tx.orm.public.Employee.where({ id }).first()) throw new Error('Employee not found.')
-            await tx.orm.public.Employee.where({ id }).update(data)
-            // Only global assignments are edited here. Preserve branch/program/region assignments.
-            await tx.orm.public.EmployeeAssignment.where({ employeeId: id, branchId: null, programId: null, region: null }).delete()
-            for (const role of roles) await tx.orm.public.EmployeeAssignment.create({ employeeId: id, role })
-        })
-        refresh()
-        return { success: true, message: 'Employee updated.' }
-    } catch { return { success: false, message: 'Could not update employee. Check the fields and whether the email is already in use.' } }
+        const employee = await db.orm.public.Employee
+            .where({ email: email})
+            .update({
+                name: name,
+                email: email,
+                phone: phone,
+                roles: roles,
+            })
+        
+        if (employee) {
+            console.log("Edit employee successful.")
+            revalidatePath("/employee-management")
+            return {success: true, message: "Employee updated successfully."}
+        }
+        else
+            return {success: false, message: "Update employee failed. Employee not found."}
+    }
+    catch (error) {
+        console.log("Update employee failed: ", error)
+        return {success: false, message: "Failed to update employee."}
+    }
 }
 export async function deleteEmployee(form: FormData) {
     try {
-        const id = employeeId(form)
+        const raw = form.get("employee-id")
+        const id = typeof raw === "string" ? Number.parseInt(raw, 10) : NaN
+
+        if (!Number.isInteger(id)) {
+            return { success: false, message: "Invalid employee ID." }
+        }
+
         await db.transaction(async tx => {
             await tx.orm.public.EmployeeAssignment.where({ employeeId: id }).delete()
             // Foreign keys protect interaction history, chiefs, and participation/legacy links.
             await tx.orm.public.Employee.where({ id }).delete()
         })
-        refresh()
+        revalidatePath("/employee-management")
         return { success: true, message: 'Employee deleted.' }
     } catch { return { success: false, message: 'Could not delete employee. They may still be referenced by contact history, a branch, or participation.' } }
 }
+

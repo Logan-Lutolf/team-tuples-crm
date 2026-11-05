@@ -2,45 +2,49 @@
 
 import { Button } from "@/components/ui/button"
 import { DialogClose } from "@/components/ui/dialog"
-import { Field, FieldLabel } from "@/components/ui/field"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createEmployee, editEmployee } from "../actions"
 import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
 import { showToast } from "@/lib/utils"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Checkbox } from "@/components/ui/checkbox"
 
-const roles = [
+type Role = Roles[number]
+
+const rolesobj = [
     { label: "Admin", value: "ADMIN" },
     { label: "Workshops Coordinator", value: "WORKSHOPS_COORDINATOR" },
     { label: "School Network Coordinator", value: "SCHOOL_NETWORK_COORDINATOR" },
     { label: "Stories of our Neighbors Coordinator", value: "STORIES_OF_OUR_NEIGHBORS_COORDINATOR" },
     { label: "Veterans Day Coordinator", value: "VETERANS_DAY_COORDINATOR" },
     { label: "Newsletter Coordinator", value: "NEWSLETTER_COORDINATOR" },
-]
+] as const satisfies readonly { label: string; value: Role }[]
 
-type Role = Scalars<Models.public_Employee>["role"]
+type Roles = Scalars<Models.public_Employee>["roles"]
 
 
 interface EditEmployeeFormProps {
     name: string,
     email: string
     phone: string,
-    role: Role
+    roles: Roles
     onSuccess?: () => void
 }
 
 
 
 // TODO: Add form validation
-export function EditEmployeeForm({name, email, phone, role, onSuccess}: EditEmployeeFormProps) {    // Add actual type later T_T
+export function EditEmployeeForm({name, email, phone, roles, onSuccess}: EditEmployeeFormProps) {    // Add actual type later T_T
     async function handleSubmit(formData: FormData) { 
             const result = await editEmployee(formData)
             if (result.success) {
                 showToast("Employee Updated", "Employee has been updated successfully.")
                 onSuccess?.()
             } else {
-                showToast("Failed to Update Employee", result.message)
+                showToast("Failed to Update Employee", result.message, "error")
             }
     }
 
@@ -77,24 +81,28 @@ export function EditEmployeeForm({name, email, phone, role, onSuccess}: EditEmpl
                 />
             </Field>
 
-            <Field>
-                <FieldLabel htmlFor="role">Role</FieldLabel>
-                <Select items={roles} defaultValue={role} name="role">
-                    <SelectTrigger>
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            {roles.map((r) => {
+            <Accordion>
+                <AccordionItem>
+                    <AccordionTrigger>Select Roles:</AccordionTrigger>
+                    <AccordionContent>
+                        <FieldGroup className="gap-2">
+                            {rolesobj.map((r) => {
                                 return (
-                                <SelectItem key={r.value} value={r.value}>
-                                    {r.label}
-                                </SelectItem>
-                            )})}
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </Field>
+                                    <Field orientation="horizontal" key={r.value}>
+                                        <Checkbox
+                                            name="roles"
+                                            defaultChecked={roles.includes(r.value) ? true : false}
+                                            value={r.value}
+                                        />
+                                        
+                                        <FieldLabel>{r.label}</FieldLabel>
+                                    </Field>
+                                )
+                            })}
+                        </FieldGroup>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
 
             <Button type="submit">Submit</Button>
         </form>

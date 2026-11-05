@@ -172,35 +172,6 @@
               }
             ]
           },
-          "EmployeeJobRole": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "ADMIN",
-                "value": "ADMIN"
-              },
-              {
-                "name": "WORKSHOPS_COORDINATOR",
-                "value": "WORKSHOPS_COORDINATOR"
-              },
-              {
-                "name": "SCHOOL_NETWORK_COORDINATOR",
-                "value": "SCHOOL_NETWORK_COORDINATOR"
-              },
-              {
-                "name": "STORIES_OF_OUR_NEIGHBORS_COORDINATOR",
-                "value": "STORIES_OF_OUR_NEIGHBORS_COORDINATOR"
-              },
-              {
-                "name": "VETERANS_DAY_COORDINATOR",
-                "value": "VETERANS_DAY_COORDINATOR"
-              },
-              {
-                "name": "NEWSLETTER_COORDINATOR",
-                "value": "NEWSLETTER_COORDINATOR"
-              }
-            ]
-          },
           "ProgramStatus": {
             "codecId": "pg/text@1",
             "members": [
@@ -297,6 +268,71 @@
               {
                 "name": "EXCELLENT",
                 "value": "EXCELLENT"
+              }
+            ]
+          },
+          "Role": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "ADMIN",
+                "value": "ADMIN"
+              },
+              {
+                "name": "WORKSHOPS_COORDINATOR",
+                "value": "WORKSHOPS_COORDINATOR"
+              },
+              {
+                "name": "SCHOOL_NETWORK_COORDINATOR",
+                "value": "SCHOOL_NETWORK_COORDINATOR"
+              },
+              {
+                "name": "STORIES_OF_OUR_NEIGHBORS_COORDINATOR",
+                "value": "STORIES_OF_OUR_NEIGHBORS_COORDINATOR"
+              },
+              {
+                "name": "VETERANS_DAY_COORDINATOR",
+                "value": "VETERANS_DAY_COORDINATOR"
+              },
+              {
+                "name": "NEWSLETTER_COORDINATOR",
+                "value": "NEWSLETTER_COORDINATOR"
+              },
+              {
+                "name": "BRANCH_DIRECTOR",
+                "value": "BRANCH_DIRECTOR"
+              },
+              {
+                "name": "HEAD_OF_EDUCATION",
+                "value": "HEAD_OF_EDUCATION"
+              },
+              {
+                "name": "PROJECT_MANAGER",
+                "value": "PROJECT_MANAGER"
+              },
+              {
+                "name": "COORDINATOR",
+                "value": "COORDINATOR"
+              },
+              {
+                "name": "DEVELOPMENT_LEAD",
+                "value": "DEVELOPMENT_LEAD"
+              },
+              {
+                "name": "PRODUCTION",
+                "value": "PRODUCTION"
+              },
+              {
+                "name": "STUDIO_LEAD",
+                "value": "STUDIO_LEAD"
+              },
+              {
+                "name": "LECTURER",
+                "value": "LECTURER"
+              },
+              {
+                "name": "METHODOLOGY_LEAD",
+                "value": "METHODOLOGY_LEAD"
               }
             ]
           },
@@ -723,6 +759,13 @@
                   "kind": "scalar"
                 }
               },
+              "password": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "phone": {
                 "nullable": true,
                 "type": {
@@ -739,6 +782,22 @@
                 "valueSet": {
                   "entityKind": "enum",
                   "entityName": "Region",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "roles": {
+                "many": {
+                  "elementNullable": false
+                },
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Role",
                   "namespaceId": "public",
                   "plane": "domain"
                 }
@@ -826,6 +885,21 @@
                   "model": "ParticipationEmployees",
                   "namespace": "public"
                 }
+              },
+              "schools": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "employeeId"
+                  ]
+                },
+                "to": {
+                  "model": "LegacySchoolEmployees",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -848,11 +922,17 @@
                 "name": {
                   "column": "name"
                 },
+                "password": {
+                  "column": "password"
+                },
                 "phone": {
                   "column": "phone"
                 },
                 "region": {
                   "column": "region"
+                },
+                "roles": {
+                  "column": "roles"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -913,7 +993,7 @@
                 },
                 "valueSet": {
                   "entityKind": "enum",
-                  "entityName": "EmployeeJobRole",
+                  "entityName": "Role",
                   "namespaceId": "public",
                   "plane": "domain"
                 }
@@ -2213,6 +2293,16 @@
                   "expression": "\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN')",
                   "name": "Employee_region_check_de154a3d",
                   "prefix": "Employee_region_check"
+                },
+                {
+                  "expression": "array_remove(\"roles\", NULL) <@ '{\"ADMIN\",\"WORKSHOPS_COORDINATOR\",\"SCHOOL_NETWORK_COORDINATOR\",\"STORIES_OF_OUR_NEIGHBORS_COORDINATOR\",\"VETERANS_DAY_COORDINATOR\",\"NEWSLETTER_COORDINATOR\",\"BRANCH_DIRECTOR\",\"HEAD_OF_EDUCATION\",\"PROJECT_MANAGER\",\"COORDINATOR\",\"DEVELOPMENT_LEAD\",\"PRODUCTION\",\"STUDIO_LEAD\",\"LECTURER\",\"METHODOLOGY_LEAD\"}'",
+                  "name": "Employee_roles_check_d243e319",
+                  "prefix": "Employee_roles_check"
+                },
+                {
+                  "expression": "array_position(\"roles\", NULL) IS NULL",
+                  "name": "Employee_roles_elem_not_null_37524d49",
+                  "prefix": "Employee_roles_elem_not_null"
                 }
               ],
               "columns": {
@@ -2258,6 +2348,11 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
+                "password": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
                 "phone": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -2270,6 +2365,20 @@
                   "valueSet": {
                     "entityKind": "valueSet",
                     "entityName": "Region",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "roles": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "many": {
+                    "elementNullable": false
+                  },
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Role",
                     "namespaceId": "public",
                     "plane": "storage"
                   }
@@ -2303,8 +2412,8 @@
                   "prefix": "EmployeeAssignment_region_check"
                 },
                 {
-                  "expression": "\"role\" IN ('ADMIN', 'WORKSHOPS_COORDINATOR', 'SCHOOL_NETWORK_COORDINATOR', 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR', 'VETERANS_DAY_COORDINATOR', 'NEWSLETTER_COORDINATOR')",
-                  "name": "EmployeeAssignment_role_check_b697a84e",
+                  "expression": "\"role\" IN ('ADMIN', 'WORKSHOPS_COORDINATOR', 'SCHOOL_NETWORK_COORDINATOR', 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR', 'VETERANS_DAY_COORDINATOR', 'NEWSLETTER_COORDINATOR', 'BRANCH_DIRECTOR', 'HEAD_OF_EDUCATION', 'PROJECT_MANAGER', 'COORDINATOR', 'DEVELOPMENT_LEAD', 'PRODUCTION', 'STUDIO_LEAD', 'LECTURER', 'METHODOLOGY_LEAD')",
+                  "name": "EmployeeAssignment_role_check_2f516525",
                   "prefix": "EmployeeAssignment_role_check"
                 }
               ],
@@ -2350,7 +2459,7 @@
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
-                    "entityName": "EmployeeJobRole",
+                    "entityName": "Role",
                     "namespaceId": "public",
                     "plane": "storage"
                   }
@@ -3291,17 +3400,6 @@
                 "OTHER"
               ]
             },
-            "EmployeeJobRole": {
-              "kind": "valueSet",
-              "values": [
-                "ADMIN",
-                "WORKSHOPS_COORDINATOR",
-                "SCHOOL_NETWORK_COORDINATOR",
-                "STORIES_OF_OUR_NEIGHBORS_COORDINATOR",
-                "VETERANS_DAY_COORDINATOR",
-                "NEWSLETTER_COORDINATOR"
-              ]
-            },
             "ProgramStatus": {
               "kind": "valueSet",
               "values": [
@@ -3338,6 +3436,26 @@
                 "EXCELLENT"
               ]
             },
+            "Role": {
+              "kind": "valueSet",
+              "values": [
+                "ADMIN",
+                "WORKSHOPS_COORDINATOR",
+                "SCHOOL_NETWORK_COORDINATOR",
+                "STORIES_OF_OUR_NEIGHBORS_COORDINATOR",
+                "VETERANS_DAY_COORDINATOR",
+                "NEWSLETTER_COORDINATOR",
+                "BRANCH_DIRECTOR",
+                "HEAD_OF_EDUCATION",
+                "PROJECT_MANAGER",
+                "COORDINATOR",
+                "DEVELOPMENT_LEAD",
+                "PRODUCTION",
+                "STUDIO_LEAD",
+                "LECTURER",
+                "METHODOLOGY_LEAD"
+              ]
+            },
             "SchoolType": {
               "kind": "valueSet",
               "values": [
@@ -3354,7 +3472,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "44099428b744912efb3e31788b6f4e70b837626f3dd35a6179f910186e4b9461"
+    "storageHash": "4f16088479c646ee5852ee3e378f1293bafbc5cf4e079d6dd66fa9d56632c16e"
   },
   "execution": {
     "executionHash": "49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353",
