@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'4f16088479c646ee5852ee3e378f1293bafbc5cf4e079d6dd66fa9d56632c16e'>;
+  StorageHashBase<'7e38569e2dd85e4df5baa06455f7ceced26cd7d8b5fa2e576a5f4d79e533f996'>;
 export type ExecutionHash =
   ExecutionHashBase<'49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353'>;
 export type ProfileHash =
@@ -315,6 +315,7 @@ export type FieldOutputTypes = {
       readonly is_online: CodecTypes['pg/bool@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly password: CodecTypes['pg/text@1']['output'];
+      readonly pfpImgUrl: CodecTypes['pg/text@1']['output'];
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly region:
         | 'ONE'
@@ -532,6 +533,7 @@ export type FieldInputTypes = {
       readonly is_online: CodecTypes['pg/bool@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly password: CodecTypes['pg/text@1']['input'];
+      readonly pfpImgUrl: CodecTypes['pg/text@1']['input'];
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly region:
         | 'ONE'
@@ -749,6 +751,7 @@ export type StorageColumnTypes = {
       readonly is_online: CodecTypes['pg/bool@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly password: CodecTypes['pg/text@1']['output'];
+      readonly pfpImgUrl: CodecTypes['pg/text@1']['output'];
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly region:
         | 'ONE'
@@ -966,6 +969,7 @@ export type StorageColumnInputTypes = {
       readonly is_online: CodecTypes['pg/bool@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly password: CodecTypes['pg/text@1']['input'];
+      readonly pfpImgUrl: CodecTypes['pg/text@1']['input'];
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly region:
         | 'ONE'
@@ -1193,6 +1197,7 @@ export namespace Models {
     is_online: CodecTypes['pg/bool@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
     password: CodecTypes['pg/text@1']['output'];
+    pfpImgUrl: CodecTypes['pg/text@1']['output'];
     phone: CodecTypes['pg/text@1']['output'] | null;
     region:
       | 'ONE'
@@ -1680,6 +1685,12 @@ type ContractBase = Omit<
                   readonly many: false;
                 };
                 readonly password: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly pfpImgUrl: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
@@ -2812,6 +2823,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly pfpImgUrl: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly phone: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -2912,6 +2927,7 @@ type ContractBase = Omit<
                 readonly is_online: { readonly column: 'is_online' };
                 readonly name: { readonly column: 'name' };
                 readonly password: { readonly column: 'password' };
+                readonly pfpImgUrl: { readonly column: 'pfpImgUrl' };
                 readonly phone: { readonly column: 'phone' };
                 readonly region: { readonly column: 'region' };
                 readonly roles: { readonly column: 'roles' };

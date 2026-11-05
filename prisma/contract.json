@@ -766,6 +766,13 @@
                   "kind": "scalar"
                 }
               },
+              "pfpImgUrl": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "phone": {
                 "nullable": true,
                 "type": {
@@ -924,6 +931,9 @@
                 },
                 "password": {
                   "column": "password"
+                },
+                "pfpImgUrl": {
+                  "column": "pfpImgUrl"
                 },
                 "phone": {
                   "column": "phone"
@@ -2353,6 +2363,11 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
+                "pfpImgUrl": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
                 "phone": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -3472,7 +3487,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "4f16088479c646ee5852ee3e378f1293bafbc5cf4e079d6dd66fa9d56632c16e"
+    "storageHash": "7e38569e2dd85e4df5baa06455f7ceced26cd7d8b5fa2e576a5f4d79e533f996"
   },
   "execution": {
     "executionHash": "49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353",
