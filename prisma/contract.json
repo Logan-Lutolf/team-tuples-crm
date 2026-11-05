@@ -647,7 +647,10 @@
                   "plane": "domain"
                 }
               },
-              "role": {
+              "roles": {
+                "many": {
+                  "elementNullable": false
+                },
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
@@ -729,8 +732,8 @@
                 "region": {
                   "column": "region"
                 },
-                "role": {
-                  "column": "role"
+                "roles": {
+                  "column": "roles"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -1715,9 +1718,14 @@
                   "prefix": "Employee_region_check"
                 },
                 {
-                  "expression": "\"role\" IN ('ADMIN', 'WORKSHOPS_COORDINATOR', 'SCHOOL_NETWORK_COORDINATOR', 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR', 'VETERANS_DAY_COORDINATOR', 'NEWSLETTER_COORDINATOR')",
-                  "name": "Employee_role_check_b697a84e",
-                  "prefix": "Employee_role_check"
+                  "expression": "array_remove(\"roles\", NULL) <@ '{\"ADMIN\",\"WORKSHOPS_COORDINATOR\",\"SCHOOL_NETWORK_COORDINATOR\",\"STORIES_OF_OUR_NEIGHBORS_COORDINATOR\",\"VETERANS_DAY_COORDINATOR\",\"NEWSLETTER_COORDINATOR\"}'",
+                  "name": "Employee_roles_check_6dc98593",
+                  "prefix": "Employee_roles_check"
+                },
+                {
+                  "expression": "array_position(\"roles\", NULL) IS NULL",
+                  "name": "Employee_roles_elem_not_null_37524d49",
+                  "prefix": "Employee_roles_elem_not_null"
                 }
               ],
               "columns": {
@@ -1784,9 +1792,12 @@
                     "plane": "storage"
                   }
                 },
-                "role": {
+                "roles": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
+                  "many": {
+                    "elementNullable": false
+                  },
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
@@ -2483,7 +2494,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "a79463918d82e96f2cb2658708b6e0d42aa41b7ca4b457ed641e717b079b82de"
+    "storageHash": "bb691e45f01127caed99948dd15a3be309eede1bdaa9631467259a2bce5e3750"
   },
   "execution": {
     "executionHash": "49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353",

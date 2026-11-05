@@ -96,7 +96,7 @@ model Employee {
 
   is_online  Boolean  @default(false)
   // remove this, because we might add EmployeeJobRole table later?
-  role      Role 
+  roles      Role[] 
 
   schools SchoolEmployees[]
   participations ParticipationEmployees[]

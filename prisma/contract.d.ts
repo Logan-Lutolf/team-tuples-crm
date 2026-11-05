@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'a79463918d82e96f2cb2658708b6e0d42aa41b7ca4b457ed641e717b079b82de'>;
+  StorageHashBase<'bb691e45f01127caed99948dd15a3be309eede1bdaa9631467259a2bce5e3750'>;
 export type ExecutionHash =
   ExecutionHashBase<'49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353'>;
 export type ProfileHash =
@@ -330,13 +330,14 @@ export type FieldOutputTypes = {
         | 'THIRTEEN'
         | 'FOURTEEN'
         | null;
-      readonly role:
+      readonly roles: ReadonlyArray<
         | 'ADMIN'
         | 'WORKSHOPS_COORDINATOR'
         | 'SCHOOL_NETWORK_COORDINATOR'
         | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
         | 'VETERANS_DAY_COORDINATOR'
-        | 'NEWSLETTER_COORDINATOR';
+        | 'NEWSLETTER_COORDINATOR'
+      >;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Municipality: {
@@ -487,13 +488,14 @@ export type FieldInputTypes = {
         | 'THIRTEEN'
         | 'FOURTEEN'
         | null;
-      readonly role:
+      readonly roles: ReadonlyArray<
         | 'ADMIN'
         | 'WORKSHOPS_COORDINATOR'
         | 'SCHOOL_NETWORK_COORDINATOR'
         | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
         | 'VETERANS_DAY_COORDINATOR'
-        | 'NEWSLETTER_COORDINATOR';
+        | 'NEWSLETTER_COORDINATOR'
+      >;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Municipality: {
@@ -644,13 +646,14 @@ export type StorageColumnTypes = {
         | 'THIRTEEN'
         | 'FOURTEEN'
         | null;
-      readonly role:
+      readonly roles: ReadonlyArray<
         | 'ADMIN'
         | 'WORKSHOPS_COORDINATOR'
         | 'SCHOOL_NETWORK_COORDINATOR'
         | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
         | 'VETERANS_DAY_COORDINATOR'
-        | 'NEWSLETTER_COORDINATOR';
+        | 'NEWSLETTER_COORDINATOR'
+      >;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Municipality: {
@@ -801,13 +804,14 @@ export type StorageColumnInputTypes = {
         | 'THIRTEEN'
         | 'FOURTEEN'
         | null;
-      readonly role:
+      readonly roles: ReadonlyArray<
         | 'ADMIN'
         | 'WORKSHOPS_COORDINATOR'
         | 'SCHOOL_NETWORK_COORDINATOR'
         | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
         | 'VETERANS_DAY_COORDINATOR'
-        | 'NEWSLETTER_COORDINATOR';
+        | 'NEWSLETTER_COORDINATOR'
+      >;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Municipality: {
@@ -965,13 +969,14 @@ export namespace Models {
       | 'THIRTEEN'
       | 'FOURTEEN'
       | null;
-    role:
+    roles: ReadonlyArray<
       | 'ADMIN'
       | 'WORKSHOPS_COORDINATOR'
       | 'SCHOOL_NETWORK_COORDINATOR'
       | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
       | 'VETERANS_DAY_COORDINATOR'
-      | 'NEWSLETTER_COORDINATOR';
+      | 'NEWSLETTER_COORDINATOR'
+    >;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     participations: public_ParticipationEmployees[];
     schools: public_SchoolEmployees[];
@@ -1337,11 +1342,11 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
-                readonly role: {
+                readonly roles: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
-                  readonly many: false;
+                  readonly many: { readonly elementNullable: false };
                 };
                 readonly updatedAt: {
                   readonly dataType: 'pg/timestamptz';
@@ -2119,9 +2124,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-              readonly role: {
+              readonly roles: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+                readonly many: { readonly elementNullable: false };
               };
               readonly updatedAt: {
                 readonly nullable: false;
@@ -2168,7 +2174,7 @@ type ContractBase = Omit<
                 readonly password: { readonly column: 'password' };
                 readonly phone: { readonly column: 'phone' };
                 readonly region: { readonly column: 'region' };
-                readonly role: { readonly column: 'role' };
+                readonly roles: { readonly column: 'roles' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };

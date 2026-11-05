@@ -4,15 +4,18 @@ import { db } from "@/prisma/db"
 import { and } from "@prisma/orm-postgres/orm-client"
 import { createSession, deleteSession } from "./sessions"
 import { redirect } from "next/navigation"
+import { Scalars } from "@prisma/orm-postgres/components"
+import { Models } from "@/prisma/contract"
 
 
-
+type Roles = Scalars<Models.public_Employee>["roles"]
 
 export async function login(prevState: any, formData: FormData) {
     const email = formData.get("email") as string
     const password = formData.get("password") as string // Encrypt later in db
 
-    var id = -1
+    let id = -1
+    let roles: Roles = []
 
     // Checking that they are not undefined (will change to zod validation later)
     if (!email || !password) {
@@ -32,12 +35,15 @@ export async function login(prevState: any, formData: FormData) {
         }
 
         id = employee.id
+        roles = employee.roles
+        
+        // Put employee role into local storage
     }
     catch (error) {
         console.log("Error: ", error)
     }
 
-    await createSession(id)
+    await createSession(id, roles)
     redirect("/dashboard")
 }
 
