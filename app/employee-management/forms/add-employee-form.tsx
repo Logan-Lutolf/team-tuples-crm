@@ -67,11 +67,11 @@ export function AddEmployeeForm({ onSuccess }: AddEmployeeFormProps) {
             <Accordion>
                 <AccordionItem>
                     <AccordionTrigger>Select Roles:</AccordionTrigger>
-                    <AccordionContent>
+                    <AccordionContent keepMounted>
                         <FieldGroup className="gap-2">
                             {rolesobj.map((r) => {
                                 return (
-                                    <Field orientation="horizontal">
+                                    <Field orientation="horizontal" key={r.label}>
                                         <Checkbox
                                             name={"roles"}
                                             value={r.value}
