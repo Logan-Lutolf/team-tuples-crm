@@ -10,7 +10,8 @@ const ALL_ROLES = db.enums.public.Role.values as readonly Role[];
 
 async function generateRandomEmployees() { 
     for (let i = 0; i < 100; i++) {
-        await db.orm.public.Employee.create({
+        await db.transaction(async tx => {
+        const employee = await tx.orm.public.Employee.create({
             name: faker.person.fullName(),
             email: faker.internet.email(),
             phone: faker.phone.number(),

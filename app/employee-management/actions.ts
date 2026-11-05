@@ -1,7 +1,7 @@
 'use server'
+import { Models } from "@/prisma/contract"
 import { db } from "@/prisma/db"
 import { Scalars } from "@prisma/orm-postgres/components"
-import { Models } from "@/prisma/contract"
 import { revalidatePath } from "next/cache"
 
 type Roles = Scalars<Models.public_Employee>["roles"]
@@ -30,18 +30,9 @@ export async function createEmployee(formData: FormData) {
             password: otp,
             roles: roles,
         })
-
-        if(employee)
-            console.log("Create employee successful.")
-            revalidatePath("/employee-management")
-            return {success: true, message: "Employee created successfully."}
-
-        
-    }
-    catch (error) {
-        console.log("Create employee failed: ", error)
-        return {success: false, message: "Failed to create employee."}
-    }
+        revalidatePath("/employee-management")
+        return { success: true, message: 'Employee created.' }
+    } catch { return { success: false, message: 'Could not create employee. Check the fields and whether the email is already in use.' } }
 }
 
 export async function editEmployee(formData: FormData) {
@@ -79,26 +70,22 @@ export async function editEmployee(formData: FormData) {
         return {success: false, message: "Failed to update employee."}
     }
 }
-
-export async function deleteEmployee(formData: FormData) {
-    const id = formData.get('employee-id')
-
-    if (id == null) 
-        console.log("Delete employee failed: Employee ID does not exist.")
-
-    const emp = Number(id)
+export async function deleteEmployee(form: FormData) {
     try {
-        const deleted = await db.orm.public.Employee
-            .where({id: emp})
-            .delete()
-        
-        if (deleted)
-            console.log("Deletion successful.")
-            revalidatePath("/employee-management")
-            return {success: true, message: "Employee deleted successfully."}
-    }
-    catch (error) {
-        console.log("Delete employee failed: ", error)
-        return {success: false, message: "Failed to delete employee."}
-    }
+        const raw = form.get("employee-id")
+        const id = typeof raw === "string" ? Number.parseInt(raw, 10) : NaN
+
+        if (!Number.isInteger(id)) {
+            return { success: false, message: "Invalid employee ID." }
+        }
+
+        await db.transaction(async tx => {
+            await tx.orm.public.EmployeeAssignment.where({ employeeId: id }).delete()
+            // Foreign keys protect interaction history, chiefs, and participation/legacy links.
+            await tx.orm.public.Employee.where({ id }).delete()
+        })
+        revalidatePath("/employee-management")
+        return { success: true, message: 'Employee deleted.' }
+    } catch { return { success: false, message: 'Could not delete employee. They may still be referenced by contact history, a branch, or participation.' } }
 }
+

@@ -2,25 +2,21 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import type { Models } from "@/prisma/contract";
 import { Button } from "@/components/ui/button"
 import type { Scalars } from "@prisma/orm-postgres/components";
-import { Pencil, Trash, Ellipsis } from "lucide-react";
+import { Trash, Ellipsis } from "lucide-react";
 import { ActionDialog } from "@/components/custom/action-dialog";
 import { DeleteContactForm } from "./forms/delete-contact";
-import { EditContactForm } from "./forms/edit-contact";
+import { ContactDetailsDialog } from "./contact-details-dialog";
 
-import type { ContactFields, Option } from "./contact-form-types";
+import type { ContactFields } from "./contact-form-types";
 
 type Contact = Scalars<Models.public_Contact>
 
 interface ContactTableProps {
     data: ContactFields[]
-    branches: Option[]
-    availableSchools: Option[]
 }
 
 export function ContactTable({
     data,
-    branches,
-    availableSchools,
 }: ContactTableProps) {
     return(
         <Table className="border border-black">
@@ -46,25 +42,7 @@ export function ContactTable({
                                 : "No address"}
                         </TableCell>
                         <TableCell className="flex flex-row gap-2">
-                            <ActionDialog
-                                contentClassName="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[min(90vw,80rem)]"
-                                icon={<Pencil />} 
-                                content={
-                                    <EditContactForm
-                                        id={contact.id}
-                                        name={contact.name}
-                                        email={contact.email}
-                                        phone={contact.phone}
-                                        address={contact.address}
-                                        region={contact.region}
-                                        contactRole={contact.contactRole}
-                                        schoolId={contact.schoolId}
-                                        branchId={contact.branchId}
-                                        branches={branches}
-                                        availableSchools={availableSchools}
-                                    />
-                                }
-                            />
+                            <ContactDetailsDialog contactId={contact.id} contactName={contact.name} />
                             <ActionDialog
                                 icon={<Trash />}
                                 content={<DeleteContactForm contactId={contact.id} schoolName={contact.name} />}

@@ -10,10 +10,10 @@ import { Button } from "@/components/ui/button";
 
 interface DeleteContactFormProps {
     contactId: number;
-    contactName: string;
+    schoolName: string;
 }
 
-export function DeleteContactForm({ contactId, contactName }: DeleteSchoolFormProps) {
+export function DeleteContactForm({ contactId, schoolName: contactName }: DeleteContactFormProps) {
     return(
         <ContactActionForm action={deleteContact}>
             <Input type="hidden" name="school-id" value={contactId} />

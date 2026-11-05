@@ -12,6 +12,7 @@ const enums = db.enums.public;
 const address = () => ({
   street: faker.location.streetAddress(),
   city: faker.location.city(),
+  country: faker.location.country(),
   zipCode: faker.location.zipCode(),
 });
 const now = Date.now();
@@ -19,33 +20,11 @@ const date = (days: number) => new Date(now + days * 86_400_000).toISOString();
 
 try {
   await db.connect();
-  // Roll back cleanup and inserts together if any record fails.
+  // Roll back inserts together if any record fails.
   await db.transaction(async (tx) => {
     const orm = tx.orm.public;
     const runId = faker.string.uuid();
     const existingSchools = await orm.School.all().toArray();
-    const schoolsWithoutPhone = existingSchools
-      .filter((school) => !school.phone?.trim())
-      .map((school) => school.id);
-
-    if (schoolsWithoutPhone.length) {
-      const participations = await orm.Participation
-        .where((participation) => participation.schoolId.in(schoolsWithoutPhone))
-        .select("id").all().toArray();
-      const participationIds = participations.map((participation) => participation.id);
-      if (participationIds.length) {
-        await orm.ParticipationEmployees
-          .where((assignment) => assignment.participationId.in(participationIds)).deleteAndCount();
-      }
-      await orm.Participation
-        .where((participation) => participation.schoolId.in(schoolsWithoutPhone)).deleteAndCount();
-      await orm.SchoolEmployees
-        .where((assignment) => assignment.schoolId.in(schoolsWithoutPhone)).deleteAndCount();
-      // Keep contacts available to assign to another school.
-      await orm.Contact.where((contact) => contact.schoolId.in(schoolsWithoutPhone))
-        .updateAndCount({ schoolId: null });
-      await orm.School.where((school) => school.id.in(schoolsWithoutPhone)).deleteAndCount();
-    }
     // School IDs are required because School has no auto-increment default.
     const firstSchoolId = existingSchools.reduce((max, s) => Math.max(max, s.id), 0) + 1;
 
@@ -59,14 +38,15 @@ try {
 
     const employees = [];
     for (let i = 0; i < 50; i++) {
-      employees.push(await orm.Employee.create({
+      const employee = await orm.Employee.create({
         name: faker.person.fullName(),
         email: `employee-${runId}-${i}@example.com`,
         phone: faker.phone.number(),
         address: address(),
         region: branches[i % branches.length].region,
-        role: faker.helpers.arrayElement(enums.Role.values),
-      }));
+      });
+      employees.push(employee);
+      await orm.EmployeeAssignment.create({ employeeId: employee.id, role: faker.helpers.arrayElement(enums.EmployeeJobRole.values) });
     }
 
     const programs = [];
@@ -102,11 +82,7 @@ try {
         branchId: branch.id,
       });
 
-      // School-level contacts are separate from teams for individual programs.
-      for (const member of [employee, teammate]) {
-        await orm.SchoolEmployees.create({ schoolId: school.id, employeeId: member.id });
-      }
-      await orm.Contact.create({
+      const contact = await orm.Contact.create({
         name: faker.person.fullName(),
         email: `contact-${runId}-${i}@example.com`,
         phone: faker.phone.number(),
@@ -119,11 +95,14 @@ try {
         last_contacted_byId: employee.id,
       });
 
+      await orm.Interaction.create({ schoolId: school.id, employeeId: employee.id, contactId: contact.id, contactedAt: date(-7), mode: "EMAIL" });
+
       // Give every school past, upcoming, ongoing, and cancelled occurrences.
       for (const status of enums.ProgramStatus.values) {
         const completed = status === "COMPLETED";
         const ongoing = status === "ONGOING";
         const participation = await orm.Participation.create({
+          name: `Sample ${status.toLowerCase()} seminar`,
           schoolId: school.id,
           programId: faker.helpers.arrayElement(programs).id,
           status,
@@ -141,7 +120,7 @@ try {
   });
   console.log("Seed complete: 8 branches, 50 employees, 50 schools, 50 contacts, 4 programs, 200 participations, 3 municipalities, and their relationships.");
 } catch (error) {
-  console.error("Seed failed; no cleanup or seed inserts were committed.");
+  console.error("Seed failed; no seed inserts were committed.");
   console.error(error);
   process.exitCode = 1;
 } finally {
