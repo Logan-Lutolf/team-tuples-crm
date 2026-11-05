@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'bb691e45f01127caed99948dd15a3be309eede1bdaa9631467259a2bce5e3750'>;
+  StorageHashBase<'4f16088479c646ee5852ee3e378f1293bafbc5cf4e079d6dd66fa9d56632c16e'>;
 export type ExecutionHash =
   ExecutionHashBase<'49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353'>;
 export type ProfileHash =
@@ -339,8 +339,68 @@ export type FieldOutputTypes = {
         | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
         | 'VETERANS_DAY_COORDINATOR'
         | 'NEWSLETTER_COORDINATOR'
+        | 'BRANCH_DIRECTOR'
+        | 'HEAD_OF_EDUCATION'
+        | 'PROJECT_MANAGER'
+        | 'COORDINATOR'
+        | 'DEVELOPMENT_LEAD'
+        | 'PRODUCTION'
+        | 'STUDIO_LEAD'
+        | 'LECTURER'
+        | 'METHODOLOGY_LEAD'
       >;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly EmployeeAssignment: {
+      readonly branchId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly programId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly region:
+        | 'ONE'
+        | 'TWO'
+        | 'THREE'
+        | 'FOUR'
+        | 'FIVE'
+        | 'SIX'
+        | 'SEVEN'
+        | 'EIGHT'
+        | 'NINE'
+        | 'TEN'
+        | 'ELEVEN'
+        | 'TWELVE'
+        | 'THIRTEEN'
+        | 'FOURTEEN'
+        | null;
+      readonly role:
+        | 'ADMIN'
+        | 'WORKSHOPS_COORDINATOR'
+        | 'SCHOOL_NETWORK_COORDINATOR'
+        | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
+        | 'VETERANS_DAY_COORDINATOR'
+        | 'NEWSLETTER_COORDINATOR'
+        | 'BRANCH_DIRECTOR'
+        | 'HEAD_OF_EDUCATION'
+        | 'PROJECT_MANAGER'
+        | 'COORDINATOR'
+        | 'DEVELOPMENT_LEAD'
+        | 'PRODUCTION'
+        | 'STUDIO_LEAD'
+        | 'LECTURER'
+        | 'METHODOLOGY_LEAD';
+    };
+    readonly Interaction: {
+      readonly contactId: CodecTypes['pg/int4@1']['output'];
+      readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly mode: 'PHONE' | 'EMAIL' | 'IN_PERSON' | 'VIDEO_CALL' | 'MESSAGE' | 'OTHER';
+      readonly programId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
+    };
+    readonly LegacySchoolEmployees: {
+      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
     };
     readonly Municipality: {
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -496,8 +556,68 @@ export type FieldInputTypes = {
         | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
         | 'VETERANS_DAY_COORDINATOR'
         | 'NEWSLETTER_COORDINATOR'
+        | 'BRANCH_DIRECTOR'
+        | 'HEAD_OF_EDUCATION'
+        | 'PROJECT_MANAGER'
+        | 'COORDINATOR'
+        | 'DEVELOPMENT_LEAD'
+        | 'PRODUCTION'
+        | 'STUDIO_LEAD'
+        | 'LECTURER'
+        | 'METHODOLOGY_LEAD'
       >;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly EmployeeAssignment: {
+      readonly branchId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly programId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly region:
+        | 'ONE'
+        | 'TWO'
+        | 'THREE'
+        | 'FOUR'
+        | 'FIVE'
+        | 'SIX'
+        | 'SEVEN'
+        | 'EIGHT'
+        | 'NINE'
+        | 'TEN'
+        | 'ELEVEN'
+        | 'TWELVE'
+        | 'THIRTEEN'
+        | 'FOURTEEN'
+        | null;
+      readonly role:
+        | 'ADMIN'
+        | 'WORKSHOPS_COORDINATOR'
+        | 'SCHOOL_NETWORK_COORDINATOR'
+        | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
+        | 'VETERANS_DAY_COORDINATOR'
+        | 'NEWSLETTER_COORDINATOR'
+        | 'BRANCH_DIRECTOR'
+        | 'HEAD_OF_EDUCATION'
+        | 'PROJECT_MANAGER'
+        | 'COORDINATOR'
+        | 'DEVELOPMENT_LEAD'
+        | 'PRODUCTION'
+        | 'STUDIO_LEAD'
+        | 'LECTURER'
+        | 'METHODOLOGY_LEAD';
+    };
+    readonly Interaction: {
+      readonly contactId: CodecTypes['pg/int4@1']['input'];
+      readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly mode: 'PHONE' | 'EMAIL' | 'IN_PERSON' | 'VIDEO_CALL' | 'MESSAGE' | 'OTHER';
+      readonly programId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
+    };
+    readonly LegacySchoolEmployees: {
+      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
     };
     readonly Municipality: {
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -653,8 +773,68 @@ export type StorageColumnTypes = {
         | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
         | 'VETERANS_DAY_COORDINATOR'
         | 'NEWSLETTER_COORDINATOR'
+        | 'BRANCH_DIRECTOR'
+        | 'HEAD_OF_EDUCATION'
+        | 'PROJECT_MANAGER'
+        | 'COORDINATOR'
+        | 'DEVELOPMENT_LEAD'
+        | 'PRODUCTION'
+        | 'STUDIO_LEAD'
+        | 'LECTURER'
+        | 'METHODOLOGY_LEAD'
       >;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly EmployeeAssignment: {
+      readonly branchId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly programId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly region:
+        | 'ONE'
+        | 'TWO'
+        | 'THREE'
+        | 'FOUR'
+        | 'FIVE'
+        | 'SIX'
+        | 'SEVEN'
+        | 'EIGHT'
+        | 'NINE'
+        | 'TEN'
+        | 'ELEVEN'
+        | 'TWELVE'
+        | 'THIRTEEN'
+        | 'FOURTEEN'
+        | null;
+      readonly role:
+        | 'ADMIN'
+        | 'WORKSHOPS_COORDINATOR'
+        | 'SCHOOL_NETWORK_COORDINATOR'
+        | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
+        | 'VETERANS_DAY_COORDINATOR'
+        | 'NEWSLETTER_COORDINATOR'
+        | 'BRANCH_DIRECTOR'
+        | 'HEAD_OF_EDUCATION'
+        | 'PROJECT_MANAGER'
+        | 'COORDINATOR'
+        | 'DEVELOPMENT_LEAD'
+        | 'PRODUCTION'
+        | 'STUDIO_LEAD'
+        | 'LECTURER'
+        | 'METHODOLOGY_LEAD';
+    };
+    readonly Interaction: {
+      readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly contactId: CodecTypes['pg/int4@1']['output'];
+      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly mode: 'PHONE' | 'EMAIL' | 'IN_PERSON' | 'VIDEO_CALL' | 'MESSAGE' | 'OTHER';
+      readonly programId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
+    };
+    readonly LegacySchoolEmployees: {
+      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly schoolId: CodecTypes['pg/int4@1']['output'];
     };
     readonly Municipality: {
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -810,8 +990,68 @@ export type StorageColumnInputTypes = {
         | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
         | 'VETERANS_DAY_COORDINATOR'
         | 'NEWSLETTER_COORDINATOR'
+        | 'BRANCH_DIRECTOR'
+        | 'HEAD_OF_EDUCATION'
+        | 'PROJECT_MANAGER'
+        | 'COORDINATOR'
+        | 'DEVELOPMENT_LEAD'
+        | 'PRODUCTION'
+        | 'STUDIO_LEAD'
+        | 'LECTURER'
+        | 'METHODOLOGY_LEAD'
       >;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly EmployeeAssignment: {
+      readonly branchId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly programId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly region:
+        | 'ONE'
+        | 'TWO'
+        | 'THREE'
+        | 'FOUR'
+        | 'FIVE'
+        | 'SIX'
+        | 'SEVEN'
+        | 'EIGHT'
+        | 'NINE'
+        | 'TEN'
+        | 'ELEVEN'
+        | 'TWELVE'
+        | 'THIRTEEN'
+        | 'FOURTEEN'
+        | null;
+      readonly role:
+        | 'ADMIN'
+        | 'WORKSHOPS_COORDINATOR'
+        | 'SCHOOL_NETWORK_COORDINATOR'
+        | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
+        | 'VETERANS_DAY_COORDINATOR'
+        | 'NEWSLETTER_COORDINATOR'
+        | 'BRANCH_DIRECTOR'
+        | 'HEAD_OF_EDUCATION'
+        | 'PROJECT_MANAGER'
+        | 'COORDINATOR'
+        | 'DEVELOPMENT_LEAD'
+        | 'PRODUCTION'
+        | 'STUDIO_LEAD'
+        | 'LECTURER'
+        | 'METHODOLOGY_LEAD';
+    };
+    readonly Interaction: {
+      readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly contactId: CodecTypes['pg/int4@1']['input'];
+      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly mode: 'PHONE' | 'EMAIL' | 'IN_PERSON' | 'VIDEO_CALL' | 'MESSAGE' | 'OTHER';
+      readonly programId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
+    };
+    readonly LegacySchoolEmployees: {
+      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly schoolId: CodecTypes['pg/int4@1']['input'];
     };
     readonly Municipality: {
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -977,11 +1217,93 @@ export namespace Models {
       | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
       | 'VETERANS_DAY_COORDINATOR'
       | 'NEWSLETTER_COORDINATOR'
+      | 'BRANCH_DIRECTOR'
+      | 'HEAD_OF_EDUCATION'
+      | 'PROJECT_MANAGER'
+      | 'COORDINATOR'
+      | 'DEVELOPMENT_LEAD'
+      | 'PRODUCTION'
+      | 'STUDIO_LEAD'
+      | 'LECTURER'
+      | 'METHODOLOGY_LEAD'
     >;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    assignments: public_EmployeeAssignment[];
+    chiefOf: public_Branch[];
+    interactions: public_Interaction[];
+    legacySchoolLinks: public_LegacySchoolEmployees[];
     participations: public_ParticipationEmployees[];
-    schools: public_SchoolEmployees[];
-    readonly [RelationKeys]?: 'participations' | 'schools';
+    schools: public_LegacySchoolEmployees[];
+    readonly [RelationKeys]?:
+      | 'assignments'
+      | 'chiefOf'
+      | 'interactions'
+      | 'legacySchoolLinks'
+      | 'participations'
+      | 'schools';
+  };
+  export type public_EmployeeAssignment = {
+    branchId: CodecTypes['pg/int4@1']['output'] | null;
+    employeeId: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    programId: CodecTypes['pg/int4@1']['output'] | null;
+    region:
+      | 'ONE'
+      | 'TWO'
+      | 'THREE'
+      | 'FOUR'
+      | 'FIVE'
+      | 'SIX'
+      | 'SEVEN'
+      | 'EIGHT'
+      | 'NINE'
+      | 'TEN'
+      | 'ELEVEN'
+      | 'TWELVE'
+      | 'THIRTEEN'
+      | 'FOURTEEN'
+      | null;
+    role:
+      | 'ADMIN'
+      | 'WORKSHOPS_COORDINATOR'
+      | 'SCHOOL_NETWORK_COORDINATOR'
+      | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
+      | 'VETERANS_DAY_COORDINATOR'
+      | 'NEWSLETTER_COORDINATOR'
+      | 'BRANCH_DIRECTOR'
+      | 'HEAD_OF_EDUCATION'
+      | 'PROJECT_MANAGER'
+      | 'COORDINATOR'
+      | 'DEVELOPMENT_LEAD'
+      | 'PRODUCTION'
+      | 'STUDIO_LEAD'
+      | 'LECTURER'
+      | 'METHODOLOGY_LEAD';
+    branch: public_Branch | null;
+    employee: public_Employee;
+    program: public_Program | null;
+    readonly [RelationKeys]?: 'branch' | 'employee' | 'program';
+  };
+  export type public_Interaction = {
+    contactId: CodecTypes['pg/int4@1']['output'];
+    contactedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    employeeId: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    mode: 'PHONE' | 'EMAIL' | 'IN_PERSON' | 'VIDEO_CALL' | 'MESSAGE' | 'OTHER';
+    programId: CodecTypes['pg/int4@1']['output'] | null;
+    schoolId: CodecTypes['pg/int4@1']['output'] | null;
+    contact: public_Contact;
+    employee: public_Employee;
+    program: public_Program | null;
+    school: public_School | null;
+    readonly [RelationKeys]?: 'contact' | 'employee' | 'program' | 'school';
+  };
+  export type public_LegacySchoolEmployees = {
+    employeeId: CodecTypes['pg/int4@1']['output'];
+    schoolId: CodecTypes['pg/int4@1']['output'];
+    employee: public_Employee;
+    school: public_School;
+    readonly [RelationKeys]?: 'employee' | 'school';
   };
   export type public_Municipality = {
     id: CodecTypes['pg/int4@1']['output'];
@@ -1366,7 +1688,7 @@ type ContractBase = Omit<
                 readonly phone: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly region: {
@@ -1429,11 +1751,11 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
-                readonly roles: {
+                readonly role: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
-                  readonly many: { readonly elementNullable: false };
+                  readonly many: false;
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
@@ -2136,17 +2458,6 @@ type ContractBase = Omit<
                 'OTHER',
               ];
             };
-            readonly EmployeeJobRole: {
-              readonly kind: 'valueSet';
-              readonly values: readonly [
-                'ADMIN',
-                'WORKSHOPS_COORDINATOR',
-                'SCHOOL_NETWORK_COORDINATOR',
-                'STORIES_OF_OUR_NEIGHBORS_COORDINATOR',
-                'VETERANS_DAY_COORDINATOR',
-                'NEWSLETTER_COORDINATOR',
-              ];
-            };
             readonly ProgramStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['PLANNED', 'ONGOING', 'COMPLETED', 'CANCELLED'];
@@ -2173,6 +2484,26 @@ type ContractBase = Omit<
             readonly RelationshipType: {
               readonly kind: 'valueSet';
               readonly values: readonly ['POOR', 'AVERAGE', 'EXCELLENT'];
+            };
+            readonly Role: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'ADMIN',
+                'WORKSHOPS_COORDINATOR',
+                'SCHOOL_NETWORK_COORDINATOR',
+                'STORIES_OF_OUR_NEIGHBORS_COORDINATOR',
+                'VETERANS_DAY_COORDINATOR',
+                'NEWSLETTER_COORDINATOR',
+                'BRANCH_DIRECTOR',
+                'HEAD_OF_EDUCATION',
+                'PROJECT_MANAGER',
+                'COORDINATOR',
+                'DEVELOPMENT_LEAD',
+                'PRODUCTION',
+                'STUDIO_LEAD',
+                'LECTURER',
+                'METHODOLOGY_LEAD',
+              ];
             };
             readonly SchoolType: {
               readonly kind: 'valueSet';
@@ -2551,6 +2882,17 @@ type ContractBase = Omit<
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'ParticipationEmployees';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['employeeId'];
+                };
+              };
+              readonly schools: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'LegacySchoolEmployees';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -3297,26 +3639,6 @@ type ContractBase = Omit<
               { readonly name: 'OTHER'; readonly value: 'OTHER' },
             ];
           };
-          readonly EmployeeJobRole: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'ADMIN'; readonly value: 'ADMIN' },
-              { readonly name: 'WORKSHOPS_COORDINATOR'; readonly value: 'WORKSHOPS_COORDINATOR' },
-              {
-                readonly name: 'SCHOOL_NETWORK_COORDINATOR';
-                readonly value: 'SCHOOL_NETWORK_COORDINATOR';
-              },
-              {
-                readonly name: 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR';
-                readonly value: 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR';
-              },
-              {
-                readonly name: 'VETERANS_DAY_COORDINATOR';
-                readonly value: 'VETERANS_DAY_COORDINATOR';
-              },
-              { readonly name: 'NEWSLETTER_COORDINATOR'; readonly value: 'NEWSLETTER_COORDINATOR' },
-            ];
-          };
           readonly ProgramStatus: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -3351,6 +3673,35 @@ type ContractBase = Omit<
               { readonly name: 'POOR'; readonly value: 'POOR' },
               { readonly name: 'AVERAGE'; readonly value: 'AVERAGE' },
               { readonly name: 'EXCELLENT'; readonly value: 'EXCELLENT' },
+            ];
+          };
+          readonly Role: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'ADMIN'; readonly value: 'ADMIN' },
+              { readonly name: 'WORKSHOPS_COORDINATOR'; readonly value: 'WORKSHOPS_COORDINATOR' },
+              {
+                readonly name: 'SCHOOL_NETWORK_COORDINATOR';
+                readonly value: 'SCHOOL_NETWORK_COORDINATOR';
+              },
+              {
+                readonly name: 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR';
+                readonly value: 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR';
+              },
+              {
+                readonly name: 'VETERANS_DAY_COORDINATOR';
+                readonly value: 'VETERANS_DAY_COORDINATOR';
+              },
+              { readonly name: 'NEWSLETTER_COORDINATOR'; readonly value: 'NEWSLETTER_COORDINATOR' },
+              { readonly name: 'BRANCH_DIRECTOR'; readonly value: 'BRANCH_DIRECTOR' },
+              { readonly name: 'HEAD_OF_EDUCATION'; readonly value: 'HEAD_OF_EDUCATION' },
+              { readonly name: 'PROJECT_MANAGER'; readonly value: 'PROJECT_MANAGER' },
+              { readonly name: 'COORDINATOR'; readonly value: 'COORDINATOR' },
+              { readonly name: 'DEVELOPMENT_LEAD'; readonly value: 'DEVELOPMENT_LEAD' },
+              { readonly name: 'PRODUCTION'; readonly value: 'PRODUCTION' },
+              { readonly name: 'STUDIO_LEAD'; readonly value: 'STUDIO_LEAD' },
+              { readonly name: 'LECTURER'; readonly value: 'LECTURER' },
+              { readonly name: 'METHODOLOGY_LEAD'; readonly value: 'METHODOLOGY_LEAD' },
             ];
           };
           readonly SchoolType: {
@@ -3396,23 +3747,6 @@ type ContractBase = Omit<
             { readonly name: 'VOLUNTEER'; readonly value: 'VOLUNTEER' },
             { readonly name: 'OTHER'; readonly value: 'OTHER' },
           ];
-          readonly EmployeeJobRole: readonly [
-            { readonly name: 'ADMIN'; readonly value: 'ADMIN' },
-            { readonly name: 'WORKSHOPS_COORDINATOR'; readonly value: 'WORKSHOPS_COORDINATOR' },
-            {
-              readonly name: 'SCHOOL_NETWORK_COORDINATOR';
-              readonly value: 'SCHOOL_NETWORK_COORDINATOR';
-            },
-            {
-              readonly name: 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR';
-              readonly value: 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR';
-            },
-            {
-              readonly name: 'VETERANS_DAY_COORDINATOR';
-              readonly value: 'VETERANS_DAY_COORDINATOR';
-            },
-            { readonly name: 'NEWSLETTER_COORDINATOR'; readonly value: 'NEWSLETTER_COORDINATOR' },
-          ];
           readonly ProgramStatus: readonly [
             { readonly name: 'PLANNED'; readonly value: 'PLANNED' },
             { readonly name: 'ONGOING'; readonly value: 'ONGOING' },
@@ -3439,6 +3773,32 @@ type ContractBase = Omit<
             { readonly name: 'POOR'; readonly value: 'POOR' },
             { readonly name: 'AVERAGE'; readonly value: 'AVERAGE' },
             { readonly name: 'EXCELLENT'; readonly value: 'EXCELLENT' },
+          ];
+          readonly Role: readonly [
+            { readonly name: 'ADMIN'; readonly value: 'ADMIN' },
+            { readonly name: 'WORKSHOPS_COORDINATOR'; readonly value: 'WORKSHOPS_COORDINATOR' },
+            {
+              readonly name: 'SCHOOL_NETWORK_COORDINATOR';
+              readonly value: 'SCHOOL_NETWORK_COORDINATOR';
+            },
+            {
+              readonly name: 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR';
+              readonly value: 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR';
+            },
+            {
+              readonly name: 'VETERANS_DAY_COORDINATOR';
+              readonly value: 'VETERANS_DAY_COORDINATOR';
+            },
+            { readonly name: 'NEWSLETTER_COORDINATOR'; readonly value: 'NEWSLETTER_COORDINATOR' },
+            { readonly name: 'BRANCH_DIRECTOR'; readonly value: 'BRANCH_DIRECTOR' },
+            { readonly name: 'HEAD_OF_EDUCATION'; readonly value: 'HEAD_OF_EDUCATION' },
+            { readonly name: 'PROJECT_MANAGER'; readonly value: 'PROJECT_MANAGER' },
+            { readonly name: 'COORDINATOR'; readonly value: 'COORDINATOR' },
+            { readonly name: 'DEVELOPMENT_LEAD'; readonly value: 'DEVELOPMENT_LEAD' },
+            { readonly name: 'PRODUCTION'; readonly value: 'PRODUCTION' },
+            { readonly name: 'STUDIO_LEAD'; readonly value: 'STUDIO_LEAD' },
+            { readonly name: 'LECTURER'; readonly value: 'LECTURER' },
+            { readonly name: 'METHODOLOGY_LEAD'; readonly value: 'METHODOLOGY_LEAD' },
           ];
           readonly SchoolType: readonly [
             { readonly name: 'PRIMARY'; readonly value: 'PRIMARY' },
