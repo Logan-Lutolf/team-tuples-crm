@@ -13,11 +13,10 @@ are copied into assignments before `Employee.role` is dropped. Branch/program sc
 remain null because the old data did not record them. Existing participations receive
 editable names of the form `Participation #<id>`.
 
-Old `SchoolEmployees` rows are preserved by renaming the table to
-`LegacySchoolEmployees`. This archive is included in the contract; new contact history
-belongs in `Interaction`. No historical interaction timestamps, contacts, or communication
-modes are invented. Existing contact last-contacted summaries remain unchanged; future
-interaction writes must maintain these summaries in application code.
+School contact history is recorded in `Interaction`. Obsolete school–employee
+assignments have been removed from the active schema by a later migration. Existing
+contact last-contacted summaries remain unchanged; future interaction writes maintain
+these summaries in application code.
 
 Before applying, back up important data and confirm `.env.local` points to the intended
 database. Stop the development server, then run:
@@ -103,3 +102,44 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+
+### Employee password and roles migration
+
+`20261105T1816_employee_password_and_roles` implements the existing, unchanged contract:
+
+1. Add nullable `Employee.password` (`text`) and `Employee.roles` (`text[]`).
+2. Fill missing credential values with unique `!setup-required$sha256$...` markers,
+   hashing two per-row random UUIDs. The random secrets are discarded, and neither
+   secrets nor resulting hashes are embedded in migration artifacts or logs.
+3. Copy distinct, sorted roles only from assignments whose branch, program, and region
+   are all null. Employees without such assignments receive `[]`. All assignment rows
+   remain unchanged; existing non-null backfill values are not overwritten.
+4. Set both columns NOT NULL and install the contract's role-membership and non-null
+   array-element check constraints. Neither column gets a default.
+
+These credential values are setup-required markers for high-entropy random secrets,
+not hashes of human-selected passwords. SHA-256 is used only for the random markers.
+A real password-setup/reset flow must replace them with a password-KDF hash (for example
+Argon2id), and login must reject setup-required markers and verify password hashes.
+The existing plaintext-comparison login and plaintext OTP creation code have not been
+changed by this migration work. Do not treat this migration as an authentication system.
+Employee display queries must explicitly omit `password`.
+
+To regenerate artifacts after editing this migration:
+
+```bash
+node migrations/app/20261105T1816_employee_password_and_roles/migration.ts
+node node_modules/prisma/dist/prisma.js migration check 20261105T1816_employee_password_and_roles
+```
+
+Local tests (use only a disposable local PostgreSQL server):
+
+```bash
+MIGRATION_TEST_PORT=55439 node --test tests/migrations/employee-password-and-roles.mjs tests/migrations/automatic-delete-links.mjs
+```
+
+At preparation time the whole-graph integrity check reported that `migrations/app/refs/db.json`
+points to `4f16088479c646ee5852ee3e378f1293bafbc5cf4e079d6dd66fa9d56632c16e`, which is not a
+node in the on-disk migration graph. This ref was not overwritten. Reconcile it with the
+actual database history before applying migrations; the single-package check above and
+disposable-database tests validate the new migration independently.

@@ -1,0 +1,328 @@
+[
+  {
+    "id": "column.public.Employee.password",
+    "label": "Add column \"password\" to \"Employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "password",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"password\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "password"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"password\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ADD COLUMN \"password\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"password\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "password"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Employee.roles",
+    "label": "Add column \"roles\" to \"Employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "roles",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"roles\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "roles"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"roles\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ADD COLUMN \"roles\" text[]"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"roles\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "roles"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "backfill.Employee.password",
+    "label": "Assign unique setup-required credential hashes to existing employees",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check for missing credential hashes",
+        "sql": "SELECT EXISTS (SELECT 1 FROM public.\"Employee\" WHERE password IS NULL) AS result"
+      }
+    ],
+    "execute": [
+      {
+        "description": "hash discarded high-entropy random secrets; never create default passwords",
+        "sql": "UPDATE public.\"Employee\"\n            SET password = '!setup-required$sha256$' || encode(sha256(convert_to(\n              gen_random_uuid()::text || gen_random_uuid()::text, 'UTF8')), 'hex')\n            WHERE password IS NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify every employee has a credential value",
+        "sql": "SELECT NOT EXISTS (SELECT 1 FROM public.\"Employee\" WHERE password IS NULL) AS result"
+      }
+    ]
+  },
+  {
+    "id": "backfill.Employee.roles",
+    "label": "Copy only unscoped assignment roles into Employee.roles",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check for missing role arrays",
+        "sql": "SELECT EXISTS (SELECT 1 FROM public.\"Employee\" WHERE roles IS NULL) AS result"
+      }
+    ],
+    "execute": [
+      {
+        "description": "copy distinct global roles; preserve every existing assignment",
+        "sql": "UPDATE public.\"Employee\" e SET roles = ARRAY(\n            SELECT DISTINCT a.role FROM public.\"EmployeeAssignment\" a\n            WHERE a.\"employeeId\" = e.id AND a.\"branchId\" IS NULL\n              AND a.\"programId\" IS NULL AND a.region IS NULL\n            ORDER BY a.role\n          ) WHERE e.roles IS NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify every employee has a role array",
+        "sql": "SELECT NOT EXISTS (SELECT 1 FROM public.\"Employee\" WHERE roles IS NULL) AS result"
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.setNotNull.Employee.password",
+    "label": "Set NOT NULL on \"Employee\".\"password\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "password",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"password\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "password"
+        ]
+      },
+      {
+        "description": "ensure no NULL values in \"password\"",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"public\".\"Employee\" WHERE \"password\" IS NULL) AS \"result\"",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "set NOT NULL on \"password\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ALTER COLUMN \"password\" SET NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"password\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "password",
+          "NO"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.setNotNull.Employee.roles",
+    "label": "Set NOT NULL on \"Employee\".\"roles\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "roles",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"roles\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "roles"
+        ]
+      },
+      {
+        "description": "ensure no NULL values in \"roles\"",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"public\".\"Employee\" WHERE \"roles\" IS NULL) AS \"result\"",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "set NOT NULL on \"roles\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ALTER COLUMN \"roles\" SET NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"roles\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "roles",
+          "NO"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Employee.Employee_roles_check_d243e319",
+    "label": "Add check constraint \"Employee_roles_check_d243e319\" on \"Employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Employee_roles_check_d243e319",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Employee_roles_check_d243e319\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_roles_check_d243e319",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Employee_roles_check_d243e319\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ADD CONSTRAINT \"Employee_roles_check_d243e319\" CHECK (array_remove(\"roles\", NULL) <@ '{\"ADMIN\",\"WORKSHOPS_COORDINATOR\",\"SCHOOL_NETWORK_COORDINATOR\",\"STORIES_OF_OUR_NEIGHBORS_COORDINATOR\",\"VETERANS_DAY_COORDINATOR\",\"NEWSLETTER_COORDINATOR\",\"BRANCH_DIRECTOR\",\"HEAD_OF_EDUCATION\",\"PROJECT_MANAGER\",\"COORDINATOR\",\"DEVELOPMENT_LEAD\",\"PRODUCTION\",\"STUDIO_LEAD\",\"LECTURER\",\"METHODOLOGY_LEAD\"}')"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Employee_roles_check_d243e319\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_roles_check_d243e319",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Employee.Employee_roles_elem_not_null_37524d49",
+    "label": "Add check constraint \"Employee_roles_elem_not_null_37524d49\" on \"Employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Employee_roles_elem_not_null_37524d49",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Employee_roles_elem_not_null_37524d49\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_roles_elem_not_null_37524d49",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Employee_roles_elem_not_null_37524d49\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ADD CONSTRAINT \"Employee_roles_elem_not_null_37524d49\" CHECK (array_position(\"roles\", NULL) IS NULL)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Employee_roles_elem_not_null_37524d49\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_roles_elem_not_null_37524d49",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ]
+  }
+]

@@ -26,7 +26,6 @@ export function schoolErrorMessage(error: unknown, action: string): string {
         case "23503":
             if (action.startsWith("Delete")) {
                 if (constraint.startsWith("Contact_")) return "This school still has contacts. Remove their school assignments before deleting it."
-                if (constraint.startsWith("SchoolEmployees_")) return "This school still has assigned employees. Remove their assignments before deleting it."
                 if (constraint.startsWith("ParticipationEmployees_")) return "This participation still has assigned employees. Remove their assignments before deleting it."
                 if (constraint.startsWith("Participation_")) return "This school still has participations. Delete them before deleting the school."
                 return "Other records still depend on this record. Remove their links before deleting it."

@@ -32,7 +32,7 @@ for (const target of mainTables) test(`deleting ${target} automatically clears l
             }
         }
         await client.query(`
-            INSERT INTO public."Employee" (id,name,email,"updatedAt") VALUES (1,'Employee','employee@example.com',now()),(2,'Other employee','other@example.com',now());
+            INSERT INTO public."Employee" (id,name,email,password,roles,"updatedAt") VALUES (1,'Employee','employee@example.com','!test-only-disabled',ARRAY[]::text[],now()),(2,'Other employee','other@example.com','!test-only-disabled-2',ARRAY[]::text[],now());
             INSERT INTO public."Branch" (id,name,region,"chiefId") VALUES (1,'ONE','ONE',1);
             INSERT INTO public."School" (id,name,email,address,type,relationship,region,"branchId","updatedAt") VALUES (1,'School','school@example.com','{}','PRIMARY','AVERAGE','ONE',1,now());
             INSERT INTO public."Contact" (id,name,email,"contactRole","schoolId","branchId","last_contacted_byId","updatedAt") VALUES (1,'Teacher','teacher@example.com','TEACHER',1,1,1,now());

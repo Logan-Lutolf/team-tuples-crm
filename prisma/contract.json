@@ -176,71 +176,6 @@
               }
             ]
           },
-          "EmployeeJobRole": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "ADMIN",
-                "value": "ADMIN"
-              },
-              {
-                "name": "WORKSHOPS_COORDINATOR",
-                "value": "WORKSHOPS_COORDINATOR"
-              },
-              {
-                "name": "SCHOOL_NETWORK_COORDINATOR",
-                "value": "SCHOOL_NETWORK_COORDINATOR"
-              },
-              {
-                "name": "STORIES_OF_OUR_NEIGHBORS_COORDINATOR",
-                "value": "STORIES_OF_OUR_NEIGHBORS_COORDINATOR"
-              },
-              {
-                "name": "VETERANS_DAY_COORDINATOR",
-                "value": "VETERANS_DAY_COORDINATOR"
-              },
-              {
-                "name": "NEWSLETTER_COORDINATOR",
-                "value": "NEWSLETTER_COORDINATOR"
-              },
-              {
-                "name": "BRANCH_DIRECTOR",
-                "value": "BRANCH_DIRECTOR"
-              },
-              {
-                "name": "HEAD_OF_EDUCATION",
-                "value": "HEAD_OF_EDUCATION"
-              },
-              {
-                "name": "PROJECT_MANAGER",
-                "value": "PROJECT_MANAGER"
-              },
-              {
-                "name": "COORDINATOR",
-                "value": "COORDINATOR"
-              },
-              {
-                "name": "DEVELOPMENT_LEAD",
-                "value": "DEVELOPMENT_LEAD"
-              },
-              {
-                "name": "PRODUCTION",
-                "value": "PRODUCTION"
-              },
-              {
-                "name": "STUDIO_LEAD",
-                "value": "STUDIO_LEAD"
-              },
-              {
-                "name": "LECTURER",
-                "value": "LECTURER"
-              },
-              {
-                "name": "METHODOLOGY_LEAD",
-                "value": "METHODOLOGY_LEAD"
-              }
-            ]
-          },
           "ProgramStatus": {
             "codecId": "pg/text@1",
             "members": [
@@ -1081,21 +1016,6 @@
                 },
                 "to": {
                   "model": "ParticipationEmployees",
-                  "namespace": "public"
-                }
-              },
-              "schools": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "employeeId"
-                  ]
-                },
-                "to": {
-                  "model": "LegacySchoolEmployees",
                   "namespace": "public"
                 }
               }
@@ -3751,26 +3671,6 @@
                 "OTHER"
               ]
             },
-            "EmployeeJobRole": {
-              "kind": "valueSet",
-              "values": [
-                "ADMIN",
-                "WORKSHOPS_COORDINATOR",
-                "SCHOOL_NETWORK_COORDINATOR",
-                "STORIES_OF_OUR_NEIGHBORS_COORDINATOR",
-                "VETERANS_DAY_COORDINATOR",
-                "NEWSLETTER_COORDINATOR",
-                "BRANCH_DIRECTOR",
-                "HEAD_OF_EDUCATION",
-                "PROJECT_MANAGER",
-                "COORDINATOR",
-                "DEVELOPMENT_LEAD",
-                "PRODUCTION",
-                "STUDIO_LEAD",
-                "LECTURER",
-                "METHODOLOGY_LEAD"
-              ]
-            },
             "ProgramStatus": {
               "kind": "valueSet",
               "values": [
@@ -3843,7 +3743,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "efffa3f8d1f973b78b7dc3e6dd41b3896a4fc50dd12e45a138b789f646cdeedc"
+    "storageHash": "f4ff1b3a161df37a206e2747f73df3952de4bfcf756be096a0c40181fe448b99"
   },
   "execution": {
     "executionHash": "49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353",

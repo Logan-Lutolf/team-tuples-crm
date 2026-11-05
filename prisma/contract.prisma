@@ -117,7 +117,6 @@ model Employee {
   // remove this, because we might add EmployeeJobRole table later?
   roles      Role[] 
 
-  schools LegacySchoolEmployees[]
   assignments EmployeeAssignment[]
   interactions Interaction[]
   chiefOf Branch[]
@@ -294,7 +293,7 @@ model MunicipalityPrograms {
   @@id([municipalityId, programId])
 }
 
-// Explicit employment periods; overlapping school appointments are allowed.
+// Explicit employment periods of a teacher
 model ContactEmployment {
   id Int @id @default(autoincrement())
   contactId Int
