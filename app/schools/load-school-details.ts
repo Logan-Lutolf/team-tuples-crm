@@ -8,19 +8,19 @@ export async function loadSchoolDetails(schoolId: number, editing = false): Prom
     const [school, contacts, participations, interactions] = await Promise.all([
         db.orm.public.School.where({ id: schoolId }).first(),
         db.orm.public.Contact.where({ schoolId }).select('id', 'name', 'email', 'phone', 'contactRole').all().toArray(),
-        db.orm.public.Participation.where({ schoolId }).all().toArray(),
+        db.orm.public.Participation.where({ schoolId }).orderBy([p => p.startDate.desc(), p => p.id.desc()]).all().toArray(),
         db.orm.public.Interaction.where({ schoolId }).orderBy(i => i.contactedAt.desc()).all().toArray(),
     ])
     if (!school) throw new Error('School not found.')
     const participationIds = participations.map(p => p.id)
-    const programIds = [...new Set([...participations.map(p => p.programId), ...interactions.flatMap(i => i.programId === null ? [] : [i.programId])])]
+    const programIds = [...new Set([...participations.map(p => p.programId), ...interactions.flatMap(i => i.programId === null ? [] : [i.programId])])].filter((id): id is number => id !== null)
     const [participantLinks, branches, programs, availableContacts] = await Promise.all([
         participationIds.length ? db.orm.public.ParticipationEmployees.where(a => a.participationId.in(participationIds)).select('participationId', 'employeeId').all().toArray() : [],
-        (editing ? db.orm.public.Branch : db.orm.public.Branch.where({ id: school.branchId })).select('id', 'name').all().toArray(),
+        (editing ? db.orm.public.Branch : db.orm.public.Branch.where({ id: school.branchId ?? -1 })).select('id', 'name').all().toArray(),
         editing ? db.orm.public.Program.select('id', 'name').all().toArray() : programIds.length ? db.orm.public.Program.where(p => p.id.in(programIds)).select('id', 'name').all().toArray() : [],
         editing ? db.orm.public.Contact.where({ schoolId: null }).select('id', 'name').all().toArray() : [],
     ])
-    const employeeIds = [...new Set([...participantLinks.map(a => a.employeeId), ...interactions.map(i => i.employeeId)])]
+    const employeeIds = [...new Set([...participantLinks.map(a => a.employeeId), ...interactions.map(i => i.employeeId)])].filter((id): id is number => id !== null)
     const [employeeRows, roles] = await Promise.all([
         editing ? db.orm.public.Employee.select('id', 'name', 'email', 'phone', 'region').all().toArray() : employeeIds.length ? db.orm.public.Employee.where(e => e.id.in(employeeIds)).select('id', 'name', 'email', 'phone', 'region').all().toArray() : [],
         editing ? db.orm.public.EmployeeAssignment.select('employeeId', 'role').all().toArray() : [],

@@ -1,11 +1,10 @@
+import { PageActionLink } from '@/components/records/page-action-link'
+import { RecordLink } from '@/components/records/record-link'
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import type { Models } from "@/prisma/contract";
 import { Button } from "@/components/ui/button"
 import type { Scalars } from "@prisma/orm-postgres/components";
 import { Trash, Ellipsis } from "lucide-react";
-import { ActionDialog } from "@/components/custom/action-dialog";
-import { DeleteContactForm } from "./forms/delete-contact";
-import { ContactDetailsDialog } from "./contact-details-dialog";
 
 import type { ContactFields } from "./contact-form-types";
 
@@ -33,7 +32,7 @@ export function ContactTable({
             <TableBody>
                 {data.map((contact: ContactFields) => (
                     <TableRow key={contact.id} className="border border-black">
-                        <TableCell>{contact.name}</TableCell>
+                        <TableCell><RecordLink type="contacts" id={contact.id}>{contact.name}</RecordLink></TableCell>
                         <TableCell>{contact.email}</TableCell>
                         <TableCell>{contact.phone}</TableCell>
                         <TableCell>
@@ -42,12 +41,8 @@ export function ContactTable({
                                 : "No address"}
                         </TableCell>
                         <TableCell className="flex flex-row gap-2">
-                            <ContactDetailsDialog contactId={contact.id} contactName={contact.name} />
-                            <ActionDialog
-                                icon={<Trash />}
-                                content={<DeleteContactForm contactId={contact.id} schoolName={contact.name} />}
-                                variant="destructive"
-                            />
+                            <PageActionLink href={`/details/contacts/${contact.id}`}>View details</PageActionLink>
+                            <PageActionLink href={`/details/contacts/${contact.id}/delete`} destructive>Delete</PageActionLink>
                             <Button size='sm' variant="ghost">
                                 <Ellipsis/>
                             </Button>

@@ -1,10 +1,11 @@
 'use client'
+import { PageContent, PageHeader, PageTitle, PageDescription } from '@/components/records/page-content'
+import { RecordLink } from '@/components/records/record-link'
 import { useEffect, useId, useState, type ReactNode } from 'react'
 import { useFormStatus } from 'react-dom'
 import { Eye, Trash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { saveMunicipality, deleteMunicipality, getMunicipalityDetails, changeMunicipalityProgram } from './actions'
 
@@ -34,8 +35,8 @@ function ActionForm({ action, onSaved, label, destructive, children }: { action:
     </form>
 }
 
-export function MunicipalityDialog({ municipality, mode = 'create' }: { municipality?: Municipality; mode?: 'create' | 'view' | 'delete' }) {
-    const [open, setOpen] = useState(false)
+export function MunicipalityPageContent({ municipality, mode = 'create' }: { municipality?: Municipality; mode?: 'create' | 'view' | 'delete' }) {
+    const [open, setOpen] = useState(true)
     const [editing, setEditing] = useState(false)
     const [details, setDetails] = useState<Details | null>(null)
     const [loading, setLoading] = useState(false)
@@ -56,12 +57,9 @@ export function MunicipalityDialog({ municipality, mode = 'create' }: { municipa
     const deleting = mode === 'delete'
     async function refresh() { if (current) setDetails(await getMunicipalityDetails(current.id, editing)) }
     const title = mode === 'create' ? 'Add a Municipality' : deleting ? `Delete ${current?.name}` : editing ? `Edit ${current?.name}` : current?.name ?? 'Municipality details'
-    return <Dialog open={open} onOpenChange={value => { setOpen(value); if (!value) { setEditing(false); setDetails(null) } }}>
-        <DialogTrigger render={<Button className={mode === 'create' ? 'w-full' : undefined} variant={deleting ? 'destructive' : mode === 'view' ? 'outline' : 'default'} aria-label={mode === 'view' ? `View details for ${municipality?.name}` : title} />}>
-            {mode === 'create' ? title : deleting ? <><Trash /> Delete</> : <><Eye /> View details</>}
-        </DialogTrigger>
-        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[min(90vw,80rem)]">
-            <DialogHeader><DialogTitle>{title}</DialogTitle><DialogDescription>{deleting ? 'Remove program sponsorship links before deleting this municipality.' : editing ? 'Edit municipality information and sponsored programs.' : 'Municipality information and program sponsorships.'}</DialogDescription></DialogHeader>
+    return <PageContent open={open} backHref="/municipalities">
+
+            <PageHeader><PageTitle>{title}</PageTitle><PageDescription>{deleting ? 'Sponsorship links are removed automatically; sponsored programs are kept.' : editing ? 'Edit municipality information and sponsored programs.' : 'Municipality information and program sponsorships.'}</PageDescription></PageHeader>
             {error && <div role="alert">{error} <Button variant="outline" onClick={() => setRevision(r => r + 1)}>Try again</Button></div>}
             {loading ? <p role="status">Loading {editing ? 'editing options' : 'municipality details'}…</p> : <>
                 {mode === 'create' || deleting || editing ? <>
@@ -80,7 +78,7 @@ export function MunicipalityDialog({ municipality, mode = 'create' }: { municipa
                         <div className="grid gap-4 border-t p-4">
                             <div className="rounded-lg border bg-muted/20 p-4"><Table>
                                 <TableHeader><TableRow><TableHead>Program</TableHead><TableHead>Description</TableHead>{editing && <TableHead>Actions</TableHead>}</TableRow></TableHeader>
-                                <TableBody>{details.programs.map(program => <TableRow key={program.id}><TableCell>{program.name}</TableCell><TableCell className="whitespace-normal">{program.description || '—'}</TableCell>{editing && <TableCell>
+                                <TableBody>{details.programs.map(program => <TableRow key={program.id}><TableCell><RecordLink type="programs" id={program.id}>{program.name}</RecordLink></TableCell><TableCell className="whitespace-normal">{program.description || '—'}</TableCell>{editing && <TableCell>
                                     <ActionForm action={changeMunicipalityProgram} label="Remove sponsorship" onSaved={refresh}>
                                         <input type="hidden" name="municipality-id" value={details.municipality.id} /><input type="hidden" name="program-id" value={program.id} /><input type="hidden" name="operation" value="remove" />
                                     </ActionForm>
@@ -98,6 +96,5 @@ export function MunicipalityDialog({ municipality, mode = 'create' }: { municipa
                     {!editing && <div className="flex justify-end border-t pt-4"><Button onClick={() => setEditing(true)}>Edit</Button></div>}
                 </>}
             </>}
-        </DialogContent>
-    </Dialog>
+    </PageContent>
 }

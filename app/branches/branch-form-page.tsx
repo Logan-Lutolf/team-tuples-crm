@@ -1,10 +1,11 @@
 'use client'
+import { PageActionLink } from '@/components/records/page-action-link'
+import { PageContent, PageHeader, PageTitle, PageDescription } from '@/components/records/page-content'
 
 import { useId, useState } from "react"
 import { useFormStatus } from "react-dom"
 import { Pencil, Trash } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -22,7 +23,7 @@ type Props = {
 function FormButtons({ deleting }: { deleting: boolean }) {
     const { pending } = useFormStatus()
     return <div className="flex justify-end gap-3 pt-2">
-        <DialogClose render={<Button type="button" variant="outline" disabled={pending}>Cancel</Button>} />
+        <PageActionLink href="/branches">Cancel</PageActionLink>
         <Button type="submit" variant={deleting ? "destructive" : "default"} disabled={pending}>
             {pending ? "Saving…" : deleting ? "Delete branch" : "Save branch"}
         </Button>
@@ -34,8 +35,8 @@ function Fields({ children }: { children: React.ReactNode }) {
     return <fieldset disabled={pending} className="grid gap-4">{children}</fieldset>
 }
 
-export function BranchDialog({ branch, employees, names, regions, mode = "create" }: Props) {
-    const [open, setOpen] = useState(false)
+export function BranchFormPage({ branch, employees, names, regions, mode = "create" }: Props) {
+    const [open, setOpen] = useState(true)
     const [result, setResult] = useState<BranchResult | null>(null)
     const prefix = useId()
     const deleting = mode === "delete"
@@ -59,15 +60,12 @@ export function BranchDialog({ branch, employees, names, regions, mode = "create
             </Select>
         </Field>
     }
-    return <Dialog open={open} onOpenChange={(value) => { setOpen(value); setResult(null) }}>
-        <DialogTrigger render={<Button className={mode === "create" ? "w-full" : undefined} variant={deleting ? "destructive" : mode === "edit" ? "outline" : "default"} aria-label={title} />}>
-            {mode === "create" ? title : deleting ? <Trash className="size-4" /> : <Pencil className="size-4" />}
-        </DialogTrigger>
-        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto">
-            <DialogHeader>
-                <DialogTitle>{title}</DialogTitle>
-                <DialogDescription>{deleting ? "Linked schools, contacts, and assignments must be reassigned before deletion." : "Manage this branch’s region, institute, and chief."}</DialogDescription>
-            </DialogHeader>
+    return <PageContent open={open} backHref="/branches">
+
+            <PageHeader>
+                <PageTitle>{title}</PageTitle>
+                <PageDescription>{deleting ? "Related schools and contacts are kept; their branch links are cleared automatically." : "Manage this branch’s region, institute, and chief."}</PageDescription>
+            </PageHeader>
             <form action={submit} className="grid gap-4">
                 <Fields>
                     {branch && <input type="hidden" name="id" value={branch.id} />}
@@ -88,6 +86,5 @@ export function BranchDialog({ branch, employees, names, regions, mode = "create
                 {result && "error" in result && <p role="alert" className="text-destructive">{result.error}</p>}
                 <FormButtons deleting={deleting} />
             </form>
-        </DialogContent>
-    </Dialog>
+    </PageContent>
 }

@@ -16,7 +16,7 @@ async function mutate(form: FormData, mode: "create" | "edit" | "delete"): Promi
                 throw new Error("This branch no longer exists. Refresh the page.")
             }
             if (mode === "delete") {
-                // Foreign keys preserve schools, contacts, and assignments that still use this branch.
+                // Schools and contacts are detached; scoped assignment links are removed by the database.
                 await tx.orm.public.Branch.where({ id: id! }).delete()
             } else if (data) {
                 if (data.chiefId !== null && !await tx.orm.public.Employee.where({ id: data.chiefId }).first()) {
@@ -29,7 +29,7 @@ async function mutate(form: FormData, mode: "create" | "edit" | "delete"): Promi
     } catch (error) {
         const state = error && typeof error === "object" && "sqlState" in error ? error.sqlState : undefined
         if (state === "23503") return { error: mode === "delete"
-            ? "This branch is still linked to schools, contacts, or employee assignments. Reassign them before deleting it."
+            ? "Could not clear a related link. Confirm the automatic-deletion migration has been applied and try again."
             : "The selected chief no longer exists. Refresh the page." }
         if (state === "23505") return { error: "A branch with these details already exists." }
         if (state || !(error instanceof Error)) return { error: "Could not save changes. Check the database setup and try again." }

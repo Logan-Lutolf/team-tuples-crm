@@ -1,8 +1,12 @@
 'use client'
+import { RecordLink } from '@/components/records/record-link'
+
+import { datedParticipations } from '@/lib/participation-status'
+import { useParticipationTime } from './use-participation-time'
 
 import { Fragment, useId, useState, type ComponentProps, type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
-import { DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { PageHeader, PageTitle, PageDescription } from '@/components/records/page-content'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { getSchoolDetails } from './actions_schools'
 import { EditSchoolForm } from './edit-school-form'
@@ -18,6 +22,8 @@ function Timestamp({ value }: { value: string | null }) {
 }
 
 export function SchoolDetails(school: Props) {
+    const now = useParticipationTime(school.participationAsOf)
+    const participations = datedParticipations(school.participations, now)
     const [editing, setEditing] = useState(false)
     const [expandedParticipants, setExpandedParticipants] = useState<Set<number>>(new Set())
     const participantsPrefix = useId()
@@ -33,14 +39,14 @@ export function SchoolDetails(school: Props) {
         } catch { setEditError('Could not load editing options. Try again.') }
         finally { setLoadingEdit(false) }
     }
-    const programName = (id: number) => school.programs.find(p => p.id === id)?.name ?? `Program #${id}`
-    const employeeName = (id: number) => school.availableEmployees.find(e => e.id === id)?.name ?? `Employee #${id}`
-    const contactName = (id: number) => school.contacts.find(c => c.id === id)?.name ?? `Contact #${id}`
+    const programName = (id: number | null) => id === null ? 'Program deleted' : school.programs.find(p => p.id === id)?.name ?? `Program #${id}`
+    const employeeName = (id: number | null) => id === null ? 'Employee deleted' : school.availableEmployees.find(e => e.id === id)?.name ?? `Employee #${id}`
+    const contactName = (id: number | null) => id === null ? 'Contact deleted' : school.contacts.find(c => c.id === id)?.name ?? `Contact #${id}`
     return <div className="grid gap-6">
-        <DialogHeader>
-            <DialogTitle>{editing ? `Edit ${school.name}` : school.name}</DialogTitle>
-            <DialogDescription>{editing ? 'Update school fields, contacts, participations, and contact history.' : 'School details and related records.'}</DialogDescription>
-        </DialogHeader>
+        <PageHeader>
+            <PageTitle>{editing ? `Edit ${school.name}` : school.name}</PageTitle>
+            <PageDescription>{editing ? 'Update school fields, contacts, participations, and contact history.' : 'School details and related records.'}</PageDescription>
+        </PageHeader>
         {editing ? <>
             <Button type="button" variant="outline" className="w-fit" onClick={() => { setEditing(false); school.onDetailsRefresh?.() }}>Back to details</Button>
             <EditSchoolForm {...(editData ?? school)} onRelationshipsChange={async () => { setEditData(await getSchoolDetails(school.id, true)) }} />
@@ -59,7 +65,7 @@ export function SchoolDetails(school: Props) {
                     <Record label="Type">{school.type}</Record>
                     <Record label="Relationship">{school.relationship}</Record>
                     <Record label="Region">{school.region}</Record>
-                    <Record label="Branch">{school.branches.find(b => b.id === school.branchId)?.name ?? `Branch #${school.branchId}`}</Record>
+                    <Record label="Branch"><RecordLink type="branches" id={school.branchId}>{school.branches.find(b => b.id === school.branchId)?.name ?? (school.branchId === null ? 'No branch assigned' : `Branch #${school.branchId}`)}</RecordLink></Record>
                     <Record label="Created"><Timestamp value={school.createdAt} /></Record>
                     <Record label="Updated"><Timestamp value={school.updatedAt} /></Record>
                 </dl>
@@ -68,16 +74,16 @@ export function SchoolDetails(school: Props) {
                 <h3 className="font-semibold">School contacts</h3>
                 {school.contacts.length ? <Table>
                     <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Role</TableHead><TableHead>Email</TableHead><TableHead>Phone</TableHead></TableRow></TableHeader>
-                    <TableBody>{school.contacts.map(c => <TableRow key={c.id}><TableCell>{c.name}</TableCell><TableCell>{c.contactRole.replaceAll('_', ' ')}</TableCell><TableCell><a href={`mailto:${c.email}`}>{c.email}</a></TableCell><TableCell>{c.phone || '—'}</TableCell></TableRow>)}</TableBody>
+                    <TableBody>{school.contacts.map(c => <TableRow key={c.id}><TableCell><RecordLink type="contacts" id={c.id}>{c.name}</RecordLink></TableCell><TableCell>{c.contactRole.replaceAll('_', ' ')}</TableCell><TableCell><a href={`mailto:${c.email}`}>{c.email}</a></TableCell><TableCell>{c.phone || '—'}</TableCell></TableRow>)}</TableBody>
                 </Table> : <p className="text-muted-foreground">No contacts assigned.</p>}
             </section>
             <section className="grid gap-3">
                 <h3 className="font-semibold">Participations</h3>
-                {school.participations.length ? <Table>
+                {participations.length ? <Table>
                     <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Program</TableHead><TableHead>Start</TableHead><TableHead>End</TableHead><TableHead>Status</TableHead><TableHead>Employees</TableHead></TableRow></TableHeader>
-                    <TableBody>{school.participations.map(p => <Fragment key={p.id}>
+                    <TableBody>{participations.map(p => <Fragment key={p.id}>
                         <TableRow>
-                            <TableCell>{p.name}</TableCell><TableCell>{programName(p.programId)}</TableCell>
+                            <TableCell>{p.name}</TableCell><TableCell><RecordLink type="programs" id={p.programId}>{programName(p.programId)}</RecordLink></TableCell>
                             <TableCell><Timestamp value={p.startDate} /></TableCell><TableCell><Timestamp value={p.endDate} /></TableCell><TableCell>{p.status}</TableCell>
                             <TableCell>
                                 <Button type="button" variant="outline" size="sm"
@@ -101,7 +107,7 @@ export function SchoolDetails(school: Props) {
                                     {p.employees.length ? <Table>
                                         <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>Phone</TableHead><TableHead>Region</TableHead></TableRow></TableHeader>
                                         <TableBody>{p.employees.map(e => <TableRow key={e.id}>
-                                            <TableCell>{e.name}</TableCell><TableCell><a href={`mailto:${e.email}`}>{e.email}</a></TableCell>
+                                            <TableCell><RecordLink type="employees" id={e.id}>{e.name}</RecordLink></TableCell><TableCell><a href={`mailto:${e.email}`}>{e.email}</a></TableCell>
                                             <TableCell>{e.phone ? <a href={`tel:${e.phone}`}>{e.phone}</a> : '—'}</TableCell><TableCell>{e.region || '—'}</TableCell>
                                         </TableRow>)}</TableBody>
                                     </Table> : <p className="text-muted-foreground">No employees assigned to this participation.</p>}
@@ -115,7 +121,7 @@ export function SchoolDetails(school: Props) {
                 <h3 className="font-semibold">Contact history</h3>
                 {school.interactions.length ? <Table>
                     <TableHeader><TableRow><TableHead>Date</TableHead><TableHead>Employee</TableHead><TableHead>Contact</TableHead><TableHead>Communication</TableHead><TableHead>Program</TableHead></TableRow></TableHeader>
-                    <TableBody>{school.interactions.map(i => <TableRow key={i.id}><TableCell><Timestamp value={i.contactedAt} /></TableCell><TableCell>{employeeName(i.employeeId)}</TableCell><TableCell>{contactName(i.contactId)}</TableCell><TableCell>{i.mode.replaceAll('_', ' ')}</TableCell><TableCell>{i.programId ? programName(i.programId) : '—'}</TableCell></TableRow>)}</TableBody>
+                    <TableBody>{school.interactions.map(i => <TableRow key={i.id}><TableCell><Timestamp value={i.contactedAt} /></TableCell><TableCell><RecordLink type="employees" id={i.employeeId}>{employeeName(i.employeeId)}</RecordLink></TableCell><TableCell><RecordLink type="contacts" id={i.contactId}>{contactName(i.contactId)}</RecordLink></TableCell><TableCell>{i.mode.replaceAll('_', ' ')}</TableCell><TableCell>{i.programId ? <RecordLink type="programs" id={i.programId}>{programName(i.programId)}</RecordLink> : '—'}</TableCell></TableRow>)}</TableBody>
                 </Table> : <p className="text-muted-foreground">No interactions recorded.</p>}
             </section>
             <div className="flex justify-end border-t pt-4">

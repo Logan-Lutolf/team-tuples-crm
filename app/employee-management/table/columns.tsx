@@ -1,4 +1,5 @@
 'use client'
+import { RecordLink } from '@/components/records/record-link'
 
 import { createColumnHelper } from "@tanstack/react-table"
 import { type DataTableFeatures } from "../../../components/ui/data-table-features"
@@ -22,6 +23,7 @@ const columnHelper = createColumnHelper<DataTableFeatures, Employee>()
 export const columns = columnHelper.columns([
     columnHelper.accessor("name", {
         header: "Name",
+        cell: ({ row }) => <RecordLink type="employees" id={row.original.id}>{row.original.name}</RecordLink>,
     }),
     columnHelper.accessor("email", {
         header: "Email",

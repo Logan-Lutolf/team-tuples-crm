@@ -1,13 +1,5 @@
-import { db } from "@/prisma/db";
-import { AddContactForm } from "./forms/add-contact";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Field } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { PageActionLink } from '@/components/records/page-action-link'
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Contract } from "@/prisma/contract";
-import { DefaultModelRow } from "@prisma/orm-postgres/orm-client";
-import { Filter } from "lucide-react";
 import { Search } from "@/components/custom/search";
 import { ContactTableContainer } from "./contact-table-container";
 import { Suspense } from "react";
@@ -15,19 +7,17 @@ import { Suspense } from "react";
 
 export default async function ContactManagementPage(
     {searchParams} : {
-        searchParams?: Promise<{ query?: string; page?: string }>
+        searchParams?: Promise<{ search?: string; query?: string; page?: string }>
     }
 ) {
     const params = await searchParams
-    const query = params?.query ?? ''
-    const branches = await db.orm.public.Branch.select("id", "name").all().toArray()
-    const schools = await db.orm.public.School.select("id", "name").all().toArray()
+    const query = params?.search ?? params?.query ?? ''
 
     const requestedPage = Number(params?.page ?? 1)
     const currentPage = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
     function pageHref(page: number) {
         const search = new URLSearchParams({ page: String(page) })
-        if (query) search.set("query", query)
+        if (query) search.set("search", query)
         return `/contacts?${search}`
     }
     const RECORDS_PER_PAGE = 20 
@@ -37,17 +27,8 @@ export default async function ContactManagementPage(
 
     return (
         <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
-            <Dialog>
-                <DialogTrigger render={<Button>Add a Contact</Button>}/>
+            <PageActionLink href="/create/contacts" fullWidth>Add a Contact</PageActionLink>
 
-                <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-3xl">
-                    <DialogHeader>
-                        <DialogTitle>Add a Contact</DialogTitle>
-                    </DialogHeader>
-                    <AddContactForm branches={branches} schools={schools}/>
-                </DialogContent>
-            </Dialog>
-            
             <Search placeholder={""}/>
 
             <Suspense key={`${query}:${currentPage}`} fallback={<p role="status">Loading contacts…</p>}>
