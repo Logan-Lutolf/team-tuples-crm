@@ -1,6 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { db } from '@/prisma/db'
+import { getSchoolDetails } from '@/app/schools/actions_schools'
+import { getContactDetails } from '@/app/contacts/actions_contacts'
+import { getBranchDetails } from '@/app/branches/actions'
+import { getProgramDetails } from '@/app/programs/actions'
+import { getMunicipalityDetails } from '@/app/municipalities/actions'
+import { timeDetails } from '@/lib/detail-timing'
 import { isRecordType } from '@/lib/record-links'
 import { SchoolDetailsPage } from '@/app/schools/school-details-page'
 import { ContactDetailsPage } from '@/app/contacts/contact-details-page'
@@ -9,32 +14,38 @@ import { ProgramPageContent } from '@/app/programs/program-page-content'
 import { MunicipalityPageContent } from '@/app/municipalities/municipality-page-content'
 import { EmployeeDetails } from '@/app/employee-management/employee-details'
 
+async function loadRecord<T>(label: string, load: () => Promise<T>) {
+    try { return await timeDetails(label, load) }
+    catch (error) {
+        if (error instanceof Error && [
+            'School not found.', 'Contact not found.', 'This branch no longer exists.',
+            'Program not found.', 'Municipality not found',
+        ].includes(error.message)) notFound()
+        throw error
+    }
+}
+
 export default async function RecordPage({ params }: { params: Promise<{ type: string; id: string }> }) {
     const { type, id: rawId } = await params
     const id = Number(rawId)
     if (!isRecordType(type) || !/^\d+$/.test(rawId) || !Number.isSafeInteger(id) || id <= 0) notFound()
     let content
-    if (type === 'schools') {
-        const record = await db.orm.public.School.where({ id }).select('id', 'name').first()
-        if (!record) notFound()
-        content = <SchoolDetailsPage key={id} schoolId={id} schoolName={record.name} />
-    } else if (type === 'contacts') {
-        const record = await db.orm.public.Contact.where({ id }).select('id', 'name').first()
-        if (!record) notFound()
-        content = <ContactDetailsPage key={id} contactId={id} contactName={record.name} />
-    } else if (type === 'branches') {
-        const record = await db.orm.public.Branch.where({ id }).select('id', 'name').first()
-        if (!record) notFound()
-        content = <BranchDetailsPage key={id} branchId={id} branchName={record.name} />
-    } else if (type === 'programs') {
-        const record = await db.orm.public.Program.where({ id }).first()
-        if (!record) notFound()
-        content = <ProgramPageContent key={id} program={record} mode="view" />
-    } else if (type === 'municipalities') {
-        const record = await db.orm.public.Municipality.where({ id }).first()
-        if (!record) notFound()
-        content = <MunicipalityPageContent key={id} municipality={record} mode="view" />
-    } else content = <EmployeeDetails employeeId={id} />
+        if (type === 'schools') {
+            const details = await loadRecord('schools', () => getSchoolDetails(id, false, true))
+            content = <SchoolDetailsPage key={id} schoolId={id} schoolName={details.name} initialDetails={details} />
+        } else if (type === 'contacts') {
+            const details = await loadRecord('contacts', () => getContactDetails(id, false, true))
+            content = <ContactDetailsPage key={id} contactId={id} contactName={details.contact.name} initialDetails={details} />
+        } else if (type === 'branches') {
+            const details = await loadRecord('branches', () => getBranchDetails(id))
+            content = <BranchDetailsPage key={id} branchId={id} branchName={details.branch.name} initialDetails={details} />
+        } else if (type === 'programs') {
+            const details = await loadRecord('programs', () => getProgramDetails(id, false, true))
+            content = <ProgramPageContent key={id} program={details.program} mode="view" initialDetails={details} />
+        } else if (type === 'municipalities') {
+            const details = await loadRecord('municipalities', () => getMunicipalityDetails(id))
+            content = <MunicipalityPageContent key={id} municipality={details.municipality} mode="view" initialDetails={details} />
+        } else content = <EmployeeDetails employeeId={id} />
     const list = type === 'employees' ? '/employee-management' : `/${type}`
     return <div className="m-10 grid gap-6"><Link href={list} className="w-fit underline">Back to {type}</Link><div>{content}</div></div>
 }

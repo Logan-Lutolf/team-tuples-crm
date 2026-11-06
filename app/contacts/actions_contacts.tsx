@@ -140,10 +140,10 @@ export async function removeSchoolContact(formData: FormData) {
         }).update({ schoolId: null })
     })
 }
-export async function getContactDetails(contactId: number, editing = false) {
+export async function getContactDetails(contactId: number, editing = false, deferHistory = false) {
     if (!Number.isSafeInteger(contactId) || contactId <= 0) throw new Error('Invalid contact ID.')
     const { loadContactDetails } = await import('./load-contact-details')
-    return loadContactDetails(contactId, editing === true)
+    return loadContactDetails(contactId, editing === true, deferHistory === true)
 }
 
 export async function recordContactInteraction(form: FormData) {

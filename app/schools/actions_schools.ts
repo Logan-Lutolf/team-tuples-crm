@@ -245,10 +245,10 @@ export async function recordSchoolInteraction(form: FormData) {
     })
 }
 
-export async function getSchoolDetails(schoolId: number, editing = false) {
+export async function getSchoolDetails(schoolId: number, editing = false, deferHistory = false) {
     if (!Number.isSafeInteger(schoolId) || schoolId <= 0) throw new Error("Invalid school ID.")
     const { loadSchoolDetails } = await import('./load-school-details')
-    return loadSchoolDetails(schoolId, editing === true)
+    return loadSchoolDetails(schoolId, editing === true, deferHistory === true)
 }
 
 export async function createSchoolContact(form: FormData) {

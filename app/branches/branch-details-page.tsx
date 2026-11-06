@@ -61,14 +61,15 @@ function AssignmentForm({ details, assignment, onSaved }: { details: Details; as
     </ActionForm>
 }
 
-export function BranchDetailsPage({ branchId, branchName }: { branchId: number; branchName: string }) {
+export function BranchDetailsPage({ branchId, branchName, initialDetails }: { branchId: number; branchName: string; initialDetails?: Details }) {
     const [editing, setEditing] = useState(false)
-    const [details, setDetails] = useState<Details | null>(null)
+    const [details, setDetails] = useState<Details | null>(initialDetails ?? null)
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
     const [revision, setRevision] = useState(0)
     const prefix = useId()
     useEffect(() => {
+        if (initialDetails && revision === 0 && !editing) return
         let active = true
         setLoading(true)
         setError('')
@@ -76,7 +77,7 @@ export function BranchDetailsPage({ branchId, branchName }: { branchId: number; 
             .catch(() => { if (active) setError('Could not load branch details. Try again.') })
             .finally(() => { if (active) setLoading(false) })
         return () => { active = false }
-    }, [branchId, editing, revision])
+    }, [branchId, editing, revision, initialDetails])
     async function refresh() { setDetails(await getBranchDetails(branchId, editing)) }
     const branch = details?.branch
     return <PageContent backHref="/branches">
@@ -138,7 +139,16 @@ export function BranchDetailsPage({ branchId, branchName }: { branchId: number; 
                         <AssignmentForm details={details} onSaved={refresh} />
                     </>}
                 </Section>
-                <Section title="Schools" count={details.schools.length}>{details.schools.length ? <ul>{details.schools.map(s => <li key={s.id}><RecordLink type="schools" id={s.id}>{s.name}</RecordLink></li>)}</ul> : <p>No schools assigned.</p>}</Section>
+                <Section title="Schools" count={details.schools.length}>
+                    <p className="text-sm text-muted-foreground">Relationship status with each school assigned to this branch. Update the status on the school’s edit page.</p>
+                    <Table>
+                        <TableHeader><TableRow><TableHead>School</TableHead><TableHead>Relationship status</TableHead></TableRow></TableHeader>
+                        <TableBody>{details.schools.map(s => <TableRow key={s.id}>
+                            <TableCell><RecordLink type="schools" id={s.id}>{s.name}</RecordLink></TableCell>
+                            <TableCell>{s.relationship.charAt(0) + s.relationship.slice(1).toLowerCase()}</TableCell>
+                        </TableRow>)}{!details.schools.length && <TableRow><TableCell colSpan={2}>No schools assigned.</TableCell></TableRow>}</TableBody>
+                    </Table>
+                </Section>
                 {!editing && <div className="flex justify-end border-t pt-4"><Button aria-describedby={`${prefix}-edit-hint`} onClick={() => setEditing(true)}>Edit</Button><span id={`${prefix}-edit-hint`} className="sr-only">Edit this branch, its contacts, and employee assignments</span></div>}
             </div>}
     </PageContent>

@@ -1,4 +1,5 @@
 'use server'
+import { timeDetails } from '@/lib/detail-timing'
 
 import { revalidatePath } from 'next/cache'
 import { db } from '@/prisma/db'
@@ -44,30 +45,30 @@ export async function deleteProgram(form: FormData) {
     return { success: true as const }
 }
 
-export async function getProgramDetails(programId: number, editing = false) {
+export async function getProgramDetails(programId: number, editing = false, deferHistory = false) {
     programId = id(programId)
-    const [program, participations, assignments, sponsors, interactions] = await Promise.all([
+    const [program, participations, assignments, sponsors, interactions] = await timeDetails('programs:query-group-1', () => Promise.all([
         db.orm.public.Program.where({ id: programId }).first(),
         db.orm.public.Participation.where({ programId }).orderBy(p => p.startDate.desc()).all().toArray(),
         db.orm.public.EmployeeAssignment.where({ programId }).all().toArray(),
         db.orm.public.MunicipalityPrograms.where({ programId }).all().toArray(),
-        db.orm.public.Interaction.where({ programId }).orderBy(i => i.contactedAt.desc()).all().toArray(),
-    ])
+        !editing && deferHistory ? [] : db.orm.public.Interaction.where({ programId }).orderBy(i => i.contactedAt.desc()).all().toArray(),
+    ]))
     if (!program) throw new Error('Program not found.')
     const schoolIds = [...new Set(participations.map(p => p.schoolId).concat(interactions.flatMap(i => i.schoolId === null ? [] : [i.schoolId])))].filter((id): id is number => id !== null)
     const employeeIds = [...new Set([...assignments.map(a => a.employeeId), ...interactions.map(i => i.employeeId)])].filter((id): id is number => id !== null)
     const municipalityIds = sponsors.map(s => s.municipalityId)
     const contactIds = [...new Set(interactions.map(i => i.contactId))].filter((id): id is number => id !== null)
-    const [schools, employees, municipalities, contacts] = await Promise.all([
+    const [schools, employees, municipalities, contacts] = await timeDetails('programs:query-group-2', () => Promise.all([
         editing ? db.orm.public.School.select('id', 'name').all().toArray() : schoolIds.length ? db.orm.public.School.where(s => s.id.in(schoolIds)).select('id', 'name').all().toArray() : [],
         editing ? db.orm.public.Employee.select('id', 'name', 'email', 'phone', 'region').all().toArray() : employeeIds.length ? db.orm.public.Employee.where(e => e.id.in(employeeIds)).select('id', 'name', 'email', 'phone', 'region').all().toArray() : [],
         editing ? db.orm.public.Municipality.select('id', 'name', 'mayor').all().toArray() : municipalityIds.length ? db.orm.public.Municipality.where(m => m.id.in(municipalityIds)).select('id', 'name', 'mayor').all().toArray() : [],
         editing ? db.orm.public.Contact.select('id', 'name').all().toArray() : contactIds.length ? db.orm.public.Contact.where(c => c.id.in(contactIds)).select('id', 'name').all().toArray() : [],
-    ])
-    const [branches, participants] = await Promise.all([
+    ]))
+    const [branches, participants] = await timeDetails('programs:query-group-3', () => Promise.all([
         editing ? db.orm.public.Branch.select('id', 'name').all().toArray() : [],
-        participations.length ? db.orm.public.ParticipationEmployees.where(a => a.participationId.in(participations.map(p => p.id))).all().toArray() : [],
-    ])
+        editing && participations.length ? db.orm.public.ParticipationEmployees.where(a => a.participationId.in(participations.map(p => p.id))).all().toArray() : [],
+    ]))
     return { asOf: Date.now(), program, participations, assignments, interactions, schools, employees, municipalities: municipalities.filter(m => municipalityIds.includes(m.id)), contacts,
         availableMunicipalities: editing ? municipalities.filter(m => !municipalityIds.includes(m.id)) : [], branches, participants,
         roles: [...db.enums.public.Role.values], regions: [...db.enums.public.Region.values], modes: [...db.enums.public.CommunicationMode.values] }

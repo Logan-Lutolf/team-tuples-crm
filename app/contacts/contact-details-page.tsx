@@ -1,4 +1,5 @@
 'use client'
+import { DeferredHistory } from '@/components/records/deferred-history'
 import { PageContent, PageHeader, PageTitle, PageDescription } from '@/components/records/page-content'
 import { RecordLink } from '@/components/records/record-link'
 
@@ -57,22 +58,23 @@ function ContactHistory({ data, editing, onSaved }: { data: Details; editing: bo
     </details>
 }
 
-export function ContactDetailsPage({ contactId, contactName }: { contactId: number; contactName: string }) {
+export function ContactDetailsPage({ contactId, contactName, initialDetails }: { contactId: number; contactName: string; initialDetails?: Details }) {
     const [editing, setEditing] = useState(false)
-    const [data, setData] = useState<Details | null>(null)
+    const [data, setData] = useState<Details | null>(initialDetails ?? null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [revision, setRevision] = useState(0)
     useEffect(() => {
+        if (initialDetails && revision === 0 && !editing) return
         let active = true
         setLoading(true)
         setError('')
-        getContactDetails(contactId, editing).then(result => { if (active) setData(result) })
+        getContactDetails(contactId, editing, true).then(result => { if (active) setData(result) })
             .catch(() => { if (active) setError('Could not load contact details.') })
             .finally(() => { if (active) setLoading(false) })
         return () => { active = false }
-    }, [contactId, editing, revision])
-    async function refresh() { setData(await getContactDetails(contactId, editing)) }
+    }, [contactId, editing, revision, initialDetails])
+    async function refresh() { setData(await getContactDetails(contactId, editing, true)) }
     const contact = data?.contact
     return <PageContent backHref="/contacts">
 
@@ -92,7 +94,7 @@ export function ContactDetailsPage({ contactId, contactName }: { contactId: numb
                 </>}
                 <ContactParticipations data={data} editing={editing} onSaved={refresh} />
                 <ContactEmploymentHistory data={data} editing={editing} onSaved={refresh} />
-                <ContactHistory data={data} editing={editing} onSaved={refresh} />
+                {editing ? <ContactHistory data={data} editing onSaved={refresh} /> : <DeferredHistory key={contact.updatedAt} type="contacts" id={contactId} />}
                 {!editing && <div className="flex justify-end border-t pt-4"><Button type="button" onClick={() => setEditing(true)}>Edit</Button></div>}
             </div>}
     </PageContent>

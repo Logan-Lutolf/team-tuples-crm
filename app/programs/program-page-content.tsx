@@ -1,4 +1,5 @@
 'use client'
+import { DeferredHistory } from '@/components/records/deferred-history'
 import { PageContent, PageHeader, PageTitle, PageDescription } from '@/components/records/page-content'
 import { RecordLink } from '@/components/records/record-link'
 
@@ -23,10 +24,10 @@ function RecordList({ title, records }: { title: string; records: ReactNode[] })
     return <section className="grid gap-2"><h3 className="font-semibold">{title}</h3>{records.length ? <ul className="grid gap-2">{records.map((record, i) => <li className="rounded border p-3 whitespace-pre-wrap break-words" key={i}>{record}</li>)}</ul> : <p className="text-muted-foreground">No {title.toLowerCase()} recorded.</p>}</section>
 }
 
-export function ProgramPageContent({ program, mode = 'create' }: { program?: Program; mode?: 'create' | 'view' | 'delete' }) {
+export function ProgramPageContent({ program, mode = 'create', initialDetails }: { program?: Program; mode?: 'create' | 'view' | 'delete'; initialDetails?: Details }) {
     const [open, setOpen] = useState(true)
     const [editing, setEditing] = useState(false)
-    const [details, setDetails] = useState<Details | null>(null)
+    const [details, setDetails] = useState<Details | null>(initialDetails ?? null)
     const [error, setError] = useState('')
     const [loadingOptions, setLoadingOptions] = useState(false)
     const [revision, setRevision] = useState(0)
@@ -34,13 +35,14 @@ export function ProgramPageContent({ program, mode = 'create' }: { program?: Pro
     const deleting = mode === 'delete'
     const formVisible = mode === 'create' || deleting || editing
     useEffect(() => {
+        if (initialDetails && revision === 0) return
         if (!open || mode !== 'view' || !program) return
         let active = true
         setDetails(null)
         setError('')
-        getProgramDetails(program.id, editing).then(data => { if (active) setDetails(data) }).catch(() => { if (active) setError('Could not load program details.') })
+        getProgramDetails(program.id, editing, true).then(data => { if (active) setDetails(data) }).catch(() => { if (active) setError('Could not load program details.') })
         return () => { active = false }
-    }, [open, program?.id, mode, revision])
+    }, [open, program?.id, mode, revision, initialDetails])
     async function openEdit() {
         if (!program) return
         setLoadingOptions(true)
@@ -49,7 +51,7 @@ export function ProgramPageContent({ program, mode = 'create' }: { program?: Pro
         catch { setError('Could not load editing options. Try again.') }
         finally { setLoadingOptions(false) }
     }
-    async function refresh() { if (program) setDetails(await getProgramDetails(program.id, editing)) }
+    async function refresh() { if (program) setDetails(await getProgramDetails(program.id, editing, true)) }
     const current = details?.program ?? program
     async function submit(form: FormData) {
         setError('')
@@ -91,7 +93,7 @@ export function ProgramPageContent({ program, mode = 'create' }: { program?: Pro
                 <RecordList title="Participations" records={details.participations.map(p => <>{p.name} · <RecordLink type="schools" id={p.schoolId}>{name(details.schools, p.schoolId)}</RecordLink> · {p.status}<br />{p.startDate} – {p.endDate ?? 'No end date'}</>)} />
                 <RecordList title="Employee assignments" records={details.assignments.map(a => <><RecordLink type="employees" id={a.employeeId}>{name(details.employees, a.employeeId)}</RecordLink> · {a.role.replaceAll('_', ' ')}{a.region ? ` · Region ${a.region}` : ''}{a.branchId ? <> · <RecordLink type="branches" id={a.branchId}>Branch #{a.branchId}</RecordLink></> : null}</>)} />
                 <RecordList title="Municipal sponsors" records={details.municipalities.map(m => <><RecordLink type="municipalities" id={m.id}>{m.name}</RecordLink> · Mayor: {m.mayor}</>)} />
-                <RecordList title="Contact history" records={details.interactions.map(i => <>{i.contactedAt} · <RecordLink type="employees" id={i.employeeId}>{name(details.employees, i.employeeId)}</RecordLink> → <RecordLink type="contacts" id={i.contactId}>{name(details.contacts, i.contactId)}</RecordLink> · {i.mode.replaceAll('_', ' ')}{i.schoolId ? <> · <RecordLink type="schools" id={i.schoolId}>{name(details.schools, i.schoolId)}</RecordLink></> : null}</>)} />
+                <DeferredHistory key={details.program.updatedAt} type="programs" id={details.program.id} />
                 <div className="flex justify-end border-t pt-4"><Button onClick={openEdit} disabled={loadingOptions}>{loadingOptions ? 'Loading editing options…' : 'Edit'}</Button></div>
             </div> : error ? <Button variant="outline" onClick={() => setRevision(r => r + 1)}>Try again</Button> : <p role="status">Loading program details…</p>}
     </PageContent>

@@ -1,4 +1,5 @@
 'use client'
+import { DeferredHistory } from '@/components/records/deferred-history'
 import { RecordLink } from '@/components/records/record-link'
 
 import { datedParticipations } from '@/lib/participation-status'
@@ -40,8 +41,6 @@ export function SchoolDetails(school: Props) {
         finally { setLoadingEdit(false) }
     }
     const programName = (id: number | null) => id === null ? 'Program deleted' : school.programs.find(p => p.id === id)?.name ?? `Program #${id}`
-    const employeeName = (id: number | null) => id === null ? 'Employee deleted' : school.availableEmployees.find(e => e.id === id)?.name ?? `Employee #${id}`
-    const contactName = (id: number | null) => id === null ? 'Contact deleted' : school.contacts.find(c => c.id === id)?.name ?? `Contact #${id}`
     return <div className="grid gap-6">
         <PageHeader>
             <PageTitle>{editing ? `Edit ${school.name}` : school.name}</PageTitle>
@@ -117,13 +116,7 @@ export function SchoolDetails(school: Props) {
                     </Fragment>)}</TableBody>
                 </Table> : <p className="text-muted-foreground">No participations recorded.</p>}
             </section>
-            <section className="grid gap-3">
-                <h3 className="font-semibold">Contact history</h3>
-                {school.interactions.length ? <Table>
-                    <TableHeader><TableRow><TableHead>Date</TableHead><TableHead>Employee</TableHead><TableHead>Contact</TableHead><TableHead>Communication</TableHead><TableHead>Program</TableHead></TableRow></TableHeader>
-                    <TableBody>{school.interactions.map(i => <TableRow key={i.id}><TableCell><Timestamp value={i.contactedAt} /></TableCell><TableCell><RecordLink type="employees" id={i.employeeId}>{employeeName(i.employeeId)}</RecordLink></TableCell><TableCell><RecordLink type="contacts" id={i.contactId}>{contactName(i.contactId)}</RecordLink></TableCell><TableCell>{i.mode.replaceAll('_', ' ')}</TableCell><TableCell>{i.programId ? <RecordLink type="programs" id={i.programId}>{programName(i.programId)}</RecordLink> : '—'}</TableCell></TableRow>)}</TableBody>
-                </Table> : <p className="text-muted-foreground">No interactions recorded.</p>}
-            </section>
+            <DeferredHistory key={school.updatedAt} type="schools" id={school.id} />
             <div className="flex justify-end border-t pt-4">
                 {editError && <p role="alert" className="text-destructive">{editError}</p>}
                 <Button type="button" onClick={openEdit} disabled={loadingEdit}>{loadingEdit ? 'Loading editing options…' : 'Edit'}</Button>

@@ -35,15 +35,16 @@ function ActionForm({ action, onSaved, label, destructive, children }: { action:
     </form>
 }
 
-export function MunicipalityPageContent({ municipality, mode = 'create' }: { municipality?: Municipality; mode?: 'create' | 'view' | 'delete' }) {
+export function MunicipalityPageContent({ municipality, mode = 'create', initialDetails }: { municipality?: Municipality; mode?: 'create' | 'view' | 'delete'; initialDetails?: Details }) {
     const [open, setOpen] = useState(true)
     const [editing, setEditing] = useState(false)
-    const [details, setDetails] = useState<Details | null>(null)
+    const [details, setDetails] = useState<Details | null>(initialDetails ?? null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [revision, setRevision] = useState(0)
     const prefix = useId()
     useEffect(() => {
+        if (initialDetails && revision === 0 && !editing) return
         if (!open || mode !== 'view' || !municipality) return
         let active = true
         setLoading(true)
@@ -52,7 +53,7 @@ export function MunicipalityPageContent({ municipality, mode = 'create' }: { mun
             .catch(() => { if (active) setError('Could not load municipality details.') })
             .finally(() => { if (active) setLoading(false) })
         return () => { active = false }
-    }, [open, municipality, editing, mode, revision])
+    }, [open, municipality, editing, mode, revision, initialDetails])
     const current = details?.municipality ?? municipality
     const deleting = mode === 'delete'
     async function refresh() { if (current) setDetails(await getMunicipalityDetails(current.id, editing)) }

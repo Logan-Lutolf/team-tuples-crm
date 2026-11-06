@@ -1,4 +1,5 @@
 'use server'
+import { timeDetails } from '@/lib/detail-timing'
 
 import { revalidatePath } from "next/cache"
 import { db } from "@/prisma/db"
@@ -48,21 +49,21 @@ export async function deleteBranch(form: FormData) { return mutate(form, "delete
 
 export async function getBranchDetails(branchId: number, editing = false) {
     branchId = positiveId(String(branchId), 'branch')
-    const [branch, contacts, assignments, schools] = await Promise.all([
+    const [branch, contacts, assignments, schools] = await timeDetails('branches:query-group-1', () => Promise.all([
         db.orm.public.Branch.where({ id: branchId }).first(),
         db.orm.public.Contact.where({ branchId }).select('id', 'name', 'email', 'phone', 'contactRole', 'schoolId').all().toArray(),
         db.orm.public.EmployeeAssignment.where({ branchId }).all().toArray(),
-        db.orm.public.School.where({ branchId }).select('id', 'name').all().toArray(),
-    ])
+        db.orm.public.School.where({ branchId }).select('id', 'name', 'relationship').orderBy(s => s.name.asc()).all().toArray(),
+    ]))
     if (!branch) throw new Error('This branch no longer exists.')
     const employeeIds = [...new Set([...assignments.map(a => a.employeeId), ...(branch.chiefId ? [branch.chiefId] : [])])]
     const programIds = [...new Set(assignments.flatMap(a => a.programId ? [a.programId] : []))]
-    const [employees, programs, otherContacts, branches] = await Promise.all([
+    const [employees, programs, otherContacts, branches] = await timeDetails('branches:query-group-2', () => Promise.all([
         editing ? db.orm.public.Employee.select('id', 'name', 'email', 'phone').all().toArray() : employeeIds.length ? db.orm.public.Employee.where(e => e.id.in(employeeIds)).select('id', 'name', 'email', 'phone').all().toArray() : [],
         editing ? db.orm.public.Program.select('id', 'name').all().toArray() : programIds.length ? db.orm.public.Program.where(p => p.id.in(programIds)).select('id', 'name').all().toArray() : [],
         editing ? db.orm.public.Contact.where(c => c.branchId.neq(branchId)).select('id', 'name', 'email').all().toArray() : [],
         editing ? db.orm.public.Branch.select('id', 'name').all().toArray() : [],
-    ])
+    ]))
     return { branch, contacts, assignments, schools, employees, programs, otherContacts, branches,
         names: [...db.enums.public.Branches.values], regions: [...db.enums.public.Region.values],
         roles: [...db.enums.public.Role.values], contactRoles: [...db.enums.public.ContactRole.values] }

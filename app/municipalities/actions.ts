@@ -1,4 +1,5 @@
 'use server'
+import { timeDetails } from '@/lib/detail-timing'
 import { db } from '@/prisma/db'
 import { revalidatePath } from 'next/cache'
 
@@ -41,10 +42,10 @@ export async function deleteMunicipality(form: FormData) {
 
 export async function getMunicipalityDetails(municipalityId: number, editing = false) {
     municipalityId = id(municipalityId)
-    const [municipality, links] = await Promise.all([
+    const [municipality, links] = await timeDetails('municipalities:query-group-1', () => Promise.all([
         db.orm.public.Municipality.where({ id: municipalityId }).first(),
         db.orm.public.MunicipalityPrograms.where({ municipalityId }).all().toArray(),
-    ])
+    ]))
     if (!municipality) throw new Error('Municipality not found')
     const ids = links.map(link => link.programId)
     const programs = editing ? await db.orm.public.Program.select('id', 'name', 'description').orderBy(p => p.name.asc()).all().toArray()

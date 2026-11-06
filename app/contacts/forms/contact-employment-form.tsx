@@ -1,4 +1,6 @@
 'use client'
+import { sortHistoryByDate } from '@/lib/history-date-sort'
+import { HistoryDateSort, type HistoryDateOrder, type HistoryDateField } from '@/components/records/history-date-sort'
 import { RecordLink } from '@/components/records/record-link'
 import { useId, useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -55,8 +57,12 @@ function EmploymentRecord({ record, data, editing, onSaved }: { record: Employme
     </article>
 }
 export function ContactEmploymentHistory({ data, editing, onSaved }: { data: Details; editing: boolean; onSaved: () => Promise<void> }) {
+    const [dateField, setDateField] = useState<HistoryDateField>('startDate')
+    const [dateOrder, setDateOrder] = useState<HistoryDateOrder>('newest')
+    const records = sortHistoryByDate(data.employmentHistory, dateField, dateOrder)
     return <details className="rounded-lg border"><summary className="cursor-pointer p-4 font-semibold">Employment history ({data.employmentHistory.length})</summary><div className="grid gap-4 border-t p-4">
-        {data.employmentHistory.map(record => <EmploymentRecord key={record.id} record={record} data={data} editing={editing} onSaved={onSaved} />)}
+        <HistoryDateSort field={dateField} onFieldChange={setDateField} value={dateOrder} onChange={setDateOrder} />
+        {records.map(record => <EmploymentRecord key={record.id} record={record} data={data} editing={editing} onSaved={onSaved} />)}
         {!data.employmentHistory.length && <p>No employment history recorded. A primary school association does not record employment dates.</p>}
         {editing && <section className="grid gap-3 rounded-lg border p-4"><h3 className="font-semibold">Add employment</h3>
             {data.schools.length ? <EmploymentForm contactId={data.contact.id} schools={data.schools} onSaved={onSaved} /> : <p>Add a school before recording employment.</p>}

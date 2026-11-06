@@ -1,4 +1,6 @@
 'use client'
+import { sortHistoryByDate } from '@/lib/history-date-sort'
+import { HistoryDateSort, type HistoryDateOrder, type HistoryDateField } from '@/components/records/history-date-sort'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { RecordLink } from '@/components/records/record-link'
@@ -14,7 +16,10 @@ export function ContactParticipations({ data, editing, onSaved }: { data: Detail
     const [changing, setChanging] = useState<number | null>(null)
     const [removing, setRemoving] = useState<number | null>(null)
     const now = useParticipationTime(data.asOf)
-    const rows = datedParticipations(data.participations, now)
+    const [dateField, setDateField] = useState<HistoryDateField>('startDate')
+    const [dateOrder, setDateOrder] = useState<HistoryDateOrder>('newest')
+    const sorted = datedParticipations(data.participations, now)
+    const rows = sortHistoryByDate(sorted, dateField, dateOrder)
     const name = (items: { id: number; name: string }[], id: number | null) => id === null ? 'Unassigned / deleted' : items.find(i => i.id === id)?.name ?? `#${id}`
     const label = (p: Details['participationOptions'][number]) => `${name(data.programs, p.programId)} · ${p.name} · ${name(data.schools, p.schoolId)} · ${p.startDate.slice(0, 10)} (#${p.id})`
     const available = data.participationOptions.filter(p => !rows.some(r => r.id === p.id))
@@ -25,6 +30,7 @@ export function ContactParticipations({ data, editing, onSaved }: { data: Detail
     }
     return <details className="rounded-lg border"><summary className="cursor-pointer p-4 font-semibold">Program participations ({rows.length})</summary><div className="grid gap-4 border-t p-4">
         <section className="grid gap-3 rounded-lg border bg-muted/20 p-4"><h3 className="font-semibold">Recorded participations</h3>
+            <HistoryDateSort field={dateField} onFieldChange={setDateField} value={dateOrder} onChange={setDateOrder} />
             <Table><TableHeader><TableRow><TableHead>Program</TableHead><TableHead>Participation</TableHead><TableHead>School</TableHead><TableHead>Start</TableHead><TableHead>End</TableHead><TableHead>Status</TableHead>{editing && <TableHead>Actions</TableHead>}</TableRow></TableHeader>
                 <TableBody>{rows.map(p => <TableRow key={p.id}>
                     <TableCell><RecordLink type="programs" id={p.programId}>{name(data.programs, p.programId)}</RecordLink></TableCell><TableCell>{p.name}</TableCell><TableCell><RecordLink type="schools" id={p.schoolId}>{name(data.schools, p.schoolId)}</RecordLink></TableCell>
