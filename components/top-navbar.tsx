@@ -1,13 +1,12 @@
 "use client"
 
-import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "./ui/navigation-menu"
-import { Avatar } from "./ui/avatar"
+import { Avatar, AvatarImage } from "./ui/avatar"
 import { HelpCircle, LogOut, Settings } from "lucide-react"
-import { Separator } from "@base-ui/react"
 import { logout } from "@/app/login/actions"
-
+import { Scalars } from "@prisma/orm-postgres/components"
+import { Models } from "@/prisma/contract"
 
 const links = [
   { href: "/employee-management", label: "Employees" },
@@ -22,11 +21,17 @@ const searchlinks = [
   { href: "/municipalities", label: "Municipalities" }
 ]
 
-export function TopNavbar() {
+type Employee = Scalars<Models.public_Employee>
+
+interface TopNavbarProps {
+  employee: Employee
+}
+
+export function TopNavbar({employee}: TopNavbarProps) {
   const pathname = usePathname()
 
   return (
-    <NavigationMenu orientation="horizontal">
+    <NavigationMenu orientation="horizontal" className="mt-2">
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuLink href="/dashboard">Dashboard</NavigationMenuLink>
@@ -49,7 +54,9 @@ export function TopNavbar() {
 
         <NavigationMenuItem>
           <NavigationMenuTrigger>
-            <Avatar/>
+            <Avatar>
+              <AvatarImage src={employee.pfpImgUrl} alt="CL" height="auto" width="auto" />
+            </Avatar>
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <NavigationMenuLink className="flex flex-row gap-2">
