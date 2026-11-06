@@ -70,7 +70,7 @@ export async function getProgramDetails(programId: number, editing = false) {
     ])
     return { asOf: Date.now(), program, participations, assignments, interactions, schools, employees, municipalities: municipalities.filter(m => municipalityIds.includes(m.id)), contacts,
         availableMunicipalities: editing ? municipalities.filter(m => !municipalityIds.includes(m.id)) : [], branches, participants,
-        roles: [...db.enums.public.EmployeeJobRole.values], regions: [...db.enums.public.Region.values], modes: [...db.enums.public.CommunicationMode.values] }
+        roles: [...db.enums.public.Role.values], regions: [...db.enums.public.Region.values], modes: [...db.enums.public.CommunicationMode.values] }
 }
 
 export async function changeProgramRelationship(form: FormData) {
@@ -87,7 +87,7 @@ export async function changeProgramRelationship(form: FormData) {
                 await tx.orm.public.EmployeeAssignment.where({ id: id(form.get('assignment-id')), programId }).delete()
             } else if (operation === 'add-assignment' || operation === 'edit-assignment') {
                 const employeeId = id(form.get('employee-id'))
-                const role = db.enums.public.EmployeeJobRole.values.find(r => r === form.get('role'))
+                const role = db.enums.public.Role.values.find(r => r === form.get('role'))
                 const regionValue = form.get('region')
                 const region = regionValue ? db.enums.public.Region.values.find(r => r === regionValue) : null
                 if (!role || (regionValue && !region)) throw new Error('Invalid scope')

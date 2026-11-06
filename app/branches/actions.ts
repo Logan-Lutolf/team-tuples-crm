@@ -65,7 +65,7 @@ export async function getBranchDetails(branchId: number, editing = false) {
     ])
     return { branch, contacts, assignments, schools, employees, programs, otherContacts, branches,
         names: [...db.enums.public.Branches.values], regions: [...db.enums.public.Region.values],
-        roles: [...db.enums.public.EmployeeJobRole.values], contactRoles: [...db.enums.public.ContactRole.values] }
+        roles: [...db.enums.public.Role.values], contactRoles: [...db.enums.public.ContactRole.values] }
 }
 
 export async function updateBranchRelationship(form: FormData): Promise<BranchResult> {
@@ -102,7 +102,7 @@ export async function updateBranchRelationship(form: FormData): Promise<BranchRe
                 await tx.orm.public.Employee.where({ id: employeeId }).update({ name, email, phone: String(form.get('phone') ?? '').trim() || null })
             } else if (operation === 'add-assignment' || operation === 'edit-assignment') {
                 const employeeId = positiveId(form.get('employee-id'), 'employee')
-                const role = db.enums.public.EmployeeJobRole.values.find(r => r === form.get('role'))
+                const role = db.enums.public.Role.values.find(r => r === form.get('role'))
                 const regionValue = form.get('region')
                 const region = regionValue ? db.enums.public.Region.values.find(r => r === regionValue) : null
                 if (!role || (regionValue && !region)) throw new Error('Invalid assignment')
