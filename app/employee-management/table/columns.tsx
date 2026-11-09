@@ -17,7 +17,7 @@ export type Employee = {
     name: string,
     email: string,
     roles: Roles
-    pfp: string
+    pfpImgUrl?: string
 }
 
 const columnHelper = createColumnHelper<DataTableFeatures, Employee>()
@@ -28,8 +28,8 @@ export const columns = columnHelper.columns([
         cell: ({ row }) => {
             return (
                 <Avatar>
-                    <AvatarImage src={row.original.pfp} />
-                    <AvatarFallback>{nameInitials(row.original.name)}</AvatarFallback>
+                    <AvatarImage src={row.original.pfpImgUrl} />
+                    <AvatarFallback>{nameInitials(String(row.original.name))}</AvatarFallback>
                 </Avatar>
             )
         },
