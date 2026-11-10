@@ -8,7 +8,8 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { changePFP } from "@/app/settings-actions";
 import { useRouter } from "next/navigation";
-import { showToast } from "@/lib/utils";
+import { nameInitials, showToast } from "@/lib/utils";
+import { Separator } from "../ui/separator";
 
 type Employee = Scalars<Models.public_Employee>
 
@@ -32,13 +33,13 @@ export function SettingsDialog({employee}: SettingsDialogProps) {
     
     return (
         <DialogContent>
-            <DialogHeader>Settings</DialogHeader>
+            <DialogHeader className="text-lg">Settings</DialogHeader>
             <div className="flex flex-row gap-5">
-                <form action={handleSubmit}  className="flex flex-col gap-2">
-                    Change Profile Picture
-                    <Avatar>
+                <form action={handleSubmit} className="flex flex-col gap-2 items-center justify-start">
+                    <span className="text-xs">Change Profile Picture</span>
+                    <Avatar size="lg">
                         <AvatarImage src={employee.pfpImgUrl}/>
-                        <AvatarFallback>{employee.name.substring(0,1).toUpperCase()}</AvatarFallback>
+                        <AvatarFallback>{nameInitials(employee.name)}</AvatarFallback>
                     </Avatar>
                     <Input
                         name="employee-id"
@@ -46,11 +47,17 @@ export function SettingsDialog({employee}: SettingsDialogProps) {
                         defaultValue={employee.id}
                     />
                     <Input
+                        className="w-1/3"
                         name="img"
                         type="file"
+                        placeholder="Choose File" // figure out how to modify this
                         onChange={(e) => e.currentTarget.form?.requestSubmit()}
                     />
                 </form>
+
+                <Separator orientation="vertical"/>
+
+                
 
             </div>
         </DialogContent>

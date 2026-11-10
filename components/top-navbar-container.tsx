@@ -28,7 +28,7 @@ export async function TopNavbarContainer() {
 
     if (!employee)
         return (
-            <div>ERROR</div>
+            <></>
         )
 
     

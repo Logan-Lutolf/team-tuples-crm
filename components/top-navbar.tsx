@@ -2,11 +2,16 @@
 
 import { usePathname } from "next/navigation"
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "./ui/navigation-menu"
-import { Avatar, AvatarImage } from "./ui/avatar"
-import { HelpCircle, LogOut, Settings } from "lucide-react"
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar"
+import { HelpCircle, LogOut, Settings, SettingsIcon } from "lucide-react"
 import { logout } from "@/app/login/actions"
 import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
+import { useState } from "react"
+import { Button } from "./ui/button"
+import { Dialog, DialogTrigger } from "./ui/dialog"
+import { SettingsDialog } from "./custom/pfp-dialog"
+import { nameInitials } from "@/lib/utils"
 
 const links = [
   { href: "/employee-management", label: "Employees" },
@@ -28,9 +33,10 @@ interface TopNavbarProps {
 }
 
 export function TopNavbar({employee}: TopNavbarProps) {
-  const pathname = usePathname()
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   return (
+    <>
     <NavigationMenu orientation="horizontal" className="mt-2">
       <NavigationMenuList>
         <NavigationMenuItem>
@@ -53,21 +59,25 @@ export function TopNavbar({employee}: TopNavbarProps) {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger>
+          <NavigationMenuTrigger className="cursor-pointer">
             <Avatar>
-              <AvatarImage src={employee.pfpImgUrl} alt="CL" height="auto" width="auto" />
+              <AvatarImage src={employee.pfpImgUrl} alt="" height="auto" width="auto" />
+              <AvatarFallback>{nameInitials(employee.name)}</AvatarFallback>
             </Avatar>
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <NavigationMenuLink className="flex flex-row gap-2">
+            <NavigationMenuLink className="flex flex-row gap-2 cursor-pointer">
               <HelpCircle/>
               Help
             </NavigationMenuLink>
-            <NavigationMenuLink className="flex flex-row gap-2">
-              <Settings/>
+            <NavigationMenuLink 
+              onClick={() => setSettingsOpen(true)}
+              className="flex flex-row gap-2 cursor-pointer"
+            >
+              <SettingsIcon/>
               Settings
             </NavigationMenuLink>
-            <NavigationMenuLink onClick={logout} className="flex flex-row gap-2">
+            <NavigationMenuLink onClick={logout} className="flex flex-row gap-2 cursor-pointer">
               <LogOut/>
               Logout
             </NavigationMenuLink>
@@ -75,5 +85,10 @@ export function TopNavbar({employee}: TopNavbarProps) {
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
+    
+    <Dialog open={settingsOpen} onOpenChange={() => setSettingsOpen(false)}>
+      <SettingsDialog employee={employee}/>
+    </Dialog>
+    </>
   )
 }

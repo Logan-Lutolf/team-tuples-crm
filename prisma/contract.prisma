@@ -66,7 +66,6 @@ enum Role {
   STUDIO_LEAD
   LECTURER
   METHODOLOGY_LEAD
-
 }
 
 enum ProgramStatus {
@@ -116,7 +115,7 @@ model Employee {
 
   is_online  Boolean  @default(false)
   // remove this, because we might add EmployeeJobRole table later?
-  roles      Role[] 
+  roles      Role[]
 
   schools LegacySchoolEmployees[]
   assignments EmployeeAssignment[]
