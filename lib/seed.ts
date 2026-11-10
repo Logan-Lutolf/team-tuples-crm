@@ -46,7 +46,7 @@ try {
         region: branches[i % branches.length].region,
       });
       employees.push(employee);
-      await orm.EmployeeAssignment.create({ employeeId: employee.id, role: faker.helpers.arrayElement(enums.EmployeeJobRole.values) });
+      await orm.EmployeeAssignment.create({ employeeId: employee.id, role: faker.helpers.arrayElement(enums.Role.values) });
     }
 
     const programs = [];

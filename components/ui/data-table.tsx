@@ -3,7 +3,6 @@
 import { useTable, type ColumnDef, type RowData } from "@tanstack/react-table"
 
 import {
-    Table,
     TableBody,
     TableCell,
     TableHead,
@@ -13,6 +12,7 @@ import {
 
 import { features, type DataTableFeatures } from "./data-table-features"
 import { Button } from "./button"
+import { DashboardTable } from "@/components/records/dashboard-table"
 
 interface DataTableProps<TData extends RowData> {
     columns: ColumnDef<DataTableFeatures, TData>[]
@@ -31,8 +31,7 @@ export function DataTable<TData extends RowData>({
 
     return (
         <>
-        <div className="overflow-hidden rounded-md border">
-        <Table>
+        <DashboardTable>
             <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -70,8 +69,7 @@ export function DataTable<TData extends RowData>({
                 </TableRow>
             )}
             </TableBody>
-        </Table>
-        </div>
+        </DashboardTable>
 
         <div className="flex items-center justify-end space-x-2 py-4">
         <Button

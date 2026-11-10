@@ -1,8 +1,8 @@
 'use client'
+import { RecordLink } from '@/components/records/record-link'
 
 import { ContactActionForm } from "./contact-action-form"
 import { Button } from "@/components/ui/button"
-import { DialogHeader } from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -76,8 +76,6 @@ export function EditContactForm(contact: EditContactFormProps) {    // Add actua
 
     return (
         <div className="flex flex-col gap-6">
-        <DialogHeader>
-        </DialogHeader>
         <ContactActionForm className="grid grid-cols-1 gap-4 sm:grid-cols-2 [&_[data-slot=select-trigger]]:w-full [&>[role=alert]]:col-span-full [&>[role=status]]:col-span-full" action={async form => {
             const result = await editContact(form)
             if ('success' in result) await contact.onSaved?.()
@@ -160,8 +158,8 @@ export function EditContactForm(contact: EditContactFormProps) {    // Add actua
             <Field>
                 <FieldLabel htmlFor="role">Branch</FieldLabel>
                 <Select
-                    items={branchOptions}
-                    defaultValue={String(contact.branchId)}
+                    items={[{ label: "No branch assigned", value: "" }, ...branchOptions]}
+                    defaultValue={contact.branchId === null ? "" : String(contact.branchId)}
                     name="branch"
                 >
                     <SelectTrigger>
@@ -169,6 +167,7 @@ export function EditContactForm(contact: EditContactFormProps) {    // Add actua
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
+                            <SelectItem value="">No branch assigned</SelectItem>
                             {branchOptions.map((branch) => (
                                 <SelectItem key={branch.value} value={branch.value}>
                                     {branch.label}
@@ -198,8 +197,7 @@ export function EditContactForm(contact: EditContactFormProps) {    // Add actua
             <p>
                 {contact.schoolId === null
                     ? "No school assigned"
-                    : contact.availableSchools.find((school) => school.id === contact.schoolId)?.name
-                        ?? `School ${contact.schoolId}`}
+                    : <RecordLink type="schools" id={contact.schoolId}>{contact.availableSchools.find((school) => school.id === contact.schoolId)?.name ?? `School ${contact.schoolId}`}</RecordLink>}
             </p>
             </div>
             <div className="grid gap-3 rounded-lg border p-4">

@@ -26,7 +26,7 @@ export function contactErrorMessage(error: unknown, action: string): string {
             return "This record or assignment already exists. Refresh the page and try again."
         case "23503":
             if (action.startsWith("Delete")) {
-                return "Other records still depend on this contact. Remove their links before deleting it."
+                return "Could not clear related links. Confirm the automatic-deletion migration has been applied and try again."
             }
             if (constraint === "Contact_branchId_fkey") return "The selected branch no longer exists. Refresh the page and select another branch."
             if (constraint === "Contact_schoolId_fkey") return "The selected school no longer exists. Refresh the page and select another school."

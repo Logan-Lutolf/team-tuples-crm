@@ -268,7 +268,7 @@ export type FieldOutputTypes = {
     };
     readonly Contact: {
       readonly address: AddressOutput | null;
-      readonly branchId: CodecTypes['pg/int4@1']['output'];
+      readonly branchId: CodecTypes['pg/int4@1']['output'] | null;
       readonly contactRole:
         | 'TEACHER'
         | 'PRINCIPAL'
@@ -306,6 +306,15 @@ export type FieldOutputTypes = {
         | null;
       readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly ContactEmployment: {
+      readonly contactId: CodecTypes['pg/int4@1']['output'];
+      readonly endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly jobTitle: CodecTypes['pg/text@1']['output'];
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly startDate: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Employee: {
       readonly address: AddressOutput | null;
@@ -391,17 +400,13 @@ export type FieldOutputTypes = {
         | 'METHODOLOGY_LEAD';
     };
     readonly Interaction: {
-      readonly contactId: CodecTypes['pg/int4@1']['output'];
+      readonly contactId: CodecTypes['pg/int4@1']['output'] | null;
       readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly employeeId: CodecTypes['pg/int4@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly mode: 'PHONE' | 'EMAIL' | 'IN_PERSON' | 'VIDEO_CALL' | 'MESSAGE' | 'OTHER';
       readonly programId: CodecTypes['pg/int4@1']['output'] | null;
       readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
-    };
-    readonly LegacySchoolEmployees: {
-      readonly employeeId: CodecTypes['pg/int4@1']['output'];
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
     };
     readonly Municipality: {
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -416,10 +421,14 @@ export type FieldOutputTypes = {
       readonly endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
-      readonly programId: CodecTypes['pg/int4@1']['output'];
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly programId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
       readonly startDate: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
+    };
+    readonly ParticipationContacts: {
+      readonly contactId: CodecTypes['pg/int4@1']['output'];
+      readonly participationId: CodecTypes['pg/int4@1']['output'];
     };
     readonly ParticipationEmployees: {
       readonly employeeId: CodecTypes['pg/int4@1']['output'];
@@ -434,7 +443,7 @@ export type FieldOutputTypes = {
     };
     readonly School: {
       readonly address: AddressOutput;
-      readonly branchId: CodecTypes['pg/int4@1']['output'];
+      readonly branchId: CodecTypes['pg/int4@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -486,7 +495,7 @@ export type FieldInputTypes = {
     };
     readonly Contact: {
       readonly address: AddressInput | null;
-      readonly branchId: CodecTypes['pg/int4@1']['input'];
+      readonly branchId: CodecTypes['pg/int4@1']['input'] | null;
       readonly contactRole:
         | 'TEACHER'
         | 'PRINCIPAL'
@@ -524,6 +533,15 @@ export type FieldInputTypes = {
         | null;
       readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly ContactEmployment: {
+      readonly contactId: CodecTypes['pg/int4@1']['input'];
+      readonly endDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly jobTitle: CodecTypes['pg/text@1']['input'];
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly startDate: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Employee: {
       readonly address: AddressInput | null;
@@ -609,17 +627,13 @@ export type FieldInputTypes = {
         | 'METHODOLOGY_LEAD';
     };
     readonly Interaction: {
-      readonly contactId: CodecTypes['pg/int4@1']['input'];
+      readonly contactId: CodecTypes['pg/int4@1']['input'] | null;
       readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly employeeId: CodecTypes['pg/int4@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly mode: 'PHONE' | 'EMAIL' | 'IN_PERSON' | 'VIDEO_CALL' | 'MESSAGE' | 'OTHER';
       readonly programId: CodecTypes['pg/int4@1']['input'] | null;
       readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
-    };
-    readonly LegacySchoolEmployees: {
-      readonly employeeId: CodecTypes['pg/int4@1']['input'];
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
     };
     readonly Municipality: {
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -634,10 +648,14 @@ export type FieldInputTypes = {
       readonly endDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
-      readonly programId: CodecTypes['pg/int4@1']['input'];
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly programId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
       readonly startDate: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
+    };
+    readonly ParticipationContacts: {
+      readonly contactId: CodecTypes['pg/int4@1']['input'];
+      readonly participationId: CodecTypes['pg/int4@1']['input'];
     };
     readonly ParticipationEmployees: {
       readonly employeeId: CodecTypes['pg/int4@1']['input'];
@@ -652,7 +670,7 @@ export type FieldInputTypes = {
     };
     readonly School: {
       readonly address: AddressInput;
-      readonly branchId: CodecTypes['pg/int4@1']['input'];
+      readonly branchId: CodecTypes['pg/int4@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -704,7 +722,7 @@ export type StorageColumnTypes = {
     };
     readonly Contact: {
       readonly address: CodecTypes['pg/jsonb@1']['output'] | null;
-      readonly branchId: CodecTypes['pg/int4@1']['output'];
+      readonly branchId: CodecTypes['pg/int4@1']['output'] | null;
       readonly contactRole:
         | 'TEACHER'
         | 'PRINCIPAL'
@@ -742,6 +760,15 @@ export type StorageColumnTypes = {
         | null;
       readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly ContactEmployment: {
+      readonly contactId: CodecTypes['pg/int4@1']['output'];
+      readonly endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly jobTitle: CodecTypes['pg/text@1']['output'];
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly startDate: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Employee: {
       readonly address: CodecTypes['pg/jsonb@1']['output'] | null;
@@ -828,16 +855,12 @@ export type StorageColumnTypes = {
     };
     readonly Interaction: {
       readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly contactId: CodecTypes['pg/int4@1']['output'];
-      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly contactId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly employeeId: CodecTypes['pg/int4@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly mode: 'PHONE' | 'EMAIL' | 'IN_PERSON' | 'VIDEO_CALL' | 'MESSAGE' | 'OTHER';
       readonly programId: CodecTypes['pg/int4@1']['output'] | null;
       readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
-    };
-    readonly LegacySchoolEmployees: {
-      readonly employeeId: CodecTypes['pg/int4@1']['output'];
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
     };
     readonly Municipality: {
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -852,10 +875,14 @@ export type StorageColumnTypes = {
       readonly endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
-      readonly programId: CodecTypes['pg/int4@1']['output'];
-      readonly schoolId: CodecTypes['pg/int4@1']['output'];
+      readonly programId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
       readonly startDate: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
+    };
+    readonly ParticipationContacts: {
+      readonly contactId: CodecTypes['pg/int4@1']['output'];
+      readonly participationId: CodecTypes['pg/int4@1']['output'];
     };
     readonly ParticipationEmployees: {
       readonly employeeId: CodecTypes['pg/int4@1']['output'];
@@ -870,7 +897,7 @@ export type StorageColumnTypes = {
     };
     readonly School: {
       readonly address: CodecTypes['pg/jsonb@1']['output'];
-      readonly branchId: CodecTypes['pg/int4@1']['output'];
+      readonly branchId: CodecTypes['pg/int4@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -922,7 +949,7 @@ export type StorageColumnInputTypes = {
     };
     readonly Contact: {
       readonly address: CodecTypes['pg/jsonb@1']['input'] | null;
-      readonly branchId: CodecTypes['pg/int4@1']['input'];
+      readonly branchId: CodecTypes['pg/int4@1']['input'] | null;
       readonly contactRole:
         | 'TEACHER'
         | 'PRINCIPAL'
@@ -960,6 +987,15 @@ export type StorageColumnInputTypes = {
         | null;
       readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly ContactEmployment: {
+      readonly contactId: CodecTypes['pg/int4@1']['input'];
+      readonly endDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly jobTitle: CodecTypes['pg/text@1']['input'];
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly startDate: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Employee: {
       readonly address: CodecTypes['pg/jsonb@1']['input'] | null;
@@ -1046,16 +1082,12 @@ export type StorageColumnInputTypes = {
     };
     readonly Interaction: {
       readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly contactId: CodecTypes['pg/int4@1']['input'];
-      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly contactId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly employeeId: CodecTypes['pg/int4@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly mode: 'PHONE' | 'EMAIL' | 'IN_PERSON' | 'VIDEO_CALL' | 'MESSAGE' | 'OTHER';
       readonly programId: CodecTypes['pg/int4@1']['input'] | null;
       readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
-    };
-    readonly LegacySchoolEmployees: {
-      readonly employeeId: CodecTypes['pg/int4@1']['input'];
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
     };
     readonly Municipality: {
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -1070,10 +1102,14 @@ export type StorageColumnInputTypes = {
       readonly endDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
-      readonly programId: CodecTypes['pg/int4@1']['input'];
-      readonly schoolId: CodecTypes['pg/int4@1']['input'];
+      readonly programId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
       readonly startDate: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
+    };
+    readonly ParticipationContacts: {
+      readonly contactId: CodecTypes['pg/int4@1']['input'];
+      readonly participationId: CodecTypes['pg/int4@1']['input'];
     };
     readonly ParticipationEmployees: {
       readonly employeeId: CodecTypes['pg/int4@1']['input'];
@@ -1088,7 +1124,7 @@ export type StorageColumnInputTypes = {
     };
     readonly School: {
       readonly address: CodecTypes['pg/jsonb@1']['input'];
-      readonly branchId: CodecTypes['pg/int4@1']['input'];
+      readonly branchId: CodecTypes['pg/int4@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -1145,7 +1181,7 @@ export namespace Models {
   };
   export type public_Contact = {
     address: AddressOutput | null;
-    branchId: CodecTypes['pg/int4@1']['output'];
+    branchId: CodecTypes['pg/int4@1']['output'] | null;
     contactRole:
       | 'TEACHER'
       | 'PRINCIPAL'
@@ -1183,11 +1219,31 @@ export namespace Models {
       | null;
     schoolId: CodecTypes['pg/int4@1']['output'] | null;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    branch: public_Branch;
+    branch: public_Branch | null;
+    employmentHistory: public_ContactEmployment[];
     interactions: public_Interaction[];
     last_contacted_by: public_Employee | null;
+    participations: public_ParticipationContacts[];
     school: public_School | null;
-    readonly [RelationKeys]?: 'branch' | 'interactions' | 'last_contacted_by' | 'school';
+    readonly [RelationKeys]?:
+      | 'branch'
+      | 'employmentHistory'
+      | 'interactions'
+      | 'last_contacted_by'
+      | 'participations'
+      | 'school';
+  };
+  export type public_ContactEmployment = {
+    contactId: CodecTypes['pg/int4@1']['output'];
+    endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    jobTitle: CodecTypes['pg/text@1']['output'];
+    notes: CodecTypes['pg/text@1']['output'] | null;
+    schoolId: CodecTypes['pg/int4@1']['output'] | null;
+    startDate: CodecTypes['pg/timestamptz-string@1']['output'];
+    contact: public_Contact;
+    school: public_School | null;
+    readonly [RelationKeys]?: 'contact' | 'school';
   };
   export type public_Employee = {
     address: AddressOutput | null;
@@ -1236,16 +1292,8 @@ export namespace Models {
     assignments: public_EmployeeAssignment[];
     chiefOf: public_Branch[];
     interactions: public_Interaction[];
-    legacySchoolLinks: public_LegacySchoolEmployees[];
     participations: public_ParticipationEmployees[];
-    schools: public_LegacySchoolEmployees[];
-    readonly [RelationKeys]?:
-      | 'assignments'
-      | 'chiefOf'
-      | 'interactions'
-      | 'legacySchoolLinks'
-      | 'participations'
-      | 'schools';
+    readonly [RelationKeys]?: 'assignments' | 'chiefOf' | 'interactions' | 'participations';
   };
   export type public_EmployeeAssignment = {
     branchId: CodecTypes['pg/int4@1']['output'] | null;
@@ -1290,25 +1338,18 @@ export namespace Models {
     readonly [RelationKeys]?: 'branch' | 'employee' | 'program';
   };
   export type public_Interaction = {
-    contactId: CodecTypes['pg/int4@1']['output'];
+    contactId: CodecTypes['pg/int4@1']['output'] | null;
     contactedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    employeeId: CodecTypes['pg/int4@1']['output'];
+    employeeId: CodecTypes['pg/int4@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
     mode: 'PHONE' | 'EMAIL' | 'IN_PERSON' | 'VIDEO_CALL' | 'MESSAGE' | 'OTHER';
     programId: CodecTypes['pg/int4@1']['output'] | null;
     schoolId: CodecTypes['pg/int4@1']['output'] | null;
-    contact: public_Contact;
-    employee: public_Employee;
+    contact: public_Contact | null;
+    employee: public_Employee | null;
     program: public_Program | null;
     school: public_School | null;
     readonly [RelationKeys]?: 'contact' | 'employee' | 'program' | 'school';
-  };
-  export type public_LegacySchoolEmployees = {
-    employeeId: CodecTypes['pg/int4@1']['output'];
-    schoolId: CodecTypes['pg/int4@1']['output'];
-    employee: public_Employee;
-    school: public_School;
-    readonly [RelationKeys]?: 'employee' | 'school';
   };
   export type public_Municipality = {
     id: CodecTypes['pg/int4@1']['output'];
@@ -1328,14 +1369,22 @@ export namespace Models {
     endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
-    programId: CodecTypes['pg/int4@1']['output'];
-    schoolId: CodecTypes['pg/int4@1']['output'];
+    programId: CodecTypes['pg/int4@1']['output'] | null;
+    schoolId: CodecTypes['pg/int4@1']['output'] | null;
     startDate: CodecTypes['pg/timestamptz-string@1']['output'];
     status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
+    contacts: public_ParticipationContacts[];
     employee: public_ParticipationEmployees[];
-    program: public_Program;
-    school: public_School;
-    readonly [RelationKeys]?: 'employee' | 'program' | 'school';
+    program: public_Program | null;
+    school: public_School | null;
+    readonly [RelationKeys]?: 'contacts' | 'employee' | 'program' | 'school';
+  };
+  export type public_ParticipationContacts = {
+    contactId: CodecTypes['pg/int4@1']['output'];
+    participationId: CodecTypes['pg/int4@1']['output'];
+    contact: public_Contact;
+    participation: public_Participation;
+    readonly [RelationKeys]?: 'contact' | 'participation';
   };
   export type public_ParticipationEmployees = {
     employeeId: CodecTypes['pg/int4@1']['output'];
@@ -1358,7 +1407,7 @@ export namespace Models {
   };
   export type public_School = {
     address: AddressOutput;
-    branchId: CodecTypes['pg/int4@1']['output'];
+    branchId: CodecTypes['pg/int4@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     email: CodecTypes['pg/text@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
@@ -1382,13 +1431,13 @@ export namespace Models {
     relationship: 'POOR' | 'AVERAGE' | 'EXCELLENT';
     type: 'PRIMARY' | 'SECONDARY' | 'UNDERGRADUATE' | 'GRADUATE' | 'POSTGRADUATE';
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    branch: public_Branch;
+    branch: public_Branch | null;
+    contactEmployments: public_ContactEmployment[];
     contacts: public_Contact[];
     interactions: public_Interaction[];
-    legacyEmployeeLinks: public_LegacySchoolEmployees[];
     participations: public_Participation[];
     readonly [RelationKeys]?:
-      'branch' | 'contacts' | 'interactions' | 'legacyEmployeeLinks' | 'participations';
+      'branch' | 'contactEmployments' | 'contacts' | 'interactions' | 'participations';
   };
 }
 
@@ -1396,13 +1445,14 @@ export declare const models: {
   public: {
     Branch: Models.public_Branch;
     Contact: Models.public_Contact;
+    ContactEmployment: Models.public_ContactEmployment;
     Employee: Models.public_Employee;
     EmployeeAssignment: Models.public_EmployeeAssignment;
     Interaction: Models.public_Interaction;
-    LegacySchoolEmployees: Models.public_LegacySchoolEmployees;
     Municipality: Models.public_Municipality;
     MunicipalityPrograms: Models.public_MunicipalityPrograms;
     Participation: Models.public_Participation;
+    ParticipationContacts: Models.public_ParticipationContacts;
     ParticipationEmployees: Models.public_ParticipationEmployees;
     Program: Models.public_Program;
     School: Models.public_School;
@@ -1500,7 +1550,7 @@ type ContractBase = Omit<
                 readonly branchId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly contactRole: {
@@ -1632,6 +1682,104 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'Branch';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly ContactEmployment: {
+              columns: {
+                readonly contactId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly endDate: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly jobTitle: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly notes: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly schoolId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly startDate: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'ContactEmployment_contactId_idx_ec98db2a';
+                  readonly prefix: 'ContactEmployment_contactId_idx';
+                  readonly columns: readonly ['contactId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ContactEmployment_contactId_startDate_idx_498892b0';
+                  readonly prefix: 'ContactEmployment_contactId_startDate_idx';
+                  readonly columns: readonly ['contactId', 'startDate'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ContactEmployment_schoolId_idx_82b454d7';
+                  readonly prefix: 'ContactEmployment_schoolId_idx';
+                  readonly columns: readonly ['schoolId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ContactEmployment';
+                    readonly columns: readonly ['contactId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Contact';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ContactEmployment';
+                    readonly columns: readonly ['schoolId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'School';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -1841,7 +1989,7 @@ type ContractBase = Omit<
                 readonly contactId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly contactedAt: {
@@ -1854,7 +2002,7 @@ type ContractBase = Omit<
                 readonly employeeId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly id: {
@@ -1989,64 +2137,6 @@ type ContractBase = Omit<
                 },
               ];
             };
-            readonly LegacySchoolEmployees: {
-              columns: {
-                readonly employeeId: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly many: false;
-                };
-                readonly schoolId: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly many: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['schoolId', 'employeeId'] };
-              uniques: readonly [];
-              indexes: readonly [
-                {
-                  readonly name: 'LegacySchoolEmployees_employeeId_idx_087dd4a6';
-                  readonly prefix: 'LegacySchoolEmployees_employeeId_idx';
-                  readonly columns: readonly ['employeeId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'LegacySchoolEmployees_schoolId_idx_82b454d7';
-                  readonly prefix: 'LegacySchoolEmployees_schoolId_idx';
-                  readonly columns: readonly ['schoolId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'LegacySchoolEmployees';
-                    readonly columns: readonly ['schoolId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'School';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'LegacySchoolEmployees';
-                    readonly columns: readonly ['employeeId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Employee';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
             readonly Municipality: {
               columns: {
                 readonly id: {
@@ -2162,13 +2252,13 @@ type ContractBase = Omit<
                 readonly programId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly schoolId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly startDate: {
@@ -2226,6 +2316,64 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'Program';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly ParticipationContacts: {
+              columns: {
+                readonly contactId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly participationId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['participationId', 'contactId'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'ParticipationContacts_contactId_idx_ec98db2a';
+                  readonly prefix: 'ParticipationContacts_contactId_idx';
+                  readonly columns: readonly ['contactId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'ParticipationContacts_participationId_idx_1840362d';
+                  readonly prefix: 'ParticipationContacts_participationId_idx';
+                  readonly columns: readonly ['participationId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ParticipationContacts';
+                    readonly columns: readonly ['participationId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Participation';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ParticipationContacts';
+                    readonly columns: readonly ['contactId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Contact';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -2343,7 +2491,7 @@ type ContractBase = Omit<
                 readonly branchId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly createdAt: {
@@ -2539,6 +2687,10 @@ type ContractBase = Omit<
   readonly roots: {
     readonly Branch: { readonly namespace: 'public' & NamespaceId; readonly model: 'Branch' };
     readonly Contact: { readonly namespace: 'public' & NamespaceId; readonly model: 'Contact' };
+    readonly ContactEmployment: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ContactEmployment';
+    };
     readonly Employee: { readonly namespace: 'public' & NamespaceId; readonly model: 'Employee' };
     readonly EmployeeAssignment: {
       readonly namespace: 'public' & NamespaceId;
@@ -2547,10 +2699,6 @@ type ContractBase = Omit<
     readonly Interaction: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Interaction';
-    };
-    readonly LegacySchoolEmployees: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'LegacySchoolEmployees';
     };
     readonly Municipality: {
       readonly namespace: 'public' & NamespaceId;
@@ -2563,6 +2711,10 @@ type ContractBase = Omit<
     readonly Participation: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Participation';
+    };
+    readonly ParticipationContacts: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ParticipationContacts';
     };
     readonly ParticipationEmployees: {
       readonly namespace: 'public' & NamespaceId;
@@ -2664,7 +2816,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'valueObject'; readonly name: 'Address' };
               };
               readonly branchId: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly contactRole: {
@@ -2728,10 +2880,21 @@ type ContractBase = Omit<
                   readonly model: 'Branch';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['branchId'];
                   readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly employmentHistory: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ContactEmployment';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['contactId'];
                 };
               };
               readonly interactions: {
@@ -2755,6 +2918,17 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['last_contacted_byId'];
                   readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly participations: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ParticipationContacts';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['contactId'];
                 };
               };
               readonly school: {
@@ -2787,6 +2961,83 @@ type ContractBase = Omit<
                 readonly region: { readonly column: 'region' };
                 readonly schoolId: { readonly column: 'schoolId' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly ContactEmployment: {
+            readonly fields: {
+              readonly contactId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly endDate: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly jobTitle: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly notes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly schoolId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly startDate: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly contact: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Contact';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['contactId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly school: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'School';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['schoolId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'ContactEmployment';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly contactId: { readonly column: 'contactId' };
+                readonly endDate: { readonly column: 'endDate' };
+                readonly id: { readonly column: 'id' };
+                readonly jobTitle: { readonly column: 'jobTitle' };
+                readonly notes: { readonly column: 'notes' };
+                readonly schoolId: { readonly column: 'schoolId' };
+                readonly startDate: { readonly column: 'startDate' };
               };
             };
           };
@@ -2882,32 +3133,10 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['employeeId'];
                 };
               };
-              readonly legacySchoolLinks: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'LegacySchoolEmployees';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['employeeId'];
-                };
-              };
               readonly participations: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'ParticipationEmployees';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['employeeId'];
-                };
-              };
-              readonly schools: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'LegacySchoolEmployees';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {
@@ -3016,7 +3245,7 @@ type ContractBase = Omit<
           readonly Interaction: {
             readonly fields: {
               readonly contactId: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly contactedAt: {
@@ -3027,7 +3256,7 @@ type ContractBase = Omit<
                 };
               };
               readonly employeeId: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly id: {
@@ -3054,7 +3283,7 @@ type ContractBase = Omit<
                   readonly model: 'Contact';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['contactId'];
                   readonly targetFields: readonly ['id'];
@@ -3066,7 +3295,7 @@ type ContractBase = Omit<
                   readonly model: 'Employee';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['employeeId'];
                   readonly targetFields: readonly ['id'];
@@ -3107,52 +3336,6 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly mode: { readonly column: 'mode' };
                 readonly programId: { readonly column: 'programId' };
-                readonly schoolId: { readonly column: 'schoolId' };
-              };
-            };
-          };
-          readonly LegacySchoolEmployees: {
-            readonly fields: {
-              readonly employeeId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly schoolId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-            };
-            readonly relations: {
-              readonly employee: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Employee';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['employeeId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly school: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'School';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['schoolId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'LegacySchoolEmployees';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly employeeId: { readonly column: 'employeeId' };
                 readonly schoolId: { readonly column: 'schoolId' };
               };
             };
@@ -3259,11 +3442,11 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly programId: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly schoolId: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly startDate: {
@@ -3279,6 +3462,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly contacts: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ParticipationContacts';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['participationId'];
+                };
+              };
               readonly employee: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -3296,7 +3490,7 @@ type ContractBase = Omit<
                   readonly model: 'Program';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['programId'];
                   readonly targetFields: readonly ['id'];
@@ -3308,7 +3502,7 @@ type ContractBase = Omit<
                   readonly model: 'School';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['schoolId'];
                   readonly targetFields: readonly ['id'];
@@ -3326,6 +3520,52 @@ type ContractBase = Omit<
                 readonly schoolId: { readonly column: 'schoolId' };
                 readonly startDate: { readonly column: 'startDate' };
                 readonly status: { readonly column: 'status' };
+              };
+            };
+          };
+          readonly ParticipationContacts: {
+            readonly fields: {
+              readonly contactId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly participationId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly contact: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Contact';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['contactId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly participation: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Participation';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['participationId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'ParticipationContacts';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly contactId: { readonly column: 'contactId' };
+                readonly participationId: { readonly column: 'participationId' };
               };
             };
           };
@@ -3469,7 +3709,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'valueObject'; readonly name: 'Address' };
               };
               readonly branchId: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly createdAt: {
@@ -3522,10 +3762,21 @@ type ContractBase = Omit<
                   readonly model: 'Branch';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['branchId'];
                   readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly contactEmployments: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ContactEmployment';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['schoolId'];
                 };
               };
               readonly contacts: {
@@ -3543,17 +3794,6 @@ type ContractBase = Omit<
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'Interaction';
-                };
-                readonly cardinality: '1:N';
-                readonly on: {
-                  readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['schoolId'];
-                };
-              };
-              readonly legacyEmployeeLinks: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'LegacySchoolEmployees';
                 };
                 readonly cardinality: '1:N';
                 readonly on: {

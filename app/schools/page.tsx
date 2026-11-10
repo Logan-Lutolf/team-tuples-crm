@@ -1,13 +1,5 @@
-import { db } from "@/prisma/db";
-import { AddSchoolForm } from "./add-school-form";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Field } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { PageActionLink } from '@/components/records/page-action-link'
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Contract } from "@/prisma/contract";
-import { DefaultModelRow } from "@prisma/orm-postgres/orm-client";
-import { Filter } from "lucide-react";
 import { Search } from "@/components/custom/search";
 import { SchoolTableContainer } from "./school-table-container";
 import { Suspense } from "react";
@@ -42,9 +34,7 @@ export default async function EmployeeManagementPage(
 
     return (
         <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
-            <Suspense fallback={<Button disabled>Loading…</Button>}>
-                <AddSchoolDialog />
-            </Suspense>
+            <PageActionLink href="/create/schools" fullWidth>Add a School</PageActionLink>
 
             <Search placeholder={""}/>
 
@@ -69,17 +59,4 @@ export default async function EmployeeManagementPage(
             </Pagination>
         </div>
     )
-}
-
-
-
-async function AddSchoolDialog() {
-    const branches = await db.orm.public.Branch.select("id", "name").all().toArray()
-    return <Dialog>
-        <DialogTrigger render={<Button>Add a School</Button>} />
-        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-3xl">
-            <DialogHeader><DialogTitle>Add a School</DialogTitle></DialogHeader>
-            <AddSchoolForm branches={branches} />
-        </DialogContent>
-    </Dialog>
 }

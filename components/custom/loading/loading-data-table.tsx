@@ -3,13 +3,14 @@
 import { useTable, type ColumnDef, type RowData } from "@tanstack/react-table"
 
 import {
-    Table,
     TableBody,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+
+import { DashboardTable } from "@/components/records/dashboard-table"
 
 import { features, type DataTableFeatures } from "../../ui/data-table-features"
 
@@ -29,8 +30,7 @@ export function LoadingDataTable<TData extends RowData>({
     })
 
     return (
-        <div className="overflow-hidden rounded-md border">
-            <Table>
+        <DashboardTable>
                 <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
@@ -68,7 +68,6 @@ export function LoadingDataTable<TData extends RowData>({
                     </TableRow>
                 )}
                 </TableBody>
-            </Table>
-        </div>
+            </DashboardTable>
     )
 }

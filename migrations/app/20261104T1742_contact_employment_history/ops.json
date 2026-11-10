@@ -1,0 +1,326 @@
+[
+  {
+    "id": "dropCheckConstraint.EmployeeAssignment.EmployeeAssignment_role_check_b697a84e",
+    "label": "Drop check constraint \"EmployeeAssignment_role_check_b697a84e\" on \"EmployeeAssignment\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "EmployeeAssignment_role_check_b697a84e",
+        "table": "EmployeeAssignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"EmployeeAssignment_role_check_b697a84e\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_role_check_b697a84e",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"EmployeeAssignment_role_check_b697a84e\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeAssignment\" DROP CONSTRAINT \"EmployeeAssignment_role_check_b697a84e\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"EmployeeAssignment_role_check_b697a84e\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_role_check_b697a84e",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.ContactEmployment",
+    "label": "Create table \"ContactEmployment\"",
+    "summary": "Creates table \"ContactEmployment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "ContactEmployment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"ContactEmployment\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"ContactEmployment\"",
+        "sql": "CREATE TABLE \"public\".\"ContactEmployment\" (\n  \"contactId\" int4 NOT NULL,\n  \"endDate\" timestamptz,\n  \"id\" SERIAL NOT NULL,\n  \"jobTitle\" text NOT NULL,\n  \"notes\" text,\n  \"schoolId\" int4 NOT NULL,\n  \"startDate\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"ContactEmployment\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.EmployeeAssignment.EmployeeAssignment_role_check_2f516525",
+    "label": "Add check constraint \"EmployeeAssignment_role_check_2f516525\" on \"EmployeeAssignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "EmployeeAssignment_role_check_2f516525",
+        "table": "EmployeeAssignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"EmployeeAssignment_role_check_2f516525\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_role_check_2f516525",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"EmployeeAssignment_role_check_2f516525\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeAssignment\" ADD CONSTRAINT \"EmployeeAssignment_role_check_2f516525\" CHECK (\"role\" IN ('ADMIN', 'WORKSHOPS_COORDINATOR', 'SCHOOL_NETWORK_COORDINATOR', 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR', 'VETERANS_DAY_COORDINATOR', 'NEWSLETTER_COORDINATOR', 'BRANCH_DIRECTOR', 'HEAD_OF_EDUCATION', 'PROJECT_MANAGER', 'COORDINATOR', 'DEVELOPMENT_LEAD', 'PRODUCTION', 'STUDIO_LEAD', 'LECTURER', 'METHODOLOGY_LEAD'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"EmployeeAssignment_role_check_2f516525\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_role_check_2f516525",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ContactEmployment.ContactEmployment_contactId_idx_ec98db2a",
+    "label": "Create index \"ContactEmployment_contactId_idx_ec98db2a\" on \"ContactEmployment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ContactEmployment_contactId_idx_ec98db2a",
+        "table": "ContactEmployment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ContactEmployment_contactId_idx_ec98db2a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ContactEmployment_contactId_idx_ec98db2a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ContactEmployment_contactId_idx_ec98db2a\"",
+        "sql": "CREATE INDEX \"ContactEmployment_contactId_idx_ec98db2a\" ON \"public\".\"ContactEmployment\" (\"contactId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ContactEmployment_contactId_idx_ec98db2a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ContactEmployment_contactId_idx_ec98db2a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ContactEmployment.ContactEmployment_contactId_startDate_idx_498892b0",
+    "label": "Create index \"ContactEmployment_contactId_startDate_idx_498892b0\" on \"ContactEmployment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ContactEmployment_contactId_startDate_idx_498892b0",
+        "table": "ContactEmployment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ContactEmployment_contactId_startDate_idx_498892b0\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ContactEmployment_contactId_startDate_idx_498892b0\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ContactEmployment_contactId_startDate_idx_498892b0\"",
+        "sql": "CREATE INDEX \"ContactEmployment_contactId_startDate_idx_498892b0\" ON \"public\".\"ContactEmployment\" (\"contactId\", \"startDate\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ContactEmployment_contactId_startDate_idx_498892b0\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ContactEmployment_contactId_startDate_idx_498892b0\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ContactEmployment.ContactEmployment_schoolId_idx_82b454d7",
+    "label": "Create index \"ContactEmployment_schoolId_idx_82b454d7\" on \"ContactEmployment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ContactEmployment_schoolId_idx_82b454d7",
+        "table": "ContactEmployment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ContactEmployment_schoolId_idx_82b454d7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ContactEmployment_schoolId_idx_82b454d7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ContactEmployment_schoolId_idx_82b454d7\"",
+        "sql": "CREATE INDEX \"ContactEmployment_schoolId_idx_82b454d7\" ON \"public\".\"ContactEmployment\" (\"schoolId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ContactEmployment_schoolId_idx_82b454d7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ContactEmployment_schoolId_idx_82b454d7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ContactEmployment.ContactEmployment_contactId_fkey",
+    "label": "Add foreign key \"ContactEmployment_contactId_fkey\" on \"ContactEmployment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ContactEmployment_contactId_fkey",
+        "table": "ContactEmployment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ContactEmployment_contactId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ContactEmployment_contactId_fkey",
+          "public",
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ContactEmployment_contactId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ContactEmployment\"\nADD CONSTRAINT \"ContactEmployment_contactId_fkey\"\nFOREIGN KEY (\"contactId\")\nREFERENCES \"public\".\"Contact\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ContactEmployment_contactId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ContactEmployment_contactId_fkey",
+          "public",
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ContactEmployment.ContactEmployment_schoolId_fkey",
+    "label": "Add foreign key \"ContactEmployment_schoolId_fkey\" on \"ContactEmployment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ContactEmployment_schoolId_fkey",
+        "table": "ContactEmployment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ContactEmployment_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ContactEmployment_schoolId_fkey",
+          "public",
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ContactEmployment_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ContactEmployment\"\nADD CONSTRAINT \"ContactEmployment_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ContactEmployment_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ContactEmployment_schoolId_fkey",
+          "public",
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ]
+  }
+]

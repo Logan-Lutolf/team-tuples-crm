@@ -1,5 +1,7 @@
 'use server'
 
+import { participationStatus } from '@/lib/participation-status'
+
 import { db } from "@/prisma/db"
 import { recordInteraction } from "@/lib/record-interaction"
 import type { Scalars } from "@prisma/orm-postgres/components"
@@ -8,7 +10,6 @@ import { revalidatePath } from "next/cache"
 import { SchoolValidationError, schoolFieldLabel, schoolErrorMessage } from "./school-errors"
 
 type SchoolFields = Scalars<Models.public_School>
-type ParticipationFields = Scalars<Models.public_Participation>
 
 // TODO: Enforce the application's administrator permission policy.
 
@@ -56,7 +57,7 @@ function schoolData(form: FormData) {
             "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN",
             "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN",
         ]),
-        branchId: id(form, "branch"),
+        branchId: text(form, "branch", false) ? id(form, "branch") : null,
     }
 }
 
@@ -123,8 +124,11 @@ export async function editSchool(formData: FormData) {
 export async function deleteSchool(formData: FormData) {
     return schoolAction("Delete school", async () => {
         const schoolId = id(formData, "school-id")
-        // Let foreign-key constraints prevent deleting schools with dependent records.
+        // Database delete actions detach related records and remove join rows atomically.
         await db.orm.public.School.where({ id: schoolId }).delete()
+        revalidatePath('/contacts')
+        revalidatePath('/programs')
+        revalidatePath('/branches')
     })
 }
 
@@ -162,12 +166,10 @@ function participationData(form: FormData) {
     if (endDate && endDate < startDate) throw new SchoolValidationError("End date must be on or after the start date.")
     return {
         name: text(form, "participation-name"),
-        programId: id(form, "program-id"),
+        programId: text(form, "program-id", false) ? id(form, "program-id") : null,
         startDate,
         endDate,
-        status: choice<ParticipationFields["status"]>(form, "status", [
-            "PLANNED", "ONGOING", "COMPLETED", "CANCELLED",
-        ]),
+        status: participationStatus({ startDate, endDate, status: form.get('cancelled') === 'on' ? 'CANCELLED' : 'PLANNED' }, Date.now()),
     }
 }
 
@@ -196,8 +198,9 @@ export async function createSchoolParticipation(formData: FormData) {
 
 export async function editSchoolParticipation(formData: FormData) {
     return schoolAction("Update participation", async () => {
-        const where = { id: id(formData, "participation-id"), schoolId: id(formData, "school-id") }
-        const data = participationData(formData)
+        const originalSchool = formData.has('original-school-id') ? text(formData, 'original-school-id', false) : text(formData, 'school-id', false)
+        const where = { id: id(formData, "participation-id"), schoolId: originalSchool ? Number(originalSchool) : null }
+        const data = { ...participationData(formData), schoolId: text(formData, "school-id", false) ? id(formData, "school-id") : null }
         const employeeIds = participationEmployees(formData)
         await db.transaction(async tx => {
             const participation = await tx.orm.public.Participation.where(where).forUpdate().first()
@@ -215,12 +218,13 @@ export async function editSchoolParticipation(formData: FormData) {
 export async function deleteSchoolParticipation(formData: FormData) {
     return schoolAction("Delete participation", async () => {
         const participationId = id(formData, "participation-id")
-        const schoolId = id(formData, "school-id")
+        const schoolId = text(formData, "school-id", false) ? id(formData, "school-id") : null
         await db.transaction(async (tx) => {
             const participation = await tx.orm.public.Participation.where({
                 id: participationId, schoolId,
             }).first()
             if (!participation) throw new SchoolValidationError("This participation no longer exists for this school. Refresh the page.")
+            await tx.orm.public.ParticipationContacts.where({ participationId }).delete()
             await tx.orm.public.ParticipationEmployees.where({ participationId }).delete()
             await tx.orm.public.Participation.where({ id: participationId, schoolId }).delete()
         })
@@ -241,10 +245,10 @@ export async function recordSchoolInteraction(form: FormData) {
     })
 }
 
-export async function getSchoolDetails(schoolId: number, editing = false) {
+export async function getSchoolDetails(schoolId: number, editing = false, deferHistory = false) {
     if (!Number.isSafeInteger(schoolId) || schoolId <= 0) throw new Error("Invalid school ID.")
     const { loadSchoolDetails } = await import('./load-school-details')
-    return loadSchoolDetails(schoolId, editing === true)
+    return loadSchoolDetails(schoolId, editing === true, deferHistory === true)
 }
 
 export async function createSchoolContact(form: FormData) {
@@ -259,7 +263,7 @@ export async function createSchoolContact(form: FormData) {
             if (typeof value === 'string') contact.set(key, value)
         }
         contact.set('school-id', String(school.id))
-        contact.set('branch', String(school.branchId))
+        contact.set('branch', school.branchId === null ? '' : String(school.branchId))
         contact.set('region', school.region)
         const { createContact } = await import('../contacts/actions_contacts')
         const result = await createContact(contact)

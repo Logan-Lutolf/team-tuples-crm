@@ -13,11 +13,10 @@ are copied into assignments before `Employee.role` is dropped. Branch/program sc
 remain null because the old data did not record them. Existing participations receive
 editable names of the form `Participation #<id>`.
 
-Old `SchoolEmployees` rows are preserved by renaming the table to
-`LegacySchoolEmployees`. This archive is included in the contract; new contact history
-belongs in `Interaction`. No historical interaction timestamps, contacts, or communication
-modes are invented. Existing contact last-contacted summaries remain unchanged; future
-interaction writes must maintain these summaries in application code.
+School contact history is recorded in `Interaction`. Obsolete school–employee
+assignments have been removed from the active schema by a later migration. Existing
+contact last-contacted summaries remain unchanged; future interaction writes maintain
+these summaries in application code.
 
 Before applying, back up important data and confirm `.env.local` points to the intended
 database. Stop the development server, then run:
@@ -102,3 +101,4 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+

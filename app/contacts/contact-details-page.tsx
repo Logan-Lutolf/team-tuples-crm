@@ -1,11 +1,14 @@
 'use client'
+import { DeferredHistory } from '@/components/records/deferred-history'
+import { PageContent, PageHeader, PageTitle, PageDescription } from '@/components/records/page-content'
+import { RecordLink } from '@/components/records/record-link'
 
 import { useEffect, useState } from 'react'
-import { Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { ContactParticipations } from './contact-participations'
+import { ContactEmploymentHistory } from './forms/contact-employment-form'
 import { EditContactForm } from './forms/edit-contact'
 import { ContactActionForm } from './forms/contact-action-form'
 import { getContactDetails, recordContactInteraction } from './actions_contacts'
@@ -27,7 +30,7 @@ function ContactHistory({ data, editing, onSaved }: { data: Details; editing: bo
                     <label>Through (UTC)<Input type="date" value={before} onChange={e => setBefore(e.target.value)} /></label>
                 </div></>}
                 <Table><TableHeader><TableRow><TableHead>Date</TableHead><TableHead>Employee</TableHead><TableHead>School</TableHead><TableHead>Program</TableHead><TableHead>Communication</TableHead></TableRow></TableHeader>
-                    <TableBody>{records.map(i => <TableRow key={i.id}><TableCell>{date(i.contactedAt)}</TableCell><TableCell>{name(data.employees, i.employeeId)}</TableCell><TableCell>{name(data.schools, i.schoolId)}</TableCell><TableCell>{name(data.programs, i.programId)}</TableCell><TableCell>{i.mode.replaceAll('_', ' ')}</TableCell></TableRow>)}
+                    <TableBody>{records.map(i => <TableRow key={i.id}><TableCell>{date(i.contactedAt)}</TableCell><TableCell><RecordLink type="employees" id={i.employeeId}>{name(data.employees, i.employeeId)}</RecordLink></TableCell><TableCell><RecordLink type="schools" id={i.schoolId}>{name(data.schools, i.schoolId)}</RecordLink></TableCell><TableCell><RecordLink type="programs" id={i.programId}>{name(data.programs, i.programId)}</RecordLink></TableCell><TableCell>{i.mode.replaceAll('_', ' ')}</TableCell></TableRow>)}
                         {!records.length && <TableRow><TableCell colSpan={5}>No interactions{after || before ? ' in this date range' : ' recorded'}.</TableCell></TableRow>}
                     </TableBody>
                 </Table>
@@ -55,29 +58,27 @@ function ContactHistory({ data, editing, onSaved }: { data: Details; editing: bo
     </details>
 }
 
-export function ContactDetailsDialog({ contactId, contactName }: { contactId: number; contactName: string }) {
-    const [open, setOpen] = useState(false)
+export function ContactDetailsPage({ contactId, contactName, initialDetails }: { contactId: number; contactName: string; initialDetails?: Details }) {
     const [editing, setEditing] = useState(false)
-    const [data, setData] = useState<Details | null>(null)
+    const [data, setData] = useState<Details | null>(initialDetails ?? null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [revision, setRevision] = useState(0)
     useEffect(() => {
-        if (!open) return
+        if (initialDetails && revision === 0 && !editing) return
         let active = true
         setLoading(true)
         setError('')
-        getContactDetails(contactId, editing).then(result => { if (active) setData(result) })
+        getContactDetails(contactId, editing, true).then(result => { if (active) setData(result) })
             .catch(() => { if (active) setError('Could not load contact details.') })
             .finally(() => { if (active) setLoading(false) })
         return () => { active = false }
-    }, [open, contactId, editing, revision])
-    async function refresh() { setData(await getContactDetails(contactId, editing)) }
+    }, [contactId, editing, revision, initialDetails])
+    async function refresh() { setData(await getContactDetails(contactId, editing, true)) }
     const contact = data?.contact
-    return <Dialog open={open} onOpenChange={value => { setOpen(value); if (!value) { setEditing(false); setData(null) } }}>
-        <DialogTrigger render={<Button aria-label={`View details for ${contactName}`} />}><Eye /> View details</DialogTrigger>
-        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-[min(90vw,80rem)]">
-            <DialogHeader><DialogTitle>{editing ? 'Edit ' : ''}{contact?.name ?? contactName}</DialogTitle><DialogDescription>{editing ? 'Update contact fields, school relationships, and contact history.' : 'Contact information and related records.'}</DialogDescription></DialogHeader>
+    return <PageContent backHref="/contacts">
+
+            <PageHeader><PageTitle>{editing ? 'Edit ' : ''}{contact?.name ?? contactName}</PageTitle><PageDescription>{editing ? 'Update contact fields, school relationships, and contact history.' : 'Contact information and related records.'}</PageDescription></PageHeader>
             {error && <div role="alert">{error} <Button variant="outline" onClick={() => setRevision(r => r + 1)}>Try again</Button></div>}
             {loading ? <p role="status">Loading {editing ? 'editing options' : 'contact details'}…</p> : data && contact && <div className="grid gap-6">
                 {editing ? <>
@@ -85,15 +86,16 @@ export function ContactDetailsDialog({ contactId, contactName }: { contactId: nu
                     <EditContactForm {...contact} branches={data.branches} availableSchools={data.schools} onSaved={refresh} />
                 </> : <>
                     <dl className="grid gap-4 sm:grid-cols-2">
-                        {Object.entries({ Name: contact.name, Email: contact.email, Phone: contact.phone || '—', Role: contact.contactRole.replaceAll('_', ' '), Region: contact.region || '—', 'Street address': contact.address?.street || '—', City: contact.address?.city || '—', 'Postal code': contact.address?.zipCode || '—', Country: contact.address?.country || '—', Branch: name(data.branches, contact.branchId), Created: date(contact.createdAt), Updated: date(contact.updatedAt) }).map(([label, value]) => <div key={label}><dt className="text-sm text-muted-foreground">{label}</dt><dd className="break-words">{value}</dd></div>)}
+                        {Object.entries({ Name: contact.name, Email: contact.email, Phone: contact.phone || '—', Role: contact.contactRole.replaceAll('_', ' '), Region: contact.region || '—', 'Street address': contact.address?.street || '—', City: contact.address?.city || '—', 'Postal code': contact.address?.zipCode || '—', Country: contact.address?.country || '—', Branch: name(data.branches, contact.branchId), Created: date(contact.createdAt), Updated: date(contact.updatedAt) }).map(([label, value]) => <div key={label}><dt className="text-sm text-muted-foreground">{label}</dt><dd className="break-words">{label === 'Branch' ? <RecordLink type="branches" id={contact.branchId}>{value}</RecordLink> : value}</dd></div>)}
                         <div><dt className="text-sm text-muted-foreground">Last contacted</dt><dd>{contact.last_contacted_byId ? date(contact.last_contacted) : 'No recorded contact employee'}</dd></div>
-                        <div><dt className="text-sm text-muted-foreground">Last contacted by</dt><dd>{name(data.employees, contact.last_contacted_byId)}</dd></div>
+                        <div><dt className="text-sm text-muted-foreground">Last contacted by</dt><dd><RecordLink type="employees" id={contact.last_contacted_byId}>{name(data.employees, contact.last_contacted_byId)}</RecordLink></dd></div>
                     </dl>
-                    <details className="rounded-lg border" open><summary className="cursor-pointer p-4 font-semibold">School</summary><div className="border-t p-4"><div className="rounded-lg border bg-muted/20 p-4">{contact.schoolId ? name(data.schools, contact.schoolId) : 'No school assigned.'}</div></div></details>
+                    <details className="rounded-lg border" open><summary className="cursor-pointer p-4 font-semibold">School</summary><div className="border-t p-4"><div className="rounded-lg border bg-muted/20 p-4">{contact.schoolId ? <RecordLink type="schools" id={contact.schoolId}>{name(data.schools, contact.schoolId)}</RecordLink> : 'No school assigned.'}</div></div></details>
                 </>}
-                <ContactHistory data={data} editing={editing} onSaved={refresh} />
+                <ContactParticipations data={data} editing={editing} onSaved={refresh} />
+                <ContactEmploymentHistory data={data} editing={editing} onSaved={refresh} />
+                {editing ? <ContactHistory data={data} editing onSaved={refresh} /> : <DeferredHistory key={contact.updatedAt} type="contacts" id={contactId} />}
                 {!editing && <div className="flex justify-end border-t pt-4"><Button type="button" onClick={() => setEditing(true)}>Edit</Button></div>}
             </div>}
-        </DialogContent>
-    </Dialog>
+    </PageContent>
 }

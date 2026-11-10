@@ -1,0 +1,2151 @@
+[
+  {
+    "id": "alterNullability.dropNotNull.Contact.branchId",
+    "label": "Drop NOT NULL on \"Contact\".\"branchId\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "branchId",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"branchId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Contact",
+          "branchId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"branchId\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\" ALTER COLUMN \"branchId\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"branchId\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Contact",
+          "branchId",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.dropNotNull.ContactEmployment.schoolId",
+    "label": "Drop NOT NULL on \"ContactEmployment\".\"schoolId\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "schoolId",
+        "table": "ContactEmployment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"schoolId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "ContactEmployment",
+          "schoolId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"schoolId\"",
+        "sql": "ALTER TABLE \"public\".\"ContactEmployment\" ALTER COLUMN \"schoolId\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"schoolId\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "ContactEmployment",
+          "schoolId",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.dropNotNull.Interaction.contactId",
+    "label": "Drop NOT NULL on \"Interaction\".\"contactId\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "contactId",
+        "table": "Interaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"contactId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Interaction",
+          "contactId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"contactId\"",
+        "sql": "ALTER TABLE \"public\".\"Interaction\" ALTER COLUMN \"contactId\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"contactId\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Interaction",
+          "contactId",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.dropNotNull.Interaction.employeeId",
+    "label": "Drop NOT NULL on \"Interaction\".\"employeeId\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "employeeId",
+        "table": "Interaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"employeeId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Interaction",
+          "employeeId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"employeeId\"",
+        "sql": "ALTER TABLE \"public\".\"Interaction\" ALTER COLUMN \"employeeId\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"employeeId\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Interaction",
+          "employeeId",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.dropNotNull.Participation.programId",
+    "label": "Drop NOT NULL on \"Participation\".\"programId\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "programId",
+        "table": "Participation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"programId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Participation",
+          "programId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"programId\"",
+        "sql": "ALTER TABLE \"public\".\"Participation\" ALTER COLUMN \"programId\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"programId\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Participation",
+          "programId",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.dropNotNull.Participation.schoolId",
+    "label": "Drop NOT NULL on \"Participation\".\"schoolId\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "schoolId",
+        "table": "Participation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"schoolId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Participation",
+          "schoolId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"schoolId\"",
+        "sql": "ALTER TABLE \"public\".\"Participation\" ALTER COLUMN \"schoolId\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"schoolId\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Participation",
+          "schoolId",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.dropNotNull.School.branchId",
+    "label": "Drop NOT NULL on \"School\".\"branchId\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "branchId",
+        "table": "School"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"branchId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "School",
+          "branchId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"branchId\"",
+        "sql": "ALTER TABLE \"public\".\"School\" ALTER COLUMN \"branchId\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"branchId\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "School",
+          "branchId",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.Branch.Branch_chiefId_fkey",
+    "label": "Drop constraint \"Branch_chiefId_fkey\" on \"Branch\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Branch_chiefId_fkey",
+        "table": "Branch"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Branch_chiefId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Branch_chiefId_fkey",
+          "public",
+          "\"public\".\"Branch\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"Branch_chiefId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Branch\" DROP CONSTRAINT \"Branch_chiefId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Branch_chiefId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Branch_chiefId_fkey",
+          "public",
+          "\"public\".\"Branch\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Branch.Branch_chiefId_fkey",
+    "label": "Add foreign key \"Branch_chiefId_fkey\" on \"Branch\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Branch_chiefId_fkey",
+        "table": "Branch"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Branch_chiefId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Branch_chiefId_fkey",
+          "public",
+          "\"public\".\"Branch\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Branch_chiefId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Branch\"\nADD CONSTRAINT \"Branch_chiefId_fkey\"\nFOREIGN KEY (\"chiefId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Branch_chiefId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Branch_chiefId_fkey",
+          "public",
+          "\"public\".\"Branch\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.Contact.Contact_last_contacted_byId_fkey",
+    "label": "Drop constraint \"Contact_last_contacted_byId_fkey\" on \"Contact\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Contact_last_contacted_byId_fkey",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Contact_last_contacted_byId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_last_contacted_byId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"Contact_last_contacted_byId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\" DROP CONSTRAINT \"Contact_last_contacted_byId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Contact_last_contacted_byId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_last_contacted_byId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Contact.Contact_last_contacted_byId_fkey",
+    "label": "Add foreign key \"Contact_last_contacted_byId_fkey\" on \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Contact_last_contacted_byId_fkey",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Contact_last_contacted_byId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_last_contacted_byId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Contact_last_contacted_byId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\"\nADD CONSTRAINT \"Contact_last_contacted_byId_fkey\"\nFOREIGN KEY (\"last_contacted_byId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Contact_last_contacted_byId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_last_contacted_byId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.Contact.Contact_schoolId_fkey",
+    "label": "Drop constraint \"Contact_schoolId_fkey\" on \"Contact\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Contact_schoolId_fkey",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Contact_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_schoolId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"Contact_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\" DROP CONSTRAINT \"Contact_schoolId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Contact_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_schoolId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Contact.Contact_schoolId_fkey",
+    "label": "Add foreign key \"Contact_schoolId_fkey\" on \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Contact_schoolId_fkey",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Contact_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_schoolId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Contact_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\"\nADD CONSTRAINT \"Contact_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Contact_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_schoolId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.Contact.Contact_branchId_fkey",
+    "label": "Drop constraint \"Contact_branchId_fkey\" on \"Contact\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Contact_branchId_fkey",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Contact_branchId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_branchId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"Contact_branchId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\" DROP CONSTRAINT \"Contact_branchId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Contact_branchId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_branchId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Contact.Contact_branchId_fkey",
+    "label": "Add foreign key \"Contact_branchId_fkey\" on \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Contact_branchId_fkey",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Contact_branchId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_branchId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Contact_branchId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\"\nADD CONSTRAINT \"Contact_branchId_fkey\"\nFOREIGN KEY (\"branchId\")\nREFERENCES \"public\".\"Branch\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Contact_branchId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Contact_branchId_fkey",
+          "public",
+          "\"public\".\"Contact\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.ContactEmployment.ContactEmployment_contactId_fkey",
+    "label": "Drop constraint \"ContactEmployment_contactId_fkey\" on \"ContactEmployment\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ContactEmployment_contactId_fkey",
+        "table": "ContactEmployment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"ContactEmployment_contactId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ContactEmployment_contactId_fkey",
+          "public",
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"ContactEmployment_contactId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ContactEmployment\" DROP CONSTRAINT \"ContactEmployment_contactId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"ContactEmployment_contactId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ContactEmployment_contactId_fkey",
+          "public",
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ContactEmployment.ContactEmployment_contactId_fkey",
+    "label": "Add foreign key \"ContactEmployment_contactId_fkey\" on \"ContactEmployment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ContactEmployment_contactId_fkey",
+        "table": "ContactEmployment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ContactEmployment_contactId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ContactEmployment_contactId_fkey",
+          "public",
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ContactEmployment_contactId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ContactEmployment\"\nADD CONSTRAINT \"ContactEmployment_contactId_fkey\"\nFOREIGN KEY (\"contactId\")\nREFERENCES \"public\".\"Contact\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ContactEmployment_contactId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ContactEmployment_contactId_fkey",
+          "public",
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.ContactEmployment.ContactEmployment_schoolId_fkey",
+    "label": "Drop constraint \"ContactEmployment_schoolId_fkey\" on \"ContactEmployment\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ContactEmployment_schoolId_fkey",
+        "table": "ContactEmployment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"ContactEmployment_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ContactEmployment_schoolId_fkey",
+          "public",
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"ContactEmployment_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ContactEmployment\" DROP CONSTRAINT \"ContactEmployment_schoolId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"ContactEmployment_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ContactEmployment_schoolId_fkey",
+          "public",
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ContactEmployment.ContactEmployment_schoolId_fkey",
+    "label": "Add foreign key \"ContactEmployment_schoolId_fkey\" on \"ContactEmployment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ContactEmployment_schoolId_fkey",
+        "table": "ContactEmployment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ContactEmployment_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ContactEmployment_schoolId_fkey",
+          "public",
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ContactEmployment_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ContactEmployment\"\nADD CONSTRAINT \"ContactEmployment_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ContactEmployment_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ContactEmployment_schoolId_fkey",
+          "public",
+          "\"public\".\"ContactEmployment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.EmployeeAssignment.EmployeeAssignment_employeeId_fkey",
+    "label": "Drop constraint \"EmployeeAssignment_employeeId_fkey\" on \"EmployeeAssignment\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "EmployeeAssignment_employeeId_fkey",
+        "table": "EmployeeAssignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"EmployeeAssignment_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_employeeId_fkey",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"EmployeeAssignment_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeAssignment\" DROP CONSTRAINT \"EmployeeAssignment_employeeId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"EmployeeAssignment_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_employeeId_fkey",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.EmployeeAssignment.EmployeeAssignment_employeeId_fkey",
+    "label": "Add foreign key \"EmployeeAssignment_employeeId_fkey\" on \"EmployeeAssignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "EmployeeAssignment_employeeId_fkey",
+        "table": "EmployeeAssignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"EmployeeAssignment_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_employeeId_fkey",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"EmployeeAssignment_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeAssignment\"\nADD CONSTRAINT \"EmployeeAssignment_employeeId_fkey\"\nFOREIGN KEY (\"employeeId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"EmployeeAssignment_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_employeeId_fkey",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.EmployeeAssignment.EmployeeAssignment_branchId_fkey",
+    "label": "Drop constraint \"EmployeeAssignment_branchId_fkey\" on \"EmployeeAssignment\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "EmployeeAssignment_branchId_fkey",
+        "table": "EmployeeAssignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"EmployeeAssignment_branchId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_branchId_fkey",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"EmployeeAssignment_branchId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeAssignment\" DROP CONSTRAINT \"EmployeeAssignment_branchId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"EmployeeAssignment_branchId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_branchId_fkey",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.EmployeeAssignment.EmployeeAssignment_branchId_fkey",
+    "label": "Add foreign key \"EmployeeAssignment_branchId_fkey\" on \"EmployeeAssignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "EmployeeAssignment_branchId_fkey",
+        "table": "EmployeeAssignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"EmployeeAssignment_branchId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_branchId_fkey",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"EmployeeAssignment_branchId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeAssignment\"\nADD CONSTRAINT \"EmployeeAssignment_branchId_fkey\"\nFOREIGN KEY (\"branchId\")\nREFERENCES \"public\".\"Branch\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"EmployeeAssignment_branchId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_branchId_fkey",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.EmployeeAssignment.EmployeeAssignment_programId_fkey",
+    "label": "Drop constraint \"EmployeeAssignment_programId_fkey\" on \"EmployeeAssignment\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "EmployeeAssignment_programId_fkey",
+        "table": "EmployeeAssignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"EmployeeAssignment_programId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_programId_fkey",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"EmployeeAssignment_programId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeAssignment\" DROP CONSTRAINT \"EmployeeAssignment_programId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"EmployeeAssignment_programId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_programId_fkey",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.EmployeeAssignment.EmployeeAssignment_programId_fkey",
+    "label": "Add foreign key \"EmployeeAssignment_programId_fkey\" on \"EmployeeAssignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "EmployeeAssignment_programId_fkey",
+        "table": "EmployeeAssignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"EmployeeAssignment_programId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_programId_fkey",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"EmployeeAssignment_programId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeAssignment\"\nADD CONSTRAINT \"EmployeeAssignment_programId_fkey\"\nFOREIGN KEY (\"programId\")\nREFERENCES \"public\".\"Program\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"EmployeeAssignment_programId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_programId_fkey",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.Interaction.Interaction_employeeId_fkey",
+    "label": "Drop constraint \"Interaction_employeeId_fkey\" on \"Interaction\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Interaction_employeeId_fkey",
+        "table": "Interaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Interaction_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_employeeId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"Interaction_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Interaction\" DROP CONSTRAINT \"Interaction_employeeId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Interaction_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_employeeId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Interaction.Interaction_employeeId_fkey",
+    "label": "Add foreign key \"Interaction_employeeId_fkey\" on \"Interaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Interaction_employeeId_fkey",
+        "table": "Interaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Interaction_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_employeeId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Interaction_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Interaction\"\nADD CONSTRAINT \"Interaction_employeeId_fkey\"\nFOREIGN KEY (\"employeeId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Interaction_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_employeeId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.Interaction.Interaction_contactId_fkey",
+    "label": "Drop constraint \"Interaction_contactId_fkey\" on \"Interaction\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Interaction_contactId_fkey",
+        "table": "Interaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Interaction_contactId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_contactId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"Interaction_contactId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Interaction\" DROP CONSTRAINT \"Interaction_contactId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Interaction_contactId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_contactId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Interaction.Interaction_contactId_fkey",
+    "label": "Add foreign key \"Interaction_contactId_fkey\" on \"Interaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Interaction_contactId_fkey",
+        "table": "Interaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Interaction_contactId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_contactId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Interaction_contactId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Interaction\"\nADD CONSTRAINT \"Interaction_contactId_fkey\"\nFOREIGN KEY (\"contactId\")\nREFERENCES \"public\".\"Contact\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Interaction_contactId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_contactId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.Interaction.Interaction_schoolId_fkey",
+    "label": "Drop constraint \"Interaction_schoolId_fkey\" on \"Interaction\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Interaction_schoolId_fkey",
+        "table": "Interaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Interaction_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_schoolId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"Interaction_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Interaction\" DROP CONSTRAINT \"Interaction_schoolId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Interaction_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_schoolId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Interaction.Interaction_schoolId_fkey",
+    "label": "Add foreign key \"Interaction_schoolId_fkey\" on \"Interaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Interaction_schoolId_fkey",
+        "table": "Interaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Interaction_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_schoolId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Interaction_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Interaction\"\nADD CONSTRAINT \"Interaction_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Interaction_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_schoolId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.Interaction.Interaction_programId_fkey",
+    "label": "Drop constraint \"Interaction_programId_fkey\" on \"Interaction\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Interaction_programId_fkey",
+        "table": "Interaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Interaction_programId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_programId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"Interaction_programId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Interaction\" DROP CONSTRAINT \"Interaction_programId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Interaction_programId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_programId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Interaction.Interaction_programId_fkey",
+    "label": "Add foreign key \"Interaction_programId_fkey\" on \"Interaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Interaction_programId_fkey",
+        "table": "Interaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Interaction_programId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_programId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Interaction_programId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Interaction\"\nADD CONSTRAINT \"Interaction_programId_fkey\"\nFOREIGN KEY (\"programId\")\nREFERENCES \"public\".\"Program\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Interaction_programId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Interaction_programId_fkey",
+          "public",
+          "\"public\".\"Interaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.MunicipalityPrograms.MunicipalityPrograms_programId_fkey",
+    "label": "Drop constraint \"MunicipalityPrograms_programId_fkey\" on \"MunicipalityPrograms\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "MunicipalityPrograms_programId_fkey",
+        "table": "MunicipalityPrograms"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"MunicipalityPrograms_programId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MunicipalityPrograms_programId_fkey",
+          "public",
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"MunicipalityPrograms_programId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"MunicipalityPrograms\" DROP CONSTRAINT \"MunicipalityPrograms_programId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"MunicipalityPrograms_programId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MunicipalityPrograms_programId_fkey",
+          "public",
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.MunicipalityPrograms.MunicipalityPrograms_programId_fkey",
+    "label": "Add foreign key \"MunicipalityPrograms_programId_fkey\" on \"MunicipalityPrograms\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "MunicipalityPrograms_programId_fkey",
+        "table": "MunicipalityPrograms"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"MunicipalityPrograms_programId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MunicipalityPrograms_programId_fkey",
+          "public",
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"MunicipalityPrograms_programId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"MunicipalityPrograms\"\nADD CONSTRAINT \"MunicipalityPrograms_programId_fkey\"\nFOREIGN KEY (\"programId\")\nREFERENCES \"public\".\"Program\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"MunicipalityPrograms_programId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MunicipalityPrograms_programId_fkey",
+          "public",
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.MunicipalityPrograms.MunicipalityPrograms_municipalityId_fkey",
+    "label": "Drop constraint \"MunicipalityPrograms_municipalityId_fkey\" on \"MunicipalityPrograms\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "MunicipalityPrograms_municipalityId_fkey",
+        "table": "MunicipalityPrograms"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"MunicipalityPrograms_municipalityId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MunicipalityPrograms_municipalityId_fkey",
+          "public",
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"MunicipalityPrograms_municipalityId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"MunicipalityPrograms\" DROP CONSTRAINT \"MunicipalityPrograms_municipalityId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"MunicipalityPrograms_municipalityId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MunicipalityPrograms_municipalityId_fkey",
+          "public",
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.MunicipalityPrograms.MunicipalityPrograms_municipalityId_fkey",
+    "label": "Add foreign key \"MunicipalityPrograms_municipalityId_fkey\" on \"MunicipalityPrograms\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "MunicipalityPrograms_municipalityId_fkey",
+        "table": "MunicipalityPrograms"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"MunicipalityPrograms_municipalityId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MunicipalityPrograms_municipalityId_fkey",
+          "public",
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"MunicipalityPrograms_municipalityId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"MunicipalityPrograms\"\nADD CONSTRAINT \"MunicipalityPrograms_municipalityId_fkey\"\nFOREIGN KEY (\"municipalityId\")\nREFERENCES \"public\".\"Municipality\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"MunicipalityPrograms_municipalityId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MunicipalityPrograms_municipalityId_fkey",
+          "public",
+          "\"public\".\"MunicipalityPrograms\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.Participation.Participation_schoolId_fkey",
+    "label": "Drop constraint \"Participation_schoolId_fkey\" on \"Participation\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Participation_schoolId_fkey",
+        "table": "Participation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Participation_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Participation_schoolId_fkey",
+          "public",
+          "\"public\".\"Participation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"Participation_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Participation\" DROP CONSTRAINT \"Participation_schoolId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Participation_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Participation_schoolId_fkey",
+          "public",
+          "\"public\".\"Participation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Participation.Participation_schoolId_fkey",
+    "label": "Add foreign key \"Participation_schoolId_fkey\" on \"Participation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Participation_schoolId_fkey",
+        "table": "Participation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Participation_schoolId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Participation_schoolId_fkey",
+          "public",
+          "\"public\".\"Participation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Participation_schoolId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Participation\"\nADD CONSTRAINT \"Participation_schoolId_fkey\"\nFOREIGN KEY (\"schoolId\")\nREFERENCES \"public\".\"School\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Participation_schoolId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Participation_schoolId_fkey",
+          "public",
+          "\"public\".\"Participation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.Participation.Participation_programId_fkey",
+    "label": "Drop constraint \"Participation_programId_fkey\" on \"Participation\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Participation_programId_fkey",
+        "table": "Participation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Participation_programId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Participation_programId_fkey",
+          "public",
+          "\"public\".\"Participation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"Participation_programId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Participation\" DROP CONSTRAINT \"Participation_programId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Participation_programId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Participation_programId_fkey",
+          "public",
+          "\"public\".\"Participation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Participation.Participation_programId_fkey",
+    "label": "Add foreign key \"Participation_programId_fkey\" on \"Participation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Participation_programId_fkey",
+        "table": "Participation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Participation_programId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Participation_programId_fkey",
+          "public",
+          "\"public\".\"Participation\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Participation_programId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Participation\"\nADD CONSTRAINT \"Participation_programId_fkey\"\nFOREIGN KEY (\"programId\")\nREFERENCES \"public\".\"Program\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Participation_programId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Participation_programId_fkey",
+          "public",
+          "\"public\".\"Participation\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.ParticipationContacts.ParticipationContacts_participationId_fkey",
+    "label": "Drop constraint \"ParticipationContacts_participationId_fkey\" on \"ParticipationContacts\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ParticipationContacts_participationId_fkey",
+        "table": "ParticipationContacts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"ParticipationContacts_participationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationContacts_participationId_fkey",
+          "public",
+          "\"public\".\"ParticipationContacts\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"ParticipationContacts_participationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ParticipationContacts\" DROP CONSTRAINT \"ParticipationContacts_participationId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"ParticipationContacts_participationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationContacts_participationId_fkey",
+          "public",
+          "\"public\".\"ParticipationContacts\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ParticipationContacts.ParticipationContacts_participationId_fkey",
+    "label": "Add foreign key \"ParticipationContacts_participationId_fkey\" on \"ParticipationContacts\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ParticipationContacts_participationId_fkey",
+        "table": "ParticipationContacts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ParticipationContacts_participationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationContacts_participationId_fkey",
+          "public",
+          "\"public\".\"ParticipationContacts\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ParticipationContacts_participationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ParticipationContacts\"\nADD CONSTRAINT \"ParticipationContacts_participationId_fkey\"\nFOREIGN KEY (\"participationId\")\nREFERENCES \"public\".\"Participation\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ParticipationContacts_participationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationContacts_participationId_fkey",
+          "public",
+          "\"public\".\"ParticipationContacts\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.ParticipationContacts.ParticipationContacts_contactId_fkey",
+    "label": "Drop constraint \"ParticipationContacts_contactId_fkey\" on \"ParticipationContacts\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ParticipationContacts_contactId_fkey",
+        "table": "ParticipationContacts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"ParticipationContacts_contactId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationContacts_contactId_fkey",
+          "public",
+          "\"public\".\"ParticipationContacts\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"ParticipationContacts_contactId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ParticipationContacts\" DROP CONSTRAINT \"ParticipationContacts_contactId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"ParticipationContacts_contactId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationContacts_contactId_fkey",
+          "public",
+          "\"public\".\"ParticipationContacts\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ParticipationContacts.ParticipationContacts_contactId_fkey",
+    "label": "Add foreign key \"ParticipationContacts_contactId_fkey\" on \"ParticipationContacts\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ParticipationContacts_contactId_fkey",
+        "table": "ParticipationContacts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ParticipationContacts_contactId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationContacts_contactId_fkey",
+          "public",
+          "\"public\".\"ParticipationContacts\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ParticipationContacts_contactId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ParticipationContacts\"\nADD CONSTRAINT \"ParticipationContacts_contactId_fkey\"\nFOREIGN KEY (\"contactId\")\nREFERENCES \"public\".\"Contact\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ParticipationContacts_contactId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationContacts_contactId_fkey",
+          "public",
+          "\"public\".\"ParticipationContacts\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.ParticipationEmployees.ParticipationEmployees_participationId_fkey",
+    "label": "Drop constraint \"ParticipationEmployees_participationId_fkey\" on \"ParticipationEmployees\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ParticipationEmployees_participationId_fkey",
+        "table": "ParticipationEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"ParticipationEmployees_participationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationEmployees_participationId_fkey",
+          "public",
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"ParticipationEmployees_participationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ParticipationEmployees\" DROP CONSTRAINT \"ParticipationEmployees_participationId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"ParticipationEmployees_participationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationEmployees_participationId_fkey",
+          "public",
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ParticipationEmployees.ParticipationEmployees_participationId_fkey",
+    "label": "Add foreign key \"ParticipationEmployees_participationId_fkey\" on \"ParticipationEmployees\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ParticipationEmployees_participationId_fkey",
+        "table": "ParticipationEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ParticipationEmployees_participationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationEmployees_participationId_fkey",
+          "public",
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ParticipationEmployees_participationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ParticipationEmployees\"\nADD CONSTRAINT \"ParticipationEmployees_participationId_fkey\"\nFOREIGN KEY (\"participationId\")\nREFERENCES \"public\".\"Participation\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ParticipationEmployees_participationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationEmployees_participationId_fkey",
+          "public",
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.ParticipationEmployees.ParticipationEmployees_employeeId_fkey",
+    "label": "Drop constraint \"ParticipationEmployees_employeeId_fkey\" on \"ParticipationEmployees\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ParticipationEmployees_employeeId_fkey",
+        "table": "ParticipationEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"ParticipationEmployees_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationEmployees_employeeId_fkey",
+          "public",
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"ParticipationEmployees_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ParticipationEmployees\" DROP CONSTRAINT \"ParticipationEmployees_employeeId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"ParticipationEmployees_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationEmployees_employeeId_fkey",
+          "public",
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ParticipationEmployees.ParticipationEmployees_employeeId_fkey",
+    "label": "Add foreign key \"ParticipationEmployees_employeeId_fkey\" on \"ParticipationEmployees\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ParticipationEmployees_employeeId_fkey",
+        "table": "ParticipationEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ParticipationEmployees_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationEmployees_employeeId_fkey",
+          "public",
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ParticipationEmployees_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ParticipationEmployees\"\nADD CONSTRAINT \"ParticipationEmployees_employeeId_fkey\"\nFOREIGN KEY (\"employeeId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ParticipationEmployees_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ParticipationEmployees_employeeId_fkey",
+          "public",
+          "\"public\".\"ParticipationEmployees\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropConstraint.School.School_branchId_fkey",
+    "label": "Drop constraint \"School_branchId_fkey\" on \"School\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "School_branchId_fkey",
+        "table": "School"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"School_branchId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "School_branchId_fkey",
+          "public",
+          "\"public\".\"School\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"School_branchId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"School\" DROP CONSTRAINT \"School_branchId_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"School_branchId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "School_branchId_fkey",
+          "public",
+          "\"public\".\"School\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.School.School_branchId_fkey",
+    "label": "Add foreign key \"School_branchId_fkey\" on \"School\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "School_branchId_fkey",
+        "table": "School"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"School_branchId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "School_branchId_fkey",
+          "public",
+          "\"public\".\"School\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"School_branchId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"School\"\nADD CONSTRAINT \"School_branchId_fkey\"\nFOREIGN KEY (\"branchId\")\nREFERENCES \"public\".\"Branch\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"School_branchId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "School_branchId_fkey",
+          "public",
+          "\"public\".\"School\""
+        ]
+      }
+    ]
+  }
+]

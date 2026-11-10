@@ -1,0 +1,39 @@
+[
+  {
+    "id": "dropTable.LegacySchoolEmployees",
+    "label": "Drop table \"LegacySchoolEmployees\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "LegacySchoolEmployees"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"LegacySchoolEmployees\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LegacySchoolEmployees\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop table \"LegacySchoolEmployees\"",
+        "sql": "DROP TABLE \"public\".\"LegacySchoolEmployees\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"LegacySchoolEmployees\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LegacySchoolEmployees\""
+        ]
+      }
+    ]
+  }
+]

@@ -1,4 +1,5 @@
 'use server'
+import { timeDetails } from '@/lib/detail-timing'
 import { db } from '@/prisma/db'
 import { revalidatePath } from 'next/cache'
 
@@ -32,7 +33,7 @@ export async function deleteMunicipality(form: FormData) {
     if (form.get('confirmation') !== 'delete') return { error: 'Type delete to confirm.' }
     try { await db.orm.public.Municipality.where({ id: id(form.get('id')) }).delete() }
     catch (error) {
-        if (error && typeof error === 'object' && 'sqlState' in error && error.sqlState === '23503') return { error: 'Remove the sponsored program links before deleting this municipality.' }
+        if (error && typeof error === 'object' && 'sqlState' in error && error.sqlState === '23503') return { error: 'Could not clear sponsorship links. Confirm the automatic-deletion migration has been applied and try again.' }
         return { error: 'Could not delete municipality. Refresh and try again.' }
     }
     refresh()
@@ -41,10 +42,10 @@ export async function deleteMunicipality(form: FormData) {
 
 export async function getMunicipalityDetails(municipalityId: number, editing = false) {
     municipalityId = id(municipalityId)
-    const [municipality, links] = await Promise.all([
+    const [municipality, links] = await timeDetails('municipalities:query-group-1', () => Promise.all([
         db.orm.public.Municipality.where({ id: municipalityId }).first(),
         db.orm.public.MunicipalityPrograms.where({ municipalityId }).all().toArray(),
-    ])
+    ]))
     if (!municipality) throw new Error('Municipality not found')
     const ids = links.map(link => link.programId)
     const programs = editing ? await db.orm.public.Program.select('id', 'name', 'description').orderBy(p => p.name.asc()).all().toArray()

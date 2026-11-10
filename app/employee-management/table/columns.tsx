@@ -1,4 +1,5 @@
 'use client'
+import { RecordLink } from '@/components/records/record-link'
 
 import { createColumnHelper } from "@tanstack/react-table"
 import { type DataTableFeatures } from "../../../components/ui/data-table-features"
@@ -16,6 +17,7 @@ export type Employee = {
     id: number,
     name: string,
     email: string,
+    phone?: string | null,
     roles: Roles
     pfpImgUrl?: string
 }
@@ -36,6 +38,7 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor("name", {
         header: "Name",
+        cell: ({ row }) => <RecordLink type="employees" id={row.original.id}>{row.original.name}</RecordLink>,
     }),
     columnHelper.accessor("email", {
         header: "Email",
@@ -43,13 +46,9 @@ export const columns = columnHelper.columns([
     columnHelper.accessor("roles", {
         header: "Roles",
         cell: ({ row }) => {
-            return ( // Fix width to avoid overflow??
-                <div className="w-full overflow-x-auto">
-                    <ScrollArea aria-orientation="horizontal">
-                        {row.original.roles.map((r) => {
-                            return <Badge key={r} variant="outline" className="mr-1">{r}</Badge>
-                        })}
-                    </ScrollArea>
+            return (
+                <div className="flex flex-wrap justify-center gap-1">
+                    {row.original.roles.map(role => <Badge key={role} variant="outline" className="max-w-full whitespace-normal break-words">{role.replaceAll('_', ' ')}</Badge>)}
                 </div>
                 
             )
@@ -57,6 +56,7 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.display({
         id: "actions",
+        header: "Actions",
         cell: ({ row }) => {
             return <ActionsCell employee={row.original} />
         },
