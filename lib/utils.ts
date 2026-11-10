@@ -9,3 +9,14 @@ export function showToast(title: string, description: string, type: "success" | 
         type: type,
     });
 }
+
+export function nameInitials(name: string) {
+    const splitName = name.split(" ")
+    
+    var initials: string = ""
+    for (let i = 0; i < splitName.length; i++) {
+        initials += splitName[i].substring(0,1).toUpperCase()
+    }
+
+    return initials
+}

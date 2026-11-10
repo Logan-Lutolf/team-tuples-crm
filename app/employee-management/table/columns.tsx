@@ -7,6 +7,9 @@ import { ActionsCell } from "./actions-cell"
 import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
 import { Badge } from "@/components/ui/badge"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { nameInitials } from "@/lib/utils"
 
 type Roles = Scalars<Models.public_Employee>["roles"]
 
@@ -16,11 +19,23 @@ export type Employee = {
     email: string,
     phone?: string | null,
     roles: Roles
+    pfpImgUrl?: string
 }
 
 const columnHelper = createColumnHelper<DataTableFeatures, Employee>()
 
 export const columns = columnHelper.columns([
+    columnHelper.display({
+        id: "pfp",
+        cell: ({ row }) => {
+            return (
+                <Avatar>
+                    <AvatarImage src={row.original.pfpImgUrl} />
+                    <AvatarFallback>{nameInitials(String(row.original.name))}</AvatarFallback>
+                </Avatar>
+            )
+        },
+    }),
     columnHelper.accessor("name", {
         header: "Name",
         cell: ({ row }) => <RecordLink type="employees" id={row.original.id}>{row.original.name}</RecordLink>,

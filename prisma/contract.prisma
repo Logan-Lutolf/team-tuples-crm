@@ -66,7 +66,6 @@ enum Role {
   STUDIO_LEAD
   LECTURER
   METHODOLOGY_LEAD
-
 }
 
 enum ProgramStatus {
@@ -108,6 +107,7 @@ model Employee {
   name      String
   email     String   @unique
   password  String
+  pfpImgUrl String?
   phone     String?
   address   Address?
   region   Region?
@@ -115,7 +115,7 @@ model Employee {
 
   is_online  Boolean  @default(false)
   // remove this, because we might add EmployeeJobRole table later?
-  roles      Role[] 
+  roles      Role[]
 
   assignments EmployeeAssignment[]
   interactions Interaction[]
