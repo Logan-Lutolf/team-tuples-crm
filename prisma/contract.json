@@ -915,7 +915,7 @@
                 }
               },
               "pfpImgUrl": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -2621,7 +2621,7 @@
                 "pfpImgUrl": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "phone": {
                   "codecId": "pg/text@1",
@@ -3758,7 +3758,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "7e38569e2dd85e4df5baa06455f7ceced26cd7d8b5fa2e576a5f4d79e533f996"
+    "storageHash": "7df83bf378c9e77aa7a1288e9351e396beefb8f71c77c6d7e0273b03e96631d6"
   },
   "execution": {
     "executionHash": "49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353",
