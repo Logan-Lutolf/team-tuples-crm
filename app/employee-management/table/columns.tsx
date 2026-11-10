@@ -7,7 +7,6 @@ import { ActionsCell } from "./actions-cell"
 import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
 import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 type Roles = Scalars<Models.public_Employee>["roles"]
 
@@ -15,6 +14,7 @@ export type Employee = {
     id: number,
     name: string,
     email: string,
+    phone?: string | null,
     roles: Roles
 }
 
@@ -31,13 +31,9 @@ export const columns = columnHelper.columns([
     columnHelper.accessor("roles", {
         header: "Roles",
         cell: ({ row }) => {
-            return ( // Fix width to avoid overflow??
-                <div className="w-full overflow-x-auto">
-                    <ScrollArea aria-orientation="horizontal">
-                        {row.original.roles.map((r) => {
-                            return <Badge key={r} variant="outline" className="mr-1">{r}</Badge>
-                        })}
-                    </ScrollArea>
+            return (
+                <div className="flex flex-wrap justify-center gap-1">
+                    {row.original.roles.map(role => <Badge key={role} variant="outline" className="max-w-full whitespace-normal break-words">{role.replaceAll('_', ' ')}</Badge>)}
                 </div>
                 
             )
@@ -45,6 +41,7 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.display({
         id: "actions",
+        header: "Actions",
         cell: ({ row }) => {
             return <ActionsCell employee={row.original} />
         },

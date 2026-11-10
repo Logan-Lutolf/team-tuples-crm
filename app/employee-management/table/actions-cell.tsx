@@ -6,13 +6,13 @@ import { useState } from "react"
 import { EditEmployeeForm } from "../forms/edit-employee-form"
 import { Button } from "@/components/ui/button"
 import { DeleteEmployeeForm } from "../forms/delete-form"
-import { Scalars } from "@prisma/orm-postgres/components"
-import { Models } from "@/prisma/contract"
-
-type Roles = Scalars<Models.public_Employee>["roles"]
+import { PageActionLink } from "@/components/records/page-action-link"
+import type { Employee } from "./columns"
 
 
-export function ActionsCell({employee}: {employee: { id: number, name: string, email: string, role: string, phone: string}}) {
+
+
+export function ActionsCell({employee}: {employee: Employee}) {
     const router = useRouter()
     const [editOpen, setEditOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
@@ -21,9 +21,12 @@ export function ActionsCell({employee}: {employee: { id: number, name: string, e
                     View profile will be a link to the employee's profile page using dynamic routes in Nextjs
                 */
             <>
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                <PageActionLink href={`/details/employees/${employee.id}`}>View details</PageActionLink>
+                <Button type="button" variant="destructive" onClick={() => setDeleteOpen(true)}>Delete</Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger
-                        render={<Button variant="ghost" className="h-8 w-8 p-0">
+                        render={<Button variant="ghost" className="h-8 w-8 p-0" aria-label={`More actions for ${employee.name}`}>
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>}
                     />
@@ -49,6 +52,7 @@ export function ActionsCell({employee}: {employee: { id: number, name: string, e
                         </DropdownMenuGroup>
                     </DropdownMenuContent>
                 </DropdownMenu>
+                </div>
 
                 {editOpen && (
                     <Dialog open={editOpen} onOpenChange={setEditOpen}>
