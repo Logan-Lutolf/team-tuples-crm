@@ -33,7 +33,7 @@ export async function login(prevState: any, formData: FormData) {
 
         if (!employee) {
             console.log("Email or password is incorrect.")
-            return
+            return "Email or password is incorrect."
         }
 
         id = employee.id

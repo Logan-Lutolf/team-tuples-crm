@@ -15,6 +15,7 @@ export function LoginForm() {
             <CardContent>
                 <CardTitle>Login</CardTitle>
                 <form action={loginAction} className="flex flex-col gap-2">
+                    {state === "Email or password is incorrect." && <span className="text-destructive">Email or password is incorrect.</span>}
                     <Field>
                     <FieldLabel>Enter email:</FieldLabel>
                     <Input type="email" name="email" required/>
