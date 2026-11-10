@@ -3,7 +3,6 @@ import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers"
 import { Scalars } from "@prisma/orm-postgres/components";
 import { Models } from "@/prisma/contract";
-import { Session } from "inspector/promises";
 
 type Roles = Scalars<Models.public_Employee>["roles"]
 
