@@ -6,6 +6,7 @@ import { redirect } from "next/navigation"
 import { AdminDashboardContainer } from "./containers/admin-dashboard-container"
 
 
+
 type Roles = Scalars<Models.public_Employee>["roles"]
 
 export default async function Dashboard() {
@@ -15,11 +16,9 @@ export default async function Dashboard() {
     try {
         const cookiesStore = await cookies()
         const session = cookiesStore.get("session")?.value
-
         const payload = await decrypt(session)
-        console.log("2. session payload:", payload)
+
         roles = payload?.userRoles?? null
-        console.log(payload?.userId)
     }
     catch (error) {
         console.log("Error reading session cookie: ", error)
@@ -28,6 +27,7 @@ export default async function Dashboard() {
     if (!roles) {
         redirect("/login")
     }
+        
 
     return (
         <>

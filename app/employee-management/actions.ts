@@ -29,6 +29,7 @@ export async function createEmployee(formData: FormData) {
             phone: phone,
             password: otp,
             roles: roles,
+            pfpImgUrl: ""
         })
         revalidatePath("/employee-management")
         return { success: true, message: 'Employee created.' }
@@ -89,3 +90,28 @@ export async function deleteEmployee(form: FormData) {
     } catch { return { success: false, message: 'Could not delete employee. Check the database connection and automatic-deletion migration.' } }
 }
 
+export async function changePassword(formData: FormData) {
+    const userId = formData.get("employee-id") as string
+    const newPassword = formData.get("new-password") as string
+    const confirmPassword = formData.get("confirm-password") as string
+
+    if (newPassword !== confirmPassword) 
+        return {success: false, message: "Passwords do not match."}
+    else {
+        try {
+            const employee = await db.orm.public.Employee
+            .where({id: Number(userId)})
+            .update({password: newPassword, mustChangePassword: false})
+
+            if (employee) {
+                revalidatePath("/dashboard")
+                return {success: "success", message: "Password changed successfully."}
+            }
+            else
+                return {success: "error", message: "Error changing password."}
+        }
+        catch (error) {
+            return {success: "error", message: "Failed to change password: " + error}
+        }
+    }
+}

@@ -12,7 +12,8 @@ const encodedKey = new TextEncoder().encode(secretKey)
 
 export async function createSession(userId: number, userRoles: Roles) {
     const expiresAt = new Date(Date.now() + 7 * 24 *60 *60 * 1000)
-    const session = await encrypt({userId, expiresAt, userRoles});
+    const mustChangePassword = true
+    const session = await encrypt({userId, expiresAt, userRoles, mustChangePassword});
 
     // Create cookie using session
     (await cookies()).set("session", session, {
@@ -33,6 +34,7 @@ type SessionPayload = {
     userId: number,
     expiresAt: Date
     userRoles: Roles
+    mustChangePassword: boolean
 }
 
 export async function encrypt(payload: SessionPayload) {

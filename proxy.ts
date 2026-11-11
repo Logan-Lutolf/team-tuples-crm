@@ -18,8 +18,10 @@ export default async function proxy(req: NextRequest) {
   if (isProtected && !payload?.userId) {
     return NextResponse.redirect(new URL("/login", req.nextUrl))
   }
+
   if (isPublic && payload?.userId) {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl))
   }
+
   return NextResponse.next()
 }
