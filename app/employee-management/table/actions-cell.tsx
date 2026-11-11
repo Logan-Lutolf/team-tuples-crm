@@ -22,8 +22,7 @@ export function ActionsCell({employee}: {employee: Employee}) {
                 */
             <>
                 <div className="flex flex-wrap items-center justify-center gap-2">
-                <PageActionLink href={`/details/employees/${employee.id}`}>View details</PageActionLink>
-                <Button type="button" variant="destructive" onClick={() => setDeleteOpen(true)}>Delete</Button>
+                <PageActionLink href={`/details/employees/${employee.id}`}>View Details</PageActionLink>
                 <DropdownMenu>
                     <DropdownMenuTrigger
                         render={<Button variant="ghost" className="h-8 w-8 p-0" aria-label={`More actions for ${employee.name}`}>
