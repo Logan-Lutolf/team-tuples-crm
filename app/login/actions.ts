@@ -16,6 +16,7 @@ export async function login(prevState: any, formData: FormData) {
 
     let id = -1
     let roles: Roles = []
+    let mustChangePassword
 
     // Checking that they are not undefined (will change to zod validation later)
     if (!email || !password) {
@@ -29,23 +30,23 @@ export async function login(prevState: any, formData: FormData) {
             .where((p) => and(p.email.eq(email), p.password.eq(password)))
             .first()
         
-            console.log("1. DB row:", employee?.id, employee?.email, employee?.roles)
-
         if (!employee) {
             console.log("Email or password is incorrect.")
-            return
+            return "Email or password is incorrect."
         }
 
         id = employee.id
         roles = employee.roles
+        mustChangePassword = employee.mustChangePassword
         
-        // Put employee role into local storage
     }
     catch (error) {
         console.log("Error: ", error)
     }
 
     await createSession(id, roles)
+    
+    if(mustChangePassword) redirect("/otp-page")
     redirect("/dashboard")
 }
 

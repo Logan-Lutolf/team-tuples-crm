@@ -111,6 +111,7 @@ model Employee {
   phone     String?
   address   Address?
   region   Region?
+  mustChangePassword  Boolean @default(true)
 
 
   is_online  Boolean  @default(false)

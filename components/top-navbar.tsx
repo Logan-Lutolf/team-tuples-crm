@@ -44,7 +44,7 @@ export function TopNavbar({employee}: TopNavbarProps) {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Searches</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="cursor-pointer">Searches</NavigationMenuTrigger>
           <NavigationMenuContent>
             {searchlinks.map((link) => {
               return (

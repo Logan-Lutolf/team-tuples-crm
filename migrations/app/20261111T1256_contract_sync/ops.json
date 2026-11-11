@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.Employee.mustChangePassword",
+    "label": "Add column \"mustChangePassword\" to \"Employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "mustChangePassword",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"mustChangePassword\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "mustChangePassword"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"mustChangePassword\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ADD COLUMN \"mustChangePassword\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"mustChangePassword\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "mustChangePassword"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Employee.pfpImgUrl",
+    "label": "Add column \"pfpImgUrl\" to \"Employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "pfpImgUrl",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"pfpImgUrl\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "pfpImgUrl"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"pfpImgUrl\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ADD COLUMN \"pfpImgUrl\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"pfpImgUrl\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "pfpImgUrl"
+        ]
+      }
+    ]
+  }
+]

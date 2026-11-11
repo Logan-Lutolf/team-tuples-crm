@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'7e38569e2dd85e4df5baa06455f7ceced26cd7d8b5fa2e576a5f4d79e533f996'>;
+  StorageHashBase<'979948870a200e311a51339bb708e6151c840bede61d7edf522b5ccf900c48b9'>;
 export type ExecutionHash =
   ExecutionHashBase<'49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353'>;
 export type ProfileHash =
@@ -322,9 +322,10 @@ export type FieldOutputTypes = {
       readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly is_online: CodecTypes['pg/bool@1']['output'];
+      readonly mustChangePassword: CodecTypes['pg/bool@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly password: CodecTypes['pg/text@1']['output'];
-      readonly pfpImgUrl: CodecTypes['pg/text@1']['output'];
+      readonly pfpImgUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly region:
         | 'ONE'
@@ -549,9 +550,10 @@ export type FieldInputTypes = {
       readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly is_online: CodecTypes['pg/bool@1']['input'];
+      readonly mustChangePassword: CodecTypes['pg/bool@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly password: CodecTypes['pg/text@1']['input'];
-      readonly pfpImgUrl: CodecTypes['pg/text@1']['input'];
+      readonly pfpImgUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly region:
         | 'ONE'
@@ -776,9 +778,10 @@ export type StorageColumnTypes = {
       readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly is_online: CodecTypes['pg/bool@1']['output'];
+      readonly mustChangePassword: CodecTypes['pg/bool@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly password: CodecTypes['pg/text@1']['output'];
-      readonly pfpImgUrl: CodecTypes['pg/text@1']['output'];
+      readonly pfpImgUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly region:
         | 'ONE'
@@ -1003,9 +1006,10 @@ export type StorageColumnInputTypes = {
       readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly is_online: CodecTypes['pg/bool@1']['input'];
+      readonly mustChangePassword: CodecTypes['pg/bool@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly password: CodecTypes['pg/text@1']['input'];
-      readonly pfpImgUrl: CodecTypes['pg/text@1']['input'];
+      readonly pfpImgUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly region:
         | 'ONE'
@@ -1251,9 +1255,10 @@ export namespace Models {
     email: CodecTypes['pg/text@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
     is_online: CodecTypes['pg/bool@1']['output'];
+    mustChangePassword: CodecTypes['pg/bool@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
     password: CodecTypes['pg/text@1']['output'];
-    pfpImgUrl: CodecTypes['pg/text@1']['output'];
+    pfpImgUrl: CodecTypes['pg/text@1']['output'] | null;
     phone: CodecTypes['pg/text@1']['output'] | null;
     region:
       | 'ONE'
@@ -1826,6 +1831,16 @@ type ContractBase = Omit<
                   };
                   readonly many: false;
                 };
+                readonly mustChangePassword: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                  readonly many: false;
+                };
                 readonly name: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -1841,7 +1856,7 @@ type ContractBase = Omit<
                 readonly pfpImgUrl: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly phone: {
@@ -3066,6 +3081,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
               };
+              readonly mustChangePassword: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
               readonly name: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -3075,7 +3094,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly pfpImgUrl: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly phone: {
@@ -3154,6 +3173,7 @@ type ContractBase = Omit<
                 readonly email: { readonly column: 'email' };
                 readonly id: { readonly column: 'id' };
                 readonly is_online: { readonly column: 'is_online' };
+                readonly mustChangePassword: { readonly column: 'mustChangePassword' };
                 readonly name: { readonly column: 'name' };
                 readonly password: { readonly column: 'password' };
                 readonly pfpImgUrl: { readonly column: 'pfpImgUrl' };
