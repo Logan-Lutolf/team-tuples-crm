@@ -4,7 +4,7 @@ import { getSchoolDetails } from '@/app/schools/actions_schools'
 import { getContactDetails } from '@/app/contacts/actions_contacts'
 import { getBranchDetails } from '@/app/branches/actions'
 import { getProgramDetails } from '@/app/programs/actions'
-import { getMunicipalityDetails } from '@/app/municipalities/actions'
+import { getMunicipalityDetails, getParticipationDetails } from '@/app/municipalities/actions'
 import { timeDetails } from '@/lib/detail-timing'
 import { isRecordType } from '@/lib/record-links'
 import { SchoolDetailsPage } from '@/app/schools/school-details-page'
@@ -13,6 +13,7 @@ import { BranchDetailsPage } from '@/app/branches/branch-details-page'
 import { ProgramPageContent } from '@/app/programs/program-page-content'
 import { MunicipalityPageContent } from '@/app/municipalities/municipality-page-content'
 import { EmployeeDetails } from '@/app/employee-management/employee-details'
+import { ParticipationPageContent } from '@/app/program-instances/instance-page-content'
 
 async function loadRecord<T>(label: string, load: () => Promise<T>) {
     try { return await timeDetails(label, load) }
@@ -26,7 +27,7 @@ async function loadRecord<T>(label: string, load: () => Promise<T>) {
 }
 
 export default async function RecordPage({ params }: { params: Promise<{ type: string; id: string }> }) {
-    const { type, id: rawId } = await params
+    var { type, id: rawId } = await params
     const id = Number(rawId)
     if (!isRecordType(type) || !/^\d+$/.test(rawId) || !Number.isSafeInteger(id) || id <= 0) notFound()
     let content
@@ -45,7 +46,11 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
         } else if (type === 'municipalities') {
             const details = await loadRecord('municipalities', () => getMunicipalityDetails(id))
             content = <MunicipalityPageContent key={id} municipality={details.municipality} mode="view" initialDetails={details} />
+        } else if (type === 'participations') {
+            const details = await loadRecord('participations', () => getParticipationDetails(id))
+            content = <ParticipationPageContent key={id} municipality={details?.participationData} mode="view" initialDetails={details} />
         } else content = <EmployeeDetails employeeId={id} />
-    const list = type === 'employees' ? '/employee-management' : `/${type}`
+    var list = type === 'employees' ? '/employee-management' : `/${type}`
+    list = type === 'participations' ? '/program-instances' : `/${type}`
     return <div className="m-10 grid gap-6"><Link href={list} className="w-fit underline">Back to {type}</Link><div>{content}</div></div>
 }
