@@ -8,6 +8,7 @@ type Address {
   zipCode String
 }
 
+
 enum Region {
   ONE
   TWO
@@ -25,6 +26,8 @@ enum Region {
   FOURTEEN
 }
 
+
+
 enum Branches {
   ONE
   TWO
@@ -34,6 +37,11 @@ enum Branches {
   SIX
   SEVEN
   EIGHT
+}
+
+enum ProgramType {
+  STORIES_OF_OUR_NEIGHBORS
+  MEMORY_OF_NATIONS_THEATRE
 }
 
 enum SchoolType {
@@ -194,6 +202,7 @@ model Participation {
 
   program Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
   programId Int?
+  programType ProgramType
 }
 
 // shows an employee is working on a participation

@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'979948870a200e311a51339bb708e6151c840bede61d7edf522b5ccf900c48b9'>;
+  StorageHashBase<'8a0661ecccf690ecf8676bcd54b217e73117ca11007761bcec1de9fbf1c3dbe8'>;
 export type ExecutionHash =
   ExecutionHashBase<'49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353'>;
 export type ProfileHash =
@@ -423,6 +423,7 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly programId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly programType: 'STORIES_OF_OUR_NEIGHBORS' | 'MEMORY_OF_NATIONS_THEATRE';
       readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
       readonly startDate: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
@@ -651,6 +652,7 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly programId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly programType: 'STORIES_OF_OUR_NEIGHBORS' | 'MEMORY_OF_NATIONS_THEATRE';
       readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
       readonly startDate: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
@@ -879,6 +881,7 @@ export type StorageColumnTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly programId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly programType: 'STORIES_OF_OUR_NEIGHBORS' | 'MEMORY_OF_NATIONS_THEATRE';
       readonly schoolId: CodecTypes['pg/int4@1']['output'] | null;
       readonly startDate: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
@@ -1107,6 +1110,7 @@ export type StorageColumnInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly programId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly programType: 'STORIES_OF_OUR_NEIGHBORS' | 'MEMORY_OF_NATIONS_THEATRE';
       readonly schoolId: CodecTypes['pg/int4@1']['input'] | null;
       readonly startDate: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
@@ -1375,6 +1379,7 @@ export namespace Models {
     id: CodecTypes['pg/int4@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
     programId: CodecTypes['pg/int4@1']['output'] | null;
+    programType: 'STORIES_OF_OUR_NEIGHBORS' | 'MEMORY_OF_NATIONS_THEATRE';
     schoolId: CodecTypes['pg/int4@1']['output'] | null;
     startDate: CodecTypes['pg/timestamptz-string@1']['output'];
     status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
@@ -2270,6 +2275,12 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly programType: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
                 readonly schoolId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
@@ -2635,6 +2646,10 @@ type ContractBase = Omit<
             readonly ProgramStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['PLANNED', 'ONGOING', 'COMPLETED', 'CANCELLED'];
+            };
+            readonly ProgramType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['STORIES_OF_OUR_NEIGHBORS', 'MEMORY_OF_NATIONS_THEATRE'];
             };
             readonly Region: {
               readonly kind: 'valueSet';
@@ -3465,6 +3480,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly programType: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly schoolId: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -3537,6 +3556,7 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
                 readonly programId: { readonly column: 'programId' };
+                readonly programType: { readonly column: 'programType' };
                 readonly schoolId: { readonly column: 'schoolId' };
                 readonly startDate: { readonly column: 'startDate' };
                 readonly status: { readonly column: 'status' };
@@ -3924,6 +3944,19 @@ type ContractBase = Omit<
               { readonly name: 'CANCELLED'; readonly value: 'CANCELLED' },
             ];
           };
+          readonly ProgramType: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              {
+                readonly name: 'STORIES_OF_OUR_NEIGHBORS';
+                readonly value: 'STORIES_OF_OUR_NEIGHBORS';
+              },
+              {
+                readonly name: 'MEMORY_OF_NATIONS_THEATRE';
+                readonly value: 'MEMORY_OF_NATIONS_THEATRE';
+              },
+            ];
+          };
           readonly Region: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -4028,6 +4061,16 @@ type ContractBase = Omit<
             { readonly name: 'ONGOING'; readonly value: 'ONGOING' },
             { readonly name: 'COMPLETED'; readonly value: 'COMPLETED' },
             { readonly name: 'CANCELLED'; readonly value: 'CANCELLED' },
+          ];
+          readonly ProgramType: readonly [
+            {
+              readonly name: 'STORIES_OF_OUR_NEIGHBORS';
+              readonly value: 'STORIES_OF_OUR_NEIGHBORS';
+            },
+            {
+              readonly name: 'MEMORY_OF_NATIONS_THEATRE';
+              readonly value: 'MEMORY_OF_NATIONS_THEATRE';
+            },
           ];
           readonly Region: readonly [
             { readonly name: 'ONE'; readonly value: 'ONE' },

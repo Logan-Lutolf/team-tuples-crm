@@ -197,6 +197,19 @@
               }
             ]
           },
+          "ProgramType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "STORIES_OF_OUR_NEIGHBORS",
+                "value": "STORIES_OF_OUR_NEIGHBORS"
+              },
+              {
+                "name": "MEMORY_OF_NATIONS_THEATRE",
+                "value": "MEMORY_OF_NATIONS_THEATRE"
+              }
+            ]
+          },
           "Region": {
             "codecId": "pg/text@1",
             "members": [
@@ -1515,6 +1528,19 @@
                   "kind": "scalar"
                 }
               },
+              "programType": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ProgramType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
               "schoolId": {
                 "nullable": true,
                 "type": {
@@ -1620,6 +1646,9 @@
                 },
                 "programId": {
                   "column": "programId"
+                },
+                "programType": {
+                  "column": "programType"
                 },
                 "schoolId": {
                   "column": "schoolId"
@@ -3191,6 +3220,11 @@
             "Participation": {
               "checks": [
                 {
+                  "expression": "\"programType\" IN ('STORIES_OF_OUR_NEIGHBORS', 'MEMORY_OF_NATIONS_THEATRE')",
+                  "name": "Participation_programType_check_151e452e",
+                  "prefix": "Participation_programType_check"
+                },
+                {
                   "expression": "\"status\" IN ('PLANNED', 'ONGOING', 'COMPLETED', 'CANCELLED')",
                   "name": "Participation_status_check_07ec6707",
                   "prefix": "Participation_status_check"
@@ -3220,6 +3254,17 @@
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
                   "nullable": true
+                },
+                "programType": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ProgramType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "schoolId": {
                   "codecId": "pg/int4@1",
@@ -3714,6 +3759,13 @@
                 "CANCELLED"
               ]
             },
+            "ProgramType": {
+              "kind": "valueSet",
+              "values": [
+                "STORIES_OF_OUR_NEIGHBORS",
+                "MEMORY_OF_NATIONS_THEATRE"
+              ]
+            },
             "Region": {
               "kind": "valueSet",
               "values": [
@@ -3777,7 +3829,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "979948870a200e311a51339bb708e6151c840bede61d7edf522b5ccf900c48b9"
+    "storageHash": "8a0661ecccf690ecf8676bcd54b217e73117ca11007761bcec1de9fbf1c3dbe8"
   },
   "execution": {
     "executionHash": "49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353",
