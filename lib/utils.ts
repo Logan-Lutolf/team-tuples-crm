@@ -32,3 +32,20 @@ export function formatPhoneNumber(phone: string) {
 export function formatAddress(address: AddressOutput) {
     return address.street + ", " + address.city + ", " + address.zipCode + ", " + address.country
 }
+
+
+export function relationshipToColor(rel: string) {
+    let color = ""
+    switch (rel) {
+        case "POOR":
+            color = "red"
+        case "AVERAGE":
+            color = "yellow"
+        case "EXCELLENT":
+            color = "green"
+        default:
+            color = "yellow"
+    }
+
+    return color
+}
