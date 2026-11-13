@@ -36,6 +36,10 @@
       "model": "MunicipalityPrograms",
       "namespace": "public"
     },
+    "Organization": {
+      "model": "Organization",
+      "namespace": "public"
+    },
     "Participation": {
       "model": "Participation",
       "namespace": "public"
@@ -61,40 +65,44 @@
     "namespaces": {
       "public": {
         "enum": {
-          "Branches": {
+          "BranchTypes": {
             "codecId": "pg/text@1",
             "members": [
               {
-                "name": "ONE",
-                "value": "ONE"
+                "name": "SEVERNÍ_ČECHY",
+                "value": "SEVERNÍ_ČECHY"
               },
               {
-                "name": "TWO",
-                "value": "TWO"
+                "name": "VÝCHODNÍ_ČECHY",
+                "value": "VÝCHODNÍ_ČECHY"
               },
               {
-                "name": "THREE",
-                "value": "THREE"
+                "name": "STŘEDNÍ_MORAVA",
+                "value": "STŘEDNÍ_MORAVA"
               },
               {
-                "name": "FOUR",
-                "value": "FOUR"
+                "name": "PLZEŇSKÝ_KRAJ",
+                "value": "PLZEŇSKÝ_KRAJ"
               },
               {
-                "name": "FIVE",
-                "value": "FIVE"
+                "name": "JIŽNÍ_MORAVA",
+                "value": "JIŽNÍ_MORAVA"
               },
               {
-                "name": "SIX",
-                "value": "SIX"
+                "name": "JIŽNÍ_ČECHY",
+                "value": "JIŽNÍ_ČECHY"
               },
               {
-                "name": "SEVEN",
-                "value": "SEVEN"
+                "name": "KARLOVARSKÝ_KRAJ",
+                "value": "KARLOVARSKÝ_KRAJ"
               },
               {
-                "name": "EIGHT",
-                "value": "EIGHT"
+                "name": "MORAVSKOSLEZSKÝ_KRAJ",
+                "value": "MORAVSKOSLEZSKÝ_KRAJ"
+              },
+              {
+                "name": "PRAHA",
+                "value": "PRAHA"
               }
             ]
           },
@@ -176,6 +184,27 @@
               }
             ]
           },
+          "OrganizationTypes": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PRIMARY_SCHOOL",
+                "value": "PRIMARY_SCHOOL"
+              },
+              {
+                "name": "SECONDARY_SCHOOL",
+                "value": "SECONDARY_SCHOOL"
+              },
+              {
+                "name": "THEATRE",
+                "value": "THEATRE"
+              },
+              {
+                "name": "CULTURAL",
+                "value": "CULTURAL"
+              }
+            ]
+          },
           "ProgramStatus": {
             "codecId": "pg/text@1",
             "members": [
@@ -207,71 +236,87 @@
               {
                 "name": "MEMORY_OF_NATIONS_THEATRE",
                 "value": "MEMORY_OF_NATIONS_THEATRE"
+              },
+              {
+                "name": "STORY_ON",
+                "value": "STORY_ON"
+              },
+              {
+                "name": "SCHOOL_NETWORK",
+                "value": "SCHOOL_NETWORK"
+              },
+              {
+                "name": "EDUCATION_DEVELOPMENT",
+                "value": "EDUCATION_DEVELOPMENT"
+              },
+              {
+                "name": "WORKSHOPS",
+                "value": "WORKSHOPS"
               }
             ]
           },
-          "Region": {
+          "RegionTypes": {
             "codecId": "pg/text@1",
             "members": [
               {
-                "name": "ONE",
-                "value": "ONE"
+                "name": "PRAHA",
+                "value": "PRAHA"
               },
               {
-                "name": "TWO",
-                "value": "TWO"
+                "name": "STŘEDOČESKÝ",
+                "value": "STŘEDOČESKÝ"
               },
               {
-                "name": "THREE",
-                "value": "THREE"
+                "name": "JIHOČESKÝ",
+                "value": "JIHOČESKÝ"
               },
               {
-                "name": "FOUR",
-                "value": "FOUR"
+                "name": "PLZEŇSKÝ",
+                "value": "PLZEŇSKÝ"
               },
               {
-                "name": "FIVE",
-                "value": "FIVE"
+                "name": "KARLOVARSKÝ",
+                "value": "KARLOVARSKÝ"
               },
               {
-                "name": "SIX",
-                "value": "SIX"
+                "name": "ÚSTECKÝ",
+                "value": "ÚSTECKÝ"
               },
               {
-                "name": "SEVEN",
-                "value": "SEVEN"
+                "name": "LIBERECKÝ",
+                "value": "LIBERECKÝ"
               },
               {
-                "name": "EIGHT",
-                "value": "EIGHT"
+                "name": "KRÁLOVÉHRADECKÝ",
+                "value": "KRÁLOVÉHRADECKÝ"
               },
               {
-                "name": "NINE",
-                "value": "NINE"
+                "name": "PARDUBICKÝ",
+                "value": "PARDUBICKÝ"
               },
               {
-                "name": "TEN",
-                "value": "TEN"
+                "name": "JIHOMORAVSKÝ",
+                "value": "JIHOMORAVSKÝ"
               },
               {
-                "name": "ELEVEN",
-                "value": "ELEVEN"
+                "name": "OLOMOUCKÝ",
+                "value": "OLOMOUCKÝ"
               },
               {
-                "name": "TWELVE",
-                "value": "TWELVE"
+                "name": "ZLÍNSKÝ",
+                "value": "ZLÍNSKÝ"
               },
               {
-                "name": "THIRTEEN",
-                "value": "THIRTEEN"
+                "name": "MORAVSKOSLEZSKÝ",
+                "value": "MORAVSKOSLEZSKÝ"
               },
               {
-                "name": "FOURTEEN",
-                "value": "FOURTEEN"
+                "name": "JIHLAVA",
+                "value": "JIHLAVA"
               }
             ]
           },
-          "RelationshipType": {
+          "RelationshipTypes": {
             "codecId": "pg/text@1",
             "members": [
               {
@@ -352,31 +397,6 @@
                 "value": "METHODOLOGY_LEAD"
               }
             ]
-          },
-          "SchoolType": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "PRIMARY",
-                "value": "PRIMARY"
-              },
-              {
-                "name": "SECONDARY",
-                "value": "SECONDARY"
-              },
-              {
-                "name": "UNDERGRADUATE",
-                "value": "UNDERGRADUATE"
-              },
-              {
-                "name": "GRADUATE",
-                "value": "GRADUATE"
-              },
-              {
-                "name": "POSTGRADUATE",
-                "value": "POSTGRADUATE"
-              }
-            ]
           }
         },
         "models": {
@@ -411,7 +431,7 @@
                 },
                 "valueSet": {
                   "entityKind": "enum",
-                  "entityName": "Branches",
+                  "entityName": "BranchTypes",
                   "namespaceId": "public",
                   "plane": "domain"
                 }
@@ -424,7 +444,7 @@
                 },
                 "valueSet": {
                   "entityKind": "enum",
-                  "entityName": "Region",
+                  "entityName": "RegionTypes",
                   "namespaceId": "public",
                   "plane": "domain"
                 }
@@ -586,6 +606,13 @@
                   "kind": "scalar"
                 }
               },
+              "organizationId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "phone": {
                 "nullable": true,
                 "type": {
@@ -601,16 +628,9 @@
                 },
                 "valueSet": {
                   "entityKind": "enum",
-                  "entityName": "Region",
+                  "entityName": "RegionTypes",
                   "namespaceId": "public",
                   "plane": "domain"
-                }
-              },
-              "schoolId": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
                 }
               },
               "updatedAt": {
@@ -684,6 +704,22 @@
                   "namespace": "public"
                 }
               },
+              "organization": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "organizationId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Organization",
+                  "namespace": "public"
+                }
+              },
               "participations": {
                 "cardinality": "1:N",
                 "on": {
@@ -696,22 +732,6 @@
                 },
                 "to": {
                   "model": "ParticipationContacts",
-                  "namespace": "public"
-                }
-              },
-              "school": {
-                "cardinality": "N:1",
-                "nullable": true,
-                "on": {
-                  "localFields": [
-                    "schoolId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "School",
                   "namespace": "public"
                 }
               }
@@ -745,14 +765,14 @@
                 "name": {
                   "column": "name"
                 },
+                "organizationId": {
+                  "column": "organizationId"
+                },
                 "phone": {
                   "column": "phone"
                 },
                 "region": {
                   "column": "region"
-                },
-                "schoolId": {
-                  "column": "schoolId"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -956,7 +976,7 @@
                 },
                 "valueSet": {
                   "entityKind": "enum",
-                  "entityName": "Region",
+                  "entityName": "RegionTypes",
                   "namespaceId": "public",
                   "plane": "domain"
                 }
@@ -1131,7 +1151,7 @@
                 },
                 "valueSet": {
                   "entityKind": "enum",
-                  "entityName": "Region",
+                  "entityName": "RegionTypes",
                   "namespaceId": "public",
                   "plane": "domain"
                 }
@@ -1268,14 +1288,14 @@
                   "plane": "domain"
                 }
               },
-              "programId": {
+              "organizationId": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
-              "schoolId": {
+              "programId": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
@@ -1316,6 +1336,22 @@
                   "namespace": "public"
                 }
               },
+              "organization": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "organizationId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Organization",
+                  "namespace": "public"
+                }
+              },
               "program": {
                 "cardinality": "N:1",
                 "nullable": true,
@@ -1329,22 +1365,6 @@
                 },
                 "to": {
                   "model": "Program",
-                  "namespace": "public"
-                }
-              },
-              "school": {
-                "cardinality": "N:1",
-                "nullable": true,
-                "on": {
-                  "localFields": [
-                    "schoolId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "School",
                   "namespace": "public"
                 }
               }
@@ -1366,11 +1386,11 @@
                 "mode": {
                   "column": "mode"
                 },
+                "organizationId": {
+                  "column": "organizationId"
+                },
                 "programId": {
                   "column": "programId"
-                },
-                "schoolId": {
-                  "column": "schoolId"
                 }
               },
               "namespaceId": "public",
@@ -1498,6 +1518,186 @@
               "table": "MunicipalityPrograms"
             }
           },
+          "Organization": {
+            "fields": {
+              "address": {
+                "nullable": false,
+                "type": {
+                  "kind": "valueObject",
+                  "name": "Address"
+                }
+              },
+              "branch": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "BranchTypes",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "email": {
+                "nullable": true,
+                "type": {
+                  "codecId": "sql/varchar@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 50
+                  }
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sql/char@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 24
+                  }
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "phone": {
+                "nullable": true,
+                "type": {
+                  "codecId": "sql/char@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 10
+                  }
+                }
+              },
+              "region": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "RegionTypes",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "relationship": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "RelationshipTypes",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "OrganizationTypes",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "contacts": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "organizationId"
+                  ]
+                },
+                "to": {
+                  "model": "Contact",
+                  "namespace": "public"
+                }
+              },
+              "interactions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "organizationId"
+                  ]
+                },
+                "to": {
+                  "model": "Interaction",
+                  "namespace": "public"
+                }
+              },
+              "participations": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "organizationId"
+                  ]
+                },
+                "to": {
+                  "model": "Participation",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "address": {
+                  "column": "address"
+                },
+                "branch": {
+                  "column": "branch"
+                },
+                "email": {
+                  "column": "email"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "phone": {
+                  "column": "phone"
+                },
+                "region": {
+                  "column": "region"
+                },
+                "relationship": {
+                  "column": "relationship"
+                },
+                "type": {
+                  "column": "type"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Organization"
+            }
+          },
           "Participation": {
             "fields": {
               "endDate": {
@@ -1521,6 +1721,13 @@
                   "kind": "scalar"
                 }
               },
+              "organizationId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "programId": {
                 "nullable": true,
                 "type": {
@@ -1539,13 +1746,6 @@
                   "entityName": "ProgramType",
                   "namespaceId": "public",
                   "plane": "domain"
-                }
-              },
-              "schoolId": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
                 }
               },
               "startDate": {
@@ -1600,6 +1800,22 @@
                   "namespace": "public"
                 }
               },
+              "organization": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "organizationId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Organization",
+                  "namespace": "public"
+                }
+              },
               "program": {
                 "cardinality": "N:1",
                 "nullable": true,
@@ -1615,22 +1831,6 @@
                   "model": "Program",
                   "namespace": "public"
                 }
-              },
-              "school": {
-                "cardinality": "N:1",
-                "nullable": true,
-                "on": {
-                  "localFields": [
-                    "schoolId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "School",
-                  "namespace": "public"
-                }
               }
             },
             "storage": {
@@ -1644,14 +1844,14 @@
                 "name": {
                   "column": "name"
                 },
+                "organizationId": {
+                  "column": "organizationId"
+                },
                 "programId": {
                   "column": "programId"
                 },
                 "programType": {
                   "column": "programType"
-                },
-                "schoolId": {
-                  "column": "schoolId"
                 },
                 "startDate": {
                   "column": "startDate"
@@ -1973,7 +2173,7 @@
                 },
                 "valueSet": {
                   "entityKind": "enum",
-                  "entityName": "Region",
+                  "entityName": "RegionTypes",
                   "namespaceId": "public",
                   "plane": "domain"
                 }
@@ -1986,7 +2186,7 @@
                 },
                 "valueSet": {
                   "entityKind": "enum",
-                  "entityName": "RelationshipType",
+                  "entityName": "RelationshipTypes",
                   "namespaceId": "public",
                   "plane": "domain"
                 }
@@ -1999,7 +2199,7 @@
                 },
                 "valueSet": {
                   "entityKind": "enum",
-                  "entityName": "SchoolType",
+                  "entityName": "OrganizationTypes",
                   "namespaceId": "public",
                   "plane": "domain"
                 }
@@ -2041,51 +2241,6 @@
                 },
                 "to": {
                   "model": "ContactEmployment",
-                  "namespace": "public"
-                }
-              },
-              "contacts": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "schoolId"
-                  ]
-                },
-                "to": {
-                  "model": "Contact",
-                  "namespace": "public"
-                }
-              },
-              "interactions": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "schoolId"
-                  ]
-                },
-                "to": {
-                  "model": "Interaction",
-                  "namespace": "public"
-                }
-              },
-              "participations": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "schoolId"
-                  ]
-                },
-                "to": {
-                  "model": "Participation",
                   "namespace": "public"
                 }
               }
@@ -2176,13 +2331,13 @@
             "Branch": {
               "checks": [
                 {
-                  "expression": "\"name\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT')",
-                  "name": "Branch_name_check_ca88058c",
+                  "expression": "\"name\" IN ('SEVERNÍ_ČECHY', 'VÝCHODNÍ_ČECHY', 'STŘEDNÍ_MORAVA', 'PLZEŇSKÝ_KRAJ', 'JIŽNÍ_MORAVA', 'JIŽNÍ_ČECHY', 'KARLOVARSKÝ_KRAJ', 'MORAVSKOSLEZSKÝ_KRAJ', 'PRAHA')",
+                  "name": "Branch_name_check_99f437af",
                   "prefix": "Branch_name_check"
                 },
                 {
-                  "expression": "\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN')",
-                  "name": "Branch_region_check_de154a3d",
+                  "expression": "\"region\" IN ('PRAHA', 'STŘEDOČESKÝ', 'JIHOČESKÝ', 'PLZEŇSKÝ', 'KARLOVARSKÝ', 'ÚSTECKÝ', 'LIBERECKÝ', 'KRÁLOVÉHRADECKÝ', 'PARDUBICKÝ', 'JIHOMORAVSKÝ', 'OLOMOUCKÝ', 'ZLÍNSKÝ', 'MORAVSKOSLEZSKÝ', 'JIHLAVA')",
+                  "name": "Branch_region_check_fbfaeec9",
                   "prefix": "Branch_region_check"
                 }
               ],
@@ -2212,7 +2367,7 @@
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
-                    "entityName": "Branches",
+                    "entityName": "BranchTypes",
                     "namespaceId": "public",
                     "plane": "storage"
                   }
@@ -2223,7 +2378,7 @@
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
-                    "entityName": "Region",
+                    "entityName": "RegionTypes",
                     "namespaceId": "public",
                     "plane": "storage"
                   }
@@ -2276,8 +2431,8 @@
                   "prefix": "Contact_contactRole_check"
                 },
                 {
-                  "expression": "\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN')",
-                  "name": "Contact_region_check_de154a3d",
+                  "expression": "\"region\" IN ('PRAHA', 'STŘEDOČESKÝ', 'JIHOČESKÝ', 'PLZEŇSKÝ', 'KARLOVARSKÝ', 'ÚSTECKÝ', 'LIBERECKÝ', 'KRÁLOVÉHRADECKÝ', 'PARDUBICKÝ', 'JIHOMORAVSKÝ', 'OLOMOUCKÝ', 'ZLÍNSKÝ', 'MORAVSKOSLEZSKÝ', 'JIHLAVA')",
+                  "name": "Contact_region_check_fbfaeec9",
                   "prefix": "Contact_region_check"
                 }
               ],
@@ -2345,6 +2500,11 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
+                "organizationId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
                 "phone": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -2356,15 +2516,10 @@
                   "nullable": true,
                   "valueSet": {
                     "entityKind": "valueSet",
-                    "entityName": "Region",
+                    "entityName": "RegionTypes",
                     "namespaceId": "public",
                     "plane": "storage"
                   }
-                },
-                "schoolId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": true
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -2395,12 +2550,12 @@
                 },
                 {
                   "index": {
-                    "name": "Contact_schoolId_idx_82b454d7"
+                    "name": "Contact_organizationId_idx_2e17ef41"
                   },
                   "onDelete": "setNull",
                   "source": {
                     "columns": [
-                      "schoolId"
+                      "organizationId"
                     ],
                     "namespaceId": "public",
                     "tableName": "Contact"
@@ -2410,7 +2565,7 @@
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "School"
+                    "tableName": "Organization"
                   }
                 },
                 {
@@ -2453,10 +2608,10 @@
                 },
                 {
                   "columns": [
-                    "schoolId"
+                    "organizationId"
                   ],
-                  "name": "Contact_schoolId_idx_82b454d7",
-                  "prefix": "Contact_schoolId_idx",
+                  "name": "Contact_organizationId_idx_2e17ef41",
+                  "prefix": "Contact_organizationId_idx",
                   "unique": false
                 }
               ],
@@ -2594,8 +2749,8 @@
             "Employee": {
               "checks": [
                 {
-                  "expression": "\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN')",
-                  "name": "Employee_region_check_de154a3d",
+                  "expression": "\"region\" IN ('PRAHA', 'STŘEDOČESKÝ', 'JIHOČESKÝ', 'PLZEŇSKÝ', 'KARLOVARSKÝ', 'ÚSTECKÝ', 'LIBERECKÝ', 'KRÁLOVÉHRADECKÝ', 'PARDUBICKÝ', 'JIHOMORAVSKÝ', 'OLOMOUCKÝ', 'ZLÍNSKÝ', 'MORAVSKOSLEZSKÝ', 'JIHLAVA')",
+                  "name": "Employee_region_check_fbfaeec9",
                   "prefix": "Employee_region_check"
                 },
                 {
@@ -2682,7 +2837,7 @@
                   "nullable": true,
                   "valueSet": {
                     "entityKind": "valueSet",
-                    "entityName": "Region",
+                    "entityName": "RegionTypes",
                     "namespaceId": "public",
                     "plane": "storage"
                   }
@@ -2725,8 +2880,8 @@
             "EmployeeAssignment": {
               "checks": [
                 {
-                  "expression": "\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN')",
-                  "name": "EmployeeAssignment_region_check_de154a3d",
+                  "expression": "\"region\" IN ('PRAHA', 'STŘEDOČESKÝ', 'JIHOČESKÝ', 'PLZEŇSKÝ', 'KARLOVARSKÝ', 'ÚSTECKÝ', 'LIBERECKÝ', 'KRÁLOVÉHRADECKÝ', 'PARDUBICKÝ', 'JIHOMORAVSKÝ', 'OLOMOUCKÝ', 'ZLÍNSKÝ', 'MORAVSKOSLEZSKÝ', 'JIHLAVA')",
+                  "name": "EmployeeAssignment_region_check_fbfaeec9",
                   "prefix": "EmployeeAssignment_region_check"
                 },
                 {
@@ -2766,7 +2921,7 @@
                   "nullable": true,
                   "valueSet": {
                     "entityKind": "valueSet",
-                    "entityName": "Region",
+                    "entityName": "RegionTypes",
                     "namespaceId": "public",
                     "plane": "storage"
                   }
@@ -2935,12 +3090,12 @@
                     "plane": "storage"
                   }
                 },
-                "programId": {
+                "organizationId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
                   "nullable": true
                 },
-                "schoolId": {
+                "programId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
                   "nullable": true
@@ -2989,12 +3144,12 @@
                 },
                 {
                   "index": {
-                    "name": "Interaction_schoolId_idx_82b454d7"
+                    "name": "Interaction_organizationId_idx_2e17ef41"
                   },
                   "onDelete": "setNull",
                   "source": {
                     "columns": [
-                      "schoolId"
+                      "organizationId"
                     ],
                     "namespaceId": "public",
                     "tableName": "Interaction"
@@ -3004,7 +3159,7 @@
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "School"
+                    "tableName": "Organization"
                   }
                 },
                 {
@@ -3065,6 +3220,23 @@
                 },
                 {
                   "columns": [
+                    "organizationId",
+                    "contactedAt"
+                  ],
+                  "name": "Interaction_organizationId_contactedAt_idx_be21b4be",
+                  "prefix": "Interaction_organizationId_contactedAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "organizationId"
+                  ],
+                  "name": "Interaction_organizationId_idx_2e17ef41",
+                  "prefix": "Interaction_organizationId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
                     "programId",
                     "contactedAt"
                   ],
@@ -3078,23 +3250,6 @@
                   ],
                   "name": "Interaction_programId_idx_4e50c706",
                   "prefix": "Interaction_programId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "schoolId",
-                    "contactedAt"
-                  ],
-                  "name": "Interaction_schoolId_contactedAt_idx_b25f69bb",
-                  "prefix": "Interaction_schoolId_contactedAt_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "schoolId"
-                  ],
-                  "name": "Interaction_schoolId_idx_82b454d7",
-                  "prefix": "Interaction_schoolId_idx",
                   "unique": false
                 }
               ],
@@ -3217,11 +3372,118 @@
               },
               "uniques": []
             },
+            "Organization": {
+              "checks": [
+                {
+                  "expression": "\"branch\" IN ('SEVERNÍ_ČECHY', 'VÝCHODNÍ_ČECHY', 'STŘEDNÍ_MORAVA', 'PLZEŇSKÝ_KRAJ', 'JIŽNÍ_MORAVA', 'JIŽNÍ_ČECHY', 'KARLOVARSKÝ_KRAJ', 'MORAVSKOSLEZSKÝ_KRAJ', 'PRAHA')",
+                  "name": "Organization_branch_check_572d22f2",
+                  "prefix": "Organization_branch_check"
+                },
+                {
+                  "expression": "\"region\" IN ('PRAHA', 'STŘEDOČESKÝ', 'JIHOČESKÝ', 'PLZEŇSKÝ', 'KARLOVARSKÝ', 'ÚSTECKÝ', 'LIBERECKÝ', 'KRÁLOVÉHRADECKÝ', 'PARDUBICKÝ', 'JIHOMORAVSKÝ', 'OLOMOUCKÝ', 'ZLÍNSKÝ', 'MORAVSKOSLEZSKÝ', 'JIHLAVA')",
+                  "name": "Organization_region_check_fbfaeec9",
+                  "prefix": "Organization_region_check"
+                },
+                {
+                  "expression": "\"relationship\" IN ('POOR', 'AVERAGE', 'EXCELLENT')",
+                  "name": "Organization_relationship_check_15167c09",
+                  "prefix": "Organization_relationship_check"
+                },
+                {
+                  "expression": "\"type\" IN ('PRIMARY_SCHOOL', 'SECONDARY_SCHOOL', 'THEATRE', 'CULTURAL')",
+                  "name": "Organization_type_check_9ea5dade",
+                  "prefix": "Organization_type_check"
+                }
+              ],
+              "columns": {
+                "address": {
+                  "codecId": "pg/jsonb@1",
+                  "dataType": "pg/jsonb",
+                  "nullable": false
+                },
+                "branch": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "BranchTypes",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "email": {
+                  "codecId": "sql/varchar@1",
+                  "dataType": "pg/varchar",
+                  "nullable": true,
+                  "typeParams": {
+                    "length": 50
+                  }
+                },
+                "id": {
+                  "codecId": "sql/char@1",
+                  "dataType": "pg/char",
+                  "nullable": false,
+                  "typeParams": {
+                    "length": 24
+                  }
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "phone": {
+                  "codecId": "sql/char@1",
+                  "dataType": "pg/char",
+                  "nullable": true,
+                  "typeParams": {
+                    "length": 10
+                  }
+                },
+                "region": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "RegionTypes",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "relationship": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "RelationshipTypes",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "OrganizationTypes",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "uniques": []
+            },
             "Participation": {
               "checks": [
                 {
-                  "expression": "\"programType\" IN ('STORIES_OF_OUR_NEIGHBORS', 'MEMORY_OF_NATIONS_THEATRE')",
-                  "name": "Participation_programType_check_151e452e",
+                  "expression": "\"programType\" IN ('STORIES_OF_OUR_NEIGHBORS', 'MEMORY_OF_NATIONS_THEATRE', 'STORY_ON', 'SCHOOL_NETWORK', 'EDUCATION_DEVELOPMENT', 'WORKSHOPS')",
+                  "name": "Participation_programType_check_87066497",
                   "prefix": "Participation_programType_check"
                 },
                 {
@@ -3250,6 +3512,11 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
+                "organizationId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
                 "programId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
@@ -3265,11 +3532,6 @@
                     "namespaceId": "public",
                     "plane": "storage"
                   }
-                },
-                "schoolId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": true
                 },
                 "startDate": {
                   "codecId": "pg/timestamptz-string@1",
@@ -3295,12 +3557,12 @@
               "foreignKeys": [
                 {
                   "index": {
-                    "name": "Participation_schoolId_idx_82b454d7"
+                    "name": "Participation_organizationId_idx_2e17ef41"
                   },
                   "onDelete": "setNull",
                   "source": {
                     "columns": [
-                      "schoolId"
+                      "organizationId"
                     ],
                     "namespaceId": "public",
                     "tableName": "Participation"
@@ -3310,7 +3572,7 @@
                       "id"
                     ],
                     "namespaceId": "public",
-                    "tableName": "School"
+                    "tableName": "Organization"
                   }
                 },
                 {
@@ -3337,18 +3599,18 @@
               "indexes": [
                 {
                   "columns": [
-                    "programId"
+                    "organizationId"
                   ],
-                  "name": "Participation_programId_idx_4e50c706",
-                  "prefix": "Participation_programId_idx",
+                  "name": "Participation_organizationId_idx_2e17ef41",
+                  "prefix": "Participation_organizationId_idx",
                   "unique": false
                 },
                 {
                   "columns": [
-                    "schoolId"
+                    "programId"
                   ],
-                  "name": "Participation_schoolId_idx_82b454d7",
-                  "prefix": "Participation_schoolId_idx",
+                  "name": "Participation_programId_idx_4e50c706",
+                  "prefix": "Participation_programId_idx",
                   "unique": false
                 }
               ],
@@ -3569,8 +3831,8 @@
             "School": {
               "checks": [
                 {
-                  "expression": "\"region\" IN ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN', 'FOURTEEN')",
-                  "name": "School_region_check_de154a3d",
+                  "expression": "\"region\" IN ('PRAHA', 'STŘEDOČESKÝ', 'JIHOČESKÝ', 'PLZEŇSKÝ', 'KARLOVARSKÝ', 'ÚSTECKÝ', 'LIBERECKÝ', 'KRÁLOVÉHRADECKÝ', 'PARDUBICKÝ', 'JIHOMORAVSKÝ', 'OLOMOUCKÝ', 'ZLÍNSKÝ', 'MORAVSKOSLEZSKÝ', 'JIHLAVA')",
+                  "name": "School_region_check_fbfaeec9",
                   "prefix": "School_region_check"
                 },
                 {
@@ -3579,8 +3841,8 @@
                   "prefix": "School_relationship_check"
                 },
                 {
-                  "expression": "\"type\" IN ('PRIMARY', 'SECONDARY', 'UNDERGRADUATE', 'GRADUATE', 'POSTGRADUATE')",
-                  "name": "School_type_check_b97fb405",
+                  "expression": "\"type\" IN ('PRIMARY_SCHOOL', 'SECONDARY_SCHOOL', 'THEATRE', 'CULTURAL')",
+                  "name": "School_type_check_9ea5dade",
                   "prefix": "School_type_check"
                 }
               ],
@@ -3630,7 +3892,7 @@
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
-                    "entityName": "Region",
+                    "entityName": "RegionTypes",
                     "namespaceId": "public",
                     "plane": "storage"
                   }
@@ -3641,7 +3903,7 @@
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
-                    "entityName": "RelationshipType",
+                    "entityName": "RelationshipTypes",
                     "namespaceId": "public",
                     "plane": "storage"
                   }
@@ -3652,7 +3914,7 @@
                   "nullable": false,
                   "valueSet": {
                     "entityKind": "valueSet",
-                    "entityName": "SchoolType",
+                    "entityName": "OrganizationTypes",
                     "namespaceId": "public",
                     "plane": "storage"
                   }
@@ -3710,17 +3972,18 @@
             }
           },
           "valueSet": {
-            "Branches": {
+            "BranchTypes": {
               "kind": "valueSet",
               "values": [
-                "ONE",
-                "TWO",
-                "THREE",
-                "FOUR",
-                "FIVE",
-                "SIX",
-                "SEVEN",
-                "EIGHT"
+                "SEVERNÍ_ČECHY",
+                "VÝCHODNÍ_ČECHY",
+                "STŘEDNÍ_MORAVA",
+                "PLZEŇSKÝ_KRAJ",
+                "JIŽNÍ_MORAVA",
+                "JIŽNÍ_ČECHY",
+                "KARLOVARSKÝ_KRAJ",
+                "MORAVSKOSLEZSKÝ_KRAJ",
+                "PRAHA"
               ]
             },
             "CommunicationMode": {
@@ -3750,6 +4013,15 @@
                 "OTHER"
               ]
             },
+            "OrganizationTypes": {
+              "kind": "valueSet",
+              "values": [
+                "PRIMARY_SCHOOL",
+                "SECONDARY_SCHOOL",
+                "THEATRE",
+                "CULTURAL"
+              ]
+            },
             "ProgramStatus": {
               "kind": "valueSet",
               "values": [
@@ -3763,29 +4035,33 @@
               "kind": "valueSet",
               "values": [
                 "STORIES_OF_OUR_NEIGHBORS",
-                "MEMORY_OF_NATIONS_THEATRE"
+                "MEMORY_OF_NATIONS_THEATRE",
+                "STORY_ON",
+                "SCHOOL_NETWORK",
+                "EDUCATION_DEVELOPMENT",
+                "WORKSHOPS"
               ]
             },
-            "Region": {
+            "RegionTypes": {
               "kind": "valueSet",
               "values": [
-                "ONE",
-                "TWO",
-                "THREE",
-                "FOUR",
-                "FIVE",
-                "SIX",
-                "SEVEN",
-                "EIGHT",
-                "NINE",
-                "TEN",
-                "ELEVEN",
-                "TWELVE",
-                "THIRTEEN",
-                "FOURTEEN"
+                "PRAHA",
+                "STŘEDOČESKÝ",
+                "JIHOČESKÝ",
+                "PLZEŇSKÝ",
+                "KARLOVARSKÝ",
+                "ÚSTECKÝ",
+                "LIBERECKÝ",
+                "KRÁLOVÉHRADECKÝ",
+                "PARDUBICKÝ",
+                "JIHOMORAVSKÝ",
+                "OLOMOUCKÝ",
+                "ZLÍNSKÝ",
+                "MORAVSKOSLEZSKÝ",
+                "JIHLAVA"
               ]
             },
-            "RelationshipType": {
+            "RelationshipTypes": {
               "kind": "valueSet",
               "values": [
                 "POOR",
@@ -3812,16 +4088,6 @@
                 "LECTURER",
                 "METHODOLOGY_LEAD"
               ]
-            },
-            "SchoolType": {
-              "kind": "valueSet",
-              "values": [
-                "PRIMARY",
-                "SECONDARY",
-                "UNDERGRADUATE",
-                "GRADUATE",
-                "POSTGRADUATE"
-              ]
             }
           }
         },
@@ -3829,7 +4095,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "8a0661ecccf690ecf8676bcd54b217e73117ca11007761bcec1de9fbf1c3dbe8"
+    "storageHash": "7f8bf80cf2e472e401ed6ea0d82dbd59daaae803f14b099f727c57be34cc34ea"
   },
   "execution": {
     "executionHash": "49f168d3b0479e920f5e32efc0f2927a7f4f0117d0882027ff31a29a594ef353",

@@ -8,51 +8,45 @@ type Address {
   zipCode String
 }
 
-
-enum Region {
-  ONE
-  TWO
-  THREE
-  FOUR
-  FIVE
-  SIX
-  SEVEN
-  EIGHT
-  NINE
-  TEN
-  ELEVEN
-  TWELVE
-  THIRTEEN
-  FOURTEEN
+enum RegionTypes {
+  PRAHA
+  STŘEDOČESKÝ
+  JIHOČESKÝ
+  PLZEŇSKÝ
+  KARLOVARSKÝ
+  ÚSTECKÝ
+  LIBERECKÝ
+  KRÁLOVÉHRADECKÝ
+  PARDUBICKÝ
+  JIHOMORAVSKÝ
+  OLOMOUCKÝ
+  ZLÍNSKÝ
+  MORAVSKOSLEZSKÝ
+  JIHLAVA
 }
 
-
-
-enum Branches {
-  ONE
-  TWO
-  THREE
-  FOUR
-  FIVE
-  SIX
-  SEVEN
-  EIGHT
+enum BranchTypes {
+  SEVERNÍ_ČECHY
+  VÝCHODNÍ_ČECHY
+  STŘEDNÍ_MORAVA
+  PLZEŇSKÝ_KRAJ
+  JIŽNÍ_MORAVA
+  JIŽNÍ_ČECHY
+  KARLOVARSKÝ_KRAJ
+  MORAVSKOSLEZSKÝ_KRAJ
+  PRAHA
 }
 
 enum ProgramType {
   STORIES_OF_OUR_NEIGHBORS
   MEMORY_OF_NATIONS_THEATRE
+  STORY_ON
+  SCHOOL_NETWORK // Seminars
+  EDUCATION_DEVELOPMENT
+  WORKSHOPS
 }
 
-enum SchoolType {
-  PRIMARY
-  SECONDARY
-  UNDERGRADUATE
-  GRADUATE
-  POSTGRADUATE
-}
-
-enum RelationshipType {
+enum RelationshipTypes {
   POOR
   AVERAGE
   EXCELLENT
@@ -109,6 +103,13 @@ enum CommunicationMode {
   OTHER
 }
 
+enum OrganizationTypes {
+  PRIMARY_SCHOOL
+  SECONDARY_SCHOOL
+  THEATRE
+  CULTURAL
+}
+
 //---------------------------MODELS---------------------------//
 model Employee {
   id        Int      @id @default(autoincrement())
@@ -118,12 +119,11 @@ model Employee {
   pfpImgUrl String?
   phone     String?
   address   Address?
-  region   Region?
+  region   RegionTypes?
   mustChangePassword  Boolean @default(true)
 
 
   is_online  Boolean  @default(false)
-  // remove this, because we might add EmployeeJobRole table later?
   roles      Role[]
 
   assignments EmployeeAssignment[]
@@ -142,7 +142,7 @@ model Contact {
   email     String   @unique
   phone     String?
   address   Address?
-  region   Region?
+  region   RegionTypes?
   // Cached summary of the latest interaction; maintained by application logic.
   last_contacted TimestamptzString @default(now())
   
@@ -153,8 +153,8 @@ model Contact {
   last_contacted_by Employee? @relation(fields: [last_contacted_byId], references: [id], onDelete: SetNull)
   last_contacted_byId Int?
 
-  school   School? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
-  schoolId Int?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  organizationId Int?
 
   branchId Int?
   branch   Branch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
@@ -171,18 +171,14 @@ model School {
   id        Int      @id
   name      String
   address   Address
-  type      SchoolType
+  type      OrganizationTypes
   phone String?
   email String @unique
-  relationship RelationshipType
-  region   Region
+  relationship RelationshipTypes
+  region   RegionTypes
 
   branchId Int?
   branch Branch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
-  
-  contacts Contact[]
-  interactions Interaction[]
-  participations Participation[]
   }
 
 // between program and school
@@ -195,8 +191,8 @@ model Participation {
   endDate   TimestamptzString?
   status    ProgramStatus @default(PLANNED)
 
-  school   School? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
-  schoolId Int?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  organizationId Int?
 
   employee ParticipationEmployees[]
 
@@ -224,7 +220,7 @@ model EmployeeAssignment {
   role       Role
   branchId   Int?
   programId  Int?
-  region     Region?
+  region     RegionTypes?
 
   employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   branch   Branch? @relation(fields: [branchId], references: [id], onDelete: Cascade)
@@ -236,22 +232,22 @@ model EmployeeAssignment {
 
 // Each contact event is a separate row, including repeat conversations.
 model Interaction {
-  id         Int @id @default(autoincrement())
-  employeeId Int?
-  contactId  Int?
-  schoolId   Int?
-  programId  Int?
-  contactedAt TimestamptzString @default(now())
-  mode       CommunicationMode
+  id                Int @id @default(autoincrement())
+  employeeId        Int?
+  contactId         Int?
+  organizationId    Int?
+  programId         Int?
+  contactedAt       TimestamptzString @default(now())
+  mode              CommunicationMode
 
   employee Employee? @relation(fields: [employeeId], references: [id], onDelete: SetNull)
   contact  Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
-  school   School? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   program  Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
 
   @@index([employeeId, contactedAt])
   @@index([contactId, contactedAt])
-  @@index([schoolId, contactedAt])
+  @@index([organizationId, contactedAt])
   @@index([programId, contactedAt])
 }
 
@@ -273,12 +269,12 @@ model Program {
 
 model Branch {
   id Int @id @default(autoincrement())
-  name Branches
+  name BranchTypes
   institute String?
   chiefId Int?
   chief Employee? @relation(fields: [chiefId], references: [id], onDelete: SetNull)
   assignments EmployeeAssignment[]
-  region Region 
+  region RegionTypes
   
   contacts Contact[]
   schools School[]
@@ -330,4 +326,21 @@ model ParticipationContacts {
 
   @@id([participationId, contactId])
   @@index([contactId])
+}
+
+
+model Organization {
+  id            cuid2()
+  name          String
+  phone         Char(10)?
+  email         VarChar(50)?
+  type          OrganizationTypes
+  region        RegionTypes
+  relationship  RelationshipTypes
+  branch        BranchTypes
+  address       Address
+
+  interactions Interaction[]
+  contacts Contact[]
+  participations Participation[]
 }
