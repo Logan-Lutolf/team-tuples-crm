@@ -1,4 +1,5 @@
 import { toast } from "@/components/ui/toast";
+import { AddressOutput } from "@/prisma/contract";
 
 export { cn } from "cn"
 
@@ -19,4 +20,15 @@ export function nameInitials(name: string) {
     }
 
     return initials
+}
+
+export function formatPhoneNumber(phone: string) {
+    if (phone.length != 10) return phone
+    else {
+        return "(" + phone.substring(0,3) + ")" + " " + phone.substring(3,6) + "-" + phone.substring(6)
+    }
+}
+
+export function formatAddress(address: AddressOutput) {
+    return address.street + ", " + address.city + ", " + address.zipCode + ", " + address.country
 }
