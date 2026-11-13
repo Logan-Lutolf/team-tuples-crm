@@ -52,6 +52,7 @@ enum RelationshipType {
 
 enum Role {
   ADMIN
+  MARKETER
   WORKSHOPS_COORDINATOR
   SCHOOL_NETWORK_COORDINATOR
   STORIES_OF_OUR_NEIGHBORS_COORDINATOR
@@ -102,6 +103,60 @@ enum CommunicationMode {
 }
 
 //---------------------------MODELS---------------------------//
+// Private, immutable snapshots. JSON stores the original addresses even if contacts change.
+model EmailSegment {
+  id Int @id @default(autoincrement())
+  name String
+  createdById Int
+  filtersJson String
+  contactsJson String
+  contactCount Int
+  createdAt TimestamptzString @default(now())
+
+  @@index([createdById, id])
+}
+
+// A Message-ID is recorded once so mailbox retries cannot duplicate contact history.
+model TrackedEmail {
+  id String @id
+  fingerprint String
+  fromEmail String
+  contactedAt TimestamptzString
+  recipientEmails String
+  matchedContactCount Int
+  receivedAt TimestamptzString @default(now())
+}
+
+// Historical direct-send records are retained; the current email page does not send mail.
+model EmailDispatch {
+  id String @id
+  actorId Int
+  fingerprint String
+  state String
+  recipientCount Int
+  providerEmailId Int?
+  providerResult String?
+  createdAt TimestamptzString @default(now())
+
+  @@index([actorId, createdAt])
+}
+
+// Snapshots intentionally have no foreign keys: history survives deleted records/editors.
+model EditHistory {
+  id Int @id @default(autoincrement())
+  recordType String
+  recordId Int
+  sourceTable String
+  operation String
+  beforeData String?
+  afterData String?
+  actorId Int?
+  actorName String
+  changedAt TimestamptzString @default(now())
+
+  @@index([recordType, recordId, id])
+}
+
 model Employee {
   id        Int      @id @default(autoincrement())
   name      String
@@ -136,6 +191,8 @@ model Contact {
   region   Region?
   // Cached summary of the latest interaction; maintained by application logic.
   last_contacted TimestamptzString @default(now())
+  // Updated only by the authenticated CC-mailbox integration, never by copying addresses.
+  lastTrackedEmailAt TimestamptzString?
   
   interactions Interaction[]
 
@@ -294,6 +351,47 @@ model MunicipalityPrograms {
 }
 
 // Explicit employment periods of a teacher
+model SmartEmailContact {
+  id Int @id
+  email String
+  listsJson String
+  hardBounced Boolean
+  softBounces Int
+  blacklisted Boolean
+  syncedAt TimestamptzString
+
+  @@index([email])
+}
+
+// Provider events stay separate from employee interactions and are safe to replay.
+model SmartEmailEvent {
+  id String @id
+  email String
+  messageId String
+  type String
+  occurredAt TimestamptzString
+  campaignName String
+  subject String
+  campaignType String
+  detailsJson String
+
+  @@index([email, type, occurredAt])
+  @@index([email, messageId])
+}
+
+model SmartEmailSync {
+  id String @id
+  streamId String
+  contactOffset Int @default(0)
+  contactsStartedAt TimestamptzString?
+  contactsSyncedAt TimestamptzString?
+  eventsSyncedAt TimestamptzString?
+  lastAttemptAt TimestamptzString?
+  lastError String?
+  lockToken String?
+  lockUntil TimestamptzString?
+}
+
 model ContactEmployment {
   id Int @id @default(autoincrement())
   contactId Int

@@ -1,0 +1,111 @@
+[
+  {
+    "id": "table.EditHistory",
+    "label": "Create table \"EditHistory\"",
+    "summary": "Creates table \"EditHistory\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "EditHistory"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"EditHistory\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EditHistory\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"EditHistory\"",
+        "sql": "CREATE TABLE \"public\".\"EditHistory\" (\n  \"actorId\" int4,\n  \"actorName\" text NOT NULL,\n  \"afterData\" text,\n  \"beforeData\" text,\n  \"changedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"operation\" text NOT NULL,\n  \"recordId\" int4 NOT NULL,\n  \"recordType\" text NOT NULL,\n  \"sourceTable\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"EditHistory\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EditHistory\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.EditHistory.EditHistory_recordType_recordId_id_idx_2eb894eb",
+    "label": "Create index \"EditHistory_recordType_recordId_id_idx_2eb894eb\" on \"EditHistory\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "EditHistory_recordType_recordId_id_idx_2eb894eb",
+        "table": "EditHistory"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"EditHistory_recordType_recordId_id_idx_2eb894eb\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EditHistory_recordType_recordId_id_idx_2eb894eb\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"EditHistory_recordType_recordId_id_idx_2eb894eb\"",
+        "sql": "CREATE INDEX \"EditHistory_recordType_recordId_id_idx_2eb894eb\" ON \"public\".\"EditHistory\" (\"recordType\", \"recordId\", \"id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"EditHistory_recordType_recordId_id_idx_2eb894eb\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EditHistory_recordType_recordId_id_idx_2eb894eb\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "audit.install-record-history",
+    "label": "Install transactional edit-history triggers for search records and relationships",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "EditHistory"
+      }
+    },
+    "precheck": [
+      {
+        "description": "History triggers are not installed",
+        "sql": "SELECT to_regprocedure('public.crm_capture_edit_history()') IS NULL AS result"
+      }
+    ],
+    "execute": [
+      {
+        "description": "Create history function and triggers",
+        "sql": "-- Capture changes atomically, including relationship updates and FK delete actions.\nCREATE FUNCTION public.crm_capture_edit_history() RETURNS trigger\nLANGUAGE plpgsql SET search_path = pg_catalog, public AS $$\nDECLARE\n  previous jsonb;\n  next_row jsonb;\n  row_data jsonb;\n  targets jsonb := '[]'::jsonb;\n  target jsonb;\n  parent record;\n  own_type text;\nBEGIN\n  IF TG_OP <> 'INSERT' THEN previous := to_jsonb(OLD) - 'updatedAt'; END IF;\n  IF TG_OP <> 'DELETE' THEN next_row := to_jsonb(NEW) - 'updatedAt'; END IF;\n  -- Never persist credentials, session data, or large profile images in an audit snapshot.\n  IF TG_TABLE_NAME = 'Employee' THEN\n    previous := previous - ARRAY['password', 'pfpImgUrl', 'is_online', 'createdAt'];\n    next_row := next_row - ARRAY['password', 'pfpImgUrl', 'is_online', 'createdAt'];\n  END IF;\n  IF previous IS NOT DISTINCT FROM next_row THEN RETURN NULL; END IF;\n  own_type := CASE TG_TABLE_NAME\n    WHEN 'School' THEN 'schools' WHEN 'Contact' THEN 'contacts'\n    WHEN 'Branch' THEN 'branches' WHEN 'Program' THEN 'programs'\n    WHEN 'Municipality' THEN 'municipalities' ELSE NULL END;\n\n  -- Include both sides of a moved relationship, not just its new parent.\n  FOR row_data IN SELECT value FROM jsonb_array_elements(jsonb_build_array(previous, next_row))\n  LOOP\n    IF row_data IS NULL OR row_data = 'null'::jsonb THEN CONTINUE; END IF;\n    IF own_type IS NOT NULL THEN\n      targets := targets || jsonb_build_array(jsonb_build_object('type', own_type, 'id', row_data->'id'));\n    END IF;\n    IF TG_TABLE_NAME IN ('School', 'Contact', 'EmployeeAssignment') THEN\n      targets := targets || jsonb_build_array(jsonb_build_object('type', 'branches', 'id', row_data->'branchId'));\n    END IF;\n    IF TG_TABLE_NAME IN ('Contact', 'Participation', 'Interaction', 'ContactEmployment') THEN\n      targets := targets || jsonb_build_array(jsonb_build_object('type', 'schools', 'id', row_data->'schoolId'));\n    END IF;\n    IF TG_TABLE_NAME IN ('Interaction', 'ContactEmployment', 'ParticipationContacts') THEN\n      targets := targets || jsonb_build_array(jsonb_build_object('type', 'contacts', 'id', row_data->'contactId'));\n    END IF;\n    IF TG_TABLE_NAME IN ('Participation', 'Interaction', 'EmployeeAssignment', 'MunicipalityPrograms') THEN\n      targets := targets || jsonb_build_array(jsonb_build_object('type', 'programs', 'id', row_data->'programId'));\n    END IF;\n    IF TG_TABLE_NAME = 'MunicipalityPrograms' THEN\n      targets := targets || jsonb_build_array(jsonb_build_object('type', 'municipalities', 'id', row_data->'municipalityId'));\n    END IF;\n    IF TG_TABLE_NAME IN ('ParticipationEmployees', 'ParticipationContacts') THEN\n      FOR parent IN SELECT \"schoolId\", \"programId\" FROM public.\"Participation\" WHERE id = (row_data->>'participationId')::int\n      LOOP\n        targets := targets || jsonb_build_array(\n          jsonb_build_object('type', 'schools', 'id', parent.\"schoolId\"),\n          jsonb_build_object('type', 'programs', 'id', parent.\"programId\"));\n      END LOOP;\n    END IF;\n    IF TG_TABLE_NAME = 'Employee' THEN\n      FOR parent IN\n        SELECT \"branchId\", \"programId\" FROM public.\"EmployeeAssignment\" WHERE \"employeeId\" = (row_data->>'id')::int\n        UNION SELECT id, NULL::int FROM public.\"Branch\" WHERE \"chiefId\" = (row_data->>'id')::int\n        UNION SELECT NULL::int, p.\"programId\" FROM public.\"ParticipationEmployees\" pe\n          JOIN public.\"Participation\" p ON p.id = pe.\"participationId\" WHERE pe.\"employeeId\" = (row_data->>'id')::int\n      LOOP\n        targets := targets || jsonb_build_array(\n          jsonb_build_object('type', 'branches', 'id', parent.\"branchId\"),\n          jsonb_build_object('type', 'programs', 'id', parent.\"programId\"));\n      END LOOP;\n      FOR parent IN SELECT p.\"schoolId\" FROM public.\"ParticipationEmployees\" pe\n        JOIN public.\"Participation\" p ON p.id = pe.\"participationId\" WHERE pe.\"employeeId\" = (row_data->>'id')::int\n      LOOP\n        targets := targets || jsonb_build_array(jsonb_build_object('type', 'schools', 'id', parent.\"schoolId\"));\n      END LOOP;\n    END IF;\n  END LOOP;\n\n  FOR target IN SELECT DISTINCT value FROM jsonb_array_elements(targets)\n    WHERE value->>'id' IS NOT NULL AND (value->>'id')::int > 0\n  LOOP\n    INSERT INTO public.\"EditHistory\" (\"recordType\", \"recordId\", \"sourceTable\", operation,\n      \"beforeData\", \"afterData\", \"actorId\", \"actorName\")\n    VALUES (target->>'type', (target->>'id')::int, TG_TABLE_NAME, TG_OP,\n      previous::text, next_row::text,\n      NULLIF(current_setting('crm.actor_id', true), '')::int,\n      COALESCE(NULLIF(current_setting('crm.actor_name', true), ''), 'System / database change'));\n  END LOOP;\n  RETURN NULL;\nEND;\n$$;\n\nDO $$\nDECLARE table_name text;\nBEGIN\n  FOREACH table_name IN ARRAY ARRAY['School', 'Contact', 'Branch', 'Program', 'Municipality',\n    'Participation', 'ParticipationEmployees', 'ParticipationContacts', 'EmployeeAssignment',\n    'Interaction', 'ContactEmployment', 'MunicipalityPrograms', 'Employee']\n  LOOP\n    EXECUTE format('CREATE TRIGGER crm_edit_history AFTER INSERT OR UPDATE OR DELETE ON public.%I FOR EACH ROW EXECUTE FUNCTION public.crm_capture_edit_history()', table_name);\n  END LOOP;\nEND;\n$$;\n"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "All history triggers are installed",
+        "sql": "SELECT count(*) = 13 AS result FROM pg_trigger WHERE tgname = 'crm_edit_history' AND tgfoid = to_regprocedure('public.crm_capture_edit_history()')"
+      }
+    ]
+  }
+]

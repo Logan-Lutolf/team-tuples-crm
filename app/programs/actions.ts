@@ -1,4 +1,6 @@
 'use server'
+
+import { auditTransaction } from '@/lib/audit-transaction'
 import { timeDetails } from '@/lib/detail-timing'
 
 import { revalidatePath } from 'next/cache'
@@ -19,11 +21,11 @@ export async function saveProgram(form: FormData) {
         const data = { name: rawName.trim(), description: rawDescription?.trim() || null }
         if (form.has('id')) {
             const programId = id(form.get('id'))
-            await db.transaction(async tx => {
+            await auditTransaction(async tx => {
                 if (!await tx.orm.public.Program.where({ id: programId }).first()) throw new Error('Not found')
                 await tx.orm.public.Program.where({ id: programId }).update(data)
             })
-        } else await db.orm.public.Program.create(data)
+        } else await auditTransaction(tx => tx.orm.public.Program.create(data))
     } catch { return { error: 'Could not save this program. Refresh and try again.' } }
     revalidatePath('/programs')
     revalidatePath('/schools')
@@ -33,7 +35,7 @@ export async function saveProgram(form: FormData) {
 export async function deleteProgram(form: FormData) {
     if (form.get('confirmation') !== 'delete') return { error: 'Type delete to confirm.' }
     try {
-        await db.orm.public.Program.where({ id: id(form.get('id')) }).delete()
+        await auditTransaction(tx => tx.orm.public.Program.where({ id: id(form.get('id')) }).delete())
     } catch (error) {
         if (error && typeof error === 'object' && 'sqlState' in error && error.sqlState === '23503') {
             return { error: 'Could not clear a related link. Confirm the automatic-deletion migration has been applied and try again.' }
@@ -78,7 +80,7 @@ export async function changeProgramRelationship(form: FormData) {
     try {
         const programId = id(form.get('program-id'))
         const operation = form.get('operation')
-        await db.transaction(async tx => {
+        await auditTransaction(async tx => {
             if (!await tx.orm.public.Program.where({ id: programId }).forUpdate().first()) throw new Error('Program missing')
             if (operation === 'add-sponsor' || operation === 'remove-sponsor') {
                 const municipalityId = id(form.get('municipality-id'))

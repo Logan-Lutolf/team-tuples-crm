@@ -1,3 +1,5 @@
+import { BranchEditAccess } from '@/components/records/branch-edit-access'
+import { branchEditScope } from '@/lib/branch-edit-access'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSchoolDetails } from '@/app/schools/actions_schools'
@@ -13,6 +15,9 @@ import { BranchDetailsPage } from '@/app/branches/branch-details-page'
 import { ProgramPageContent } from '@/app/programs/program-page-content'
 import { MunicipalityPageContent } from '@/app/municipalities/municipality-page-content'
 import { EmployeeDetails } from '@/app/employee-management/employee-details'
+import { currentEmployee } from '@/lib/current-employee'
+import { canViewEditHistory } from '@/lib/edit-history-policy'
+import { EditHistoryAccess } from '@/components/records/edit-history-button'
 
 async function loadRecord<T>(label: string, load: () => Promise<T>) {
     try { return await timeDetails(label, load) }
@@ -29,6 +34,8 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
     const { type, id: rawId } = await params
     const id = Number(rawId)
     if (!isRecordType(type) || !/^\d+$/.test(rawId) || !Number.isSafeInteger(id) || id <= 0) notFound()
+    const employee = await currentEmployee()
+    const editScope = await branchEditScope(employee)
     let content
         if (type === 'schools') {
             const details = await loadRecord('schools', () => getSchoolDetails(id, false, true))
@@ -47,5 +54,5 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
             content = <MunicipalityPageContent key={id} municipality={details.municipality} mode="view" initialDetails={details} />
         } else content = <EmployeeDetails employeeId={id} />
     const list = type === 'employees' ? '/employee-management' : `/${type}`
-    return <div className="m-10 grid gap-6"><Link href={list} className="w-fit underline">Back to {type}</Link><div>{content}</div></div>
+    return <div className="m-10 grid gap-6"><Link href={list} className="w-fit underline">Back to {type}</Link><EditHistoryAccess allowed={canViewEditHistory(employee?.roles ?? [])}><BranchEditAccess scope={editScope}><div>{content}</div></BranchEditAccess></EditHistoryAccess></div>
 }

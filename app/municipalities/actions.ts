@@ -1,4 +1,6 @@
 'use server'
+
+import { auditTransaction } from '@/lib/audit-transaction'
 import { timeDetails } from '@/lib/detail-timing'
 import { db } from '@/prisma/db'
 import { revalidatePath } from 'next/cache'
@@ -19,11 +21,11 @@ export async function saveMunicipality(form: FormData) {
         const data = { name: name.trim(), mayor: mayor.trim() }
         if (form.has('id')) {
             const municipalityId = id(form.get('id'))
-            await db.transaction(async tx => {
+            await auditTransaction(async tx => {
                 if (!await tx.orm.public.Municipality.where({ id: municipalityId }).first()) throw new Error('Missing municipality')
                 await tx.orm.public.Municipality.where({ id: municipalityId }).update(data)
             })
-        } else await db.orm.public.Municipality.create(data)
+        } else await auditTransaction(tx => tx.orm.public.Municipality.create(data))
     } catch { return { error: 'Could not save municipality. Refresh and try again.' } }
     refresh()
     return { success: true as const }
@@ -31,7 +33,7 @@ export async function saveMunicipality(form: FormData) {
 
 export async function deleteMunicipality(form: FormData) {
     if (form.get('confirmation') !== 'delete') return { error: 'Type delete to confirm.' }
-    try { await db.orm.public.Municipality.where({ id: id(form.get('id')) }).delete() }
+    try { await auditTransaction(tx => tx.orm.public.Municipality.where({ id: id(form.get('id')) }).delete()) }
     catch (error) {
         if (error && typeof error === 'object' && 'sqlState' in error && error.sqlState === '23503') return { error: 'Could not clear sponsorship links. Confirm the automatic-deletion migration has been applied and try again.' }
         return { error: 'Could not delete municipality. Refresh and try again.' }
@@ -59,7 +61,7 @@ export async function changeMunicipalityProgram(form: FormData) {
         const programId = id(form.get('program-id'))
         const operation = form.get('operation')
         if (operation !== 'add' && operation !== 'remove') return { error: 'Choose a valid operation.' }
-        await db.transaction(async tx => {
+        await auditTransaction(async tx => {
             // Serialize changes for the same municipality to make repeated assignment safe.
             if (!await tx.orm.public.Municipality.where({ id: municipalityId }).forUpdate().first()) throw new Error('Missing municipality')
             if (operation === 'remove') await tx.orm.public.MunicipalityPrograms.where({ municipalityId, programId }).delete()

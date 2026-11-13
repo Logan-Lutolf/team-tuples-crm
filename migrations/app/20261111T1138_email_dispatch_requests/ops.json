@@ -1,0 +1,80 @@
+[
+  {
+    "id": "table.EmailDispatch",
+    "label": "Create table \"EmailDispatch\"",
+    "summary": "Creates table \"EmailDispatch\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "EmailDispatch"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"EmailDispatch\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDispatch\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"EmailDispatch\"",
+        "sql": "CREATE TABLE \"public\".\"EmailDispatch\" (\n  \"actorId\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"fingerprint\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"providerEmailId\" int4,\n  \"providerResult\" text,\n  \"recipientCount\" int4 NOT NULL,\n  \"state\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"EmailDispatch\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDispatch\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.EmailDispatch.EmailDispatch_actorId_createdAt_idx_0e9f1adf",
+    "label": "Create index \"EmailDispatch_actorId_createdAt_idx_0e9f1adf\" on \"EmailDispatch\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "EmailDispatch_actorId_createdAt_idx_0e9f1adf",
+        "table": "EmailDispatch"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"EmailDispatch_actorId_createdAt_idx_0e9f1adf\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDispatch_actorId_createdAt_idx_0e9f1adf\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"EmailDispatch_actorId_createdAt_idx_0e9f1adf\"",
+        "sql": "CREATE INDEX \"EmailDispatch_actorId_createdAt_idx_0e9f1adf\" ON \"public\".\"EmailDispatch\" (\"actorId\", \"createdAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"EmailDispatch_actorId_createdAt_idx_0e9f1adf\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailDispatch_actorId_createdAt_idx_0e9f1adf\""
+        ]
+      }
+    ]
+  }
+]

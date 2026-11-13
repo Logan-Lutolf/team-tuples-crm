@@ -7,7 +7,6 @@ import { ActionsCell } from "./actions-cell"
 import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
 import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { nameInitials } from "@/lib/utils"
 
@@ -48,7 +47,7 @@ export const columns = columnHelper.columns([
         cell: ({ row }) => {
             return (
                 <div className="flex flex-wrap justify-center gap-1">
-                    {row.original.roles.map(role => <Badge key={role} variant="outline" className="max-w-full whitespace-normal break-words">{role.replaceAll('_', ' ')}</Badge>)}
+                    {row.original.roles.map(role => <Badge key={role} variant="outline" className="h-auto min-h-5 max-w-full whitespace-normal break-words text-center">{role.replaceAll('_', ' ')}</Badge>)}
                 </div>
                 
             )

@@ -1,6 +1,7 @@
 'use server'
+
+import { auditTransaction } from '@/lib/audit-transaction'
 import { Models } from "@/prisma/contract"
-import { db } from "@/prisma/db"
 import { Scalars } from "@prisma/orm-postgres/components"
 import { revalidatePath } from "next/cache"
 
@@ -23,13 +24,13 @@ export async function createEmployee(formData: FormData) {
     }
     
     try {
-        const employee = await db.orm.public.Employee.create({
+        const employee = await auditTransaction(tx => tx.orm.public.Employee.create({
             name: name,
             email: email,
             phone: phone,
             password: otp,
             roles: roles,
-        })
+        }))
         revalidatePath("/employee-management")
         return { success: true, message: 'Employee created.' }
     } catch { return { success: false, message: 'Could not create employee. Check the fields and whether the email is already in use.' } }
@@ -48,14 +49,14 @@ export async function editEmployee(formData: FormData) {
     }
 
     try {
-        const employee = await db.orm.public.Employee
+        const employee = await auditTransaction(tx => tx.orm.public.Employee
             .where({ email: email})
             .update({
                 name: name,
                 email: email,
                 phone: phone,
                 roles: roles,
-            })
+            }))
         
         if (employee) {
             console.log("Edit employee successful.")
@@ -79,7 +80,7 @@ export async function deleteEmployee(form: FormData) {
             return { success: false, message: "Invalid employee ID." }
         }
 
-        await db.transaction(async tx => {
+        await auditTransaction(async tx => {
             await tx.orm.public.EmployeeAssignment.where({ employeeId: id }).delete()
             // Delete actions clear chiefs/history references and remove participation links.
             await tx.orm.public.Employee.where({ id }).delete()

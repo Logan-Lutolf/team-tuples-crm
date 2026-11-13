@@ -1,4 +1,7 @@
 import { timeDetails } from '@/lib/detail-timing'
+import { currentEmployee } from '@/lib/current-employee'
+import { canUseEmailContacts } from '@/lib/email-contacts'
+import { loadSmartEmailContact } from '@/lib/smartemailing-data'
 import { db } from '@/prisma/db'
 
 export async function loadContactDetails(contactId: number, editing = false, deferHistory = false) {
@@ -21,7 +24,9 @@ export async function loadContactDetails(contactId: number, editing = false, def
         editing ? db.orm.public.Employee.select('id', 'name', 'email').all().toArray() : employeeIds.length ? db.orm.public.Employee.where(e => e.id.in(employeeIds)).select('id', 'name', 'email').all().toArray() : [],
         editing ? db.orm.public.Program.select('id', 'name').all().toArray() : programIds.length ? db.orm.public.Program.where(p => p.id.in(programIds)).select('id', 'name').all().toArray() : [],
     ]))
-    return { asOf: Date.now(), contact, interactions, employmentHistory,
+    const employee = await currentEmployee()
+    const smartEmailing = employee && canUseEmailContacts(employee.roles) ? await loadSmartEmailContact(contact.email) : null
+    return { asOf: Date.now(), smartEmailing, contact, interactions, employmentHistory,
         participations: participationRows.filter(p => participationIds.includes(p.id)),
         participationOptions: editing ? participationRows : [], branches, schools, employees, programs, modes: [...db.enums.public.CommunicationMode.values] }
 }

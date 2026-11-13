@@ -8,7 +8,8 @@ import { userInfo } from 'node:os';
 import { randomBytes } from 'node:crypto';
 import pg from 'pg';
 import postgres from '@prisma/orm-postgres/runtime';
-import contractJson from '../../prisma/contract.json' with { type: 'json' };
+// This fixture stops at the participation migration; query its frozen contract, not future app fields.
+import contractJson from '../../migrations/snapshots/a360ae11609df68776e86a102641b08a7fe2880c62236e6e4044e9eddace1253/contract.json' with { type: 'json' };
 import { recordInteraction } from '../../lib/record-interaction.ts';
 
 const port = Number(process.env.MIGRATION_TEST_PORT);
@@ -19,7 +20,9 @@ const previous = ['20261030T1456_baseline', '20261030T1457_add_contact_role', '2
 const migration = [...await load('20261103T1944_branch_and_interaction_updates'), ...await load('20261104T1742_contact_employment_history'), ...await load('20261104T1804_contact_program_participation')];
 // Load server actions against the disposable runtime; never import the configured hosted DB.
 registerHooks({ resolve(specifier, context, next) {
+    if (specifier === '@/lib/audit-transaction') return { url: 'data:text/javascript,export function auditTransaction(work) { return globalThis.branchTestDb.transaction(work); }', shortCircuit: true };
     if (specifier === '@/prisma/db') return { url: 'data:text/javascript,export const db = globalThis.branchTestDb;', shortCircuit: true };
+    if (specifier === '@/lib/detail-timing') return next(new URL('../../lib/detail-timing.ts', import.meta.url).href, context);
     if (specifier === 'next/cache') return { url: 'data:text/javascript,export function revalidatePath() {}', shortCircuit: true };
     if (specifier === './branch-data' && context.parentURL?.endsWith('/app/branches/actions.ts')) return next(new URL('../../app/branches/branch-data.ts', import.meta.url).href, context);
     if (specifier === '../../lib/contact-employment' && (context.parentURL?.endsWith('/app/contacts/employment-actions.ts') || context.parentURL?.endsWith('/app/contacts/participation-actions.ts'))) return next(new URL('../../lib/contact-employment.ts', import.meta.url).href, context);
@@ -102,7 +105,9 @@ for (const populated of [false, true]) test(`migration preserves ${populated ? '
                 assert.equal(Date.parse(contact.last_contacted), Date.parse(data.contactedAt));
                 await assert.rejects(runtime.transaction(tx => recordInteraction(tx, { ...data, schoolId: 999 })), /contact assigned/);
                 assert.equal((await runtime.orm.public.Interaction.all().toArray()).length, 2);
-                globalThis.branchTestDb = runtime;
+                // The historical enum was called EmployeeJobRole; current actions use the renamed Role.
+                globalThis.branchTestDb = { ...runtime, enums: { ...runtime.enums,
+                    public: { ...runtime.enums.public, Role: runtime.enums.public.EmployeeJobRole } } };
                 // Empty fixture runs first, but actions are imported only for populated data.
                 const actions = await import('../../app/branches/actions.ts');
                 const form = values => {

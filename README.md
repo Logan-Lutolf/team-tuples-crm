@@ -2,6 +2,42 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Email contacts and segments
+
+The **Email** navigation page filters contacts, copies all matching email addresses,
+and saves private, fixed snapshots (segments). Users send mail from an external email
+application; the CRM no longer contains a sending form or uses the SmartEmailing API.
+Administrators, coordinators, and the `MARKETER` role can use this page.
+
+CC-based tracking requires Post Bellum IT to supply a real mailbox and connect it to
+the authenticated inbound endpoint. The current mailbox is a clearly labelled
+placeholder; copying addresses does not mark contacts as emailed.
+
+See [the email contacts handoff guide](docs/email-contacts.md) for configuration,
+webhook payloads, permissions, snapshot behavior, and tests.
+
+### Edit history
+
+School, contact, branch, program, and municipality details have a **View edit history**
+button beside **Edit** for signed-in employees whose current roles contain `ADMIN`
+or `COORDINATOR`. Both global roles and scoped employee assignments are checked on
+the server; other roles cannot access the history URL directly.
+
+The `record_edit_history` migration creates an audit table and Postgres triggers.
+History starts when that migration is applied. It records field values before and
+after a change, the editor, and the time, including changes to related records and
+automatic link removals. Entries survive deletion of records and employees.
+Application mutations use `auditTransaction` to set the authenticated editor for
+that transaction; database/script changes are labelled as system changes. Passwords
+and profile images are excluded. Failed transactions leave no audit entries.
+
+Apply with `npm run db:migrate:preview`, then `npm run db:migrate`. Integration tests
+use only a disposable local database:
+
+```bash
+MIGRATION_TEST_PORT=55439 node --test tests/migrations/edit-history.mjs
+```
+
 ### Branch and interaction schema migration
 
 The migration `20261103T1944_branch_and_interaction_updates` is already prepared.
@@ -102,3 +138,5 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+
+Read-only newsletter history: [SmartEmailing setup and daily sync](docs/smartemailing-sync.md).

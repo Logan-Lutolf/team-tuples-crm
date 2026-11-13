@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 const rolesobj = [
     { label: "Admin", value: "ADMIN" },
+    { label: "Marketer", value: "MARKETER" },
     { label: "Workshops Coordinator", value: "WORKSHOPS_COORDINATOR" },
     { label: "School Network Coordinator", value: "SCHOOL_NETWORK_COORDINATOR" },
     { label: "Stories of our Neighbors Coordinator", value: "STORIES_OF_OUR_NEIGHBORS_COORDINATOR" },

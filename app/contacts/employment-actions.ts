@@ -1,5 +1,6 @@
 'use server'
-import { db } from '@/prisma/db'
+
+import { auditTransaction } from '@/lib/audit-transaction'
 import { revalidatePath } from 'next/cache'
 import { employmentData, employmentId, EmploymentValidationError } from '../../lib/contact-employment'
 
@@ -9,7 +10,7 @@ async function mutate(form: FormData, mode: 'create' | 'edit' | 'delete') {
         const recordId = mode === 'create' ? null : employmentId(form.get('employment-id'))
         if (mode === 'delete' && form.get('confirmation') !== 'delete') return { error: 'Type delete to confirm.' }
         const data = mode === 'delete' ? null : employmentData(form, mode === 'edit')
-        await db.transaction(async tx => {
+        await auditTransaction(async tx => {
             if (!await tx.orm.public.Contact.where({ id: contactId }).first()) throw new EmploymentValidationError('This contact no longer exists.')
             if (recordId !== null && !await tx.orm.public.ContactEmployment.where({ id: recordId, contactId }).first()) throw new EmploymentValidationError('This employment record no longer exists for this contact.')
             if (data && data.schoolId !== null && !await tx.orm.public.School.where({ id: data.schoolId }).first()) throw new EmploymentValidationError('The selected school no longer exists.')

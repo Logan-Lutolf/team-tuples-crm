@@ -1,4 +1,6 @@
 'use client'
+import { useCanEditBranch } from '@/components/records/branch-edit-access'
+import { EditHistoryButton } from '@/components/records/edit-history-button'
 import { DeferredHistory } from '@/components/records/deferred-history'
 import { RecordLink } from '@/components/records/record-link'
 
@@ -23,6 +25,7 @@ function Timestamp({ value }: { value: string | null }) {
 }
 
 export function SchoolDetails(school: Props) {
+    const canEdit = useCanEditBranch(school.branchId)
     const now = useParticipationTime(school.participationAsOf)
     const participations = datedParticipations(school.participations, now)
     const [editing, setEditing] = useState(false)
@@ -69,16 +72,19 @@ export function SchoolDetails(school: Props) {
                     <Record label="Updated"><Timestamp value={school.updatedAt} /></Record>
                 </dl>
             </section>
-            <section className="grid gap-3">
-                <h3 className="font-semibold">School contacts</h3>
-                {school.contacts.length ? <Table>
-                    <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Role</TableHead><TableHead>Email</TableHead><TableHead>Phone</TableHead></TableRow></TableHeader>
-                    <TableBody>{school.contacts.map(c => <TableRow key={c.id}><TableCell><RecordLink type="contacts" id={c.id}>{c.name}</RecordLink></TableCell><TableCell>{c.contactRole.replaceAll('_', ' ')}</TableCell><TableCell><a href={`mailto:${c.email}`}>{c.email}</a></TableCell><TableCell>{c.phone || '—'}</TableCell></TableRow>)}</TableBody>
-                </Table> : <p className="text-muted-foreground">No contacts assigned.</p>}
-            </section>
-            <section className="grid gap-3">
-                <h3 className="font-semibold">Participations</h3>
-                {participations.length ? <Table>
+            <details className="rounded-lg border" open>
+                <summary className="cursor-pointer p-4 font-semibold">School contacts ({school.contacts.length})</summary>
+                <div className="grid gap-3 border-t p-4">
+                    <Table>
+                        <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Role</TableHead><TableHead>Email</TableHead><TableHead>Phone</TableHead></TableRow></TableHeader>
+                        <TableBody>{school.contacts.map(c => <TableRow key={c.id}><TableCell><RecordLink type="contacts" id={c.id}>{c.name}</RecordLink></TableCell><TableCell>{c.contactRole.replaceAll('_', ' ')}</TableCell><TableCell><a href={`mailto:${c.email}`}>{c.email}</a></TableCell><TableCell>{c.phone || '—'}</TableCell></TableRow>)}{!school.contacts.length && <TableRow><TableCell colSpan={4}>No contacts assigned.</TableCell></TableRow>}</TableBody>
+                    </Table>
+                </div>
+            </details>
+            <details className="rounded-lg border" open>
+                <summary className="cursor-pointer p-4 font-semibold">Participations ({participations.length})</summary>
+                <div className="grid gap-3 border-t p-4">
+                <Table>
                     <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Program</TableHead><TableHead>Start</TableHead><TableHead>End</TableHead><TableHead>Status</TableHead><TableHead>Employees</TableHead></TableRow></TableHeader>
                     <TableBody>{participations.map(p => <Fragment key={p.id}>
                         <TableRow>
@@ -103,23 +109,24 @@ export function SchoolDetails(school: Props) {
                             <TableCell colSpan={6} className="bg-muted/20 p-4 whitespace-normal">
                                 <section id={`${participantsPrefix}-${p.id}`} aria-label={`Employees participating in ${p.name}`} className="grid gap-3">
                                     <h4 className="font-semibold">Participation employees</h4>
-                                    {p.employees.length ? <Table>
+                                    <Table>
                                         <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>Phone</TableHead><TableHead>Region</TableHead></TableRow></TableHeader>
                                         <TableBody>{p.employees.map(e => <TableRow key={e.id}>
                                             <TableCell><RecordLink type="employees" id={e.id}>{e.name}</RecordLink></TableCell><TableCell><a href={`mailto:${e.email}`}>{e.email}</a></TableCell>
                                             <TableCell>{e.phone ? <a href={`tel:${e.phone}`}>{e.phone}</a> : '—'}</TableCell><TableCell>{e.region || '—'}</TableCell>
-                                        </TableRow>)}</TableBody>
-                                    </Table> : <p className="text-muted-foreground">No employees assigned to this participation.</p>}
+                                        </TableRow>)}{!p.employees.length && <TableRow><TableCell colSpan={4}>No employees assigned to this participation.</TableCell></TableRow>}</TableBody>
+                                    </Table>
                                 </section>
                             </TableCell>
                         </TableRow>
-                    </Fragment>)}</TableBody>
-                </Table> : <p className="text-muted-foreground">No participations recorded.</p>}
-            </section>
+                    </Fragment>)}{!participations.length && <TableRow><TableCell colSpan={6}>No participations recorded.</TableCell></TableRow>}</TableBody>
+                </Table>
+                </div>
+            </details>
             <DeferredHistory key={school.updatedAt} type="schools" id={school.id} />
-            <div className="flex justify-end border-t pt-4">
+            <div className="flex flex-wrap justify-end gap-2 border-t pt-4">
                 {editError && <p role="alert" className="text-destructive">{editError}</p>}
-                <Button type="button" onClick={openEdit} disabled={loadingEdit}>{loadingEdit ? 'Loading editing options…' : 'Edit'}</Button>
+                <EditHistoryButton type="schools" id={school.id} />{canEdit && <Button type="button" onClick={openEdit} disabled={loadingEdit}>{loadingEdit ? 'Loading editing options…' : 'Edit'}</Button>}
             </div>
         </>}
     </div>

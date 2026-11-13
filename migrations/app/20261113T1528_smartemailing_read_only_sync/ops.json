@@ -1,0 +1,236 @@
+[
+  {
+    "id": "table.SmartEmailContact",
+    "label": "Create table \"SmartEmailContact\"",
+    "summary": "Creates table \"SmartEmailContact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "SmartEmailContact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"SmartEmailContact\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SmartEmailContact\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"SmartEmailContact\"",
+        "sql": "CREATE TABLE \"public\".\"SmartEmailContact\" (\n  \"blacklisted\" bool NOT NULL,\n  \"email\" text NOT NULL,\n  \"hardBounced\" bool NOT NULL,\n  \"id\" int4 NOT NULL,\n  \"listsJson\" text NOT NULL,\n  \"softBounces\" int4 NOT NULL,\n  \"syncedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"SmartEmailContact\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SmartEmailContact\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.SmartEmailEvent",
+    "label": "Create table \"SmartEmailEvent\"",
+    "summary": "Creates table \"SmartEmailEvent\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "SmartEmailEvent"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"SmartEmailEvent\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SmartEmailEvent\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"SmartEmailEvent\"",
+        "sql": "CREATE TABLE \"public\".\"SmartEmailEvent\" (\n  \"campaignName\" text NOT NULL,\n  \"campaignType\" text NOT NULL,\n  \"detailsJson\" text NOT NULL,\n  \"email\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"messageId\" text NOT NULL,\n  \"occurredAt\" timestamptz NOT NULL,\n  \"subject\" text NOT NULL,\n  \"type\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"SmartEmailEvent\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SmartEmailEvent\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.SmartEmailSync",
+    "label": "Create table \"SmartEmailSync\"",
+    "summary": "Creates table \"SmartEmailSync\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "SmartEmailSync"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"SmartEmailSync\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SmartEmailSync\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"SmartEmailSync\"",
+        "sql": "CREATE TABLE \"public\".\"SmartEmailSync\" (\n  \"contactOffset\" int4 DEFAULT 0 NOT NULL,\n  \"contactsStartedAt\" timestamptz,\n  \"contactsSyncedAt\" timestamptz,\n  \"eventsSyncedAt\" timestamptz,\n  \"id\" text NOT NULL,\n  \"lastAttemptAt\" timestamptz,\n  \"lastError\" text,\n  \"lockToken\" text,\n  \"lockUntil\" timestamptz,\n  \"streamId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"SmartEmailSync\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SmartEmailSync\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SmartEmailContact.SmartEmailContact_email_idx_46df9cad",
+    "label": "Create index \"SmartEmailContact_email_idx_46df9cad\" on \"SmartEmailContact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SmartEmailContact_email_idx_46df9cad",
+        "table": "SmartEmailContact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SmartEmailContact_email_idx_46df9cad\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SmartEmailContact_email_idx_46df9cad\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SmartEmailContact_email_idx_46df9cad\"",
+        "sql": "CREATE INDEX \"SmartEmailContact_email_idx_46df9cad\" ON \"public\".\"SmartEmailContact\" (\"email\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SmartEmailContact_email_idx_46df9cad\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SmartEmailContact_email_idx_46df9cad\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SmartEmailEvent.SmartEmailEvent_email_messageId_idx_73ce93f2",
+    "label": "Create index \"SmartEmailEvent_email_messageId_idx_73ce93f2\" on \"SmartEmailEvent\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SmartEmailEvent_email_messageId_idx_73ce93f2",
+        "table": "SmartEmailEvent"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SmartEmailEvent_email_messageId_idx_73ce93f2\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SmartEmailEvent_email_messageId_idx_73ce93f2\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SmartEmailEvent_email_messageId_idx_73ce93f2\"",
+        "sql": "CREATE INDEX \"SmartEmailEvent_email_messageId_idx_73ce93f2\" ON \"public\".\"SmartEmailEvent\" (\"email\", \"messageId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SmartEmailEvent_email_messageId_idx_73ce93f2\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SmartEmailEvent_email_messageId_idx_73ce93f2\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.SmartEmailEvent.SmartEmailEvent_email_type_occurredAt_idx_77c7bb33",
+    "label": "Create index \"SmartEmailEvent_email_type_occurredAt_idx_77c7bb33\" on \"SmartEmailEvent\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "SmartEmailEvent_email_type_occurredAt_idx_77c7bb33",
+        "table": "SmartEmailEvent"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"SmartEmailEvent_email_type_occurredAt_idx_77c7bb33\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SmartEmailEvent_email_type_occurredAt_idx_77c7bb33\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"SmartEmailEvent_email_type_occurredAt_idx_77c7bb33\"",
+        "sql": "CREATE INDEX \"SmartEmailEvent_email_type_occurredAt_idx_77c7bb33\" ON \"public\".\"SmartEmailEvent\" (\"email\", \"type\", \"occurredAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"SmartEmailEvent_email_type_occurredAt_idx_77c7bb33\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SmartEmailEvent_email_type_occurredAt_idx_77c7bb33\""
+        ]
+      }
+    ]
+  }
+]
