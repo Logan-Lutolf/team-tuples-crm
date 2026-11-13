@@ -33,7 +33,7 @@ export function formatAddress(address: AddressOutput) {
     return address.street + ", " + address.city + ", " + address.zipCode + ", " + address.country
 }
 
-
+// needs fixing
 export function relationshipToColor(rel: string) {
     let color = ""
     switch (rel) {
@@ -44,8 +44,25 @@ export function relationshipToColor(rel: string) {
         case "EXCELLENT":
             color = "green"
         default:
-            color = "yellow"
+            color = "green"
     }
 
     return color
+}
+
+export function programParsing(program: string) {
+    const words = program.toLowerCase().split("_")
+    
+    let result = ""
+    for (let i = 0; i < words.length; i++) {
+        result += words[i].substring(0,1).toUpperCase() + words[i].substring(1) + " "
+    }
+
+    return result
+}
+
+export function dateParsing(date: string) {
+    date = date.substring(0, 10)
+
+    return date.substring(8) + "/" + date.substring(5,7) + "/" + date.substring(0,4)
 }
