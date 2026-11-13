@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'439668826c5aa22239929b6482f9d1f993422d7cfbddea78ff1a4f1a6f2a92be'>;
+  StorageHashBase<'65cffa9e790e02bbf633075bf36cf4a1d2dc5aad3bc7d6a2dd38f6ba420c44a8'>;
 export type ExecutionHash =
   ExecutionHashBase<'14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9'>;
 export type ProfileHash =
@@ -297,10 +297,6 @@ export type FieldOutputTypes = {
       readonly type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
-    readonly OrganizationPeople: {
-      readonly orgId: CodecTypes['pg/int4@1']['output'];
-      readonly personId: CodecTypes['pg/int4@1']['output'];
-    };
     readonly Parent: { readonly personId: CodecTypes['pg/int4@1']['output'] };
     readonly Participation: {
       readonly endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -329,9 +325,24 @@ export type FieldOutputTypes = {
       readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
-      readonly orgId: CodecTypes['pg/int4@1']['output'];
+      readonly orgId: CodecTypes['pg/int4@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly PersonRoles: {
+      readonly personId: CodecTypes['pg/int4@1']['output'];
+      readonly type:
+        | 'TEACHER'
+        | 'PRINCIPAL'
+        | 'SCHOOL_COORDINATOR'
+        | 'STUDENT'
+        | 'HISTORIAN'
+        | 'GOVERNMENT_OFFICIAL'
+        | 'DONOR'
+        | 'SPONSOR'
+        | 'PARTNER'
+        | 'VOLUNTEER'
+        | 'OTHER';
     };
     readonly Program: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -401,10 +412,6 @@ export type FieldInputTypes = {
       readonly type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
-    readonly OrganizationPeople: {
-      readonly orgId: CodecTypes['pg/int4@1']['input'];
-      readonly personId: CodecTypes['pg/int4@1']['input'];
-    };
     readonly Parent: { readonly personId: CodecTypes['pg/int4@1']['input'] };
     readonly Participation: {
       readonly endDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -433,9 +440,24 @@ export type FieldInputTypes = {
       readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
-      readonly orgId: CodecTypes['pg/int4@1']['input'];
+      readonly orgId: CodecTypes['pg/int4@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly PersonRoles: {
+      readonly personId: CodecTypes['pg/int4@1']['input'];
+      readonly type:
+        | 'TEACHER'
+        | 'PRINCIPAL'
+        | 'SCHOOL_COORDINATOR'
+        | 'STUDENT'
+        | 'HISTORIAN'
+        | 'GOVERNMENT_OFFICIAL'
+        | 'DONOR'
+        | 'SPONSOR'
+        | 'PARTNER'
+        | 'VOLUNTEER'
+        | 'OTHER';
     };
     readonly Program: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -505,10 +527,6 @@ export type StorageColumnTypes = {
       readonly type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
-    readonly OrganizationPeople: {
-      readonly orgId: CodecTypes['pg/int4@1']['output'];
-      readonly personId: CodecTypes['pg/int4@1']['output'];
-    };
     readonly Parent: { readonly personId: CodecTypes['pg/int4@1']['output'] };
     readonly Participation: {
       readonly endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -537,9 +555,24 @@ export type StorageColumnTypes = {
       readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
-      readonly orgId: CodecTypes['pg/int4@1']['output'];
+      readonly orgId: CodecTypes['pg/int4@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly PersonRoles: {
+      readonly personId: CodecTypes['pg/int4@1']['output'];
+      readonly type:
+        | 'TEACHER'
+        | 'PRINCIPAL'
+        | 'SCHOOL_COORDINATOR'
+        | 'STUDENT'
+        | 'HISTORIAN'
+        | 'GOVERNMENT_OFFICIAL'
+        | 'DONOR'
+        | 'SPONSOR'
+        | 'PARTNER'
+        | 'VOLUNTEER'
+        | 'OTHER';
     };
     readonly Program: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -609,10 +642,6 @@ export type StorageColumnInputTypes = {
       readonly type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
-    readonly OrganizationPeople: {
-      readonly orgId: CodecTypes['pg/int4@1']['input'];
-      readonly personId: CodecTypes['pg/int4@1']['input'];
-    };
     readonly Parent: { readonly personId: CodecTypes['pg/int4@1']['input'] };
     readonly Participation: {
       readonly endDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -641,9 +670,24 @@ export type StorageColumnInputTypes = {
       readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
-      readonly orgId: CodecTypes['pg/int4@1']['input'];
+      readonly orgId: CodecTypes['pg/int4@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly PersonRoles: {
+      readonly personId: CodecTypes['pg/int4@1']['input'];
+      readonly type:
+        | 'TEACHER'
+        | 'PRINCIPAL'
+        | 'SCHOOL_COORDINATOR'
+        | 'STUDENT'
+        | 'HISTORIAN'
+        | 'GOVERNMENT_OFFICIAL'
+        | 'DONOR'
+        | 'SPONSOR'
+        | 'PARTNER'
+        | 'VOLUNTEER'
+        | 'OTHER';
     };
     readonly Program: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -718,13 +762,6 @@ export namespace Models {
     participations: public_Participation[];
     readonly [RelationKeys]?: 'participations';
   };
-  export type public_OrganizationPeople = {
-    orgId: CodecTypes['pg/int4@1']['output'];
-    personId: CodecTypes['pg/int4@1']['output'];
-    organization: public_Organization;
-    person: public_Person;
-    readonly [RelationKeys]?: 'organization' | 'person';
-  };
   export type public_Parent = {
     personId: CodecTypes['pg/int4@1']['output'];
     person: public_Person;
@@ -765,14 +802,32 @@ export namespace Models {
     email: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
-    orgId: CodecTypes['pg/int4@1']['output'];
+    orgId: CodecTypes['pg/int4@1']['output'] | null;
     phone: CodecTypes['pg/text@1']['output'] | null;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     employee: public_Employee | null;
-    organization: public_Organization;
+    organization: public_Organization | null;
     parent: public_Parent | null;
+    personRole: public_PersonRoles | null;
     student: public_Student | null;
-    readonly [RelationKeys]?: 'employee' | 'organization' | 'parent' | 'student';
+    readonly [RelationKeys]?: 'employee' | 'organization' | 'parent' | 'personRole' | 'student';
+  };
+  export type public_PersonRoles = {
+    personId: CodecTypes['pg/int4@1']['output'];
+    type:
+      | 'TEACHER'
+      | 'PRINCIPAL'
+      | 'SCHOOL_COORDINATOR'
+      | 'STUDENT'
+      | 'HISTORIAN'
+      | 'GOVERNMENT_OFFICIAL'
+      | 'DONOR'
+      | 'SPONSOR'
+      | 'PARTNER'
+      | 'VOLUNTEER'
+      | 'OTHER';
+    person: public_Person;
+    readonly [RelationKeys]?: 'person';
   };
   export type public_Program = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -798,11 +853,11 @@ export declare const models: {
   public: {
     Employee: Models.public_Employee;
     Organization: Models.public_Organization;
-    OrganizationPeople: Models.public_OrganizationPeople;
     Parent: Models.public_Parent;
     Participation: Models.public_Participation;
     ParticipationEmployees: Models.public_ParticipationEmployees;
     Person: Models.public_Person;
+    PersonRoles: Models.public_PersonRoles;
     Program: Models.public_Program;
     Student: Models.public_Student;
   };
@@ -961,64 +1016,6 @@ type ContractBase = Omit<
               uniques: readonly [];
               indexes: readonly [];
               foreignKeys: readonly [];
-            };
-            readonly OrganizationPeople: {
-              columns: {
-                readonly orgId: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly many: false;
-                };
-                readonly personId: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly many: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['orgId', 'personId'] };
-              uniques: readonly [];
-              indexes: readonly [
-                {
-                  readonly name: 'OrganizationPeople_orgId_idx_c5e5aabe';
-                  readonly prefix: 'OrganizationPeople_orgId_idx';
-                  readonly columns: readonly ['orgId'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'OrganizationPeople_personId_idx_e5e06b80';
-                  readonly prefix: 'OrganizationPeople_personId_idx';
-                  readonly columns: readonly ['personId'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'OrganizationPeople';
-                    readonly columns: readonly ['personId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Person';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'OrganizationPeople';
-                    readonly columns: readonly ['orgId'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'Organization';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
             };
             readonly Parent: {
               columns: {
@@ -1253,7 +1250,7 @@ type ContractBase = Omit<
                 readonly orgId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly phone: {
@@ -1289,6 +1286,39 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'Organization';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly PersonRoles: {
+              columns: {
+                readonly personId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly type: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['personId'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'PersonRoles';
+                    readonly columns: readonly ['personId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Person';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -1440,7 +1470,7 @@ type ContractBase = Omit<
                 'OTHER',
               ];
             };
-            readonly ContactRole: {
+            readonly ContactTypes: {
               readonly kind: 'valueSet';
               readonly values: readonly [
                 'TEACHER',
@@ -1539,10 +1569,6 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Organization';
     };
-    readonly OrganizationPeople: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'OrganizationPeople';
-    };
     readonly Parent: { readonly namespace: 'public' & NamespaceId; readonly model: 'Parent' };
     readonly Participation: {
       readonly namespace: 'public' & NamespaceId;
@@ -1553,6 +1579,10 @@ type ContractBase = Omit<
       readonly model: 'ParticipationEmployees';
     };
     readonly Person: { readonly namespace: 'public' & NamespaceId; readonly model: 'Person' };
+    readonly PersonRoles: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'PersonRoles';
+    };
     readonly Program: { readonly namespace: 'public' & NamespaceId; readonly model: 'Program' };
     readonly Student: { readonly namespace: 'public' & NamespaceId; readonly model: 'Student' };
   };
@@ -1716,52 +1746,6 @@ type ContractBase = Omit<
                 readonly relationship: { readonly column: 'relationship' };
                 readonly type: { readonly column: 'type' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
-              };
-            };
-          };
-          readonly OrganizationPeople: {
-            readonly fields: {
-              readonly orgId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly personId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-            };
-            readonly relations: {
-              readonly organization: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Organization';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['orgId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly person: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Person';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['personId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'OrganizationPeople';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly orgId: { readonly column: 'orgId' };
-                readonly personId: { readonly column: 'personId' };
               };
             };
           };
@@ -1972,7 +1956,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly orgId: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly phone: {
@@ -2006,7 +1990,7 @@ type ContractBase = Omit<
                   readonly model: 'Organization';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['orgId'];
                   readonly targetFields: readonly ['id'];
@@ -2016,6 +2000,18 @@ type ContractBase = Omit<
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'Parent';
+                };
+                readonly cardinality: '1:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['personId'];
+                };
+              };
+              readonly personRole: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PersonRoles';
                 };
                 readonly cardinality: '1:1';
                 readonly nullable: true;
@@ -2050,6 +2046,40 @@ type ContractBase = Omit<
                 readonly orgId: { readonly column: 'orgId' };
                 readonly phone: { readonly column: 'phone' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly PersonRoles: {
+            readonly fields: {
+              readonly personId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly person: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Person';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['personId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'PersonRoles';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly personId: { readonly column: 'personId' };
+                readonly type: { readonly column: 'type' };
               };
             };
           };
@@ -2219,7 +2249,7 @@ type ContractBase = Omit<
               { readonly name: 'OTHER'; readonly value: 'OTHER' },
             ];
           };
-          readonly ContactRole: {
+          readonly ContactTypes: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
               { readonly name: 'TEACHER'; readonly value: 'TEACHER' },
@@ -2347,7 +2377,7 @@ type ContractBase = Omit<
             { readonly name: 'MESSAGE'; readonly value: 'MESSAGE' },
             { readonly name: 'OTHER'; readonly value: 'OTHER' },
           ];
-          readonly ContactRole: readonly [
+          readonly ContactTypes: readonly [
             { readonly name: 'TEACHER'; readonly value: 'TEACHER' },
             { readonly name: 'PRINCIPAL'; readonly value: 'PRINCIPAL' },
             { readonly name: 'SCHOOL_COORDINATOR'; readonly value: 'SCHOOL_COORDINATOR' },

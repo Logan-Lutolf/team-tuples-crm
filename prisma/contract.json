@@ -12,10 +12,6 @@
       "model": "Organization",
       "namespace": "public"
     },
-    "OrganizationPeople": {
-      "model": "OrganizationPeople",
-      "namespace": "public"
-    },
     "Parent": {
       "model": "Parent",
       "namespace": "public"
@@ -30,6 +26,10 @@
     },
     "Person": {
       "model": "Person",
+      "namespace": "public"
+    },
+    "PersonRoles": {
+      "model": "PersonRoles",
       "namespace": "public"
     },
     "Program": {
@@ -115,7 +115,7 @@
               }
             ]
           },
-          "ContactRole": {
+          "ContactTypes": {
             "codecId": "pg/text@1",
             "members": [
               {
@@ -659,70 +659,6 @@
               "table": "Organization"
             }
           },
-          "OrganizationPeople": {
-            "fields": {
-              "orgId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "personId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "organization": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "orgId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Organization",
-                  "namespace": "public"
-                }
-              },
-              "person": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "personId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Person",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "orgId": {
-                  "column": "orgId"
-                },
-                "personId": {
-                  "column": "personId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "OrganizationPeople"
-            }
-          },
           "Parent": {
             "fields": {
               "personId": {
@@ -1036,7 +972,7 @@
                 }
               },
               "orgId": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
@@ -1076,7 +1012,7 @@
               },
               "organization": {
                 "cardinality": "N:1",
-                "nullable": false,
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "orgId"
@@ -1103,6 +1039,22 @@
                 },
                 "to": {
                   "model": "Parent",
+                  "namespace": "public"
+                }
+              },
+              "personRole": {
+                "cardinality": "1:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "personId"
+                  ]
+                },
+                "to": {
+                  "model": "PersonRoles",
                   "namespace": "public"
                 }
               },
@@ -1155,6 +1107,60 @@
               },
               "namespaceId": "public",
               "table": "Person"
+            }
+          },
+          "PersonRoles": {
+            "fields": {
+              "personId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ContactTypes",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "person": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "personId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Person",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "personId": {
+                  "column": "personId"
+                },
+                "type": {
+                  "column": "type"
+                }
+              },
+              "namespaceId": "public",
+              "table": "PersonRoles"
             }
           },
           "Program": {
@@ -1568,85 +1574,6 @@
               },
               "uniques": []
             },
-            "OrganizationPeople": {
-              "columns": {
-                "orgId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                },
-                "personId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "index": {
-                    "name": "OrganizationPeople_personId_idx_e5e06b80"
-                  },
-                  "source": {
-                    "columns": [
-                      "personId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "OrganizationPeople"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Person"
-                  }
-                },
-                {
-                  "index": {
-                    "name": "OrganizationPeople_orgId_idx_c5e5aabe"
-                  },
-                  "source": {
-                    "columns": [
-                      "orgId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "OrganizationPeople"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Organization"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "orgId"
-                  ],
-                  "name": "OrganizationPeople_orgId_idx_c5e5aabe",
-                  "prefix": "OrganizationPeople_orgId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "personId"
-                  ],
-                  "name": "OrganizationPeople_personId_idx_e5e06b80",
-                  "prefix": "OrganizationPeople_personId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "orgId",
-                  "personId"
-                ]
-              },
-              "uniques": []
-            },
             "Parent": {
               "columns": {
                 "personId": {
@@ -1948,7 +1875,7 @@
                 "orgId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
+                  "nullable": true
                 },
                 "phone": {
                   "codecId": "pg/text@1",
@@ -2004,6 +1931,61 @@
                   ]
                 }
               ]
+            },
+            "PersonRoles": {
+              "checks": [
+                {
+                  "expression": "\"type\" IN ('TEACHER', 'PRINCIPAL', 'SCHOOL_COORDINATOR', 'STUDENT', 'HISTORIAN', 'GOVERNMENT_OFFICIAL', 'DONOR', 'SPONSOR', 'PARTNER', 'VOLUNTEER', 'OTHER')",
+                  "name": "PersonRoles_type_check_29b12c93",
+                  "prefix": "PersonRoles_type_check"
+                }
+              ],
+              "columns": {
+                "personId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ContactTypes",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "primaryKey": true
+                  },
+                  "source": {
+                    "columns": [
+                      "personId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PersonRoles"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Person"
+                  }
+                }
+              ],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "personId"
+                ]
+              },
+              "uniques": []
             },
             "Program": {
               "columns": {
@@ -2179,7 +2161,7 @@
                 "OTHER"
               ]
             },
-            "ContactRole": {
+            "ContactTypes": {
               "kind": "valueSet",
               "values": [
                 "TEACHER",
@@ -2277,7 +2259,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "439668826c5aa22239929b6482f9d1f993422d7cfbddea78ff1a4f1a6f2a92be"
+    "storageHash": "65cffa9e790e02bbf633075bf36cf4a1d2dc5aad3bc7d6a2dd38f6ba420c44a8"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",
