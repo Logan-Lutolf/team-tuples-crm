@@ -12,6 +12,10 @@
       "model": "Organization",
       "namespace": "public"
     },
+    "OrganizationPeople": {
+      "model": "OrganizationPeople",
+      "namespace": "public"
+    },
     "Parent": {
       "model": "Parent",
       "namespace": "public"
@@ -655,6 +659,70 @@
               "table": "Organization"
             }
           },
+          "OrganizationPeople": {
+            "fields": {
+              "orgId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "personId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "organization": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "orgId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Organization",
+                  "namespace": "public"
+                }
+              },
+              "person": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "personId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Person",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "orgId": {
+                  "column": "orgId"
+                },
+                "personId": {
+                  "column": "personId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "OrganizationPeople"
+            }
+          },
           "Parent": {
             "fields": {
               "personId": {
@@ -967,6 +1035,13 @@
                   "kind": "scalar"
                 }
               },
+              "orgId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "phone": {
                 "nullable": true,
                 "type": {
@@ -996,6 +1071,22 @@
                 },
                 "to": {
                   "model": "Employee",
+                  "namespace": "public"
+                }
+              },
+              "organization": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "orgId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Organization",
                   "namespace": "public"
                 }
               },
@@ -1051,6 +1142,9 @@
                 },
                 "name": {
                   "column": "name"
+                },
+                "orgId": {
+                  "column": "orgId"
                 },
                 "phone": {
                   "column": "phone"
@@ -1474,6 +1568,85 @@
               },
               "uniques": []
             },
+            "OrganizationPeople": {
+              "columns": {
+                "orgId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "personId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "OrganizationPeople_personId_idx_e5e06b80"
+                  },
+                  "source": {
+                    "columns": [
+                      "personId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "OrganizationPeople"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Person"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "OrganizationPeople_orgId_idx_c5e5aabe"
+                  },
+                  "source": {
+                    "columns": [
+                      "orgId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "OrganizationPeople"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Organization"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "orgId"
+                  ],
+                  "name": "OrganizationPeople_orgId_idx_c5e5aabe",
+                  "prefix": "OrganizationPeople_orgId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "personId"
+                  ],
+                  "name": "OrganizationPeople_personId_idx_e5e06b80",
+                  "prefix": "OrganizationPeople_personId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "orgId",
+                  "personId"
+                ]
+              },
+              "uniques": []
+            },
             "Parent": {
               "columns": {
                 "personId": {
@@ -1772,6 +1945,11 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
+                "orgId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
                 "phone": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -1783,8 +1961,37 @@
                   "nullable": false
                 }
               },
-              "foreignKeys": [],
-              "indexes": [],
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Person_orgId_idx_c5e5aabe"
+                  },
+                  "source": {
+                    "columns": [
+                      "orgId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Person"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Organization"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "orgId"
+                  ],
+                  "name": "Person_orgId_idx_c5e5aabe",
+                  "prefix": "Person_orgId_idx",
+                  "unique": false
+                }
+              ],
               "primaryKey": {
                 "columns": [
                   "id"
@@ -2070,7 +2277,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "6c3d572fba92ab8bb1a38736c8e29ca2cc170cedb5f300250223c5157bef3add"
+    "storageHash": "439668826c5aa22239929b6482f9d1f993422d7cfbddea78ff1a4f1a6f2a92be"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

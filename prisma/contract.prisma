@@ -357,10 +357,11 @@ model Person {
   updatedAt temporal.updatedAtString()
 
   // FKs
-  
   employee        Employee?
   student         Student?
   parent          Parent?
+  organization    Organization @relation(fields: [orgId], references: [id])
+  orgId           Int
   // participations ParticipationContacts[]
 }
 
@@ -405,4 +406,14 @@ model ParticipationEmployees {
   participation Participation @relation(fields: [particpationId], references: [id])
 
   @@id([particpationId, employeeId])
+}
+
+model OrganizationPeople {
+  personId Int
+  orgId  Int
+
+  person Person @relation(fields: [personId], references: [id])
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@id([orgId, personId])
 }
