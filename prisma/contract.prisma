@@ -111,79 +111,78 @@ enum OrganizationTypes {
 }
 
 //---------------------------MODELS---------------------------//
-model Employee {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  pfpImgUrl String?
-  phone     String?
-  address   Address?
-  region   RegionTypes?
-  mustChangePassword  Boolean @default(true)
+// model EmployeeOld {
+//   id        Int      @id @default(autoincrement())
+//   name      String
+//   email     String   @unique
+//   password  String
+//   pfpImgUrl String?
+//   phone     String?
+//   address   Address?
+//   region   RegionTypes?
+//   mustChangePassword  Boolean @default(true)
 
 
-  is_online  Boolean  @default(false)
-  roles      Role[]
+//   is_online  Boolean  @default(false)
+//   roles      Role[]
 
-  assignments EmployeeAssignment[]
-  interactions Interaction[]
-  chiefOf Branch[]
-  participations ParticipationEmployees[]
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
-}
+//   // assignments EmployeeAssignment[]
+//   // interactions Interaction[]
+//   // chiefOf Branch[]
+//   // participations ParticipationEmployees[]
+//   createdAt TimestamptzString @default(now())
+//   updatedAt temporal.updatedAtString()
+// }
 
-model Contact {
-  participations ParticipationContacts[]
-  employmentHistory ContactEmployment[]
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  phone     String?
-  address   Address?
-  region   RegionTypes?
-  // Cached summary of the latest interaction; maintained by application logic.
-  last_contacted TimestamptzString @default(now())
+// model Contact {
+//   employmentHistory ContactEmployment[]
+//   id        Int      @id @default(autoincrement())
+//   name      String
+//   email     String   @unique
+//   phone     String?
+//   address   Address?
+//   region   RegionTypes?
+//   // Cached summary of the latest interaction; maintained by application logic.
+//   last_contacted TimestamptzString @default(now())
   
-  interactions Interaction[]
+//   interactions Interaction[]
 
-  contactRole ContactRole
+//   contactRole ContactRole
 
-  last_contacted_by Employee? @relation(fields: [last_contacted_byId], references: [id], onDelete: SetNull)
-  last_contacted_byId Int?
+//   last_contacted_by Employee? @relation(fields: [last_contacted_byId], references: [personId], onDelete: SetNull)
+//   last_contacted_byId Int?
 
-  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-  organizationId Int?
+//   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+//   organizationId Int?
 
-  branchId Int?
-  branch   Branch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
+//   branchId Int?
+//   branch   Branch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
 
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
-}
+//   createdAt TimestamptzString @default(now())
+//   updatedAt temporal.updatedAtString()
+// }
 
-model School {
-  contactEmployments ContactEmployment[]
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+// model School {
+//   contactEmployments ContactEmployment[]
+//   createdAt TimestamptzString @default(now())
+//   updatedAt temporal.updatedAtString()
 
-  id        Int      @id
-  name      String
-  address   Address
-  type      OrganizationTypes
-  phone String?
-  email String @unique
-  relationship RelationshipTypes
-  region   RegionTypes
+//   id        Int      @id
+//   name      String
+//   address   Address
+//   type      OrganizationTypes
+//   phone String?
+//   email String @unique
+//   relationship RelationshipTypes
+//   region   RegionTypes
 
-  branchId Int?
-  branch Branch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
-  }
+//   branchId Int?
+//   branch Branch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
+//   }
 
 // between program and school
 model Participation {
-  contacts ParticipationContacts[]
+  // contacts ParticipationContacts[]
   id        Int      @id @default(autoincrement())
   name      String
   
@@ -202,54 +201,54 @@ model Participation {
 }
 
 // shows an employee is working on a participation
-model ParticipationEmployees {
-  participationId Int
-  employeeId Int
+// model ParticipationEmployees {
+//   participationId Int
+//   employeeId Int
 
-  participation Participation @relation(fields: [participationId], references: [id], onDelete: Cascade)
-  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+//   participation Participation @relation(fields: [participationId], references: [id], onDelete: Cascade)
+//   employee Employee @relation(fields: [employeeId], references: [personId], onDelete: Cascade)
 
-  @@id([participationId, employeeId])
-}
+//   @@id([participationId, employeeId])
+// }
 
 // Roles may apply globally, or be scoped to a branch, program, and/or region.
 // Multiple rows let an employee work across multiple programs and branches.
-model EmployeeAssignment {
-  id         Int @id @default(autoincrement())
-  employeeId Int
-  role       Role
-  branchId   Int?
-  programId  Int?
-  region     RegionTypes?
+// model EmployeeAssignment {
+//   id         Int @id @default(autoincrement())
+//   employeeId Int
+//   role       Role
+//   branchId   Int?
+//   programId  Int?
+//   region     RegionTypes?
 
-  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  branch   Branch? @relation(fields: [branchId], references: [id], onDelete: Cascade)
-  program  Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
+//   employee Employee @relation(fields: [employeeId], references: [personId], onDelete: Cascade)
+//   branch   BranchTypes
+//   program  Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
 
-  @@index([employeeId])
-  @@index([branchId, programId])
-}
+//   @@index([employeeId])
+//   @@index([branchId, programId])
+// }
 
 // Each contact event is a separate row, including repeat conversations.
-model Interaction {
-  id                Int @id @default(autoincrement())
-  employeeId        Int?
-  contactId         Int?
-  organizationId    Int?
-  programId         Int?
-  contactedAt       TimestamptzString @default(now())
-  mode              CommunicationMode
+// model Interaction {
+//   id                Int @id @default(autoincrement())
+//   employeeId        Int?
+//   contactId         Int?
+//   organizationId    Int?
+//   programId         Int?
+//   contactedAt       TimestamptzString @default(now())
+//   mode              CommunicationMode
 
-  employee Employee? @relation(fields: [employeeId], references: [id], onDelete: SetNull)
-  contact  Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
-  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-  program  Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
+//   employee Employee? @relation(fields: [employeeId], references: [personId], onDelete: SetNull)
+//   contact  Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+//   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+//   program  Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
 
-  @@index([employeeId, contactedAt])
-  @@index([contactId, contactedAt])
-  @@index([organizationId, contactedAt])
-  @@index([programId, contactedAt])
-}
+//   @@index([employeeId, contactedAt])
+//   @@index([contactId, contactedAt])
+//   @@index([organizationId, contactedAt])
+//   @@index([programId, contactedAt])
+// }
 
 model Program {
   id        Int      @id @default(autoincrement())
@@ -257,9 +256,9 @@ model Program {
   description String?
   
   // the municipality funding the program (optional)
-  sponsor MunicipalityPrograms[]
-  assignments EmployeeAssignment[]
-  interactions Interaction[]
+  // sponsor MunicipalityPrograms[]
+  // assignments EmployeeAssignment[]
+  // interactions Interaction[]
 
   participations Participation[]
   createdAt TimestamptzString @default(now())
@@ -267,70 +266,69 @@ model Program {
 }
 
 
-model Branch {
-  id Int @id @default(autoincrement())
-  name BranchTypes
-  institute String?
-  chiefId Int?
-  chief Employee? @relation(fields: [chiefId], references: [id], onDelete: SetNull)
-  assignments EmployeeAssignment[]
-  region RegionTypes
+// model Branch {
+//   id Int @id @default(autoincrement())
+//   name BranchTypes
+//   institute String?
+//   chiefId Int?
+//   chief Employee? @relation(fields: [chiefId], references: [personId], onDelete: SetNull)
+//   region RegionTypes
   
-  contacts Contact[]
-  schools School[]
-}
+//   contacts Contact[]
+//   schools School[]
+// }
 
-model Municipality {
-  id Int @id @default(autoincrement())
-  name String
-  mayor String
+// model Municipality {
+//   id Int @id @default(autoincrement())
+//   name String
+//   mayor String
 
-  program MunicipalityPrograms[]
+//   program MunicipalityPrograms[]
 
-}
+// }
 
-model MunicipalityPrograms {
-  municipalityId Int
-  programId Int
+// model MunicipalityPrograms {
+//   municipalityId Int
+//   programId Int
 
-  program Program @relation(fields: [programId], references: [id], onDelete: Cascade)
-  municipality Municipality @relation(fields: [municipalityId], references: [id], onDelete: Cascade)
+//   program Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+//   municipality Municipality @relation(fields: [municipalityId], references: [id], onDelete: Cascade)
 
-  @@id([municipalityId, programId])
-}
+//   @@id([municipalityId, programId])
+// }
 
 // Explicit employment periods of a teacher
-model ContactEmployment {
-  id Int @id @default(autoincrement())
-  contactId Int
-  schoolId Int?
-  jobTitle String
-  startDate TimestamptzString
-  endDate TimestamptzString?
-  notes String?
+// model ContactEmployment {
+//   id Int @id @default(autoincrement())
+//   contactId String
+//   schoolId String?
+//   jobTitle String
+//   startDate TimestamptzString
+//   endDate TimestamptzString?
+//   notes String?
 
-  contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
-  school School? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+//   contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+//   school School? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
 
-  @@index([contactId, startDate])
-  @@index([schoolId])
-}
+//   @@index([contactId, startDate])
+//   @@index([schoolId])
+// }
 
 // Contacts attending a specific occurrence of a program at a school.
-model ParticipationContacts {
-  participationId Int
-  contactId Int
+// model ParticipationContacts {
+//   participationId Int
+//   personId Int
 
-  participation Participation @relation(fields: [participationId], references: [id], onDelete: Cascade)
-  contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+//   participation Participation @relation(fields: [participationId], references: [id], onDelete: Cascade)
+//   people Person @relation(fields: [personId], references: [id], onDelete: Cascade)
 
-  @@id([participationId, contactId])
-  @@index([contactId])
-}
+//   @@id([participationId, personId])
+//   @@index([personId])
+// }
 
-
+//* --------------------------- CHARLOTTE'S CHANGES --------------------------- *//
 model Organization {
-  id            cuid2()
+  id            Int @id @default(autoincrement())
   name          String
   phone         Char(10)?
   email         VarChar(50)?
@@ -340,7 +338,71 @@ model Organization {
   branch        BranchTypes
   address       Address
 
-  interactions Interaction[]
-  contacts Contact[]
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  // interactions Interaction[]
+  // contacts Contact[]
   participations Participation[]
+}
+
+model Person {
+  id      Int @id @default(autoincrement())
+  name    String
+  email   String? @unique
+  phone   String?
+  address Address
+  dob     Date
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  // FKs
+  
+  employee        Employee?
+  student         Student?
+  parent          Parent?
+  // participations ParticipationContacts[]
+}
+
+model Student {
+  personId  Int @id 
+  person   Person @relation(fields: [personId], references: [id])
+
+  orgId  Int
+  org    Organization @relation(fields: [orgId], references: [id])
+
+  parentId  Int
+  parent   Parent @relation(fields: [parentId], references: [personId])
+
+}
+
+model Parent {
+  personId  Int @id 
+  person   Person @relation(fields: [personId], references: [id])
+
+  students Student[]
+}
+
+model Employee {
+  personId  Int @id 
+  person   Person @relation(fields: [personId], references: [id])
+
+  password  String
+  pfpImgUrl String
+  mustChangePassword Boolean @default(true)
+  branch  BranchTypes
+
+  // assignments EmployeeAssignment[]
+  // interactions Interaction[]
+  participation Participation[]
+}
+
+model ParticipationEmployees {
+  particpationId Int
+  employeeId  Int
+
+  employee Employee @relation(fields: [employeeId], references: [personId])
+  participation Participation @relation(fields: [particpationId], references: [id])
+
+  @@id([particpationId, employeeId])
 }
