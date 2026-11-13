@@ -313,7 +313,7 @@
               }
             ]
           },
-          "Role": {
+          "RoleTypes": {
             "codecId": "pg/text@1",
             "members": [
               {
@@ -422,6 +422,22 @@
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
+              },
+              "role": {
+                "many": {
+                  "elementNullable": false
+                },
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "RoleTypes",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
               }
             },
             "relations": {
@@ -486,6 +502,9 @@
                 },
                 "pfpImgUrl": {
                   "column": "pfpImgUrl"
+                },
+                "role": {
+                  "column": "role"
                 }
               },
               "namespaceId": "public",
@@ -946,7 +965,7 @@
               "dob": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/date-temporal@1",
+                  "codecId": "pg/date-string@1",
                   "kind": "scalar"
                 }
               },
@@ -1379,6 +1398,16 @@
                   "expression": "\"branch\" IN ('SEVERNÍ_ČECHY', 'VÝCHODNÍ_ČECHY', 'STŘEDNÍ_MORAVA', 'PLZEŇSKÝ_KRAJ', 'JIŽNÍ_MORAVA', 'JIŽNÍ_ČECHY', 'KARLOVARSKÝ_KRAJ', 'MORAVSKOSLEZSKÝ_KRAJ', 'PRAHA')",
                   "name": "Employee_branch_check_572d22f2",
                   "prefix": "Employee_branch_check"
+                },
+                {
+                  "expression": "array_remove(\"role\", NULL) <@ '{\"ADMIN\",\"WORKSHOPS_COORDINATOR\",\"SCHOOL_NETWORK_COORDINATOR\",\"STORIES_OF_OUR_NEIGHBORS_COORDINATOR\",\"VETERANS_DAY_COORDINATOR\",\"NEWSLETTER_COORDINATOR\",\"BRANCH_DIRECTOR\",\"HEAD_OF_EDUCATION\",\"PROJECT_MANAGER\",\"COORDINATOR\",\"DEVELOPMENT_LEAD\",\"PRODUCTION\",\"STUDIO_LEAD\",\"LECTURER\",\"METHODOLOGY_LEAD\"}'",
+                  "name": "Employee_role_check_4cda3a2c",
+                  "prefix": "Employee_role_check"
+                },
+                {
+                  "expression": "array_position(\"role\", NULL) IS NULL",
+                  "name": "Employee_role_elem_not_null_11b195b8",
+                  "prefix": "Employee_role_elem_not_null"
                 }
               ],
               "columns": {
@@ -1416,6 +1445,20 @@
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
+                },
+                "role": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "many": {
+                    "elementNullable": false
+                  },
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "RoleTypes",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 }
               },
               "foreignKeys": [
@@ -1849,7 +1892,7 @@
                   "nullable": false
                 },
                 "dob": {
-                  "codecId": "pg/date-temporal@1",
+                  "codecId": "pg/date-string@1",
                   "dataType": "pg/date",
                   "nullable": false
                 },
@@ -2233,7 +2276,7 @@
                 "EXCELLENT"
               ]
             },
-            "Role": {
+            "RoleTypes": {
               "kind": "valueSet",
               "values": [
                 "ADMIN",
@@ -2259,7 +2302,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "65cffa9e790e02bbf633075bf36cf4a1d2dc5aad3bc7d6a2dd38f6ba420c44a8"
+    "storageHash": "63500ec848d929088f3a2380e30b6e5c305482dbf7583e06bc0c30591716db36"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

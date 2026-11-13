@@ -12,6 +12,7 @@ import { Button } from "./ui/button"
 import { Dialog, DialogTrigger } from "./ui/dialog"
 import { SettingsDialog } from "./custom/pfp-dialog"
 import { nameInitials } from "@/lib/utils"
+import { Employee, Person } from "@/app/types"
 
 const links = [
   { href: "/employee-management", label: "Employees" },
@@ -26,13 +27,13 @@ const searchlinks = [
   { href: "/municipalities", label: "Municipalities" }
 ]
 
-type Employee = Scalars<Models.public_Employee>
 
 interface TopNavbarProps {
   employee: Employee
+  person: Person
 }
 
-export function TopNavbar({employee}: TopNavbarProps) {
+export function TopNavbar({employee, person}: TopNavbarProps) {
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   return (
@@ -62,7 +63,7 @@ export function TopNavbar({employee}: TopNavbarProps) {
           <NavigationMenuTrigger className="cursor-pointer">
             <Avatar>
               <AvatarImage src={employee.pfpImgUrl} alt="" height="auto" width="auto" />
-              <AvatarFallback>{nameInitials(employee.name)}</AvatarFallback>
+              <AvatarFallback>{nameInitials(person.name)}</AvatarFallback>
             </Avatar>
           </NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -87,7 +88,7 @@ export function TopNavbar({employee}: TopNavbarProps) {
     </NavigationMenu>
     
     <Dialog open={settingsOpen} onOpenChange={() => setSettingsOpen(false)}>
-      <SettingsDialog employee={employee}/>
+      <SettingsDialog employee={employee} person={person}/>
     </Dialog>
     </>
   )

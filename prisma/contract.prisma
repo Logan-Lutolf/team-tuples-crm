@@ -52,7 +52,7 @@ enum RelationshipTypes {
   EXCELLENT
 }
 
-enum Role {
+enum RoleTypes {
   ADMIN
   WORKSHOPS_COORDINATOR
   SCHOOL_NETWORK_COORDINATOR
@@ -352,7 +352,7 @@ model Person {
   email   String? @unique
   phone   String?
   address Address
-  dob     Date
+  dob     DateString
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
 
@@ -393,10 +393,12 @@ model Employee {
   pfpImgUrl String
   mustChangePassword Boolean @default(true)
   branch  BranchTypes
+  role    RoleTypes[]
 
   // assignments EmployeeAssignment[]
   // interactions Interaction[]
   participation Participation[]
+
 }
 
 model ParticipationEmployees {

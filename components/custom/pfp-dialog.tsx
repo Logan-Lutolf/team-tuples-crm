@@ -1,24 +1,22 @@
 "use client"
 
-import { Scalars } from "@prisma/orm-postgres/components";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { DialogContent, DialogHeader } from "../ui/dialog";
-import { Models } from "@/prisma/contract";
-import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { changePFP } from "@/app/settings-actions";
 import { useRouter } from "next/navigation";
 import { nameInitials, showToast } from "@/lib/utils";
 import { Separator } from "../ui/separator";
+import { Employee, Person } from "@/app/types";
 
-type Employee = Scalars<Models.public_Employee>
 
 
 interface SettingsDialogProps {
     employee: Employee
+    person: Person
 }
 
-export function SettingsDialog({employee}: SettingsDialogProps) {
+export function SettingsDialog({employee, person}: SettingsDialogProps) {
     const router = useRouter()
     
     async function handleSubmit(formData: FormData) {
@@ -39,12 +37,12 @@ export function SettingsDialog({employee}: SettingsDialogProps) {
                     <span className="text-xs">Change Profile Picture</span>
                     <Avatar size="lg">
                         <AvatarImage src={employee.pfpImgUrl}/>
-                        <AvatarFallback>{nameInitials(employee.name)}</AvatarFallback>
+                        <AvatarFallback>{nameInitials(person.name)}</AvatarFallback>
                     </Avatar>
                     <Input
                         name="employee-id"
                         type="hidden"
-                        defaultValue={employee.id}
+                        defaultValue={person.id}
                     />
                     <Input
                         className="w-1/3"

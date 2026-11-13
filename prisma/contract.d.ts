@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'65cffa9e790e02bbf633075bf36cf4a1d2dc5aad3bc7d6a2dd38f6ba420c44a8'>;
+  StorageHashBase<'63500ec848d929088f3a2380e30b6e5c305482dbf7583e06bc0c30591716db36'>;
 export type ExecutionHash =
   ExecutionHashBase<'14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9'>;
 export type ProfileHash =
@@ -260,6 +260,23 @@ export type FieldOutputTypes = {
       readonly password: CodecTypes['pg/text@1']['output'];
       readonly personId: CodecTypes['pg/int4@1']['output'];
       readonly pfpImgUrl: CodecTypes['pg/text@1']['output'];
+      readonly role: ReadonlyArray<
+        | 'ADMIN'
+        | 'WORKSHOPS_COORDINATOR'
+        | 'SCHOOL_NETWORK_COORDINATOR'
+        | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
+        | 'VETERANS_DAY_COORDINATOR'
+        | 'NEWSLETTER_COORDINATOR'
+        | 'BRANCH_DIRECTOR'
+        | 'HEAD_OF_EDUCATION'
+        | 'PROJECT_MANAGER'
+        | 'COORDINATOR'
+        | 'DEVELOPMENT_LEAD'
+        | 'PRODUCTION'
+        | 'STUDIO_LEAD'
+        | 'LECTURER'
+        | 'METHODOLOGY_LEAD'
+      >;
     };
     readonly Organization: {
       readonly address: AddressOutput;
@@ -321,7 +338,7 @@ export type FieldOutputTypes = {
     readonly Person: {
       readonly address: AddressOutput;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly dob: CodecTypes['pg/date-temporal@1']['output'];
+      readonly dob: CodecTypes['pg/date-string@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -375,6 +392,23 @@ export type FieldInputTypes = {
       readonly password: CodecTypes['pg/text@1']['input'];
       readonly personId: CodecTypes['pg/int4@1']['input'];
       readonly pfpImgUrl: CodecTypes['pg/text@1']['input'];
+      readonly role: ReadonlyArray<
+        | 'ADMIN'
+        | 'WORKSHOPS_COORDINATOR'
+        | 'SCHOOL_NETWORK_COORDINATOR'
+        | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
+        | 'VETERANS_DAY_COORDINATOR'
+        | 'NEWSLETTER_COORDINATOR'
+        | 'BRANCH_DIRECTOR'
+        | 'HEAD_OF_EDUCATION'
+        | 'PROJECT_MANAGER'
+        | 'COORDINATOR'
+        | 'DEVELOPMENT_LEAD'
+        | 'PRODUCTION'
+        | 'STUDIO_LEAD'
+        | 'LECTURER'
+        | 'METHODOLOGY_LEAD'
+      >;
     };
     readonly Organization: {
       readonly address: AddressInput;
@@ -436,7 +470,7 @@ export type FieldInputTypes = {
     readonly Person: {
       readonly address: AddressInput;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly dob: CodecTypes['pg/date-temporal@1']['input'];
+      readonly dob: CodecTypes['pg/date-string@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
@@ -490,6 +524,23 @@ export type StorageColumnTypes = {
       readonly password: CodecTypes['pg/text@1']['output'];
       readonly personId: CodecTypes['pg/int4@1']['output'];
       readonly pfpImgUrl: CodecTypes['pg/text@1']['output'];
+      readonly role: ReadonlyArray<
+        | 'ADMIN'
+        | 'WORKSHOPS_COORDINATOR'
+        | 'SCHOOL_NETWORK_COORDINATOR'
+        | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
+        | 'VETERANS_DAY_COORDINATOR'
+        | 'NEWSLETTER_COORDINATOR'
+        | 'BRANCH_DIRECTOR'
+        | 'HEAD_OF_EDUCATION'
+        | 'PROJECT_MANAGER'
+        | 'COORDINATOR'
+        | 'DEVELOPMENT_LEAD'
+        | 'PRODUCTION'
+        | 'STUDIO_LEAD'
+        | 'LECTURER'
+        | 'METHODOLOGY_LEAD'
+      >;
     };
     readonly Organization: {
       readonly address: CodecTypes['pg/jsonb@1']['output'];
@@ -551,7 +602,7 @@ export type StorageColumnTypes = {
     readonly Person: {
       readonly address: CodecTypes['pg/jsonb@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly dob: CodecTypes['pg/date-temporal@1']['output'];
+      readonly dob: CodecTypes['pg/date-string@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -605,6 +656,23 @@ export type StorageColumnInputTypes = {
       readonly password: CodecTypes['pg/text@1']['input'];
       readonly personId: CodecTypes['pg/int4@1']['input'];
       readonly pfpImgUrl: CodecTypes['pg/text@1']['input'];
+      readonly role: ReadonlyArray<
+        | 'ADMIN'
+        | 'WORKSHOPS_COORDINATOR'
+        | 'SCHOOL_NETWORK_COORDINATOR'
+        | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
+        | 'VETERANS_DAY_COORDINATOR'
+        | 'NEWSLETTER_COORDINATOR'
+        | 'BRANCH_DIRECTOR'
+        | 'HEAD_OF_EDUCATION'
+        | 'PROJECT_MANAGER'
+        | 'COORDINATOR'
+        | 'DEVELOPMENT_LEAD'
+        | 'PRODUCTION'
+        | 'STUDIO_LEAD'
+        | 'LECTURER'
+        | 'METHODOLOGY_LEAD'
+      >;
     };
     readonly Organization: {
       readonly address: CodecTypes['pg/jsonb@1']['input'];
@@ -666,7 +734,7 @@ export type StorageColumnInputTypes = {
     readonly Person: {
       readonly address: CodecTypes['pg/jsonb@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly dob: CodecTypes['pg/date-temporal@1']['input'];
+      readonly dob: CodecTypes['pg/date-string@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
@@ -720,6 +788,23 @@ export namespace Models {
     password: CodecTypes['pg/text@1']['output'];
     personId: CodecTypes['pg/int4@1']['output'];
     pfpImgUrl: CodecTypes['pg/text@1']['output'];
+    role: ReadonlyArray<
+      | 'ADMIN'
+      | 'WORKSHOPS_COORDINATOR'
+      | 'SCHOOL_NETWORK_COORDINATOR'
+      | 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR'
+      | 'VETERANS_DAY_COORDINATOR'
+      | 'NEWSLETTER_COORDINATOR'
+      | 'BRANCH_DIRECTOR'
+      | 'HEAD_OF_EDUCATION'
+      | 'PROJECT_MANAGER'
+      | 'COORDINATOR'
+      | 'DEVELOPMENT_LEAD'
+      | 'PRODUCTION'
+      | 'STUDIO_LEAD'
+      | 'LECTURER'
+      | 'METHODOLOGY_LEAD'
+    >;
     participation: public_Participation[];
     person: public_Person;
     readonly [RelationKeys]?: 'participation' | 'person';
@@ -798,7 +883,7 @@ export namespace Models {
   export type public_Person = {
     address: AddressOutput;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    dob: CodecTypes['pg/date-temporal@1']['output'];
+    dob: CodecTypes['pg/date-string@1']['output'];
     email: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
@@ -916,6 +1001,12 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
                   readonly many: false;
+                };
+                readonly role: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: { readonly elementNullable: false };
                 };
               };
               primaryKey: { readonly columns: readonly ['personId'] };
@@ -1221,7 +1312,7 @@ type ContractBase = Omit<
                 };
                 readonly dob: {
                   readonly dataType: 'pg/date';
-                  readonly codecId: 'pg/date-temporal@1';
+                  readonly codecId: 'pg/date-string@1';
                   readonly nullable: false;
                   readonly many: false;
                 };
@@ -1533,7 +1624,7 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['POOR', 'AVERAGE', 'EXCELLENT'];
             };
-            readonly Role: {
+            readonly RoleTypes: {
               readonly kind: 'valueSet';
               readonly values: readonly [
                 'ADMIN',
@@ -1612,6 +1703,11 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly role: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+                readonly many: { readonly elementNullable: false };
+              };
             };
             readonly relations: {
               readonly participation: {
@@ -1654,6 +1750,7 @@ type ContractBase = Omit<
                 readonly password: { readonly column: 'password' };
                 readonly personId: { readonly column: 'personId' };
                 readonly pfpImgUrl: { readonly column: 'pfpImgUrl' };
+                readonly role: { readonly column: 'role' };
               };
             };
           };
@@ -1941,7 +2038,7 @@ type ContractBase = Omit<
               };
               readonly dob: {
                 readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-temporal@1' };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
               };
               readonly email: {
                 readonly nullable: true;
@@ -2327,7 +2424,7 @@ type ContractBase = Omit<
               { readonly name: 'EXCELLENT'; readonly value: 'EXCELLENT' },
             ];
           };
-          readonly Role: {
+          readonly RoleTypes: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
               { readonly name: 'ADMIN'; readonly value: 'ADMIN' },
@@ -2437,7 +2534,7 @@ type ContractBase = Omit<
             { readonly name: 'AVERAGE'; readonly value: 'AVERAGE' },
             { readonly name: 'EXCELLENT'; readonly value: 'EXCELLENT' },
           ];
-          readonly Role: readonly [
+          readonly RoleTypes: readonly [
             { readonly name: 'ADMIN'; readonly value: 'ADMIN' },
             { readonly name: 'WORKSHOPS_COORDINATOR'; readonly value: 'WORKSHOPS_COORDINATOR' },
             {

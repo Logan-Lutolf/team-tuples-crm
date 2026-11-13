@@ -24,12 +24,13 @@ async function generateRandomEmployees() {
                 month: birth.getUTCMonth() + 1,
                 day: birth.getUTCDate(),
             }),
+            orgId: 1,
         })
     }
 }
 
 async function generateOrganizations() {
-    for (let i = 0; i < 5; i++) {
+    for (let i = 1; i <= 5; i++) {
         const org = await db.orm.public.Organization.create({
             address: {
                 street: faker.location.streetAddress(),
@@ -46,6 +47,7 @@ async function generateOrganizations() {
     }
 }
 
-// generateRandomEmployees()
+
 
 generateOrganizations()
+generateRandomEmployees()
