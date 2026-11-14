@@ -4,12 +4,28 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "Branch": {
+      "model": "Branch",
+      "namespace": "public"
+    },
     "Employee": {
       "model": "Employee",
       "namespace": "public"
     },
     "EmployeeAssignment": {
       "model": "EmployeeAssignment",
+      "namespace": "public"
+    },
+    "Interaction": {
+      "model": "Interaction",
+      "namespace": "public"
+    },
+    "Municipality": {
+      "model": "Municipality",
+      "namespace": "public"
+    },
+    "MunicipalityPrograms": {
+      "model": "MunicipalityPrograms",
       "namespace": "public"
     },
     "Organization": {
@@ -24,12 +40,20 @@
       "model": "Participation",
       "namespace": "public"
     },
+    "ParticipationContacts": {
+      "model": "ParticipationContacts",
+      "namespace": "public"
+    },
     "ParticipationEmployees": {
       "model": "ParticipationEmployees",
       "namespace": "public"
     },
     "Person": {
       "model": "Person",
+      "namespace": "public"
+    },
+    "PersonEmployment": {
+      "model": "PersonEmployment",
       "namespace": "public"
     },
     "PersonRoles": {
@@ -384,6 +408,126 @@
           }
         },
         "models": {
+          "Branch": {
+            "fields": {
+              "chiefId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "institute": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "BranchTypes",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "region": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "RegionTypes",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "chief": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "chiefId"
+                  ],
+                  "targetFields": [
+                    "personId"
+                  ]
+                },
+                "to": {
+                  "model": "Employee",
+                  "namespace": "public"
+                }
+              },
+              "organization": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "branchId"
+                  ]
+                },
+                "to": {
+                  "model": "Organization",
+                  "namespace": "public"
+                }
+              },
+              "people": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "branchId"
+                  ]
+                },
+                "to": {
+                  "model": "Person",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "chiefId": {
+                  "column": "chiefId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "institute": {
+                  "column": "institute"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "region": {
+                  "column": "region"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Branch"
+            }
+          },
           "Employee": {
             "fields": {
               "branch": {
@@ -445,6 +589,36 @@
               }
             },
             "relations": {
+              "assignments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "personId"
+                  ],
+                  "targetFields": [
+                    "employeeId"
+                  ]
+                },
+                "to": {
+                  "model": "EmployeeAssignment",
+                  "namespace": "public"
+                }
+              },
+              "interactions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "personId"
+                  ],
+                  "targetFields": [
+                    "employeeId"
+                  ]
+                },
+                "to": {
+                  "model": "Interaction",
+                  "namespace": "public"
+                }
+              },
               "participation": {
                 "cardinality": "N:M",
                 "on": {
@@ -647,6 +821,279 @@
               "table": "EmployeeAssignment"
             }
           },
+          "Interaction": {
+            "fields": {
+              "contactedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "employeeId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "mode": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "CommunicationMode",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "organizationId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "personId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "programId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "employee": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "employeeId"
+                  ],
+                  "targetFields": [
+                    "personId"
+                  ]
+                },
+                "to": {
+                  "model": "Employee",
+                  "namespace": "public"
+                }
+              },
+              "organization": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "organizationId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Organization",
+                  "namespace": "public"
+                }
+              },
+              "person": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "personId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Person",
+                  "namespace": "public"
+                }
+              },
+              "program": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "programId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Program",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "contactedAt": {
+                  "column": "contactedAt"
+                },
+                "employeeId": {
+                  "column": "employeeId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "mode": {
+                  "column": "mode"
+                },
+                "organizationId": {
+                  "column": "organizationId"
+                },
+                "personId": {
+                  "column": "personId"
+                },
+                "programId": {
+                  "column": "programId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Interaction"
+            }
+          },
+          "Municipality": {
+            "fields": {
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "mayor": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "program": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "municipalityId"
+                  ]
+                },
+                "to": {
+                  "model": "MunicipalityPrograms",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "id": {
+                  "column": "id"
+                },
+                "mayor": {
+                  "column": "mayor"
+                },
+                "name": {
+                  "column": "name"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Municipality"
+            }
+          },
+          "MunicipalityPrograms": {
+            "fields": {
+              "municipalityId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "programId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "municipality": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "municipalityId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Municipality",
+                  "namespace": "public"
+                }
+              },
+              "program": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "programId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Program",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "municipalityId": {
+                  "column": "municipalityId"
+                },
+                "programId": {
+                  "column": "programId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "MunicipalityPrograms"
+            }
+          },
           "Organization": {
             "fields": {
               "address": {
@@ -656,17 +1103,11 @@
                   "name": "Address"
                 }
               },
-              "branch": {
-                "nullable": false,
+              "branchId": {
+                "nullable": true,
                 "type": {
-                  "codecId": "pg/text@1",
+                  "codecId": "pg/int4@1",
                   "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "BranchTypes",
-                  "namespaceId": "public",
-                  "plane": "domain"
                 }
               },
               "createdAt": {
@@ -758,6 +1199,22 @@
               }
             },
             "relations": {
+              "branch": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "branchId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Branch",
+                  "namespace": "public"
+                }
+              },
               "participations": {
                 "cardinality": "1:N",
                 "on": {
@@ -779,8 +1236,8 @@
                 "address": {
                   "column": "address"
                 },
-                "branch": {
-                  "column": "branch"
+                "branchId": {
+                  "column": "branchId"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -1018,6 +1475,70 @@
               "table": "Participation"
             }
           },
+          "ParticipationContacts": {
+            "fields": {
+              "participationId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "personId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "participation": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "participationId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Participation",
+                  "namespace": "public"
+                }
+              },
+              "people": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "personId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Person",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "participationId": {
+                  "column": "participationId"
+                },
+                "personId": {
+                  "column": "personId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ParticipationContacts"
+            }
+          },
           "ParticipationEmployees": {
             "fields": {
               "employeeId": {
@@ -1091,6 +1612,13 @@
                   "name": "Address"
                 }
               },
+              "branchId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -1149,6 +1677,22 @@
               }
             },
             "relations": {
+              "branch": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "branchId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Branch",
+                  "namespace": "public"
+                }
+              },
               "employee": {
                 "cardinality": "1:1",
                 "nullable": true,
@@ -1162,6 +1706,21 @@
                 },
                 "to": {
                   "model": "Employee",
+                  "namespace": "public"
+                }
+              },
+              "interactions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "personId"
+                  ]
+                },
+                "to": {
+                  "model": "Interaction",
                   "namespace": "public"
                 }
               },
@@ -1194,6 +1753,21 @@
                 },
                 "to": {
                   "model": "Parent",
+                  "namespace": "public"
+                }
+              },
+              "participations": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "personId"
+                  ]
+                },
+                "to": {
+                  "model": "ParticipationContacts",
                   "namespace": "public"
                 }
               },
@@ -1235,6 +1809,9 @@
                 "address": {
                   "column": "address"
                 },
+                "branchId": {
+                  "column": "branchId"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
@@ -1262,6 +1839,120 @@
               },
               "namespaceId": "public",
               "table": "Person"
+            }
+          },
+          "PersonEmployment": {
+            "fields": {
+              "endDate": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "jobTitle": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "orgId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "personId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "startDate": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "organization": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "orgId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Organization",
+                  "namespace": "public"
+                }
+              },
+              "person": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "personId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Person",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "endDate": {
+                  "column": "endDate"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "jobTitle": {
+                  "column": "jobTitle"
+                },
+                "notes": {
+                  "column": "notes"
+                },
+                "orgId": {
+                  "column": "orgId"
+                },
+                "personId": {
+                  "column": "personId"
+                },
+                "startDate": {
+                  "column": "startDate"
+                }
+              },
+              "namespaceId": "public",
+              "table": "PersonEmployment"
             }
           },
           "PersonRoles": {
@@ -1357,6 +2048,36 @@
               }
             },
             "relations": {
+              "assignments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "programId"
+                  ]
+                },
+                "to": {
+                  "model": "EmployeeAssignment",
+                  "namespace": "public"
+                }
+              },
+              "interactions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "programId"
+                  ]
+                },
+                "to": {
+                  "model": "Interaction",
+                  "namespace": "public"
+                }
+              },
               "participations": {
                 "cardinality": "1:N",
                 "on": {
@@ -1369,6 +2090,21 @@
                 },
                 "to": {
                   "model": "Participation",
+                  "namespace": "public"
+                }
+              },
+              "sponsor": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "programId"
+                  ]
+                },
+                "to": {
+                  "model": "MunicipalityPrograms",
                   "namespace": "public"
                 }
               }
@@ -1528,6 +2264,101 @@
       "public": {
         "entries": {
           "table": {
+            "Branch": {
+              "checks": [
+                {
+                  "expression": "\"name\" IN ('SEVERNÍ_ČECHY', 'VÝCHODNÍ_ČECHY', 'STŘEDNÍ_MORAVA', 'PLZEŇSKÝ_KRAJ', 'JIŽNÍ_MORAVA', 'JIŽNÍ_ČECHY', 'KARLOVARSKÝ_KRAJ', 'MORAVSKOSLEZSKÝ_KRAJ', 'PRAHA')",
+                  "name": "Branch_name_check_99f437af",
+                  "prefix": "Branch_name_check"
+                },
+                {
+                  "expression": "\"region\" IN ('PRAHA', 'STŘEDOČESKÝ', 'JIHOČESKÝ', 'PLZEŇSKÝ', 'KARLOVARSKÝ', 'ÚSTECKÝ', 'LIBERECKÝ', 'KRÁLOVÉHRADECKÝ', 'PARDUBICKÝ', 'JIHOMORAVSKÝ', 'OLOMOUCKÝ', 'ZLÍNSKÝ', 'MORAVSKOSLEZSKÝ', 'JIHLAVA')",
+                  "name": "Branch_region_check_fbfaeec9",
+                  "prefix": "Branch_region_check"
+                }
+              ],
+              "columns": {
+                "chiefId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "institute": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "BranchTypes",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "region": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "RegionTypes",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Branch_chiefId_idx_3a71836f"
+                  },
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "chiefId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Branch"
+                  },
+                  "target": {
+                    "columns": [
+                      "personId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Employee"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "chiefId"
+                  ],
+                  "name": "Branch_chiefId_idx_3a71836f",
+                  "prefix": "Branch_chiefId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Employee": {
               "checks": [
                 {
@@ -1779,13 +2610,338 @@
               },
               "uniques": []
             },
-            "Organization": {
+            "Interaction": {
               "checks": [
                 {
-                  "expression": "\"branch\" IN ('SEVERNÍ_ČECHY', 'VÝCHODNÍ_ČECHY', 'STŘEDNÍ_MORAVA', 'PLZEŇSKÝ_KRAJ', 'JIŽNÍ_MORAVA', 'JIŽNÍ_ČECHY', 'KARLOVARSKÝ_KRAJ', 'MORAVSKOSLEZSKÝ_KRAJ', 'PRAHA')",
-                  "name": "Organization_branch_check_572d22f2",
-                  "prefix": "Organization_branch_check"
+                  "expression": "\"mode\" IN ('PHONE', 'EMAIL', 'IN_PERSON', 'VIDEO_CALL', 'MESSAGE', 'OTHER')",
+                  "name": "Interaction_mode_check_0a8da420",
+                  "prefix": "Interaction_mode_check"
+                }
+              ],
+              "columns": {
+                "contactedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
                 },
+                "employeeId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "mode": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "CommunicationMode",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "organizationId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "personId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "programId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Interaction_employeeId_idx_087dd4a6"
+                  },
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "employeeId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Interaction"
+                  },
+                  "target": {
+                    "columns": [
+                      "personId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Employee"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "Interaction_personId_idx_e5e06b80"
+                  },
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "personId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Interaction"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Person"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "Interaction_organizationId_idx_2e17ef41"
+                  },
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "organizationId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Interaction"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Organization"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "Interaction_programId_idx_4e50c706"
+                  },
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "programId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Interaction"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Program"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "employeeId",
+                    "contactedAt"
+                  ],
+                  "name": "Interaction_employeeId_contactedAt_idx_d693dbbf",
+                  "prefix": "Interaction_employeeId_contactedAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "employeeId"
+                  ],
+                  "name": "Interaction_employeeId_idx_087dd4a6",
+                  "prefix": "Interaction_employeeId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "organizationId",
+                    "contactedAt"
+                  ],
+                  "name": "Interaction_organizationId_contactedAt_idx_be21b4be",
+                  "prefix": "Interaction_organizationId_contactedAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "organizationId"
+                  ],
+                  "name": "Interaction_organizationId_idx_2e17ef41",
+                  "prefix": "Interaction_organizationId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "personId",
+                    "contactedAt"
+                  ],
+                  "name": "Interaction_personId_contactedAt_idx_98eb0b52",
+                  "prefix": "Interaction_personId_contactedAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "personId"
+                  ],
+                  "name": "Interaction_personId_idx_e5e06b80",
+                  "prefix": "Interaction_personId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "programId",
+                    "contactedAt"
+                  ],
+                  "name": "Interaction_programId_contactedAt_idx_06e95833",
+                  "prefix": "Interaction_programId_contactedAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "programId"
+                  ],
+                  "name": "Interaction_programId_idx_4e50c706",
+                  "prefix": "Interaction_programId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "Municipality": {
+              "columns": {
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "mayor": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "MunicipalityPrograms": {
+              "columns": {
+                "municipalityId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "programId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "MunicipalityPrograms_programId_idx_4e50c706"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "programId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "MunicipalityPrograms"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Program"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "MunicipalityPrograms_municipalityId_idx_0a7c35cd"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "municipalityId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "MunicipalityPrograms"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Municipality"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "municipalityId"
+                  ],
+                  "name": "MunicipalityPrograms_municipalityId_idx_0a7c35cd",
+                  "prefix": "MunicipalityPrograms_municipalityId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "programId"
+                  ],
+                  "name": "MunicipalityPrograms_programId_idx_4e50c706",
+                  "prefix": "MunicipalityPrograms_programId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "municipalityId",
+                  "programId"
+                ]
+              },
+              "uniques": []
+            },
+            "Organization": {
+              "checks": [
                 {
                   "expression": "\"region\" IN ('PRAHA', 'STŘEDOČESKÝ', 'JIHOČESKÝ', 'PLZEŇSKÝ', 'KARLOVARSKÝ', 'ÚSTECKÝ', 'LIBERECKÝ', 'KRÁLOVÉHRADECKÝ', 'PARDUBICKÝ', 'JIHOMORAVSKÝ', 'OLOMOUCKÝ', 'ZLÍNSKÝ', 'MORAVSKOSLEZSKÝ', 'JIHLAVA')",
                   "name": "Organization_region_check_fbfaeec9",
@@ -1808,16 +2964,10 @@
                   "dataType": "pg/jsonb",
                   "nullable": false
                 },
-                "branch": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": false,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "BranchTypes",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
+                "branchId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -1897,8 +3047,37 @@
                   "nullable": false
                 }
               },
-              "foreignKeys": [],
-              "indexes": [],
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Organization_branchId_idx_d04da5bb"
+                  },
+                  "source": {
+                    "columns": [
+                      "branchId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Organization"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Branch"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "branchId"
+                  ],
+                  "name": "Organization_branchId_idx_d04da5bb",
+                  "prefix": "Organization_branchId_idx",
+                  "unique": false
+                }
+              ],
               "primaryKey": {
                 "columns": [
                   "id"
@@ -2085,6 +3264,87 @@
               },
               "uniques": []
             },
+            "ParticipationContacts": {
+              "columns": {
+                "participationId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "personId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "ParticipationContacts_participationId_idx_1840362d"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "participationId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ParticipationContacts"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Participation"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "ParticipationContacts_personId_idx_e5e06b80"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "personId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ParticipationContacts"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Person"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "participationId"
+                  ],
+                  "name": "ParticipationContacts_participationId_idx_1840362d",
+                  "prefix": "ParticipationContacts_participationId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "personId"
+                  ],
+                  "name": "ParticipationContacts_personId_idx_e5e06b80",
+                  "prefix": "ParticipationContacts_personId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "participationId",
+                  "personId"
+                ]
+              },
+              "uniques": []
+            },
             "ParticipationEmployees": {
               "columns": {
                 "employeeId": {
@@ -2171,6 +3431,11 @@
                   "dataType": "pg/jsonb",
                   "nullable": true
                 },
+                "branchId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
@@ -2239,9 +3504,36 @@
                     "namespaceId": "public",
                     "tableName": "Organization"
                   }
+                },
+                {
+                  "index": {
+                    "name": "Person_branchId_idx_d04da5bb"
+                  },
+                  "source": {
+                    "columns": [
+                      "branchId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Person"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Branch"
+                  }
                 }
               ],
               "indexes": [
+                {
+                  "columns": [
+                    "branchId"
+                  ],
+                  "name": "Person_branchId_idx_d04da5bb",
+                  "prefix": "Person_branchId_idx",
+                  "unique": false
+                },
                 {
                   "columns": [
                     "orgId"
@@ -2263,6 +3555,124 @@
                   ]
                 }
               ]
+            },
+            "PersonEmployment": {
+              "columns": {
+                "endDate": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "jobTitle": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "orgId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "personId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "startDate": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "PersonEmployment_personId_idx_e5e06b80"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "personId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PersonEmployment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Person"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "PersonEmployment_orgId_idx_c5e5aabe"
+                  },
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "orgId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "PersonEmployment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Organization"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "orgId"
+                  ],
+                  "name": "PersonEmployment_orgId_idx_c5e5aabe",
+                  "prefix": "PersonEmployment_orgId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "personId"
+                  ],
+                  "name": "PersonEmployment_personId_idx_e5e06b80",
+                  "prefix": "PersonEmployment_personId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "personId",
+                    "startDate"
+                  ],
+                  "name": "PersonEmployment_personId_startDate_idx_6d0f5736",
+                  "prefix": "PersonEmployment_personId_startDate_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
             },
             "PersonRoles": {
               "checks": [
@@ -2591,7 +4001,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d55084f2ee0b40cf5d892f4de5ead6efe8c335169bdb3e59d8e2785e51fd8307"
+    "storageHash": "8ae5973a7d8b2c3176fb3f6c3170440774e869bb0e619f7d26beab282f827569"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",
