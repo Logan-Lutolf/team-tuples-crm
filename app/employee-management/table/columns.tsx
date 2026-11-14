@@ -4,25 +4,15 @@ import { RecordLink } from '@/components/records/record-link'
 import { createColumnHelper } from "@tanstack/react-table"
 import { type DataTableFeatures } from "../../../components/ui/data-table-features"
 import { ActionsCell } from "./actions-cell"
-import { Scalars } from "@prisma/orm-postgres/components"
-import { Models } from "@/prisma/contract"
 import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { nameInitials } from "@/lib/utils"
+import { EmployeePerson } from '@/app/types'
 
-type Roles = Scalars<Models.public_Employee>["roles"]
 
-export type Employee = {
-    id: number,
-    name: string,
-    email: string,
-    phone?: string | null,
-    roles: Roles
-    pfpImgUrl?: string
-}
 
-const columnHelper = createColumnHelper<DataTableFeatures, Employee>()
+
+const columnHelper = createColumnHelper<DataTableFeatures, EmployeePerson>()
 
 export const columns = columnHelper.columns([
     columnHelper.display({
@@ -30,25 +20,25 @@ export const columns = columnHelper.columns([
         cell: ({ row }) => {
             return (
                 <Avatar>
-                    <AvatarImage src={row.original.pfpImgUrl} />
-                    <AvatarFallback>{nameInitials(String(row.original.name))}</AvatarFallback>
+                    <AvatarImage src={row.original.employee.pfpImgUrl} />
+                    <AvatarFallback>{nameInitials(String(row.original.person.name))}</AvatarFallback>
                 </Avatar>
             )
         },
     }),
-    columnHelper.accessor("name", {
+    columnHelper.accessor("person.name", {
         header: "Name",
-        cell: ({ row }) => <RecordLink type="employees" id={row.original.id}>{row.original.name}</RecordLink>,
+        cell: ({ row }) => <RecordLink type="employees" id={row.original.person.id}>{row.original.person.name}</RecordLink>,
     }),
-    columnHelper.accessor("email", {
+    columnHelper.accessor("person.email", {
         header: "Email",
     }),
-    columnHelper.accessor("roles", {
+    columnHelper.accessor("employee.role", {
         header: "Roles",
         cell: ({ row }) => {
             return (
                 <div className="flex flex-wrap justify-center gap-1">
-                    {row.original.roles.map(role => <Badge key={role} variant="outline" className="max-w-full whitespace-normal break-words">{role.replaceAll('_', ' ')}</Badge>)}
+                    {row.original.employee.role.map(role => <Badge key={role} variant="outline" className="max-w-full whitespace-normal break-words">{role.replaceAll('_', ' ')}</Badge>)}
                 </div>
                 
             )

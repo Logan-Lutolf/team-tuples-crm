@@ -17,11 +17,13 @@ import { DashboardTable } from "@/components/records/dashboard-table"
 interface DataTableProps<TData extends RowData> {
     columns: ColumnDef<DataTableFeatures, TData>[]
     data: TData[]
+    paginationEnabled?: boolean
 }
 
 export function DataTable<TData extends RowData>({
     columns,
     data,
+    paginationEnabled = true
 }: DataTableProps<TData>) {
     const table = useTable({
         features,
@@ -70,25 +72,25 @@ export function DataTable<TData extends RowData>({
             )}
             </TableBody>
         </DashboardTable>
-
-        <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-        </div>
+        
+        {paginationEnabled && <div className="flex items-center justify-end space-x-2 py-4">
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+            >
+                Previous
+            </Button>
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+            >
+                Next
+            </Button>
+        </div>}
 
         </>
     )

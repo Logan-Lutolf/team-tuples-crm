@@ -74,3 +74,23 @@ export async function changeMunicipalityProgram(form: FormData) {
     refresh()
     return { success: true as const }
 }
+
+export async function getParticipationDetails(participationId: number) {
+    participationId = id(participationId)
+    
+    try {
+        const participationData = await db.orm.public.Participation
+            .where({id: participationId})
+            .first()
+
+        const contactData = await db.orm.public.ParticipationContacts
+            .where({participationId: participationId})
+            .all()
+
+        if (participationData && contactData)
+            return {participationData: participationData, contactData: contactData}
+    }
+    catch (error) {
+        console.log(error)
+    }
+}

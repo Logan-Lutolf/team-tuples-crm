@@ -1,10 +1,10 @@
 'use server'
-import { Models } from "@/prisma/contract"
 import { db } from "@/prisma/db"
-import { Scalars } from "@prisma/orm-postgres/components"
 import { revalidatePath } from "next/cache"
+import { BranchTypes, RoleTypes } from "../types"
+import { error } from "console"
 
-type Roles = Scalars<Models.public_Employee>["roles"]
+
 
 
 // TODO: Only ADMIN should be able to create new employee
@@ -12,8 +12,9 @@ export async function createEmployee(formData: FormData) {
     const name = formData.get("full-name") as string
     const email = formData.get("email") as string
     const phone = formData.get("phone-num") as string
-    const roles = formData.getAll("roles") as Roles
+    const roles = formData.getAll("roles") as RoleTypes
     const otp = formData.get("otp") as string
+    const dob = formData.get("dob") as string
 
     
     
@@ -23,24 +24,41 @@ export async function createEmployee(formData: FormData) {
     }
     
     try {
-        const employee = await db.orm.public.Employee.create({
-            name: name,
-            email: email,
-            phone: phone,
-            password: otp,
-            roles: roles,
-            pfpImgUrl: ""
+        
+        const person = await db.orm.public.Person.create({
+            name,
+            email,
+            phone: phone || null,
+            dob: dob
         })
+
+        const employee = await db.orm.public.Employee.create({
+            personId: person.id,
+            password: otp,
+            pfpImgUrl: "",
+            role: roles,
+        })
+
+        // Possibly create employee assignments
+        if (!person || !employee) {
+            return {success: false, message: "Failed to create employee. Invalid name or email."}
+        }
+
+
         revalidatePath("/employee-management")
         return { success: true, message: 'Employee created.' }
-    } catch { return { success: false, message: 'Could not create employee. Check the fields and whether the email is already in use.' } }
+    } catch(error) { 
+        console.log(error)
+        return { success: false, message: 'Could not create employee. Check the fields and whether the email is already in use.' } 
+    }
 }
 
 export async function editEmployee(formData: FormData) {
+    const id = formData.get("id") as string
     const name = formData.get("full-name") as string
     const email = formData.get("email") as string
     const phone = formData.get("phone-num") as string
-    const roles = formData.getAll("roles") as Roles
+    const roles = formData.getAll("roles") as RoleTypes
 
 
     if (name == null || email == null){
@@ -49,16 +67,21 @@ export async function editEmployee(formData: FormData) {
     }
 
     try {
-        const employee = await db.orm.public.Employee
-            .where({ email: email})
+        const person = await db.orm.public.Person
+            .where({email: email})
             .update({
                 name: name,
                 email: email,
                 phone: phone,
-                roles: roles,
             })
         
-        if (employee) {
+        const employee = await db.orm.public.Employee
+            .where({ personId: Number(id)})
+            .update({
+                role: roles,
+            })
+        
+        if (employee && person) {
             console.log("Edit employee successful.")
             revalidatePath("/employee-management")
             return {success: true, message: "Employee updated successfully."}
@@ -83,7 +106,8 @@ export async function deleteEmployee(form: FormData) {
         await db.transaction(async tx => {
             await tx.orm.public.EmployeeAssignment.where({ employeeId: id }).delete()
             // Delete actions clear chiefs/history references and remove participation links.
-            await tx.orm.public.Employee.where({ id }).delete()
+            await tx.orm.public.Employee.where({ personId: id }).delete()
+            await tx.orm.public.Person.where({id: id}).delete()
         })
         revalidatePath("/employee-management")
         return { success: true, message: 'Employee deleted.' }
@@ -100,7 +124,7 @@ export async function changePassword(formData: FormData) {
     else {
         try {
             const employee = await db.orm.public.Employee
-            .where({id: Number(userId)})
+            .where({personId: Number(userId)})
             .update({password: newPassword, mustChangePassword: false})
 
             if (employee) {
