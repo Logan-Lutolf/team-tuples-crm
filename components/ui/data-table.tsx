@@ -17,7 +17,7 @@ import { DashboardTable } from "@/components/records/dashboard-table"
 interface DataTableProps<TData extends RowData> {
     columns: ColumnDef<DataTableFeatures, TData>[]
     data: TData[]
-    paginationEnabled: boolean
+    paginationEnabled?: boolean
 }
 
 export function DataTable<TData extends RowData>({
