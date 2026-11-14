@@ -213,21 +213,21 @@ model Participation {
 
 // Roles may apply globally, or be scoped to a branch, program, and/or region.
 // Multiple rows let an employee work across multiple programs and branches.
-// model EmployeeAssignment {
-//   id         Int @id @default(autoincrement())
-//   employeeId Int
-//   role       Role
-//   branchId   Int?
-//   programId  Int?
-//   region     RegionTypes?
+model EmployeeAssignment {
+  id         Int @id @default(autoincrement())
+  employeeId Int
+  role       RoleTypes
+  branchId   Int?
+  programId  Int?
+  region     RegionTypes?
 
-//   employee Employee @relation(fields: [employeeId], references: [personId], onDelete: Cascade)
-//   branch   BranchTypes
-//   program  Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
+  employee Employee @relation(fields: [employeeId], references: [personId], onDelete: Cascade)
+  branch   BranchTypes
+  program  Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
 
-//   @@index([employeeId])
-//   @@index([branchId, programId])
-// }
+  @@index([employeeId])
+  @@index([branchId, programId])
+}
 
 // Each contact event is a separate row, including repeat conversations.
 // model Interaction {
@@ -351,7 +351,7 @@ model Person {
   name    String
   email   String? @unique
   phone   String?
-  address Address
+  address Address?
   dob     DateString
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
@@ -392,7 +392,7 @@ model Employee {
   password  String
   pfpImgUrl String
   mustChangePassword Boolean @default(true)
-  branch  BranchTypes
+  branch  BranchTypes?
   role    RoleTypes[]
 
   // assignments EmployeeAssignment[]
