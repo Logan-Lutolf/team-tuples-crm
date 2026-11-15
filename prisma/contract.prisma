@@ -318,7 +318,8 @@ model Organization {
   // contacts Contact[]
   participations Participation[]
   branch          Branch? @relation(fields: [branchId], references: [id])
-  branchId         Int?
+  branchId        Int?
+  people          Person[]
 }
 
 model Person {

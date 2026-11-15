@@ -18,12 +18,17 @@ interface DataTableProps<TData extends RowData> {
     columns: ColumnDef<DataTableFeatures, TData>[]
     data: TData[]
     paginationEnabled?: boolean
+    visibleRows?: number
 }
+
+const ROW_HEIGHT_REM = 2.75  
+const HEADER_HEIGHT_REM = 2.5 
 
 export function DataTable<TData extends RowData>({
     columns,
     data,
-    paginationEnabled = true
+    paginationEnabled = true,
+    visibleRows
 }: DataTableProps<TData>) {
     const table = useTable({
         features,
@@ -33,6 +38,12 @@ export function DataTable<TData extends RowData>({
 
     return (
         <>
+        <div
+            className={visibleRows ? "overflow-y-auto" : undefined}
+            style={visibleRows ? {
+                maxHeight: `${visibleRows * ROW_HEIGHT_REM + HEADER_HEIGHT_REM}rem`,
+            } : undefined}
+        >
         <DashboardTable>
             <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -91,7 +102,7 @@ export function DataTable<TData extends RowData>({
                 Next
             </Button>
         </div>}
-
+            </div>
         </>
     )
 }

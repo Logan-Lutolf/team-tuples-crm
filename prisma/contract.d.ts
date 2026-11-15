@@ -1361,7 +1361,8 @@ export namespace Models {
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     branch: public_Branch | null;
     participations: public_Participation[];
-    readonly [RelationKeys]?: 'branch' | 'participations';
+    people: public_Person[];
+    readonly [RelationKeys]?: 'branch' | 'participations' | 'people';
   };
   export type public_Parent = {
     personId: CodecTypes['pg/int4@1']['output'];
@@ -3366,6 +3367,17 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['id'];
                   readonly targetFields: readonly ['organizationId'];
+                };
+              };
+              readonly people: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Person';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['orgId'];
                 };
               };
             };

@@ -1229,6 +1229,21 @@
                   "model": "Participation",
                   "namespace": "public"
                 }
+              },
+              "people": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "orgId"
+                  ]
+                },
+                "to": {
+                  "model": "Person",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
