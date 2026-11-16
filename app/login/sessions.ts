@@ -1,26 +1,35 @@
 import "server-only"
 import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers"
-import { Scalars } from "@prisma/orm-postgres/components";
-import { Models } from "@/prisma/contract";
+import { type RoleTypes } from "../types"
 
-type Roles = Scalars<Models.public_Employee>["roles"]
+
 
 
 const secretKey = process.env.SECRET_KEY
 const encodedKey = new TextEncoder().encode(secretKey)
 
-export async function createSession(userId: number, userRoles: Roles) {
+if (!secretKey) throw new Error("SECRET_KEY is not set")
+
+export async function createSession(userId: number, userRoles: RoleTypes) {
     const expiresAt = new Date(Date.now() + 7 * 24 *60 *60 * 1000)
     const mustChangePassword = true
     const session = await encrypt({userId, expiresAt, userRoles, mustChangePassword});
+    
 
-    // Create cookie using session
-    (await cookies()).set("session", session, {
+    const cookieStore = await cookies()
+    cookieStore.set("session", session, {
         httpOnly: true,
         secure: true,
         expires: expiresAt
     })
+
+    // Create cookie using session
+    // (await cookies()).set("session", session, {
+    //     httpOnly: true,
+    //     secure: true,
+    //     expires: expiresAt
+    // })
 }
 
 export async function deleteSession() {
@@ -33,7 +42,7 @@ export async function deleteSession() {
 type SessionPayload = {
     userId: number,
     expiresAt: Date
-    userRoles: Roles
+    userRoles: RoleTypes
     mustChangePassword: boolean
 }
 
@@ -45,7 +54,8 @@ export async function encrypt(payload: SessionPayload) {
         .sign(encodedKey)
 }
 
-export async function decrypt(session: string | undefined = "") {
+export async function decrypt(session: string | undefined) {
+    if (!session) return undefined
     try {
         const { payload } = await jwtVerify<SessionPayload>(session, encodedKey, {
             algorithms: ["HS256"],
@@ -55,5 +65,6 @@ export async function decrypt(session: string | undefined = "") {
     } 
     catch (error) {
         console.log("Failed to verify session: ", error);
+        return undefined
     }
 }

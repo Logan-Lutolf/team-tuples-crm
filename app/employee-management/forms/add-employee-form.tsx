@@ -8,6 +8,8 @@ import { createEmployee } from "../actions"
 import { showToast } from "@/lib/utils"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Checkbox } from "@/components/ui/checkbox"
+import { DatePickerDemo } from "@/components/custom/date-picker"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const rolesobj = [
     { label: "Admin", value: "ADMIN" },
@@ -63,6 +65,27 @@ export function AddEmployeeForm({ onSuccess }: AddEmployeeFormProps) {
                     type="text"
                 />
             </Field>
+
+            <Field>
+                <FieldLabel>Date of Birth</FieldLabel>
+                {/* Implement this later <DatePickerDemo /> */}
+                <Input 
+                    name="dob"
+                    type="date"
+                    placeholder="yyyy-mm-dd"
+                />
+            </Field>
+
+            {/* <Select name="branch">
+                <SelectTrigger>
+                    <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectItem>PRAHA</SelectItem>
+                    </SelectGroup>
+                </SelectContent>
+            </Select> */}
 
             <Accordion>
                 <AccordionItem>

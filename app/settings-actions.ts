@@ -17,7 +17,7 @@ export async function changePFP(formData: FormData) {
         const dataUrl = `data:${file.type};base64,${buffer.toString("base64")}`
 
         await db.orm.public.Employee
-            .where({ id: Number(empId) })
+            .where({ personId: Number(empId) })
             .update({ pfpImgUrl: dataUrl })
 
         return { result: "success", message: "Profile picture updated." }

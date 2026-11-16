@@ -17,11 +17,18 @@ import { DashboardTable } from "@/components/records/dashboard-table"
 interface DataTableProps<TData extends RowData> {
     columns: ColumnDef<DataTableFeatures, TData>[]
     data: TData[]
+    paginationEnabled?: boolean
+    visibleRows?: number
 }
+
+const ROW_HEIGHT_REM = 2.75  
+const HEADER_HEIGHT_REM = 2.5 
 
 export function DataTable<TData extends RowData>({
     columns,
     data,
+    paginationEnabled = true,
+    visibleRows
 }: DataTableProps<TData>) {
     const table = useTable({
         features,
@@ -31,6 +38,12 @@ export function DataTable<TData extends RowData>({
 
     return (
         <>
+        <div
+            className={visibleRows ? "overflow-y-auto" : undefined}
+            style={visibleRows ? {
+                maxHeight: `${visibleRows * ROW_HEIGHT_REM + HEADER_HEIGHT_REM}rem`,
+            } : undefined}
+        >
         <DashboardTable>
             <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -70,26 +83,26 @@ export function DataTable<TData extends RowData>({
             )}
             </TableBody>
         </DashboardTable>
-
-        <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-        </div>
-
+        
+        {paginationEnabled && <div className="flex items-center justify-end space-x-2 py-4">
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+            >
+                Previous
+            </Button>
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+            >
+                Next
+            </Button>
+        </div>}
+            </div>
         </>
     )
 }

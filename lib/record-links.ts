@@ -1,4 +1,4 @@
-export const recordTypes = ['schools', 'contacts', 'employees', 'programs', 'branches', 'municipalities'] as const
+export const recordTypes = ['schools', 'contacts', 'employees', 'programs', 'branches', 'municipalities', 'participations'] as const
 export type RecordType = typeof recordTypes[number]
 export function isRecordType(value: string): value is RecordType {
     return recordTypes.some(type => type === value)

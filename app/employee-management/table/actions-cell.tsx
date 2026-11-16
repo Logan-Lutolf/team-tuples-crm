@@ -7,12 +7,12 @@ import { EditEmployeeForm } from "../forms/edit-employee-form"
 import { Button } from "@/components/ui/button"
 import { DeleteEmployeeForm } from "../forms/delete-form"
 import { PageActionLink } from "@/components/records/page-action-link"
-import type { Employee } from "./columns"
+import type { Employee, EmployeePerson, Person } from "@/app/types"
 
 
 
 
-export function ActionsCell({employee}: {employee: Employee}) {
+export function ActionsCell({employee}: {employee: EmployeePerson}) {
     const router = useRouter()
     const [editOpen, setEditOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
@@ -22,10 +22,10 @@ export function ActionsCell({employee}: {employee: Employee}) {
                 */
             <>
                 <div className="flex flex-wrap items-center justify-center gap-2">
-                <PageActionLink href={`/details/employees/${employee.id}`}>View Details</PageActionLink>
+                <PageActionLink href={`/details/employees/${employee.person.id}`}>View Details</PageActionLink>
                 <DropdownMenu>
                     <DropdownMenuTrigger
-                        render={<Button variant="ghost" className="h-8 w-8 p-0" aria-label={`More actions for ${employee.name}`}>
+                        render={<Button variant="ghost" className="h-8 w-8 p-0" aria-label={`More actions for ${employee.person.name}`}>
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>}
                     />
@@ -38,7 +38,7 @@ export function ActionsCell({employee}: {employee: Employee}) {
                                 <Pencil/>
                                 Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => router.push(`/details/employees/${employee.id}`)}>
+                            <DropdownMenuItem onClick={() => router.push(`/details/employees/${employee.person.id}`)}>
                                 <User/>
                                 View Profile
                             </DropdownMenuItem>
@@ -57,10 +57,10 @@ export function ActionsCell({employee}: {employee: Employee}) {
                     <Dialog open={editOpen} onOpenChange={setEditOpen}>
                         <DialogContent>
                             <EditEmployeeForm
-                                name={employee.name}
-                                email={employee.email}
-                                roles={employee.roles}
-                                phone={employee.phone ?? "N/a"}    
+                                name={employee.person.name}
+                                email={employee.person.email ?? "Unknown"}
+                                roles={employee.employee.role}
+                                phone={employee.person.phone ?? "Unkown"}    
                                 onSuccess={setEditOpen.bind(null, false)}                                
                             />
                         </DialogContent>
@@ -70,9 +70,9 @@ export function ActionsCell({employee}: {employee: Employee}) {
                     <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                         <DialogContent>
                             <DeleteEmployeeForm
-                                    employeeName={employee.name}
+                                    employeeName={employee.person.name}
                                     onSuccess={setDeleteOpen.bind(null, false)}
-                                    employeeId={employee.id}
+                                    employeeId={employee.person.id}
                             />
                         </DialogContent>
                     </Dialog>

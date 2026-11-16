@@ -7,8 +7,8 @@ export default async function DeletePage({ params }: { params: Promise<{ type: s
     const { type, id: rawId } = await params
     const id = Number(rawId)
     if (!isRecordType(type) || type === 'employees' || !/^\d+$/.test(rawId) || !Number.isSafeInteger(id) || id <= 0) notFound()
-    const record = type === 'schools' ? await db.orm.public.School.where({ id }).select('name').first()
-        : type === 'contacts' ? await db.orm.public.Contact.where({ id }).select('name').first()
+    const record = type === 'schools' ? await db.orm.public.Organization.where({ id }).select('name').first()
+        : type === 'contacts' ? await db.orm.public.Person.where({ id }).select('name').first()
         : type === 'branches' ? await db.orm.public.Branch.where({ id }).select('name').first()
         : type === 'programs' ? await db.orm.public.Program.where({ id }).select('name').first()
         : await db.orm.public.Municipality.where({ id }).select('name').first()

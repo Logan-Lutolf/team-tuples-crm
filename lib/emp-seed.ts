@@ -1,30 +1,53 @@
+import "temporal-polyfill/global";
 import { db } from "@/prisma/db";
 import { faker } from "@faker-js/faker";
-import { Scalars } from "@prisma/orm-postgres/components";
-import { Models } from "@/prisma/contract";
+import { Temporal } from "temporal-polyfill";
 
-type Roles = Scalars<Models.public_Employee>["roles"];
-type Role = Roles[number];
 
-const ALL_ROLES = db.enums.public.Role.values as readonly Role[];
+
 
 async function generateRandomEmployees() { 
     for (let i = 0; i < 100; i++) {
-        await db.transaction(async tx => {
-        const employee = await tx.orm.public.Employee.create({
+        const birth = faker.date.birthdate({ min: 18, max: 65, mode: "age" });
+        const employee = await db.orm.public.Person.create({
             name: faker.person.fullName(),
             email: faker.internet.email(),
             phone: faker.phone.number(),
-            password: faker.internet.password(),
             address: {
                 street: faker.location.streetAddress(),
                 city: faker.location.city(),
                 zipCode: faker.location.zipCode(),
                 country: faker.location.country(),
             },
-            roles: faker.helpers.arrayElements(ALL_ROLES, {min: 0, max: 3}),
-        });
+            dob: Temporal.PlainDate.from({
+                year: birth.getUTCFullYear(),
+                month: birth.getUTCMonth() + 1,
+                day: birth.getUTCDate(),
+            }),
+            orgId: 1,
+        })
     }
 }
 
+async function generateOrganizations() {
+    for (let i = 1; i <= 5; i++) {
+        const org = await db.orm.public.Organization.create({
+            address: {
+                street: faker.location.streetAddress(),
+                city: faker.location.city(),
+                zipCode: faker.location.zipCode(),
+                country: faker.location.country(),
+            },
+            branch: "PRAHA",
+            name: "Organization " + i,
+            region: "PRAHA",
+            relationship: "EXCELLENT",
+            type: "PRIMARY_SCHOOL"
+        })
+    }
+}
+
+
+
+generateOrganizations()
 generateRandomEmployees()

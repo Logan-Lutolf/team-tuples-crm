@@ -28,3 +28,6 @@ export function SchoolDetailsPage({ schoolId, schoolName, initialDetails }: { sc
             </>}
     </PageContent>
 }
+
+
+
