@@ -16,7 +16,6 @@ export function EmployeeDetailsPage({person, participations, assignments, employ
         <>
             <PersonDetailsPage person={person} participations={participations}  />
         
-            {/* School Contacts */}
             <div>
                 <span>Assignments</span>
                 <DataTable columns={assignmentColumns} data={assignments} paginationEnabled={false} visibleRows={5}/>

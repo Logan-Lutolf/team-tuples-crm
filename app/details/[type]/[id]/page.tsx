@@ -6,7 +6,6 @@ import { getProgramDetails } from '@/app/programs/actions'
 import { getMunicipalityDetails, getParticipationDetails } from '@/app/municipalities/actions'
 import { timeDetails } from '@/lib/detail-timing'
 import { isRecordType } from '@/lib/record-links'
-import { BranchDetailsPage } from '@/app/branches/branch-details-page'
 import { ProgramPageContent } from '@/app/programs/program-page-content'
 import { MunicipalityPageContent } from '@/app/municipalities/municipality-page-content'
 import { EmployeeDetails } from '@/app/employee-management/employee-details'
@@ -15,6 +14,8 @@ import { OrganizationDetailsPage } from '@/app/details/pages/organization-detail
 import { db } from '@/prisma/db'
 import { PersonDetailsPage } from '../../pages/person-details-page'
 import { EmployeeDetailsPage } from '../../pages/employee-details-page'
+import { ProgramDetailsPage } from '../../pages/program-details-page'
+import { BranchDetailsPage } from '../../pages/branch-details-page'
 
 
 
@@ -70,11 +71,11 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
         } 
         
         else if (type === 'branches') {
-            const details = await loadRecord('branches', () => getBranchDetails(id))
-            content = <BranchDetailsPage key={id} branchId={id} branchName={details.branch.name} initialDetails={details} />
+
+            content = <BranchDetailsPage />
         } else if (type === 'programs') {
-            const details = await loadRecord('programs', () => getProgramDetails(id, false, true))
-            content = <ProgramPageContent key={id} program={details.program} mode="view" initialDetails={details} />
+            
+            content = <ProgramDetailsPage />
         } else if (type === 'municipalities') {
             const details = await loadRecord('municipalities', () => getMunicipalityDetails(id))
             content = <MunicipalityPageContent key={id} municipality={details.municipality} mode="view" initialDetails={details} />
