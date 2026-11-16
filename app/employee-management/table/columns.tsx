@@ -40,7 +40,7 @@ export const columns = columnHelper.columns([
                 <div className="flex flex-wrap justify-center gap-1">
                     {row.original.employee.role.map(role => <Badge key={role} variant="outline" className="max-w-full whitespace-normal break-words">{role.replaceAll('_', ' ')}</Badge>)}
                 </div>
-                
+
             )
         }
     }),

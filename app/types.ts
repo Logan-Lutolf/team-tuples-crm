@@ -15,9 +15,9 @@ export type Person = Scalars<Models.public_Person>
 
 export type RoleTypes = Scalars<Models.public_Employee>["role"]
 
-export type BranchTypes = Scalars<Models.public_Employee>["branch"]
-
 export type PersonRoles = Scalars<Models.public_PersonRoles>
+
+export type EmployeeAssignment = Scalars<Models.public_EmployeeAssignment>
 
 export type EmployeePerson = {
     person: Person,
@@ -29,11 +29,15 @@ export type ParticipationPerson = {
     participation: Participation
 }
 
-
 export type PersonWithRole = Person & { personRole: PersonRoles | null }
 
 export type OrganizationPerson = {
     person: PersonWithRole,
     organization: Organization
     roles: PersonWithRole["personRole"]
+}
+
+export type EmployeeAssignmentPerson = {
+    person: Person,
+    assignment: EmployeeAssignment
 }

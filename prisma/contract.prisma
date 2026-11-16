@@ -136,7 +136,7 @@ model EmployeeAssignment {
   id         Int @id @default(autoincrement())
   employeeId Int
   role       RoleTypes
-  branchId   Int?
+  branchId   Int?  // Do we need this here? Redundant imo
   programId  Int?
   region     RegionTypes?
 
