@@ -1,7 +1,7 @@
 import type { Scalars } from "@prisma/orm-postgres/components"
 import type { Models } from "@/prisma/contract"
 
-export type ContactFields = Scalars<Models.public_Contact>
+export type ContactFields = Scalars<Models.public_Person>
 
 export type Option = {
     id: number

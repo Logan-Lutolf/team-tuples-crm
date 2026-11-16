@@ -21,7 +21,7 @@ export function ContactParticipations({ data, editing, onSaved }: { data: Detail
     const sorted = datedParticipations(data.participations, now)
     const rows = sortHistoryByDate(sorted, dateField, dateOrder)
     const name = (items: { id: number; name: string }[], id: number | null) => id === null ? 'Unassigned / deleted' : items.find(i => i.id === id)?.name ?? `#${id}`
-    const label = (p: Details['participationOptions'][number]) => `${name(data.programs, p.programId)} · ${p.name} · ${name(data.schools, p.schoolId)} · ${p.startDate.slice(0, 10)} (#${p.id})`
+    const label = (p: Details['participationOptions'][number]) => `${name(data.programs, p.programId)} · ${p.name} · ${name(data.schools, p.organizationId)} · ${p.startDate.slice(0, 10)} (#${p.id})`
     const available = data.participationOptions.filter(p => !rows.some(r => r.id === p.id))
     async function save(form: FormData) {
         const result = await changeContactParticipation(form)
@@ -33,7 +33,7 @@ export function ContactParticipations({ data, editing, onSaved }: { data: Detail
             <HistoryDateSort field={dateField} onFieldChange={setDateField} value={dateOrder} onChange={setDateOrder} />
             <Table><TableHeader><TableRow><TableHead>Program</TableHead><TableHead>Participation</TableHead><TableHead>School</TableHead><TableHead>Start</TableHead><TableHead>End</TableHead><TableHead>Status</TableHead>{editing && <TableHead>Actions</TableHead>}</TableRow></TableHeader>
                 <TableBody>{rows.map(p => <TableRow key={p.id}>
-                    <TableCell><RecordLink type="programs" id={p.programId}>{name(data.programs, p.programId)}</RecordLink></TableCell><TableCell>{p.name}</TableCell><TableCell><RecordLink type="schools" id={p.schoolId}>{name(data.schools, p.schoolId)}</RecordLink></TableCell>
+                    <TableCell><RecordLink type="programs" id={p.programId}>{name(data.programs, p.programId)}</RecordLink></TableCell><TableCell>{p.name}</TableCell><TableCell><RecordLink type="schools" id={p.organizationId}>{name(data.schools, p.organizationId)}</RecordLink></TableCell>
                     <TableCell>{p.startDate.replace('T', ' ').slice(0, 16)} UTC</TableCell><TableCell>{p.endDate ? `${p.endDate.replace('T', ' ').slice(0, 16)} UTC` : '—'}</TableCell><TableCell>{p.status}</TableCell>
                     {editing && <TableCell><div className="flex gap-2"><Button type="button" variant="outline" onClick={() => { setChanging(changing === p.id ? null : p.id); setRemoving(null) }}>Change participation</Button><Button type="button" variant="destructive" onClick={() => { setRemoving(removing === p.id ? null : p.id); setChanging(null) }}>Remove link</Button></div></TableCell>}
                 </TableRow>)}{!rows.length && <TableRow><TableCell colSpan={editing ? 7 : 6}>No recorded program participations.</TableCell></TableRow>}</TableBody>

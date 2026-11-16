@@ -10,12 +10,12 @@ async function mutate(form: FormData, mode: 'create' | 'edit' | 'delete') {
         if (mode === 'delete' && form.get('confirmation') !== 'delete') return { error: 'Type delete to confirm.' }
         const data = mode === 'delete' ? null : employmentData(form, mode === 'edit')
         await db.transaction(async tx => {
-            if (!await tx.orm.public.Contact.where({ id: contactId }).first()) throw new EmploymentValidationError('This contact no longer exists.')
-            if (recordId !== null && !await tx.orm.public.ContactEmployment.where({ id: recordId, contactId }).first()) throw new EmploymentValidationError('This employment record no longer exists for this contact.')
-            if (data && data.schoolId !== null && !await tx.orm.public.School.where({ id: data.schoolId }).first()) throw new EmploymentValidationError('The selected school no longer exists.')
-            if (mode === 'delete') await tx.orm.public.ContactEmployment.where({ id: recordId!, contactId }).delete()
-            else if (mode === 'edit' && data) await tx.orm.public.ContactEmployment.where({ id: recordId!, contactId }).update(data)
-            else if (data) await tx.orm.public.ContactEmployment.create({ contactId, ...data })
+            if (!await tx.orm.public.Person.where({ id: contactId }).first()) throw new EmploymentValidationError('This contact no longer exists.')
+            if (recordId !== null && !await tx.orm.public.PersonEmployment.where({ id: recordId, personId: contactId }).first()) throw new EmploymentValidationError('This employment record no longer exists for this contact.')
+            if (data && data.schoolId !== null && !await tx.orm.public.Organization.where({ id: data.schoolId }).first()) throw new EmploymentValidationError('The selected school no longer exists.')
+            if (mode === 'delete') await tx.orm.public.PersonEmployment.where({ id: recordId!, personId: contactId }).delete()
+            else if (mode === 'edit' && data) await tx.orm.public.PersonEmployment.where({ id: recordId!, personId: contactId }).update(data)
+            else if (data) await tx.orm.public.PersonEmployment.create({ personId: contactId, ...data })
         })
     } catch (error) {
         return { error: error instanceof EmploymentValidationError ? error.message : 'Could not save employment history. Check the database migration and try again.' }
