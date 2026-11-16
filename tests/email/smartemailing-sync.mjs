@@ -88,6 +88,9 @@ test('read-only SmartEmailing import is replay-safe, resumable and separate from
             const [contact] = await loadEmailContacts(); assert.equal(contact.lastTrackedEmailAt, null); assert.equal(lastEmailAt(contact), details.delivered.occurredAt);
             assert.equal(filterEmailContacts([contact], { ...emptyContactFilters, lastEmail: 'contacted' }).length, 1);
             assert.equal(filterEmailContacts([contact], { ...emptyContactFilters, lastEmail: 'never' }).length, 0);
+            assert.equal(contact.smartEmailing.lists[0].name, 'PNS Teachers');
+            assert.equal(filterEmailContacts([contact], { ...emptyContactFilters, mailingList: '7', subscription: 'unsubscribed', bounce: 'hard', campaign: 'monthly', engagement: 'clicked', engagementSince: '2026-11-12', engagementUntil: '2026-11-12' }).length, 1);
+            assert.equal(filterEmailContacts([contact], { ...emptyContactFilters, mailingList: '7', subscription: 'subscribed' }).length, 0);
             assert.equal((await client.query('SELECT * FROM public."Interaction"')).rowCount, 0);
             assert.equal((await runtime.orm.public.Contact.where({ id: 1 }).first()).last_contacted_byId, null);
             assert.equal(calls.filter(call => call.method === 'POST').every(call => call.path.endsWith('/ack')), true);
@@ -129,6 +132,7 @@ test('read-only SmartEmailing import is replay-safe, resumable and separate from
             assert.equal((await runtime.orm.public.SmartEmailSync.where({ id: 'smartemailing' }).first()).contactOffset, 5);
             result = await (await POST(request())).json(); assert.equal(result.moreContacts, false); assert.equal(result.contactsRead, 2);
             const details = await loadSmartEmailContact('teacher@example.test'); assert.equal(details.profile, null); assert.equal(details.history.length, 6);
+            assert.equal((await loadEmailContacts())[0].smartEmailing, null);
             await client.query('UPDATE public."Contact" SET email=\'replacement@example.test\' WHERE id=1');
             assert.equal(lastEmailAt((await loadEmailContacts())[0]), null);
         });

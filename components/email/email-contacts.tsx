@@ -39,8 +39,9 @@ export function EmailContacts({ contacts, segments, trackingAddress, trackingCon
     const schools = [...new Map(contacts.filter(c => c.schoolId !== null).map(c => [c.schoolId!, c.school])).entries()].sort((a, b) => a[1].localeCompare(b[1]))
     const branches = [...new Map(contacts.filter(c => c.branchId !== null).map(c => [c.branchId!, c.branch])).entries()].sort((a, b) => a[1].localeCompare(b[1]))
     const regions = [...new Set(contacts.flatMap(c => c.region ? [c.region] : []))].sort()
+    const mailingLists = [...new Map(contacts.flatMap(contact => (contact.smartEmailing?.lists ?? []).map(list => [list.id, list.name] as const))).entries()].sort((a, b) => a[1].localeCompare(b[1]))
     function changeFilter<K extends keyof ContactFilters>(key: K, value: ContactFilters[K]) {
-        setFilters(current => ({ ...current, [key]: value, ...(key === 'lastEmail' && value === 'never' ? { since: '', until: '' } : {}) }))
+        setFilters(current => ({ ...current, [key]: value, ...(key === 'lastEmail' && value === 'never' ? { since: '', until: '' } : {}), ...(key === 'engagement' && value === 'any' ? { engagementSince: '', engagementUntil: '' } : {}) }))
         setPage(1); setNotice(''); setError(''); setManualCopy('')
     }
     async function copy(text: string, message: string) {
@@ -103,6 +104,18 @@ export function EmailContacts({ contacts, segments, trackingAddress, trackingCon
                         <label className="grid gap-2 text-sm">Emailed on or after<Input type="date" disabled={filters.lastEmail === 'never'} value={filters.since} onChange={e => changeFilter('since', e.target.value)} /></label>
                         <label className="grid gap-2 text-sm">Emailed on or before<Input type="date" disabled={filters.lastEmail === 'never'} value={filters.until} onChange={e => changeFilter('until', e.target.value)} /></label>
                     </div>
+                    <fieldset className="grid gap-4 border-t pt-4">
+                        <legend className="pt-4 font-semibold">SmartEmailing filters</legend>
+                        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                            <label className="grid gap-2 text-sm">Mailing list<select className={selectClass} value={filters.mailingList} onChange={e => changeFilter('mailingList', e.target.value)}><option value="">All lists</option>{mailingLists.map(([id, name]) => <option key={id} value={String(id)}>{name}</option>)}</select></label>
+                            <label className="grid gap-2 text-sm">Subscription (selected list or any list)<select className={selectClass} value={filters.subscription} onChange={e => changeFilter('subscription', e.target.value as ContactFilters['subscription'])}><option value="any">Any status</option><option value="subscribed">Subscribed</option><option value="unsubscribed">Unsubscribed</option><option value="blacklisted">Blacklisted</option><option value="unknown">No current data</option></select></label>
+                            <label className="grid gap-2 text-sm">Current bounce status<select className={selectClass} value={filters.bounce} onChange={e => changeFilter('bounce', e.target.value as ContactFilters['bounce'])}><option value="any">Any status</option><option value="hard">Permanent bounce</option><option value="soft">Temporary bounce</option><option value="none">No bounce flag</option><option value="unknown">No current data</option></select></label>
+                            <label className="grid gap-2 text-sm">Newsletter / campaign name<Input type="search" maxLength={200} value={filters.campaign} onChange={e => changeFilter('campaign', e.target.value)} /></label>
+                            <label className="grid gap-2 text-sm">Reported engagement<select className={selectClass} value={filters.engagement} onChange={e => changeFilter('engagement', e.target.value as ContactFilters['engagement'])}><option value="any">Any engagement</option><option value="opened">Open reported</option><option value="clicked">Click reported</option><option value="unopened">No open reported</option><option value="unclicked">No click reported</option></select></label>
+                            <label className="grid gap-2 text-sm">Engagement on or after<Input type="date" disabled={filters.engagement === 'any'} value={filters.engagementSince} onChange={e => changeFilter('engagementSince', e.target.value)} /></label>
+                            <label className="grid gap-2 text-sm">Engagement on or before<Input type="date" disabled={filters.engagement === 'any'} value={filters.engagementUntil} onChange={e => changeFilter('engagementUntil', e.target.value)} /></label>
+                        </div>
+                    </fieldset>
                     {filterError && <p role="alert" className="text-destructive">{filterError}</p>}
                     <Button className="w-fit" variant="outline" onClick={() => { setFilters({ ...emptyContactFilters }); setPage(1); setNotice(''); setError(''); setManualCopy('') }}>Reset filters</Button>
                     <form className="grid gap-3 border-t pt-4" aria-labelledby="save-segment-heading" onSubmit={e => { e.preventDefault(); void save() }}>

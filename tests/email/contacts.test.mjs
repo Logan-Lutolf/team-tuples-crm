@@ -35,3 +35,39 @@ test('email contacts access is limited to administrators, coordinators, and mark
  for(const role of ['LECTURER','BRANCH_DIRECTOR','PROJECT_MANAGER'])assert.equal(canUseEmailContacts([role]),false);
  assert.equal(canUseEmailContacts([]),false);
 });
+
+const newsletterContact = { ...contact,
+ smartEmailing: { lists: [{id:7,name:'PNS Teachers',status:'unsubscribed'},{id:8,name:'PNS Parents',status:'confirmed'}],blacklisted:false,hardBounced:true,softBounces:0 },
+ smartCampaigns: [
+  {name:'Teachers November',deliveredAt:'2026-11-10T10:00:00Z',openDates:['2026-11-10','2026-11-13'],clickDates:[]},
+  {name:'Parents October',deliveredAt:'2026-10-10T10:00:00Z',openDates:[],clickDates:['2026-10-11']},
+ ],
+};
+test('mailing list, subscription and current bounce filters combine without treating missing data as healthy',()=>{
+ const find=values=>filterEmailContacts([newsletterContact,other],filters(values));
+ assert.deepEqual(find({mailingList:'7',subscription:'unsubscribed',bounce:'hard'}),[newsletterContact]);
+ assert.equal(find({mailingList:'7',subscription:'subscribed'}).length,0);
+ assert.deepEqual(find({mailingList:'8',subscription:'subscribed'}),[newsletterContact]);
+ assert.deepEqual(find({subscription:'unknown',bounce:'unknown'}),[other]);
+ assert.equal(find({bounce:'none'}).length,0);
+ const healthy={...newsletterContact,smartEmailing:{...newsletterContact.smartEmailing,hardBounced:false}};
+ assert.deepEqual(filterEmailContacts([healthy],filters({bounce:'none'})),[healthy]);
+ assert.equal(filterEmailContacts([{...healthy,smartEmailing:{...healthy.smartEmailing,blacklisted:true}}],filters({subscription:'subscribed'})).length,0);
+});
+test('engagement and campaign filters refer to the same campaign and any matching day, not just the latest event',()=>{
+ const find=values=>filterEmailContacts([newsletterContact,other],filters(values));
+ assert.deepEqual(find({campaign:'teachers',engagement:'opened',engagementSince:'2026-11-10',engagementUntil:'2026-11-10'}),[newsletterContact]);
+ assert.equal(find({campaign:'teachers',engagement:'clicked'}).length,0);
+ assert.deepEqual(find({campaign:'parents',engagement:'clicked'}),[newsletterContact]);
+ assert.deepEqual(find({campaign:'teachers',engagement:'unopened',engagementSince:'2026-11-11',engagementUntil:'2026-11-12'}),[newsletterContact]);
+ assert.equal(find({engagement:'unclicked'}).length,0);
+ assert.equal(find({campaign:'nonexistent'}).length,0);
+ // Missing imported history must not imply that an unknown contact ignored newsletters.
+ assert.equal(filterEmailContacts([other],filters({engagement:'unopened'})).length,0);
+ assert.equal(filterEmailContacts([{...newsletterContact,lastTrackedEmailAt:null}],filters({lastEmail:'never',bounce:'none'})).length,0);
+});
+test('new filter values and date ranges are validated; older saved filter sets receive defaults',()=>{
+ for (const values of [{subscription:'invalid'},{bounce:'invalid'},{engagement:'invalid'},{mailingList:'nope'},{engagement:'opened',engagementSince:'2026-02-30'},{engagement:'clicked',engagementSince:'2026-11-14',engagementUntil:'2026-11-13'},{engagementSince:'2026-11-10'}])assert.throws(()=>filters(values));
+ const old=validateContactFilters({name:'Jana',lastEmail:'any'});
+ assert.equal(old.mailingList,'');assert.equal(old.engagement,'any');assert.equal(old.subscription,'any');
+});

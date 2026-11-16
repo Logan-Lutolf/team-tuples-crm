@@ -59,6 +59,21 @@ test('private segments and verified CC tracking work against the actual schema',
    assert.equal((await loadEmailContacts())[0].lastTrackedEmailAt,null);
    await assert.rejects(actions.saveEmailSegment('Empty',{...emptyContactFilters,name:'nonexistent'}),/no contacts/i);
   });
+  await t.test('SmartEmailing filters are reapplied on the server when saving a private snapshot',async()=>{
+   await client.query(`INSERT INTO public."SmartEmailSync"(id,"streamId","contactsSyncedAt") VALUES('smartemailing','test',now()-interval '1 minute');
+    INSERT INTO public."SmartEmailContact"(id,email,"listsJson","hardBounced","softBounces",blacklisted,"syncedAt")
+    VALUES(10,'alice@example.test','[{"id":7,"name":"Teachers","status":"unsubscribed"}]',true,0,false,now());
+    INSERT INTO public."SmartEmailEvent"(id,email,"messageId",type,"occurredAt","campaignName",subject,"campaignType","detailsJson")
+    VALUES('test-click','alice@example.test','newsletter-1','email.clicked','2026-11-12T23:30:00Z','Monthly newsletter','News','newsletter','{}');`);
+   const selected={...emptyContactFilters,mailingList:'7',subscription:'unsubscribed',bounce:'hard',campaign:'monthly',engagement:'clicked',engagementSince:'2026-11-13',engagementUntil:'2026-11-13'};
+   const result=await actions.saveEmailSegment('Newsletter follow-up',selected);
+   const saved=await actions.getEmailSegment(result.id);
+   assert.equal(saved.contactCount,1);assert.equal(saved.contacts[0].id,1);assert.equal(saved.filters.engagement,'clicked');
+   await client.query(`UPDATE public."SmartEmailContact" SET "hardBounced"=false`);
+   await assert.rejects(actions.saveEmailSegment('No longer matching',selected),/no contacts/i);
+   assert.equal((await actions.getEmailSegment(result.id)).contactCount,1);
+   await client.query(`DELETE FROM public."SmartEmailEvent"; DELETE FROM public."SmartEmailContact"; DELETE FROM public."SmartEmailSync";`);
+  });
   await t.test('other creators and unauthorized roles cannot read or delete private segments',async()=>{
    globalThis.emailTestEmployee={id:2,roles:['MARKETER']};
    await assert.rejects(actions.getEmailSegment(segment.id),/not found/i);await assert.rejects(actions.deleteEmailSegment(segment.id),/not found/i);
