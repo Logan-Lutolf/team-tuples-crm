@@ -1,4 +1,8 @@
 'use client'
+import { SmartEmailingHistory } from '@/components/email/smartemailing-history'
+import { useCanEditBranch } from '@/components/records/branch-edit-access'
+import { PageActionLink } from '@/components/records/page-action-link'
+import { EditHistoryButton } from '@/components/records/edit-history-button'
 import { DeferredHistory } from '@/components/records/deferred-history'
 import { PageContent, PageHeader, PageTitle, PageDescription } from '@/components/records/page-content'
 import { RecordLink } from '@/components/records/record-link'
@@ -52,13 +56,14 @@ function ContactHistory({ data, editing, onSaved }: { data: Details; editing: bo
                     <label>Communication<select className="block w-full rounded-md border p-2" name="mode" required>{data.modes.map(mode => <option key={mode} value={mode}>{mode.replaceAll('_', ' ')}</option>)}</select></label>
                     <label>Date and time (local)<Input type="datetime-local" name="contacted-at-local" required /></label>
                     <Button type="submit" className="sm:col-span-2">Record interaction</Button>
-                </ContactActionForm> : <p>Add employees on the Employees page before recording interactions.</p>}
+                </ContactActionForm> : <p className="text-muted-foreground">Add employees on the Employees page before recording interactions.</p>}
             </section>}
         </div>
     </details>
 }
 
 export function ContactDetailsPage({ contactId, contactName, initialDetails }: { contactId: number; contactName: string; initialDetails?: Details }) {
+    const canEdit = useCanEditBranch(initialDetails?.contact.branchId ?? null)
     const [editing, setEditing] = useState(false)
     const [data, setData] = useState<Details | null>(initialDetails ?? null)
     const [loading, setLoading] = useState(false)
@@ -95,7 +100,7 @@ export function ContactDetailsPage({ contactId, contactName, initialDetails }: {
                 <ContactParticipations data={data} editing={editing} onSaved={refresh} />
                 <ContactEmploymentHistory data={data} editing={editing} onSaved={refresh} />
                 {editing ? <ContactHistory data={data} editing onSaved={refresh} /> : <DeferredHistory key={contact.updatedAt} type="contacts" id={contactId} />}
-                {!editing && <div className="flex justify-end border-t pt-4"><Button type="button" onClick={() => setEditing(true)}>Edit</Button></div>}
+                {!editing && <div className="flex flex-wrap justify-end gap-2 border-t pt-4"><PageActionLink href="/email">Email contacts</PageActionLink><EditHistoryButton type="contacts" id={contactId} />{canEdit && <Button type="button" onClick={() => setEditing(true)}>Edit</Button>}</div>}
             </div>}
     </PageContent>
 }

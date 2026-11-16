@@ -1,4 +1,5 @@
 'use client'
+import { EditHistoryButton } from '@/components/records/edit-history-button'
 import { DeferredHistory } from '@/components/records/deferred-history'
 import { PageContent, PageHeader, PageTitle, PageDescription } from '@/components/records/page-content'
 import { RecordLink } from '@/components/records/record-link'
@@ -94,7 +95,7 @@ export function ProgramPageContent({ program, mode = 'create', initialDetails }:
                 <RecordList title="Employee assignments" records={details.assignments.map(a => <><RecordLink type="employees" id={a.employeeId}>{name(details.employees, a.employeeId)}</RecordLink> · {a.role.replaceAll('_', ' ')}{a.region ? ` · Region ${a.region}` : ''}{a.branchId ? <> · <RecordLink type="branches" id={a.branchId}>Branch #{a.branchId}</RecordLink></> : null}</>)} />
                 <RecordList title="Municipal sponsors" records={details.municipalities.map(m => <><RecordLink type="municipalities" id={m.id}>{m.name}</RecordLink> · Mayor: {m.mayor}</>)} />
                 <DeferredHistory key={details.program.updatedAt} type="programs" id={details.program.id} />
-                <div className="flex justify-end border-t pt-4"><Button onClick={openEdit} disabled={loadingOptions}>{loadingOptions ? 'Loading editing options…' : 'Edit'}</Button></div>
+                <div className="flex flex-wrap justify-end gap-2 border-t pt-4"><EditHistoryButton type="programs" id={details.program.id} /><Button onClick={openEdit} disabled={loadingOptions}>{loadingOptions ? 'Loading editing options…' : 'Edit'}</Button></div>
             </div> : error ? <Button variant="outline" onClick={() => setRevision(r => r + 1)}>Try again</Button> : <p role="status">Loading program details…</p>}
     </PageContent>
 }

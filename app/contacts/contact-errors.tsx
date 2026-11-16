@@ -1,3 +1,4 @@
+import { BranchEditPermissionError } from '@/lib/branch-edit-policy'
 export class ContactValidationError extends Error {}
 
 const fields: Record<string, string> = {
@@ -16,6 +17,7 @@ export function contactFieldLabel(key: string) {
 }
 
 export function contactErrorMessage(error: unknown, action: string): string {
+    if (error instanceof BranchEditPermissionError) return error.message
     if (error instanceof ContactValidationError) return error.message
     const info = typeof error === "object" && error !== null ? error as Record<string, unknown> : {}
     const constraint = typeof info.constraint === "string" ? info.constraint : ""

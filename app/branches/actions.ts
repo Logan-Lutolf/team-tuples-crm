@@ -1,4 +1,6 @@
 'use server'
+
+import { auditTransaction } from '@/lib/audit-transaction'
 import { timeDetails } from '@/lib/detail-timing'
 
 import { revalidatePath } from "next/cache"
@@ -12,7 +14,7 @@ async function mutate(form: FormData, mode: "create" | "edit" | "delete"): Promi
             return { error: "Type delete to confirm." }
         }
         const data = mode === "delete" ? null : branchData(form, db.enums.public.Branches.values, db.enums.public.Region.values)
-        await db.transaction(async (tx) => {
+        await auditTransaction(async (tx) => {
             if (id !== null && !await tx.orm.public.Branch.where({ id }).first()) {
                 throw new Error("This branch no longer exists. Refresh the page.")
             }
@@ -73,7 +75,7 @@ export async function updateBranchRelationship(form: FormData): Promise<BranchRe
     try {
         const branchId = positiveId(form.get('branch-id'), 'branch')
         const operation = form.get('operation')
-        await db.transaction(async tx => {
+        await auditTransaction(async tx => {
             if (!await tx.orm.public.Branch.where({ id: branchId }).first()) throw new Error('Branch missing')
             if (operation === 'assign-contact') {
                 const contactId = positiveId(form.get('contact-id'), 'contact')

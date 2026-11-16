@@ -1,5 +1,6 @@
 'use server'
-import { db } from '@/prisma/db'
+
+import { auditTransaction } from '@/lib/audit-transaction'
 import { revalidatePath } from 'next/cache'
 import { employmentId } from '../../lib/contact-employment'
 
@@ -9,7 +10,7 @@ export async function changeContactParticipation(form: FormData) {
         const participationId = employmentId(form.get('participation-id'))
         const operation = form.get('operation')
         if (operation !== 'add' && operation !== 'remove' && operation !== 'change') return { error: 'Choose a valid operation.' }
-        await db.transaction(async tx => {
+        await auditTransaction(async tx => {
             // Serialize duplicate adds/changes for the same contact.
             if (!await tx.orm.public.Contact.where({ id: contactId }).forUpdate().first()) throw new Error('Contact missing')
             if (operation === 'remove') {

@@ -1,4 +1,8 @@
 'use server'
+
+import { auditTransaction } from '@/lib/audit-transaction'
+import { Models } from "@/prisma/contract"
+import { Scalars } from "@prisma/orm-postgres/components"
 import { db } from "@/prisma/db"
 import { revalidatePath } from "next/cache"
 import { BranchTypes, RoleTypes } from "../types"
@@ -73,7 +77,8 @@ export async function editEmployee(formData: FormData) {
                 name: name,
                 email: email,
                 phone: phone,
-            })
+                roles: roles,
+            }))
         
         const employee = await db.orm.public.Employee
             .where({ personId: Number(id)})
@@ -103,7 +108,7 @@ export async function deleteEmployee(form: FormData) {
             return { success: false, message: "Invalid employee ID." }
         }
 
-        await db.transaction(async tx => {
+        await auditTransaction(async tx => {
             await tx.orm.public.EmployeeAssignment.where({ employeeId: id }).delete()
             // Delete actions clear chiefs/history references and remove participation links.
             await tx.orm.public.Employee.where({ personId: id }).delete()

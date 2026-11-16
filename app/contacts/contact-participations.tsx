@@ -53,7 +53,7 @@ export function ContactParticipations({ data, editing, onSaved }: { data: Detail
             {available.length ? <ContactActionForm action={save} className="grid gap-3"><input type="hidden" name="contact-id" value={data.contact.id} /><input type="hidden" name="operation" value="add" />
                 <label>Participation<select name="participation-id" required defaultValue="" className="block w-full rounded-md border bg-transparent p-2"><option value="" disabled>Choose participation</option>{available.map(p => <option key={p.id} value={p.id}>{label(p)}</option>)}</select></label>
                 <Button type="submit">Add participation</Button>
-            </ContactActionForm> : <p>No additional participations available. Create a participation on the Schools or Programs page first.</p>}
+            </ContactActionForm> : <p className="text-muted-foreground">No additional participations available. Create a participation on the Schools or Programs page first.</p>}
         </section>}
     </div></details>
 }

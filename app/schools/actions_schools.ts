@@ -1,5 +1,7 @@
 'use server'
 
+
+import { auditTransaction } from '@/lib/audit-transaction'
 import { participationStatus } from '@/lib/participation-status'
 
 import { db } from "@/prisma/db"
@@ -87,7 +89,7 @@ export async function createSchool(formData: FormData) {
         // School IDs have no database default. Retry if concurrent creation claims the same ID.
         for (let attempt = 0; attempt < 3; attempt++) {
             try {
-                await db.transaction(async (tx) => {
+                await auditTransaction(async (tx) => {
                     const lastSchool = await tx.orm.public.School
                         .orderBy((school) => school.id.desc()).first()
                     await tx.orm.public.School.create({ id: (lastSchool?.id ?? 0) + 1, ...data })
@@ -110,14 +112,14 @@ export async function editSchool(formData: FormData) {
     return schoolAction("Update school", async () => {
         const schoolId = id(formData, "school-id")
         const data = schoolData(formData)
-        await db.transaction(async (tx) => {
+        await auditTransaction(async (tx) => {
             const school = await tx.orm.public.School.where({ id: schoolId }).first()
             if (!school) throw new SchoolValidationError("This school no longer exists. Refresh the page.")
             await tx.orm.public.School.where({ id: schoolId }).update({
                 ...data,
                 address: addressData(formData),
             })
-        })
+        }, { type: 'School', id: schoolId, destinationBranchId: data.branchId })
     })
 }
 
@@ -125,7 +127,7 @@ export async function deleteSchool(formData: FormData) {
     return schoolAction("Delete school", async () => {
         const schoolId = id(formData, "school-id")
         // Database delete actions detach related records and remove join rows atomically.
-        await db.orm.public.School.where({ id: schoolId }).delete()
+        await auditTransaction(tx => tx.orm.public.School.where({ id: schoolId }).delete())
         revalidatePath('/contacts')
         revalidatePath('/programs')
         revalidatePath('/branches')
@@ -135,18 +137,18 @@ export async function deleteSchool(formData: FormData) {
 // Submit school-id and contact-id to associate an existing, unassigned contact.
 export async function addSchoolContact(formData: FormData) {
     return schoolAction("Assign contact", async () => {
-        await db.orm.public.Contact.where({
+        await auditTransaction(tx => tx.orm.public.Contact.where({
             id: id(formData, "contact-id"), schoolId: null,
-        }).update({ schoolId: id(formData, "school-id") })
+        }).update({ schoolId: id(formData, "school-id") }))
     })
 }
 
 // Detach the contact without deleting it or changing another school's contacts.
 export async function removeSchoolContact(formData: FormData) {
     return schoolAction("Remove contact", async () => {
-        await db.orm.public.Contact.where({
+        await auditTransaction(tx => tx.orm.public.Contact.where({
             id: id(formData, "contact-id"), schoolId: id(formData, "school-id"),
-        }).update({ schoolId: null })
+        }).update({ schoolId: null }))
     })
 }
 
@@ -186,7 +188,7 @@ export async function createSchoolParticipation(formData: FormData) {
     return schoolAction("Create participation", async () => {
         const data = { schoolId: id(formData, "school-id"), ...participationData(formData) }
         const employeeIds = participationEmployees(formData)
-        await db.transaction(async tx => {
+        await auditTransaction(async tx => {
             const participation = await tx.orm.public.Participation.create(data)
             for (const employeeId of employeeIds) {
                 await tx.orm.public.ParticipationEmployees.create({ participationId: participation.id, employeeId })
@@ -202,7 +204,7 @@ export async function editSchoolParticipation(formData: FormData) {
         const where = { id: id(formData, "participation-id"), schoolId: originalSchool ? Number(originalSchool) : null }
         const data = { ...participationData(formData), schoolId: text(formData, "school-id", false) ? id(formData, "school-id") : null }
         const employeeIds = participationEmployees(formData)
-        await db.transaction(async tx => {
+        await auditTransaction(async tx => {
             const participation = await tx.orm.public.Participation.where(where).forUpdate().first()
             if (!participation) throw new SchoolValidationError('This participation no longer exists for this school. Refresh the page.')
             await tx.orm.public.Participation.where(where).update(data)
@@ -219,7 +221,7 @@ export async function deleteSchoolParticipation(formData: FormData) {
     return schoolAction("Delete participation", async () => {
         const participationId = id(formData, "participation-id")
         const schoolId = text(formData, "school-id", false) ? id(formData, "school-id") : null
-        await db.transaction(async (tx) => {
+        await auditTransaction(async (tx) => {
             const participation = await tx.orm.public.Participation.where({
                 id: participationId, schoolId,
             }).first()
@@ -240,7 +242,7 @@ export async function recordSchoolInteraction(form: FormData) {
         if (Date.parse(contactedAt) > Date.now()) throw new SchoolValidationError('Contact date cannot be in the future.')
         const mode = choice(form, 'mode', db.enums.public.CommunicationMode.values)
         const programId = text(form, 'program-id', false) ? id(form, 'program-id') : null
-        await db.transaction(tx => recordInteraction(tx, { schoolId, employeeId, contactId, programId, contactedAt, mode }))
+        await auditTransaction(tx => recordInteraction(tx, { schoolId, employeeId, contactId, programId, contactedAt, mode }))
         revalidatePath('/contacts')
     })
 }

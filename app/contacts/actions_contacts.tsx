@@ -1,4 +1,6 @@
 'use server'
+
+import { auditTransaction } from '@/lib/audit-transaction'
 import { db } from "@/prisma/db"
 import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
@@ -40,11 +42,11 @@ function email(form: FormData): string {
 
 export async function createContact(formData: FormData) {
     return contactAction("Create contact", async () => {
-        await db.orm.public.Contact.create({
+        await auditTransaction(tx => tx.orm.public.Contact.create({
             ...contactData(formData),
             address: addressData(formData),
             schoolId: text(formData, "school-id", false) ? id(formData, "school-id") : null,
-        })
+        }))
     })
 }
 
@@ -104,14 +106,14 @@ export async function editContact(formData: FormData) {
     return contactAction("Update contact", async () => {
         const contactId = id(formData, "contact-id")
         const data = contactData(formData)
-        await db.transaction(async (tx) => {
+        await auditTransaction(async (tx) => {
             const contact = await tx.orm.public.Contact.where({ id: contactId }).first()
             if (!contact) throw new ContactValidationError("This contact no longer exists. Refresh the page.")
             await tx.orm.public.Contact.where({ id: contactId }).update({
                 ...data,
                 address: addressData(formData),
             })
-        })
+        }, { type: 'Contact', id: contactId, destinationBranchId: data.branchId })
     })
 }
 
@@ -119,25 +121,25 @@ export async function deleteContact(formData: FormData) {
     return contactAction("Delete school", async () => {
         const contactId = id(formData, "school-id")
         // Let foreign-key constraints prevent deleting schools with dependent records.
-        await db.orm.public.Contact.where({ id: contactId }).delete()
+        await auditTransaction(tx => tx.orm.public.Contact.where({ id: contactId }).delete())
     })
 }
 
 export async function addSchoolContact(formData: FormData) {
     return contactAction("Assign school", async () => {
-        await db.orm.public.Contact.where({
+        await auditTransaction(tx => tx.orm.public.Contact.where({
             id: id(formData, "contact-id"),
             schoolId: null,
-        }).update({ schoolId: id(formData, "school-id") })
+        }).update({ schoolId: id(formData, "school-id") }))
     })
 }
 
 export async function removeSchoolContact(formData: FormData) {
     return contactAction("Remove school", async () => {
-        await db.orm.public.Contact.where({
+        await auditTransaction(tx => tx.orm.public.Contact.where({
             id: id(formData, "contact-id"),
             schoolId: id(formData, "school-id"),
-        }).update({ schoolId: null })
+        }).update({ schoolId: null }))
     })
 }
 export async function getContactDetails(contactId: number, editing = false, deferHistory = false) {
@@ -158,7 +160,7 @@ export async function recordContactInteraction(form: FormData) {
         const mode = choice(form, 'mode', db.enums.public.CommunicationMode.values)
         const programId = text(form, 'program-id', false) ? id(form, 'program-id') : null
         const { recordInteraction } = await import('@/lib/record-interaction')
-        await db.transaction(async tx => {
+        await auditTransaction(async tx => {
             const contact = await tx.orm.public.Contact.where({ id: contactId }).forUpdate().first()
             if (!contact) throw new ContactValidationError('This contact no longer exists.')
             await recordInteraction(tx, { contactId, employeeId, programId, contactedAt, mode, schoolId: contact.schoolId })

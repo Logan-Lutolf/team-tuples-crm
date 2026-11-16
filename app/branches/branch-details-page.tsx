@@ -1,4 +1,5 @@
 'use client'
+import { EditHistoryButton } from '@/components/records/edit-history-button'
 import { PageContent, PageHeader, PageTitle, PageDescription } from '@/components/records/page-content'
 import { RecordLink } from '@/components/records/record-link'
 
@@ -121,7 +122,7 @@ export function BranchDetailsPage({ branchId, branchName, initialDetails }: { br
                         {details.otherContacts.length ? <ActionForm onSaved={refresh} label="Assign contact">
                             <input type="hidden" name="operation" value="assign-contact" /><input type="hidden" name="branch-id" value={branch.id} />
                             <Options name="contact-id" label="Contact" values={details.otherContacts.map(c => ({ value: String(c.id), label: `${c.name} (${c.email})` }))} />
-                        </ActionForm> : <p>No additional contacts available.</p>}
+                        </ActionForm> : <p className="text-muted-foreground">No additional contacts available.</p>}
                     </>}
                 </Section>
                 <Section title="Employee assignments" count={details.assignments.length}>
@@ -149,7 +150,7 @@ export function BranchDetailsPage({ branchId, branchName, initialDetails }: { br
                         </TableRow>)}{!details.schools.length && <TableRow><TableCell colSpan={2}>No schools assigned.</TableCell></TableRow>}</TableBody>
                     </Table>
                 </Section>
-                {!editing && <div className="flex justify-end border-t pt-4"><Button aria-describedby={`${prefix}-edit-hint`} onClick={() => setEditing(true)}>Edit</Button><span id={`${prefix}-edit-hint`} className="sr-only">Edit this branch, its contacts, and employee assignments</span></div>}
+                {!editing && <div className="flex flex-wrap justify-end gap-2 border-t pt-4"><EditHistoryButton type="branches" id={branchId} /><Button aria-describedby={`${prefix}-edit-hint`} onClick={() => setEditing(true)}>Edit</Button><span id={`${prefix}-edit-hint`} className="sr-only">Edit this branch, its contacts, and employee assignments</span></div>}
             </div>}
     </PageContent>
 }

@@ -1,4 +1,5 @@
 'use client'
+import { EditHistoryButton } from '@/components/records/edit-history-button'
 import { PageContent, PageHeader, PageTitle, PageDescription } from '@/components/records/page-content'
 import { RecordLink } from '@/components/records/record-link'
 import { useEffect, useId, useState, type ReactNode } from 'react'
@@ -89,12 +90,12 @@ export function MunicipalityPageContent({ municipality, mode = 'create', initial
                                 {details.availablePrograms.length ? <ActionForm action={changeMunicipalityProgram} label="Add sponsorship" onSaved={refresh}>
                                     <input type="hidden" name="municipality-id" value={details.municipality.id} /><input type="hidden" name="operation" value="add" />
                                     <label>Program<select className="block w-full rounded-md border border-input bg-transparent p-2" name="program-id" required defaultValue=""><option value="" disabled>Choose a program</option>{details.availablePrograms.map(program => <option value={program.id} key={program.id}>{program.name}</option>)}</select></label>
-                                </ActionForm> : <p>No additional programs available. Create programs on the Programs page.</p>}
+                                </ActionForm> : <p className="text-muted-foreground">No additional programs available. Create programs on the Programs page.</p>}
                                 <p className="text-sm text-muted-foreground">Removing a sponsorship keeps the program and its participations.</p>
                             </section>}
                         </div>
                     </details>
-                    {!editing && <div className="flex justify-end border-t pt-4"><Button onClick={() => setEditing(true)}>Edit</Button></div>}
+                    {!editing && <div className="flex flex-wrap justify-end gap-2 border-t pt-4"><EditHistoryButton type="municipalities" id={details.municipality.id} /><Button onClick={() => setEditing(true)}>Edit</Button></div>}
                 </>}
             </>}
     </PageContent>

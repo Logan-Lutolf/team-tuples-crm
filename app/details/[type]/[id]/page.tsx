@@ -1,3 +1,5 @@
+import { BranchEditAccess } from '@/components/records/branch-edit-access'
+import { branchEditScope } from '@/lib/branch-edit-access'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getContactDetails } from '@/app/contacts/actions_contacts'
@@ -9,6 +11,9 @@ import { isRecordType } from '@/lib/record-links'
 import { ProgramPageContent } from '@/app/programs/program-page-content'
 import { MunicipalityPageContent } from '@/app/municipalities/municipality-page-content'
 import { EmployeeDetails } from '@/app/employee-management/employee-details'
+import { currentEmployee } from '@/lib/current-employee'
+import { canViewEditHistory } from '@/lib/edit-history-policy'
+import { EditHistoryAccess } from '@/components/records/edit-history-button'
 import { ParticipationPageContent } from '@/app/program-instances/instance-page-content'
 import { OrganizationDetailsPage } from '@/app/details/pages/organization-details-page'
 import { db } from '@/prisma/db'
@@ -37,6 +42,8 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
     const id = Number(rawId)
 
     if (!isRecordType(type) || !/^\d+$/.test(rawId) || !Number.isSafeInteger(id) || id <= 0) notFound()
+    const employee = await currentEmployee()
+    const editScope = await branchEditScope(employee)
     let content
         if (type === 'schools') {
             const org = await db.orm.public.Organization

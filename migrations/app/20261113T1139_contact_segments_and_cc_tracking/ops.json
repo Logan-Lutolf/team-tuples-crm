@@ -1,0 +1,329 @@
+[
+  {
+    "id": "dropCheckConstraint.Employee.Employee_roles_check_d243e319",
+    "label": "Drop check constraint \"Employee_roles_check_d243e319\" on \"Employee\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Employee_roles_check_d243e319",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Employee_roles_check_d243e319\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_roles_check_d243e319",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"Employee_roles_check_d243e319\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" DROP CONSTRAINT \"Employee_roles_check_d243e319\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Employee_roles_check_d243e319\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_roles_check_d243e319",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropCheckConstraint.EmployeeAssignment.EmployeeAssignment_role_check_2f516525",
+    "label": "Drop check constraint \"EmployeeAssignment_role_check_2f516525\" on \"EmployeeAssignment\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "EmployeeAssignment_role_check_2f516525",
+        "table": "EmployeeAssignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"EmployeeAssignment_role_check_2f516525\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_role_check_2f516525",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"EmployeeAssignment_role_check_2f516525\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeAssignment\" DROP CONSTRAINT \"EmployeeAssignment_role_check_2f516525\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"EmployeeAssignment_role_check_2f516525\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_role_check_2f516525",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.EmailSegment",
+    "label": "Create table \"EmailSegment\"",
+    "summary": "Creates table \"EmailSegment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "EmailSegment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"EmailSegment\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailSegment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"EmailSegment\"",
+        "sql": "CREATE TABLE \"public\".\"EmailSegment\" (\n  \"contactCount\" int4 NOT NULL,\n  \"contactsJson\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"createdById\" int4 NOT NULL,\n  \"filtersJson\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"EmailSegment\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailSegment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.TrackedEmail",
+    "label": "Create table \"TrackedEmail\"",
+    "summary": "Creates table \"TrackedEmail\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "TrackedEmail"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"TrackedEmail\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TrackedEmail\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"TrackedEmail\"",
+        "sql": "CREATE TABLE \"public\".\"TrackedEmail\" (\n  \"contactedAt\" timestamptz NOT NULL,\n  \"fingerprint\" text NOT NULL,\n  \"fromEmail\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"matchedContactCount\" int4 NOT NULL,\n  \"receivedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"recipientEmails\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"TrackedEmail\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TrackedEmail\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Contact.lastTrackedEmailAt",
+    "label": "Add column \"lastTrackedEmailAt\" to \"Contact\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "lastTrackedEmailAt",
+        "table": "Contact"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"lastTrackedEmailAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Contact",
+          "lastTrackedEmailAt"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"lastTrackedEmailAt\"",
+        "sql": "ALTER TABLE \"public\".\"Contact\" ADD COLUMN \"lastTrackedEmailAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"lastTrackedEmailAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Contact",
+          "lastTrackedEmailAt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Employee.Employee_roles_check_a37c734c",
+    "label": "Add check constraint \"Employee_roles_check_a37c734c\" on \"Employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Employee_roles_check_a37c734c",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Employee_roles_check_a37c734c\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_roles_check_a37c734c",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Employee_roles_check_a37c734c\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ADD CONSTRAINT \"Employee_roles_check_a37c734c\" CHECK (array_remove(\"roles\", NULL) <@ '{\"ADMIN\",\"MARKETER\",\"WORKSHOPS_COORDINATOR\",\"SCHOOL_NETWORK_COORDINATOR\",\"STORIES_OF_OUR_NEIGHBORS_COORDINATOR\",\"VETERANS_DAY_COORDINATOR\",\"NEWSLETTER_COORDINATOR\",\"BRANCH_DIRECTOR\",\"HEAD_OF_EDUCATION\",\"PROJECT_MANAGER\",\"COORDINATOR\",\"DEVELOPMENT_LEAD\",\"PRODUCTION\",\"STUDIO_LEAD\",\"LECTURER\",\"METHODOLOGY_LEAD\"}')"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Employee_roles_check_a37c734c\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_roles_check_a37c734c",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.EmployeeAssignment.EmployeeAssignment_role_check_bc2abc23",
+    "label": "Add check constraint \"EmployeeAssignment_role_check_bc2abc23\" on \"EmployeeAssignment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "EmployeeAssignment_role_check_bc2abc23",
+        "table": "EmployeeAssignment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"EmployeeAssignment_role_check_bc2abc23\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_role_check_bc2abc23",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"EmployeeAssignment_role_check_bc2abc23\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeAssignment\" ADD CONSTRAINT \"EmployeeAssignment_role_check_bc2abc23\" CHECK (\"role\" IN ('ADMIN', 'MARKETER', 'WORKSHOPS_COORDINATOR', 'SCHOOL_NETWORK_COORDINATOR', 'STORIES_OF_OUR_NEIGHBORS_COORDINATOR', 'VETERANS_DAY_COORDINATOR', 'NEWSLETTER_COORDINATOR', 'BRANCH_DIRECTOR', 'HEAD_OF_EDUCATION', 'PROJECT_MANAGER', 'COORDINATOR', 'DEVELOPMENT_LEAD', 'PRODUCTION', 'STUDIO_LEAD', 'LECTURER', 'METHODOLOGY_LEAD'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"EmployeeAssignment_role_check_bc2abc23\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeAssignment_role_check_bc2abc23",
+          "public",
+          "\"public\".\"EmployeeAssignment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.EmailSegment.EmailSegment_createdById_id_idx_2b066c09",
+    "label": "Create index \"EmailSegment_createdById_id_idx_2b066c09\" on \"EmailSegment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "EmailSegment_createdById_id_idx_2b066c09",
+        "table": "EmailSegment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"EmailSegment_createdById_id_idx_2b066c09\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailSegment_createdById_id_idx_2b066c09\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"EmailSegment_createdById_id_idx_2b066c09\"",
+        "sql": "CREATE INDEX \"EmailSegment_createdById_id_idx_2b066c09\" ON \"public\".\"EmailSegment\" (\"createdById\", \"id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"EmailSegment_createdById_id_idx_2b066c09\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmailSegment_createdById_id_idx_2b066c09\""
+        ]
+      }
+    ]
+  }
+]

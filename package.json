@@ -13,7 +13,8 @@
     "contract:emit": "prisma contract emit",
     "db:migrate": "node --env-file-if-exists=.env.local node_modules/prisma/dist/prisma.js db migrate",
     "db:migrate:preview": "npm run db:migrate -- --show",
-    "db:migrations:check": "node --env-file-if-exists=.env.local node_modules/prisma/dist/prisma.js migration check"
+    "db:migrations:check": "node --env-file-if-exists=.env.local node_modules/prisma/dist/prisma.js migration check",
+    "smartemailing:sync": "node --env-file-if-exists=.env.local scripts/sync-smartemailing.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

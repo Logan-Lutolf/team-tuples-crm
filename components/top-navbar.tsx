@@ -56,6 +56,10 @@ export function TopNavbar({employee, person}: TopNavbarProps) {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
+          <NavigationMenuLink href="/email">Email</NavigationMenuLink>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
           <NavigationMenuTrigger className="cursor-pointer">
             <Avatar>
               <AvatarImage src={employee.pfpImgUrl} alt="" height="auto" width="auto" />

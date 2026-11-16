@@ -1,5 +1,6 @@
 'use server'
-import { db } from '@/prisma/db'
+
+import { auditTransaction } from '@/lib/audit-transaction'
 import { revalidatePath } from 'next/cache'
 import { employmentData, employmentId, EmploymentValidationError } from '../../lib/contact-employment'
 
