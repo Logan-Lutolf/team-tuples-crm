@@ -4,8 +4,6 @@ import { cookies } from "next/headers";
 import { decrypt } from "@/app/login/sessions";
 
 
-
-
 export async function TopNavbarContainer() {
     let userId = null
 

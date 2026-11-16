@@ -1,16 +1,12 @@
 "use client"
 
-import { usePathname } from "next/navigation"
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "./ui/navigation-menu"
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar"
 import { HelpCircle, LogOut, Settings, SettingsIcon } from "lucide-react"
 import { logout } from "@/app/login/actions"
-import { Scalars } from "@prisma/orm-postgres/components"
-import { Models } from "@/prisma/contract"
 import { useState } from "react"
-import { Button } from "./ui/button"
 import { Dialog, DialogTrigger } from "./ui/dialog"
-import { SettingsDialog } from "./custom/pfp-dialog"
+import { SettingsDialog } from "./custom/settings-dialog"
 import { nameInitials } from "@/lib/utils"
 import { Employee, Person } from "@/app/types"
 
