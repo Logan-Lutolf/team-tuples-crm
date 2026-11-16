@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'8ae5973a7d8b2c3176fb3f6c3170440774e869bb0e619f7d26beab282f827569'>;
+  StorageHashBase<'d77785b258f9935fabfff359b8d4d18dd632efccd144efaa743102282f771719'>;
 export type ExecutionHash =
   ExecutionHashBase<'14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9'>;
 export type ProfileHash =
@@ -276,17 +276,7 @@ export type FieldOutputTypes = {
         | 'JIHLAVA';
     };
     readonly Employee: {
-      readonly branch:
-        | 'SEVERNÍ_ČECHY'
-        | 'VÝCHODNÍ_ČECHY'
-        | 'STŘEDNÍ_MORAVA'
-        | 'PLZEŇSKÝ_KRAJ'
-        | 'JIŽNÍ_MORAVA'
-        | 'JIŽNÍ_ČECHY'
-        | 'KARLOVARSKÝ_KRAJ'
-        | 'MORAVSKOSLEZSKÝ_KRAJ'
-        | 'PRAHA'
-        | null;
+      readonly branchId: CodecTypes['pg/int4@1']['output'] | null;
       readonly mustChangePassword: CodecTypes['pg/bool@1']['output'];
       readonly password: CodecTypes['pg/text@1']['output'];
       readonly personId: CodecTypes['pg/int4@1']['output'];
@@ -510,17 +500,7 @@ export type FieldInputTypes = {
         | 'JIHLAVA';
     };
     readonly Employee: {
-      readonly branch:
-        | 'SEVERNÍ_ČECHY'
-        | 'VÝCHODNÍ_ČECHY'
-        | 'STŘEDNÍ_MORAVA'
-        | 'PLZEŇSKÝ_KRAJ'
-        | 'JIŽNÍ_MORAVA'
-        | 'JIŽNÍ_ČECHY'
-        | 'KARLOVARSKÝ_KRAJ'
-        | 'MORAVSKOSLEZSKÝ_KRAJ'
-        | 'PRAHA'
-        | null;
+      readonly branchId: CodecTypes['pg/int4@1']['input'] | null;
       readonly mustChangePassword: CodecTypes['pg/bool@1']['input'];
       readonly password: CodecTypes['pg/text@1']['input'];
       readonly personId: CodecTypes['pg/int4@1']['input'];
@@ -744,17 +724,7 @@ export type StorageColumnTypes = {
         | 'JIHLAVA';
     };
     readonly Employee: {
-      readonly branch:
-        | 'SEVERNÍ_ČECHY'
-        | 'VÝCHODNÍ_ČECHY'
-        | 'STŘEDNÍ_MORAVA'
-        | 'PLZEŇSKÝ_KRAJ'
-        | 'JIŽNÍ_MORAVA'
-        | 'JIŽNÍ_ČECHY'
-        | 'KARLOVARSKÝ_KRAJ'
-        | 'MORAVSKOSLEZSKÝ_KRAJ'
-        | 'PRAHA'
-        | null;
+      readonly branchId: CodecTypes['pg/int4@1']['output'] | null;
       readonly mustChangePassword: CodecTypes['pg/bool@1']['output'];
       readonly password: CodecTypes['pg/text@1']['output'];
       readonly personId: CodecTypes['pg/int4@1']['output'];
@@ -978,17 +948,7 @@ export type StorageColumnInputTypes = {
         | 'JIHLAVA';
     };
     readonly Employee: {
-      readonly branch:
-        | 'SEVERNÍ_ČECHY'
-        | 'VÝCHODNÍ_ČECHY'
-        | 'STŘEDNÍ_MORAVA'
-        | 'PLZEŇSKÝ_KRAJ'
-        | 'JIŽNÍ_MORAVA'
-        | 'JIŽNÍ_ČECHY'
-        | 'KARLOVARSKÝ_KRAJ'
-        | 'MORAVSKOSLEZSKÝ_KRAJ'
-        | 'PRAHA'
-        | null;
+      readonly branchId: CodecTypes['pg/int4@1']['input'] | null;
       readonly mustChangePassword: CodecTypes['pg/bool@1']['input'];
       readonly password: CodecTypes['pg/text@1']['input'];
       readonly personId: CodecTypes['pg/int4@1']['input'];
@@ -1216,17 +1176,7 @@ export namespace Models {
     readonly [RelationKeys]?: 'chief' | 'organization' | 'people';
   };
   export type public_Employee = {
-    branch:
-      | 'SEVERNÍ_ČECHY'
-      | 'VÝCHODNÍ_ČECHY'
-      | 'STŘEDNÍ_MORAVA'
-      | 'PLZEŇSKÝ_KRAJ'
-      | 'JIŽNÍ_MORAVA'
-      | 'JIŽNÍ_ČECHY'
-      | 'KARLOVARSKÝ_KRAJ'
-      | 'MORAVSKOSLEZSKÝ_KRAJ'
-      | 'PRAHA'
-      | null;
+    branchId: CodecTypes['pg/int4@1']['output'] | null;
     mustChangePassword: CodecTypes['pg/bool@1']['output'];
     password: CodecTypes['pg/text@1']['output'];
     personId: CodecTypes['pg/int4@1']['output'];
@@ -1249,10 +1199,12 @@ export namespace Models {
       | 'METHODOLOGY_LEAD'
     >;
     assignments: public_EmployeeAssignment[];
+    branch: public_Branch | null;
     interactions: public_Interaction[];
     participation: public_Participation[];
     person: public_Person;
-    readonly [RelationKeys]?: 'assignments' | 'interactions' | 'participation' | 'person';
+    readonly [RelationKeys]?:
+      'assignments' | 'branch' | 'interactions' | 'participation' | 'person';
   };
   export type public_EmployeeAssignment = {
     branch:
@@ -1588,9 +1540,9 @@ type ContractBase = Omit<
             };
             readonly Employee: {
               columns: {
-                readonly branch: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
+                readonly branchId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
                   readonly nullable: true;
                   readonly many: false;
                 };
@@ -1631,7 +1583,14 @@ type ContractBase = Omit<
               };
               primaryKey: { readonly columns: readonly ['personId'] };
               uniques: readonly [];
-              indexes: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'Employee_branchId_idx_d04da5bb';
+                  readonly prefix: 'Employee_branchId_idx';
+                  readonly columns: readonly ['branchId'];
+                  readonly unique: false;
+                },
+              ];
               foreignKeys: readonly [
                 {
                   readonly source: {
@@ -1642,6 +1601,18 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'Person';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Employee';
+                    readonly columns: readonly ['branchId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Branch';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -2938,9 +2909,9 @@ type ContractBase = Omit<
           };
           readonly Employee: {
             readonly fields: {
-              readonly branch: {
+              readonly branchId: {
                 readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly mustChangePassword: {
                 readonly nullable: false;
@@ -2974,6 +2945,18 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['personId'];
                   readonly targetFields: readonly ['employeeId'];
+                };
+              };
+              readonly branch: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Branch';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['branchId'];
+                  readonly targetFields: readonly ['id'];
                 };
               };
               readonly interactions: {
@@ -3022,7 +3005,7 @@ type ContractBase = Omit<
               readonly table: 'Employee';
               readonly namespaceId: 'public';
               readonly fields: {
-                readonly branch: { readonly column: 'branch' };
+                readonly branchId: { readonly column: 'branchId' };
                 readonly mustChangePassword: { readonly column: 'mustChangePassword' };
                 readonly password: { readonly column: 'password' };
                 readonly personId: { readonly column: 'personId' };

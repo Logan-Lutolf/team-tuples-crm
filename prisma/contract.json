@@ -530,17 +530,11 @@
           },
           "Employee": {
             "fields": {
-              "branch": {
+              "branchId": {
                 "nullable": true,
                 "type": {
-                  "codecId": "pg/text@1",
+                  "codecId": "pg/int4@1",
                   "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "BranchTypes",
-                  "namespaceId": "public",
-                  "plane": "domain"
                 }
               },
               "mustChangePassword": {
@@ -601,6 +595,22 @@
                 },
                 "to": {
                   "model": "EmployeeAssignment",
+                  "namespace": "public"
+                }
+              },
+              "branch": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "branchId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Branch",
                   "namespace": "public"
                 }
               },
@@ -666,8 +676,8 @@
             },
             "storage": {
               "fields": {
-                "branch": {
-                  "column": "branch"
+                "branchId": {
+                  "column": "branchId"
                 },
                 "mustChangePassword": {
                   "column": "mustChangePassword"
@@ -2377,11 +2387,6 @@
             "Employee": {
               "checks": [
                 {
-                  "expression": "\"branch\" IN ('SEVERNÍ_ČECHY', 'VÝCHODNÍ_ČECHY', 'STŘEDNÍ_MORAVA', 'PLZEŇSKÝ_KRAJ', 'JIŽNÍ_MORAVA', 'JIŽNÍ_ČECHY', 'KARLOVARSKÝ_KRAJ', 'MORAVSKOSLEZSKÝ_KRAJ', 'PRAHA')",
-                  "name": "Employee_branch_check_572d22f2",
-                  "prefix": "Employee_branch_check"
-                },
-                {
                   "expression": "array_remove(\"role\", NULL) <@ '{\"ADMIN\",\"WORKSHOPS_COORDINATOR\",\"SCHOOL_NETWORK_COORDINATOR\",\"STORIES_OF_OUR_NEIGHBORS_COORDINATOR\",\"VETERANS_DAY_COORDINATOR\",\"NEWSLETTER_COORDINATOR\",\"BRANCH_DIRECTOR\",\"HEAD_OF_EDUCATION\",\"PROJECT_MANAGER\",\"COORDINATOR\",\"DEVELOPMENT_LEAD\",\"PRODUCTION\",\"STUDIO_LEAD\",\"LECTURER\",\"METHODOLOGY_LEAD\"}'",
                   "name": "Employee_role_check_4cda3a2c",
                   "prefix": "Employee_role_check"
@@ -2393,16 +2398,10 @@
                 }
               ],
               "columns": {
-                "branch": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": true,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "BranchTypes",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
+                "branchId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
                 },
                 "mustChangePassword": {
                   "codecId": "pg/bool@1",
@@ -2462,9 +2461,37 @@
                     "namespaceId": "public",
                     "tableName": "Person"
                   }
+                },
+                {
+                  "index": {
+                    "name": "Employee_branchId_idx_d04da5bb"
+                  },
+                  "source": {
+                    "columns": [
+                      "branchId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Employee"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Branch"
+                  }
                 }
               ],
-              "indexes": [],
+              "indexes": [
+                {
+                  "columns": [
+                    "branchId"
+                  ],
+                  "name": "Employee_branchId_idx_d04da5bb",
+                  "prefix": "Employee_branchId_idx",
+                  "unique": false
+                }
+              ],
               "primaryKey": {
                 "columns": [
                   "personId"
@@ -4016,7 +4043,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "8ae5973a7d8b2c3176fb3f6c3170440774e869bb0e619f7d26beab282f827569"
+    "storageHash": "d77785b258f9935fabfff359b8d4d18dd632efccd144efaa743102282f771719"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

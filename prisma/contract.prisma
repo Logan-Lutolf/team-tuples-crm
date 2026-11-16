@@ -110,60 +110,6 @@ enum OrganizationTypes {
   CULTURAL
 }
 
-//---------------------------MODELS---------------------------//
-// model EmployeeOld {
-//   id        Int      @id @default(autoincrement())
-//   name      String
-//   email     String   @unique
-//   password  String
-//   pfpImgUrl String?
-//   phone     String?
-//   address   Address?
-//   region   RegionTypes?
-//   mustChangePassword  Boolean @default(true)
-
-
-//   is_online  Boolean  @default(false)
-//   roles      Role[]
-
-//   // assignments EmployeeAssignment[]
-//   // interactions Interaction[]
-//   // chiefOf Branch[]
-//   // participations ParticipationEmployees[]
-//   createdAt TimestamptzString @default(now())
-//   updatedAt temporal.updatedAtString()
-// }
-
-// model Contact {
-//   employmentHistory ContactEmployment[]
-//   id        Int      @id @default(autoincrement())
-//   name      String
-//   email     String   @unique
-//   phone     String?
-//   address   Address?
-//   region   RegionTypes?
-//   // Cached summary of the latest interaction; maintained by application logic.
-//   last_contacted TimestamptzString @default(now())
-  
-//   interactions Interaction[]
-
-//   contactRole ContactRole
-
-//   last_contacted_by Employee? @relation(fields: [last_contacted_byId], references: [personId], onDelete: SetNull)
-//   last_contacted_byId Int?
-
-//   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-//   organizationId Int?
-
-//   branchId Int?
-//   branch   Branch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
-
-//   createdAt TimestamptzString @default(now())
-//   updatedAt temporal.updatedAtString()
-// }
-
-
-
 // between program and school
 model Participation {
   // contacts ParticipationContacts[]
@@ -308,7 +254,6 @@ model Organization {
   type          OrganizationTypes
   region        RegionTypes
   relationship  RelationshipTypes
-  // branch        Branch?
   address       Address
 
   createdAt TimestamptzString @default(now())
@@ -370,7 +315,8 @@ model Employee {
   password  String
   pfpImgUrl String
   mustChangePassword Boolean @default(true)
-  branch  BranchTypes?
+  branch  Branch? @relation(fields: [branchId], references: [id])
+  branchId  Int?
   role    RoleTypes[]
 
   assignments EmployeeAssignment[]
