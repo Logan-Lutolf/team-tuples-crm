@@ -24,7 +24,7 @@ export async function EmployeeDetails({ employeeId }: { employeeId: number }) {
         orgIds.length ? db.orm.public.Organization.where(s => s.id.in(orgIds)).select('id', 'name').all().toArray() : [],
         contactIds.length ? db.orm.public.Person.where(c => c.id.in(contactIds)).select('id', 'name').all().toArray() : [],
     ])
-    if (!person) return notFound
+    if (!person) return notFound()
     const name = (rows: { id: number; name: string }[], id: number | null) => id === null ? 'Unassigned / deleted' : rows.find(r => r.id === id)?.name ?? `#${id}`
     return <article className="grid gap-6">
         <h1 className="text-2xl font-semibold">{person.name}</h1>

@@ -1,19 +1,22 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getSchoolDetails } from '@/app/schools/actions_schools'
 import { getContactDetails } from '@/app/contacts/actions_contacts'
 import { getBranchDetails } from '@/app/branches/actions'
 import { getProgramDetails } from '@/app/programs/actions'
 import { getMunicipalityDetails, getParticipationDetails } from '@/app/municipalities/actions'
 import { timeDetails } from '@/lib/detail-timing'
 import { isRecordType } from '@/lib/record-links'
-import { SchoolDetailsPage } from '@/app/schools/school-details-page'
 import { ContactDetailsPage } from '@/app/contacts/contact-details-page'
 import { BranchDetailsPage } from '@/app/branches/branch-details-page'
 import { ProgramPageContent } from '@/app/programs/program-page-content'
 import { MunicipalityPageContent } from '@/app/municipalities/municipality-page-content'
 import { EmployeeDetails } from '@/app/employee-management/employee-details'
 import { ParticipationPageContent } from '@/app/program-instances/instance-page-content'
+import { OrganizationDetailsPage } from '@/app/details/pages/organization-details-page'
+import { db } from '@/prisma/db'
+
+
+
 
 async function loadRecord<T>(label: string, load: () => Promise<T>) {
     try { return await timeDetails(label, load) }
@@ -26,14 +29,30 @@ async function loadRecord<T>(label: string, load: () => Promise<T>) {
     }
 }
 
+
 export default async function RecordPage({ params }: { params: Promise<{ type: string; id: string }> }) {
     var { type, id: rawId } = await params
     const id = Number(rawId)
+
     if (!isRecordType(type) || !/^\d+$/.test(rawId) || !Number.isSafeInteger(id) || id <= 0) notFound()
     let content
         if (type === 'schools') {
-            const details = await loadRecord('schools', () => getSchoolDetails(id, false, true))
-            content = <SchoolDetailsPage key={id} schoolId={id} schoolName={details.name} initialDetails={details} />
+            const org = await db.orm.public.Organization
+                .where({id: id})
+                .first()
+
+            const contacts = await db.orm.public.Person
+                .where({orgId: id})
+                .include("personRole")
+                .all()
+            
+            const participations = await db.orm.public.Participation
+                .where({organizationId: id})
+                .all()
+
+            if (org == null || contacts == null || participations == null) return
+            content = <OrganizationDetailsPage organization={org} participations={participations} contacts={contacts}/>
+        
         } else if (type === 'contacts') {
             const details = await loadRecord('contacts', () => getContactDetails(id, false, true))
             content = <ContactDetailsPage key={id} contactId={id} contactName={details.contact.name} initialDetails={details} />
