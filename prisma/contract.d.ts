@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d77785b258f9935fabfff359b8d4d18dd632efccd144efaa743102282f771719'>;
+  StorageHashBase<'f683b57819cd844545d2fe14a0a574d853bfbc851651de773111208942aa6b39'>;
 export type ExecutionHash =
   ExecutionHashBase<'14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9'>;
 export type ProfileHash =
@@ -424,6 +424,8 @@ export type FieldOutputTypes = {
       readonly dob: CodecTypes['pg/date-string@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly lastContactedById: CodecTypes['pg/int4@1']['output'] | null;
+      readonly lastContactedDate: CodecTypes['pg/date-string@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly orgId: CodecTypes['pg/int4@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
@@ -648,6 +650,8 @@ export type FieldInputTypes = {
       readonly dob: CodecTypes['pg/date-string@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly lastContactedById: CodecTypes['pg/int4@1']['input'] | null;
+      readonly lastContactedDate: CodecTypes['pg/date-string@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly orgId: CodecTypes['pg/int4@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
@@ -872,6 +876,8 @@ export type StorageColumnTypes = {
       readonly dob: CodecTypes['pg/date-string@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly lastContactedById: CodecTypes['pg/int4@1']['output'] | null;
+      readonly lastContactedDate: CodecTypes['pg/date-string@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly orgId: CodecTypes['pg/int4@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
@@ -1096,6 +1102,8 @@ export type StorageColumnInputTypes = {
       readonly dob: CodecTypes['pg/date-string@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly lastContactedById: CodecTypes['pg/int4@1']['input'] | null;
+      readonly lastContactedDate: CodecTypes['pg/date-string@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly orgId: CodecTypes['pg/int4@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
@@ -1363,6 +1371,8 @@ export namespace Models {
     dob: CodecTypes['pg/date-string@1']['output'];
     email: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
+    lastContactedById: CodecTypes['pg/int4@1']['output'] | null;
+    lastContactedDate: CodecTypes['pg/date-string@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
     orgId: CodecTypes['pg/int4@1']['output'] | null;
     phone: CodecTypes['pg/text@1']['output'] | null;
@@ -1370,6 +1380,7 @@ export namespace Models {
     branch: public_Branch | null;
     employee: public_Employee | null;
     interactions: public_Interaction[];
+    lastContactedBy: public_Employee | null;
     organization: public_Organization | null;
     parent: public_Parent | null;
     participations: public_ParticipationContacts[];
@@ -1379,6 +1390,7 @@ export namespace Models {
       | 'branch'
       | 'employee'
       | 'interactions'
+      | 'lastContactedBy'
       | 'organization'
       | 'parent'
       | 'participations'
@@ -2346,6 +2358,18 @@ type ContractBase = Omit<
                   };
                   readonly many: false;
                 };
+                readonly lastContactedById: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly lastContactedDate: {
+                  readonly dataType: 'pg/date';
+                  readonly codecId: 'pg/date-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
                 readonly name: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -2381,6 +2405,12 @@ type ContractBase = Omit<
                   readonly unique: false;
                 },
                 {
+                  readonly name: 'Person_lastContactedById_idx_865540cc';
+                  readonly prefix: 'Person_lastContactedById_idx';
+                  readonly columns: readonly ['lastContactedById'];
+                  readonly unique: false;
+                },
+                {
                   readonly name: 'Person_orgId_idx_c5e5aabe';
                   readonly prefix: 'Person_orgId_idx';
                   readonly columns: readonly ['orgId'];
@@ -2410,6 +2440,18 @@ type ContractBase = Omit<
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'Branch';
                     readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Person';
+                    readonly columns: readonly ['lastContactedById'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Employee';
+                    readonly columns: readonly ['personId'];
                   };
                 },
               ];
@@ -3634,6 +3676,14 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly lastContactedById: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly lastContactedDate: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
+              };
               readonly name: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -3687,6 +3737,18 @@ type ContractBase = Omit<
                 readonly cardinality: '1:N';
                 readonly on: {
                   readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['personId'];
+                };
+              };
+              readonly lastContactedBy: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Employee';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['lastContactedById'];
                   readonly targetFields: readonly ['personId'];
                 };
               };
@@ -3760,6 +3822,8 @@ type ContractBase = Omit<
                 readonly dob: { readonly column: 'dob' };
                 readonly email: { readonly column: 'email' };
                 readonly id: { readonly column: 'id' };
+                readonly lastContactedById: { readonly column: 'lastContactedById' };
+                readonly lastContactedDate: { readonly column: 'lastContactedDate' };
                 readonly name: { readonly column: 'name' };
                 readonly orgId: { readonly column: 'orgId' };
                 readonly phone: { readonly column: 'phone' };

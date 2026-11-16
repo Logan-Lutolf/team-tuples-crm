@@ -288,6 +288,9 @@ model Person {
   branchId        Int?
   interactions    Interaction[]
   participations ParticipationContacts[]
+  lastContactedById     Int?
+  lastContactedBy       Employee? @relation(fields: [lastContactedById], references: [personId])
+  lastContactedDate     DateString
 }
 
 model Student {

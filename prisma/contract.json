@@ -1672,6 +1672,20 @@
                   "kind": "scalar"
                 }
               },
+              "lastContactedById": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "lastContactedDate": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/date-string@1",
+                  "kind": "scalar"
+                }
+              },
               "name": {
                 "nullable": false,
                 "type": {
@@ -1746,6 +1760,22 @@
                 },
                 "to": {
                   "model": "Interaction",
+                  "namespace": "public"
+                }
+              },
+              "lastContactedBy": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "lastContactedById"
+                  ],
+                  "targetFields": [
+                    "personId"
+                  ]
+                },
+                "to": {
+                  "model": "Employee",
                   "namespace": "public"
                 }
               },
@@ -1848,6 +1878,12 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "lastContactedById": {
+                  "column": "lastContactedById"
+                },
+                "lastContactedDate": {
+                  "column": "lastContactedDate"
                 },
                 "name": {
                   "column": "name"
@@ -3506,6 +3542,16 @@
                   },
                   "nullable": false
                 },
+                "lastContactedById": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "lastContactedDate": {
+                  "codecId": "pg/date-string@1",
+                  "dataType": "pg/date",
+                  "nullable": false
+                },
                 "name": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -3565,6 +3611,25 @@
                     "namespaceId": "public",
                     "tableName": "Branch"
                   }
+                },
+                {
+                  "index": {
+                    "name": "Person_lastContactedById_idx_865540cc"
+                  },
+                  "source": {
+                    "columns": [
+                      "lastContactedById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Person"
+                  },
+                  "target": {
+                    "columns": [
+                      "personId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Employee"
+                  }
                 }
               ],
               "indexes": [
@@ -3574,6 +3639,14 @@
                   ],
                   "name": "Person_branchId_idx_d04da5bb",
                   "prefix": "Person_branchId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "lastContactedById"
+                  ],
+                  "name": "Person_lastContactedById_idx_865540cc",
+                  "prefix": "Person_lastContactedById_idx",
                   "unique": false
                 },
                 {
@@ -4043,7 +4116,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d77785b258f9935fabfff359b8d4d18dd632efccd144efaa743102282f771719"
+    "storageHash": "f683b57819cd844545d2fe14a0a574d853bfbc851651de773111208942aa6b39"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",
