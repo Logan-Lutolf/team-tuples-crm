@@ -12,8 +12,8 @@ export async function ContactTableContainer({ query, page }: ContactTableContain
     // Escape LIKE wildcards so searching keeps its literal substring behavior.
     const pattern = `%${query.replace(/[\\%_]/g, "\\$&")}%`
     const contactQuery = query
-        ? db.orm.public.Contact.where((contact) => contact.name.ilike(pattern))
-        : db.orm.public.Contact
+        ? db.orm.public.Person.where((contact) => contact.name.ilike(pattern))
+        : db.orm.public.Person
 
     const contacts = await contactQuery.orderBy([(contact) => contact.updatedAt.desc(), (contact) => contact.id.desc()])
         .offset((currentPage - 1) * recordsPerPage).limit(recordsPerPage).all().toArray()
