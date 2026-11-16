@@ -37,7 +37,7 @@ export default function RootLayout({
         <ToastProvider>
           <div className="flex min-w-0 flex-1 flex-col">  
             <div className="flex flex-row justify-between">
-              <p>LOGO HERE</p>
+              <Image src={"/Post_Bellum_logo.png"} alt={"Post Bellum Logo"} width={300} height={10}/>
               <TopNavbarContainer />
             </div>
             
