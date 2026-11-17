@@ -1,24 +1,20 @@
+import { SchoolDetailsPage } from '@/app/schools/school-details-page'
+import { loadSchoolDetails } from '@/app/schools/load-school-details'
+import { ContactDetailsPage } from '@/app/contacts/contact-details-page'
+import { loadContactDetails } from '@/app/contacts/load-contact-details'
 import { BranchEditAccess } from '@/components/records/branch-edit-access'
 import { branchEditScope } from '@/lib/branch-edit-access'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getContactDetails } from '@/app/contacts/actions_contacts'
-import { getBranchDetails } from '@/app/branches/actions'
-import { getProgramDetails } from '@/app/programs/actions'
 import { getMunicipalityDetails, getParticipationDetails } from '@/app/municipalities/actions'
 import { timeDetails } from '@/lib/detail-timing'
 import { isRecordType } from '@/lib/record-links'
-import { ProgramPageContent } from '@/app/programs/program-page-content'
 import { MunicipalityPageContent } from '@/app/municipalities/municipality-page-content'
 import { EmployeeDetails } from '@/app/employee-management/employee-details'
 import { currentEmployee } from '@/lib/current-employee'
 import { canViewEditHistory } from '@/lib/edit-history-policy'
 import { EditHistoryAccess } from '@/components/records/edit-history-button'
 import { ParticipationPageContent } from '@/app/program-instances/instance-page-content'
-import { OrganizationDetailsPage } from '@/app/details/pages/organization-details-page'
-import { db } from '@/prisma/db'
-import { PersonDetailsPage } from '../../pages/person-details-page'
-import { EmployeeDetailsPage } from '../../pages/employee-details-page'
 import { ProgramDetailsPage } from '../../pages/program-details-page'
 import { BranchDetailsPage } from '../../pages/branch-details-page'
 
@@ -46,36 +42,12 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
     const editScope = await branchEditScope(employee)
     let content
         if (type === 'schools') {
-            const org = await db.orm.public.Organization
-                .where({id: id})
-                .first()
-
-            const contacts = await db.orm.public.Person
-                .where({orgId: id})
-                .include("personRole")
-                .all()
-            
-            const participations = await db.orm.public.Participation
-                .where({organizationId: id})
-                .all()
-
-            if (org == null || contacts == null || participations == null) return
-            content = <OrganizationDetailsPage organization={org} participations={participations} contacts={contacts}/>
-        } 
-        
-        else if (type === 'contacts') {
-            const person = await db.orm.public.Person.include("employee").where({id: id}).first()
-            
-            const participationRows = await db.orm.public.ParticipationEmployees
-                .where({ employeeId: id })
-                .include("participation")
-                .all()
-            const participations = participationRows.map((row) => row.participation)
-
-            if (person == null || participations == null) return
-
-            content = <PersonDetailsPage key={id} person={person} participations={participations} />
-        } 
+            const details = await loadRecord('schools', () => loadSchoolDetails(id, false, true))
+            content = <SchoolDetailsPage schoolId={id} schoolName={details.name} initialDetails={details} />
+        } else if (type === 'contacts') {
+            const details = await loadRecord('contacts', () => loadContactDetails(id, false, true))
+            content = <ContactDetailsPage contactId={id} contactName={details.contact.name} initialDetails={details} />
+        }
         
         else if (type === 'branches') {
 
@@ -91,25 +63,9 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
             content = <ParticipationPageContent key={id} municipality={details?.participationData} mode="view" initialDetails={details} />
         } 
         else {
-            const person = await db.orm.public.Person.include("employee").where({id: id}).first()
-            const employee = await db.orm.public.Employee.where({personId: id}).first()
-            
-            const assignments = await db.orm.public.EmployeeAssignment
-                .where({ employeeId: id })
-                .all()
-
-            const participationRows = await db.orm.public.ParticipationEmployees
-                .where({ employeeId: id })
-                .include("participation")
-                .all()
-            const participations = participationRows.map((row) => row.participation)
-
-            if (person == null || assignments == null || participations == null || employee == null) return
-            
-            content = <EmployeeDetailsPage person={person} employee={employee} assignments={assignments} participations={participations} />
-        
+            content = <EmployeeDetails employeeId={id} />
         }
     var list = type === 'employees' ? '/employee-management' : `/${type}`
-    list = type === 'participations' ? '/program-instances' : `/${type}`
-    return <div className="m-10 grid gap-6"><Link href={list} className="w-fit underline">Back to {type}</Link><div>{content}</div></div>
+    if (type === 'participations') list = '/program-instances'
+    return <BranchEditAccess scope={editScope}><EditHistoryAccess allowed={canViewEditHistory(employee?.roles ?? [])}><div className="m-10 grid gap-6"><Link href={list} className="w-fit underline">Back to {type}</Link><div>{content}</div></div></EditHistoryAccess></BranchEditAccess>
 }

@@ -1,48 +1,32 @@
 import { db } from "@/prisma/db";
-import { columns } from "./table/columns"
-import { columns as skeletonColumns} from "@/components/custom/loading/loading-columns" 
+import { columns } from "./table/columns";
 import { DataTable } from "@/components/ui/data-table";
-import { LoadingDataTable } from "@/components/custom/loading/loading-data-table";
-import { EmployeePerson } from "../types";
+import type { EmployeePerson } from "../types";
 
 interface EmployeeTableContainerProps {
-    search?: string | undefined
-    cursor?: string | undefined
+    search?: string
+    cursor?: string
     dir?: "next" | "prev"
 }
 
-export async function EmployeeTableContainer({search, cursor, dir} : EmployeeTableContainerProps) {    
-    
-    const people = await db.orm.public.Person
-        .include("employee")
-        .all()
-    
-
+export async function EmployeeTableContainer({ search }: EmployeeTableContainerProps) {
+    const records = await db.orm.public.Employee.all().toArray()
     const assignments = await db.orm.public.EmployeeAssignment.all().toArray()
-
     const query = search?.toLowerCase() ?? ""
 
-    const employees: EmployeePerson[] = people
-        .flatMap(({ employee, ...person }) => {
-        if (!employee) return [] // skip people who aren't employees
+    const employees: EmployeePerson[] = records
+        .filter(employee => employee.name.toLowerCase().includes(query))
+        .map(employee => {
+            const mine = assignments.filter(assignment => assignment.employeeId === employee.id)
+            return {
+                person: { id: employee.id, name: employee.name, email: employee.email, phone: employee.phone },
+                employee: {
+                    id: employee.id,
+                    pfpImgUrl: employee.pfpImgUrl,
+                    roles: [...new Set([...employee.roles, ...mine.map(assignment => assignment.role)])],
+                },
+            }
+        })
 
-      const mine = assignments.filter((a) => a.employeeId === employee.personId)
-      return [{
-        person,
-        employee,
-        role: [...new Set(mine.map((a) => a.role))].join(", "),
-        globalRoles: mine
-          .filter((a) => a.branchId === null && a.programId === null && a.region === null)
-          .map((a) => a.role),
-      }]
-    })
-    .filter((e) => e.person.name.toLowerCase().includes(query))
-
-
-    return (
-        <>
-            <DataTable columns={columns} data={employees} />
-        </>
-        
-    )
+    return <DataTable columns={columns} data={employees} />
 }

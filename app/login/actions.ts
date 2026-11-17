@@ -1,12 +1,9 @@
 "use server"
 
 import { db } from "@/prisma/db"
-import { and } from "@prisma/orm-postgres/orm-client"
 import { createSession, deleteSession } from "./sessions"
 import { redirect } from "next/navigation"
-import { Scalars } from "@prisma/orm-postgres/components"
-import { Models } from "@/prisma/contract"
-import { RoleTypes } from "../types"
+import type { Employee } from "../types"
 
 
 
@@ -16,8 +13,7 @@ export async function login(prevState: any, formData: FormData) {
     const password = formData.get("password") as string // Encrypt later in db
 
     let id = -1
-    let roles: RoleTypes = []
-    let mustChangePassword
+    let roles: Employee["roles"] = []
 
     // Checking that they are not undefined (will change to zod validation later)
     if (!email || !password) {
@@ -27,20 +23,14 @@ export async function login(prevState: any, formData: FormData) {
 
     // Check db for matching email and password
     try {
-        const person = await db.orm.public.Person.where({ email }).first()
-        console.log("person:", person?.id)
-        const employee = person
-            ? await db.orm.public.Employee.where({ personId: person.id }).first()
-            : null
-        console.log("employee:", employee?.personId, "pw match:", employee?.password === password)
+        const employee = await db.orm.public.Employee.where({ email }).first()
 
-        if (!person || !employee || employee.password !== password) {
+        if (!employee || employee.password !== password) {
             return "Email or password is incorrect."
         }
 
-        id = person.id
-        roles = employee.role
-        mustChangePassword = employee.mustChangePassword
+        id = employee.id
+        roles = employee.roles
     }
     catch (error) {
         console.log("Error: ", error)
@@ -49,7 +39,6 @@ export async function login(prevState: any, formData: FormData) {
 
     await createSession(id, roles)
     
-    if(mustChangePassword) redirect("/otp-page")
     redirect("/dashboard")
 }
 

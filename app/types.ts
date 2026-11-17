@@ -13,15 +13,15 @@ export type Employee = Scalars<Models.public_Employee>
 
 export type Person = Scalars<Models.public_Person>
 
-export type RoleTypes = Scalars<Models.public_Employee>["role"]
+export type RoleTypes = Scalars<Models.public_Employee>["roles"]
 
 export type PersonRoles = Scalars<Models.public_PersonRoles>
 
 export type EmployeeAssignment = Scalars<Models.public_EmployeeAssignment>
 
 export type EmployeePerson = {
-    person: Person,
-    employee: Employee
+    person: Pick<Employee, "id" | "name" | "email" | "phone">,
+    employee: Pick<Employee, "id" | "pfpImgUrl" | "roles">
 }
 
 export type ParticipationPerson = {

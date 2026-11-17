@@ -33,12 +33,12 @@ export const columns = columnHelper.columns([
     columnHelper.accessor("person.email", {
         header: "Email",
     }),
-    columnHelper.accessor("employee.role", {
+    columnHelper.accessor("employee.roles", {
         header: "Roles",
         cell: ({ row }) => {
             return (
                 <div className="flex flex-wrap justify-center gap-1">
-                    {row.original.employee.role.map(role => <Badge key={role} variant="outline" className="max-w-full whitespace-normal break-words">{role.replaceAll('_', ' ')}</Badge>)}
+                    {row.original.employee.roles.map(role => <Badge key={role} variant="outline" className="max-w-full whitespace-normal break-words">{role.replaceAll('_', ' ')}</Badge>)}
                 </div>
 
             )

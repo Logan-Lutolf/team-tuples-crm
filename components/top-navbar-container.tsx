@@ -10,7 +10,6 @@ export async function TopNavbarContainer() {
     try {
         const cookiesStore = await cookies()
         const session = cookiesStore.get("session")?.value
-        console.log("session cookie:", session === undefined ? "undefined" : session.slice(0, 20))
 
         const payload = await decrypt(session)
         userId = payload?.userId?? null
@@ -18,18 +17,16 @@ export async function TopNavbarContainer() {
     catch (error) {
         console.log("Error reading session cookie or employee not found: ", error)
     }
-    const employee = userId !== null
-        ? await db.orm.public.Employee.where({ personId: userId }).first()
-        : null
+    if (userId === null) return null
 
-    const person = await db.orm.public.Person.where({id: userId}).first()
+    const employee = await db.orm.public.Employee.where({ id: userId }).first()
 
-    if (!employee || !person)
+    if (!employee)
         return (
             <></>
         )
 
     return (
-        <TopNavbar person={person} employee={employee} />
+        <TopNavbar person={employee} employee={employee} />
     )
 }

@@ -59,7 +59,7 @@ export function ActionsCell({employee}: {employee: EmployeePerson}) {
                             <EditEmployeeForm
                                 name={employee.person.name}
                                 email={employee.person.email ?? "Unknown"}
-                                roles={employee.employee.role}
+                                roles={employee.employee.roles}
                                 phone={employee.person.phone ?? "Unkown"}    
                                 onSuccess={setEditOpen.bind(null, false)}                                
                             />

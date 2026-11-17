@@ -78,7 +78,7 @@ export async function editEmployee(formData: FormData) {
                 email: email,
                 phone: phone,
                 roles: roles,
-            }))
+            })
         
         const employee = await db.orm.public.Employee
             .where({ personId: Number(id)})
