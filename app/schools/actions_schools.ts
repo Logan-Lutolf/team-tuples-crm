@@ -1,15 +1,80 @@
 'use server'
 
 import { participationStatus } from '@/lib/participation-status'
-
 import { db } from "@/prisma/db"
 import { recordInteraction } from "@/lib/record-interaction"
 import type { Scalars } from "@prisma/orm-postgres/components"
 import type { Models } from "@/prisma/contract"
 import { revalidatePath } from "next/cache"
 import { SchoolValidationError, schoolFieldLabel, schoolErrorMessage } from "./school-errors"
+import { BRANCH_TYPES, ORG_TYPES, OrganizationTypes, REGION_TYPES, RELATIONSHIP_TYPES } from '../types'
+import { z } from 'zod'
 
-type SchoolFields = Scalars<Models.public_School>
+
+const organizationSchema = z.object({
+    name: z.string().min(1),
+    phone: z.string().min(1).optional(), // make this validation better
+    email: z.email().min(1).optional(),
+    type: z.enum(ORG_TYPES),
+    region: z.enum(REGION_TYPES),
+    relationship: z.enum(RELATIONSHIP_TYPES),
+    street: z.string().min(1),
+    city: z.string().min(1),
+    country: z.string().min(1),
+    zipCode: z.string().min(1),
+    branch: z.enum(BRANCH_TYPES)
+})
+
+
+/* CHARLOTTE'S EDITS */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+type SchoolFields = Scalars<Models.public_Organization>
+
 
 // TODO: Enforce the application's administrator permission policy.
 
@@ -48,16 +113,16 @@ function schoolData(form: FormData) {
         email: email(form),
         phone: text(form, "phone-num", false) || null,
         type: choice<SchoolFields["type"]>(form, "type", [
-            "PRIMARY", "SECONDARY", "UNDERGRADUATE", "GRADUATE", "POSTGRADUATE",
+            "PRIMARY_SCHOOL", "SECONDARY_SCHOOL", "THEATRE", "CULTURAL",
         ]),
         relationship: choice<SchoolFields["relationship"]>(form, "relationship", [
             "POOR", "AVERAGE", "EXCELLENT",
         ]),
         region: choice<SchoolFields["region"]>(form, "region", [
-            "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN",
-            "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN",
+            "PRAHA", "STŘEDOČESKÝ", "JIHOČESKÝ", "PLZEŇSKÝ", "KARLOVARSKÝ", "ÚSTECKÝ", "LIBERECKÝ",
+            "KRÁLOVÉHRADECKÝ", "PARDUBICKÝ", "JIHOMORAVSKÝ", "OLOMOUCKÝ", "ZLÍNSKÝ", "MORAVSKOSLEZSKÝ", "JIHLAVA",
         ]),
-        branchId: text(form, "branch", false) ? id(form, "branch") : null,
+        branchName: text(form, "branch", false) ? id(form, "branch") : null,
     }
 }
 
@@ -81,28 +146,38 @@ async function schoolAction(label: string, action: () => Promise<void>) {
     return { success: true as const }
 }
 
-export async function createSchool(formData: FormData) {
+
+
+
+
+
+
+
+
+
+
+export async function createSchoolOld(formData: FormData) {
     try {
         const data = { ...schoolData(formData), address: addressData(formData) }
         // School IDs have no database default. Retry if concurrent creation claims the same ID.
         for (let attempt = 0; attempt < 3; attempt++) {
             try {
                 await db.transaction(async (tx) => {
-                    const lastSchool = await tx.orm.public.School
+                    const lastSchool = await tx.orm.public.Organization
                         .orderBy((school) => school.id.desc()).first()
-                    await tx.orm.public.School.create({ id: (lastSchool?.id ?? 0) + 1, ...data })
+                    await tx.orm.public.Organization.create({ id: (lastSchool?.id ?? 0) + 1, ...data })
                 })
                 revalidatePath("/schools")
                 return { success: true as const }
             } catch (error) {
                 if (attempt === 2 || !(error instanceof Error) ||
                     !("sqlState" in error) || error.sqlState !== "23505" ||
-                    !("constraint" in error) || error.constraint !== "School_pkey") throw error
+                    !("constraint" in error) || error.constraint !== "Organization_pkey") throw error
             }
         }
     } catch (error) {
-        console.error("Create school failed:", error)
-        return { error: schoolErrorMessage(error, "Create school") }
+        console.error("Create organization failed:", error)
+        return { error: schoolErrorMessage(error, "Create organization") }
     }
 }
 
@@ -111,9 +186,9 @@ export async function editSchool(formData: FormData) {
         const schoolId = id(formData, "school-id")
         const data = schoolData(formData)
         await db.transaction(async (tx) => {
-            const school = await tx.orm.public.School.where({ id: schoolId }).first()
+            const school = await tx.orm.public.Organization.where({ id: schoolId }).first()
             if (!school) throw new SchoolValidationError("This school no longer exists. Refresh the page.")
-            await tx.orm.public.School.where({ id: schoolId }).update({
+            await tx.orm.public.Organization.where({ id: schoolId }).update({
                 ...data,
                 address: addressData(formData),
             })
@@ -125,7 +200,7 @@ export async function deleteSchool(formData: FormData) {
     return schoolAction("Delete school", async () => {
         const schoolId = id(formData, "school-id")
         // Database delete actions detach related records and remove join rows atomically.
-        await db.orm.public.School.where({ id: schoolId }).delete()
+        await db.orm.public.Organization.where({ id: schoolId }).delete()
         revalidatePath('/contacts')
         revalidatePath('/programs')
         revalidatePath('/branches')
@@ -135,18 +210,18 @@ export async function deleteSchool(formData: FormData) {
 // Submit school-id and contact-id to associate an existing, unassigned contact.
 export async function addSchoolContact(formData: FormData) {
     return schoolAction("Assign contact", async () => {
-        await db.orm.public.Contact.where({
-            id: id(formData, "contact-id"), schoolId: null,
-        }).update({ schoolId: id(formData, "school-id") })
+        await db.orm.public.Person.where({
+            id: id(formData, "contact-id"), orgId: null,
+        }).update({ orgId: id(formData, "school-id") })
     })
 }
 
 // Detach the contact without deleting it or changing another school's contacts.
 export async function removeSchoolContact(formData: FormData) {
     return schoolAction("Remove contact", async () => {
-        await db.orm.public.Contact.where({
-            id: id(formData, "contact-id"), schoolId: id(formData, "school-id"),
-        }).update({ schoolId: null })
+        await db.orm.public.Person.where({
+            id: id(formData, "contact-id"), orgId: id(formData, "school-id"),
+        }).update({ orgId: null })
     })
 }
 

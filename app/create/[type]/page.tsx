@@ -7,16 +7,17 @@ import { BranchFormPage } from '@/app/branches/branch-form-page'
 import { ProgramPageContent } from '@/app/programs/program-page-content'
 import { MunicipalityPageContent } from '@/app/municipalities/municipality-page-content'
 import { isRecordType } from '@/lib/record-links'
+import { AddOrganizationForm } from '@/app/schools/add-organization-form'
 
 export default async function CreatePage({ params }: { params: Promise<{ type: string }> }) {
     const { type } = await params
     if (!isRecordType(type) || type === 'employees') notFound()
     let content
     if (type === 'schools') {
-        const branches = await db.orm.public.Branch.select('id', 'name').all().toArray()
-        content = <><h1 className="text-2xl font-semibold">Add a School</h1><AddSchoolForm branches={branches} /></>
+        const branches = await db.orm.public.Branch.select('name').all().toArray()
+        content = <><h1 className="text-2xl font-semibold">Add an Organization</h1><AddOrganizationForm branches={branches} /></>
     } else if (type === 'contacts') {
-        const [branches, schools] = await Promise.all([db.orm.public.Branch.select('id', 'name').all().toArray(), db.orm.public.Organization.select('id', 'name').all().toArray()])
+        const [branches, schools] = await Promise.all([db.orm.public.Branch.select('name').all().toArray(), db.orm.public.Organization.select('id', 'name').all().toArray()])
         content = <><h1 className="text-2xl font-semibold">Add a Contact</h1><AddContactForm branches={branches} schools={schools} /></>
     } else if (type === 'branches') {
         const employees = await db.orm.public.Employee.include("person").all()

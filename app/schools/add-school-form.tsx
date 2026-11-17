@@ -1,36 +1,36 @@
 'use client'
 
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
 import { useFormStatus } from "react-dom"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createSchool } from "./actions_schools"
+import { createOrganization } from "@/app/actions/organization"
+import { showToast } from "@/lib/utils"
 
 const regions = [
-    { label: "ONE", value: "ONE" },
-    { label: "TWO", value: "TWO" },
-    { label: "THREE", value: "THREE" },
-    { label: "FOUR", value: "FOUR" },
-    { label: "FIVE", value: "FIVE" },
-    { label: "SIX", value: "SIX" },
-    { label: "SEVEN", value: "SEVEN" },
-    { label: "EIGHT", value: "EIGHT" },
-    { label: "NINE", value: "NINE" },
-    { label: "TEN", value: "TEN" },
-    { label: "ELEVEN", value: "ELEVEN" },
-    { label: "TWELVE", value: "TWELVE" },
-    { label: "THIRTEEN", value: "THIRTEEN" },
-    { label: "FOURTEEN", value: "FOURTEEN" },
+    { label: "PRAHA", value: "PRAHA" },
+    { label: "STŘEDOČESKÝ", value: "STŘEDOČESKÝ" },
+    { label: "JIHOČESKÝ", value: "JIHOČESKÝ" },
+    { label: "PLZEŇSKÝ", value: "PLZEŇSKÝ" },
+    { label: "KARLOVARSKÝ", value: "KARLOVARSKÝ" },
+    { label: "ÚSTECKÝ", value: "ÚSTECKÝ" },
+    { label: "LIBERECKÝ", value: "LIBERECKÝ" },
+    { label: "KRÁLOVÉHRADECKÝ", value: "KRÁLOVÉHRADECKÝ" },
+    { label: "PARDUBICKÝ", value: "PARDUBICKÝ" },
+    { label: "JIHOMORAVSKÝ", value: "JIHOMORAVSKÝ" },
+    { label: "OLOMOUCKÝ", value: "OLOMOUCKÝ" },
+    { label: "ZLÍNSKÝ", value: "ZLÍNSKÝ" },
+    { label: "MORAVSKOSLEZSKÝ", value: "MORAVSKOSLEZSKÝ" },
+    { label: "JIHLAVA", value: "JIHLAVA" },
 ];
 
+
 const types = [
-    { label: "PRIMARY", value: "PRIMARY" },
-    { label: "SECONDARY", value: "SECONDARY" },
-    { label: "UNDERGRADUATE", value: "UNDERGRADUATE" },
-    { label: "GRADUATE", value: "GRADUATE" },
-    { label: "POSTGRADUATE", value: "POSTGRADUATE" },
+    { label: "PRIMARY_SCHOOL", value: "PRIMARY_SCHOOL" },
+    { label: "SECONDARY_SCHOOL", value: "SECONDARY_SCHOOL" },
+    { label: "THEATRE", value: "THEATRE" },
+    { label: "CULTURAL", value: "CULTURAL" },
 ]
 
 const relationships = [
@@ -44,20 +44,24 @@ function SubmitButton() {
     return <Button type="submit" disabled={pending} className="sm:col-span-2">{pending ? "Saving…" : "Submit"}</Button>
 }
 
-export function AddSchoolForm({ branches }: { branches: { id: number; name: string }[] }) {
-    const [saved, setSaved] = useState(false)
-    const [error, setError] = useState<string | null>(null)
-    const branchOptions = branches.map((branch) => ({ label: branch.name, value: String(branch.id) }))
+export function AddSchoolForm({ branches }: { branches: {name: string }[] }) {
+    const branchOptions = branches.map((branch) => ({ label: branch.name, value: branch.name }))
     async function submit(formData: FormData) {
-        setError(null)
-        setSaved(false)
+        let result = null
         try {
-            const result = await createSchool(formData)
-            if (result?.error) setError(result.error)
-            else setSaved(true)
-        } catch (error) {
-            setError(error instanceof Error ? error.message : "Could not create school. Please try again.")
+            result = await createOrganization(formData)
+        } 
+        catch (error) {
+            console.log(error)
         }
+
+        if (result != null) {
+            if (result.result == "success") 
+                showToast("Success", result.message as string, result.result as "error" | "success" | "warning" | undefined)
+            else 
+                showToast("Error", result.message as string, result.result as "error" | "success" | "warning" | undefined)
+        }
+
     }
     return (
         <form className="grid grid-cols-1 gap-4 sm:grid-cols-2 [&_[data-slot=select-trigger]]:w-full" action={submit}>
@@ -112,9 +116,9 @@ export function AddSchoolForm({ branches }: { branches: { id: number; name: stri
 
 
             <Field>
-                <FieldLabel htmlFor="phone-num">Phone Number</FieldLabel>
+                <FieldLabel htmlFor="phone">Phone Number</FieldLabel>
                 <Input 
-                    name="phone-num"
+                    name="phone"
                     type="text"
                 />
             </Field>
@@ -186,9 +190,6 @@ export function AddSchoolForm({ branches }: { branches: { id: number; name: stri
                     </SelectContent>
                 </Select>
             </Field>
-
-            {saved && <p role="status" className="text-green-700 dark:text-green-400 sm:col-span-2">School created successfully.</p>}
-            {error && <p role="alert" className="text-destructive sm:col-span-2">{error}</p>}
             <SubmitButton />
         </form>
     )

@@ -9,6 +9,8 @@ export type Participation = Scalars<Models.public_Participation>
 
 export type Organization = Scalars<Models.public_Organization>
 
+
+
 export type Employee = Scalars<Models.public_Employee>
 
 export type Person = Scalars<Models.public_Person>
@@ -18,6 +20,37 @@ export type RoleTypes = Scalars<Models.public_Employee>["role"]
 export type PersonRoles = Scalars<Models.public_PersonRoles>
 
 export type EmployeeAssignment = Scalars<Models.public_EmployeeAssignment>
+
+export const RELATIONSHIP_TYPES = [
+    "POOR",
+    "AVERAGE",
+    "EXCELLENT"
+] as const
+
+
+export const ORG_TYPES = [
+    "PRIMARY_SCHOOL",
+    "SECONDARY_SCHOOL",
+    "THEATRE",
+    "CULTURAL"
+] as const
+export type OrganizationTypes = (typeof ORG_TYPES)[number]
+
+
+export const BRANCH_TYPES = [
+    "SEVERNÍ_ČECHY",
+    "VÝCHODNÍ_ČECHY",
+    "STŘEDNÍ_MORAVA",
+    "PLZEŇSKÝ_KRAJ",
+    "JIŽNÍ_MORAVA",
+    "JIŽNÍ_ČECHY",
+    "KARLOVARSKÝ_KRAJ",
+    "MORAVSKOSLEZSKÝ_KRAJ",
+    "PRAHA",
+] as const
+export type BranchTypes = (typeof BRANCH_TYPES)[number]
+
+export type Branch = Scalars<Models.public_Branch>
 
 export type EmployeePerson = {
     person: Person,
@@ -41,3 +74,24 @@ export type EmployeeAssignmentPerson = {
     person: Person,
     assignment: EmployeeAssignment
 }
+
+export const REGION_TYPES = [
+    "PRAHA",
+    "STŘEDOČESKÝ",
+    "JIHOČESKÝ",
+    "PLZEŇSKÝ",
+    "KARLOVARSKÝ",
+    "ÚSTECKÝ",
+    "LIBERECKÝ",
+    "KRÁLOVÉHRADECKÝ",
+    "PARDUBICKÝ",
+    "JIHOMORAVSKÝ",
+    "OLOMOUCKÝ",
+    "ZLÍNSKÝ",
+    "MORAVSKOSLEZSKÝ",
+    "JIHLAVA",
+] as const
+
+export type RegionTypes = (typeof REGION_TYPES)[number]
+
+export type ActionResult = { result: "success" | "error"; message: string }
