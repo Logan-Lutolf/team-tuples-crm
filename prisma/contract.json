@@ -597,7 +597,7 @@
                 }
               },
               "participation": {
-                "cardinality": "N:M",
+                "cardinality": "1:N",
                 "on": {
                   "localFields": [
                     "personId"
@@ -606,21 +606,8 @@
                     "employeeId"
                   ]
                 },
-                "through": {
-                  "childColumns": [
-                    "particpationId"
-                  ],
-                  "namespaceId": "public",
-                  "parentColumns": [
-                    "employeeId"
-                  ],
-                  "table": "ParticipationEmployees",
-                  "targetColumns": [
-                    "id"
-                  ]
-                },
                 "to": {
-                  "model": "Participation",
+                  "model": "ParticipationEmployees",
                   "namespace": "public"
                 }
               },
@@ -1650,7 +1637,7 @@
                 }
               },
               "lastContactedDate": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/date-string@1",
                   "kind": "scalar"
@@ -2164,15 +2151,8 @@
           },
           "Student": {
             "fields": {
-              "orgId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
               "parentId": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
@@ -2187,25 +2167,9 @@
               }
             },
             "relations": {
-              "org": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "orgId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Organization",
-                  "namespace": "public"
-                }
-              },
               "parent": {
                 "cardinality": "N:1",
-                "nullable": false,
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "parentId"
@@ -2238,9 +2202,6 @@
             },
             "storage": {
               "fields": {
-                "orgId": {
-                  "column": "orgId"
-                },
                 "parentId": {
                   "column": "parentId"
                 },
@@ -3496,7 +3457,7 @@
                 "lastContactedDate": {
                   "codecId": "pg/date-string@1",
                   "dataType": "pg/date",
-                  "nullable": false
+                  "nullable": true
                 },
                 "name": {
                   "codecId": "pg/text@1",
@@ -3837,15 +3798,10 @@
             },
             "Student": {
               "columns": {
-                "orgId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                },
                 "parentId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
-                  "nullable": false
+                  "nullable": true
                 },
                 "personId": {
                   "codecId": "pg/int4@1",
@@ -3875,25 +3831,6 @@
                 },
                 {
                   "index": {
-                    "name": "Student_orgId_idx_c5e5aabe"
-                  },
-                  "source": {
-                    "columns": [
-                      "orgId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Student"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Organization"
-                  }
-                },
-                {
-                  "index": {
                     "name": "Student_parentId_idx_6a68f597"
                   },
                   "source": {
@@ -3913,14 +3850,6 @@
                 }
               ],
               "indexes": [
-                {
-                  "columns": [
-                    "orgId"
-                  ],
-                  "name": "Student_orgId_idx_c5e5aabe",
-                  "prefix": "Student_orgId_idx",
-                  "unique": false
-                },
                 {
                   "columns": [
                     "parentId"
@@ -4062,7 +3991,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "a8cfb5cad664aeda416f08b22fff592d2011b24d894a6648b40443762f0ba977"
+    "storageHash": "993ee0afda0258c7a50a313d1b7ded95da0b8e02078ffe8fbe4c2d48f4e1ecf2"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

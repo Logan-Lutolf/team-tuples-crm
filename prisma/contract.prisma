@@ -289,18 +289,15 @@ model Person {
   participations ParticipationContacts[]
   lastContactedById     Int?
   lastContactedBy       Employee? @relation(fields: [lastContactedById], references: [personId])
-  lastContactedDate     DateString
+  lastContactedDate     DateString?
 }
 
 model Student {
   personId  Int @id 
   person   Person @relation(fields: [personId], references: [id])
 
-  orgId  Int
-  org    Organization @relation(fields: [orgId], references: [id])
-
-  parentId  Int
-  parent   Parent @relation(fields: [parentId], references: [personId])
+  parentId  Int?
+  parent   Parent? @relation(fields: [parentId], references: [personId])
 }
 
 model Parent {
@@ -321,7 +318,7 @@ model Employee {
 
   assignments EmployeeAssignment[]
   interactions Interaction[]
-  participation Participation[]
+  participation ParticipationEmployees[]
 
 }
 
