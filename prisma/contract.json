@@ -1130,11 +1130,8 @@
               "email": {
                 "nullable": true,
                 "type": {
-                  "codecId": "sql/varchar@1",
-                  "kind": "scalar",
-                  "typeParams": {
-                    "length": 50
-                  }
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
                 }
               },
               "id": {
@@ -1154,11 +1151,8 @@
               "phone": {
                 "nullable": true,
                 "type": {
-                  "codecId": "sql/char@1",
-                  "kind": "scalar",
-                  "typeParams": {
-                    "length": 10
-                  }
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
                 }
               },
               "region": {
@@ -3057,12 +3051,9 @@
                   "nullable": false
                 },
                 "email": {
-                  "codecId": "sql/varchar@1",
-                  "dataType": "pg/varchar",
-                  "nullable": true,
-                  "typeParams": {
-                    "length": 50
-                  }
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
                 },
                 "id": {
                   "codecId": "pg/int4@1",
@@ -3079,12 +3070,9 @@
                   "nullable": false
                 },
                 "phone": {
-                  "codecId": "sql/char@1",
-                  "dataType": "pg/char",
-                  "nullable": true,
-                  "typeParams": {
-                    "length": 10
-                  }
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
                 },
                 "region": {
                   "codecId": "pg/text@1",
@@ -4116,7 +4104,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f683b57819cd844545d2fe14a0a574d853bfbc851651de773111208942aa6b39"
+    "storageHash": "c417faf45a3bf1604cea9f3b86d0c2e67e49bcac2fac1ee7ebb307ffe8364dda"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

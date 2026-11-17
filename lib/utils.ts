@@ -29,8 +29,19 @@ export function formatPhoneNumber(phone: string) {
     }
 }
 
-export function formatAddress(address: AddressOutput) {
+export function formatAddress(address: AddressOutput | null) {
+    if (address == null) return "Unknown Address"
     return address.street + ", " + address.city + ", " + address.zipCode + ", " + address.country
+}
+
+export function unformatAddress(address: string) {
+    const addressArr = address.split(",")
+    return {
+        street: addressArr[0],
+        city: addressArr[1],
+        zipCode: addressArr[2],
+        country: addressArr[3]
+    } as AddressOutput
 }
 
 // needs fixing
@@ -66,3 +77,5 @@ export function dateParsing(date: string) {
 
     return date.substring(8) + "/" + date.substring(5,7) + "/" + date.substring(0,4)
 }
+
+

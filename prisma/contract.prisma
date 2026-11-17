@@ -249,8 +249,8 @@ model ParticipationContacts {
 model Organization {
   id            Int @id @default(autoincrement())
   name          String
-  phone         Char(10)?
-  email         VarChar(50)?
+  phone         String?
+  email         String?
   type          OrganizationTypes
   region        RegionTypes
   relationship  RelationshipTypes
