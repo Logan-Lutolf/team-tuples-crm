@@ -13,8 +13,8 @@ export default async function BranchesPage({ searchParams }: {
     const params = await searchParams
     const search = params?.search?.trim() ?? ""
     const [branches, employees] = await Promise.all([
-        db.orm.public.Branch.orderBy((branch) => branch.id.asc()).all().toArray(),
-        db.orm.public.Employee.select("id", "name", "email").orderBy((employee) => employee.name.asc()).all().toArray(),
+        db.orm.public.Branch.orderBy((branch) => branch.name.asc()).all().toArray(),
+        db.orm.public.Person.select("id", "name", "email").orderBy((employee) => employee.name.asc()).all().toArray(),  // Needs fixing
     ])
     const chiefs = new Map(employees.map((employee) => [employee.id, employee.name]))
     const filtered = branches.filter((branch) => [branch.name, branch.region, branch.institute, branch.chiefId ? chiefs.get(branch.chiefId) : ""]
@@ -35,12 +35,12 @@ export default async function BranchesPage({ searchParams }: {
                 <TableHead>Name</TableHead><TableHead>Region</TableHead><TableHead>Institute</TableHead><TableHead>Chief</TableHead><TableHead>Actions</TableHead>
             </TableRow></TableHeader>
             <TableBody>
-                {rows.map((branch) => <TableRow key={branch.id}>
-                    <TableCell><RecordLink type="branches" id={branch.id}>{branch.name}</RecordLink></TableCell><TableCell>{branch.region}</TableCell>
+                {rows.map((branch) => <TableRow key={branch.name}>
+                    <TableCell><RecordLink type="branches" id={1}>{branch.name}</RecordLink></TableCell><TableCell>{branch.region}</TableCell>
                     <TableCell>{branch.institute || "—"}</TableCell><TableCell><RecordLink type="employees" id={branch.chiefId}>{branch.chiefId ? chiefs.get(branch.chiefId) ?? "Unassigned" : "Unassigned"}</RecordLink></TableCell>
                     <TableCell><div className="flex flex-wrap items-center justify-center gap-2">
-                        <PageActionLink href={`/details/branches/${branch.id}`}>View details</PageActionLink>
-                        <PageActionLink href={`/details/branches/${branch.id}/delete`} destructive>Delete</PageActionLink>
+                        <PageActionLink href={`/details/branches/${branch.name}`}>View details</PageActionLink>
+                        <PageActionLink href={`/details/branches/${branch.name}/delete`} destructive>Delete</PageActionLink>
                     </div></TableCell>
                 </TableRow>)}
                 {!rows.length && <TableRow><TableCell colSpan={5} className="py-10 text-center text-muted-foreground">

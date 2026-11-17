@@ -2374,13 +2374,12 @@
                   "unique": false
                 }
               ],
-              "uniques": [
-                {
-                  "columns": [
-                    "name"
-                  ]
-                }
-              ]
+              "primaryKey": {
+                "columns": [
+                  "name"
+                ]
+              },
+              "uniques": []
             },
             "Employee": {
               "checks": [
@@ -4063,7 +4062,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "9fa4518d9b21781e4f42865a6f30076093550b8d2a4dcd1145597f233b4f2669"
+    "storageHash": "a8cfb5cad664aeda416f08b22fff592d2011b24d894a6648b40443762f0ba977"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

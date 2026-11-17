@@ -186,7 +186,7 @@ model Program {
 
 
 model Branch {
-  name BranchTypes @unique
+  name BranchTypes @id
   institute String?
   chiefId Int?
   chief Employee? @relation(fields: [chiefId], references: [personId], onDelete: SetNull)
