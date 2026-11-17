@@ -186,8 +186,7 @@ model Program {
 
 
 model Branch {
-  id Int @id @default(autoincrement())
-  name BranchTypes
+  name BranchTypes @unique
   institute String?
   chiefId Int?
   chief Employee? @relation(fields: [chiefId], references: [personId], onDelete: SetNull)
@@ -260,10 +259,10 @@ model Organization {
   updatedAt temporal.updatedAtString()
 
   // interactions Interaction[]
-  // contacts Contact[]
+
   participations Participation[]
-  branch          Branch? @relation(fields: [branchId], references: [id])
-  branchId        Int?
+  branch          Branch? @relation(fields: [branchName], references: [name])
+  branchName      BranchTypes?
   people          Person[]
 }
 
@@ -284,8 +283,8 @@ model Person {
   organization    Organization? @relation(fields: [orgId], references: [id])
   orgId           Int?
   personRole      PersonRoles?
-  branch          Branch? @relation(fields: [branchId], references: [id])
-  branchId        Int?
+  branch          Branch? @relation(fields: [branchName], references: [name])
+  branchName      BranchTypes?
   interactions    Interaction[]
   participations ParticipationContacts[]
   lastContactedById     Int?
@@ -318,8 +317,6 @@ model Employee {
   password  String
   pfpImgUrl String
   mustChangePassword Boolean @default(true)
-  branch  Branch? @relation(fields: [branchId], references: [id])
-  branchId  Int?
   role    RoleTypes[]
 
   assignments EmployeeAssignment[]

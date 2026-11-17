@@ -417,13 +417,6 @@
                   "kind": "scalar"
                 }
               },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
               "institute": {
                 "nullable": true,
                 "type": {
@@ -479,10 +472,10 @@
                 "cardinality": "1:N",
                 "on": {
                   "localFields": [
-                    "id"
+                    "name"
                   ],
                   "targetFields": [
-                    "branchId"
+                    "branchName"
                   ]
                 },
                 "to": {
@@ -494,10 +487,10 @@
                 "cardinality": "1:N",
                 "on": {
                   "localFields": [
-                    "id"
+                    "name"
                   ],
                   "targetFields": [
-                    "branchId"
+                    "branchName"
                   ]
                 },
                 "to": {
@@ -510,9 +503,6 @@
               "fields": {
                 "chiefId": {
                   "column": "chiefId"
-                },
-                "id": {
-                  "column": "id"
                 },
                 "institute": {
                   "column": "institute"
@@ -530,13 +520,6 @@
           },
           "Employee": {
             "fields": {
-              "branchId": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
               "mustChangePassword": {
                 "nullable": false,
                 "type": {
@@ -595,22 +578,6 @@
                 },
                 "to": {
                   "model": "EmployeeAssignment",
-                  "namespace": "public"
-                }
-              },
-              "branch": {
-                "cardinality": "N:1",
-                "nullable": true,
-                "on": {
-                  "localFields": [
-                    "branchId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Branch",
                   "namespace": "public"
                 }
               },
@@ -676,9 +643,6 @@
             },
             "storage": {
               "fields": {
-                "branchId": {
-                  "column": "branchId"
-                },
                 "mustChangePassword": {
                   "column": "mustChangePassword"
                 },
@@ -1113,11 +1077,17 @@
                   "name": "Address"
                 }
               },
-              "branchId": {
+              "branchName": {
                 "nullable": true,
                 "type": {
-                  "codecId": "pg/int4@1",
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "BranchTypes",
+                  "namespaceId": "public",
+                  "plane": "domain"
                 }
               },
               "createdAt": {
@@ -1208,10 +1178,10 @@
                 "nullable": true,
                 "on": {
                   "localFields": [
-                    "branchId"
+                    "branchName"
                   ],
                   "targetFields": [
-                    "id"
+                    "name"
                   ]
                 },
                 "to": {
@@ -1255,8 +1225,8 @@
                 "address": {
                   "column": "address"
                 },
-                "branchId": {
-                  "column": "branchId"
+                "branchName": {
+                  "column": "branchName"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -1631,11 +1601,17 @@
                   "name": "Address"
                 }
               },
-              "branchId": {
+              "branchName": {
                 "nullable": true,
                 "type": {
-                  "codecId": "pg/int4@1",
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "BranchTypes",
+                  "namespaceId": "public",
+                  "plane": "domain"
                 }
               },
               "createdAt": {
@@ -1715,10 +1691,10 @@
                 "nullable": true,
                 "on": {
                   "localFields": [
-                    "branchId"
+                    "branchName"
                   ],
                   "targetFields": [
-                    "id"
+                    "name"
                   ]
                 },
                 "to": {
@@ -1858,8 +1834,8 @@
                 "address": {
                   "column": "address"
                 },
-                "branchId": {
-                  "column": "branchId"
+                "branchName": {
+                  "column": "branchName"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -2338,15 +2314,6 @@
                   "dataType": "pg/int4",
                   "nullable": true
                 },
-                "id": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nullable": false
-                },
                 "institute": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -2407,12 +2374,13 @@
                   "unique": false
                 }
               ],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "name"
+                  ]
+                }
+              ]
             },
             "Employee": {
               "checks": [
@@ -2428,11 +2396,6 @@
                 }
               ],
               "columns": {
-                "branchId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": true
-                },
                 "mustChangePassword": {
                   "codecId": "pg/bool@1",
                   "dataType": "pg/bool",
@@ -2491,37 +2454,9 @@
                     "namespaceId": "public",
                     "tableName": "Person"
                   }
-                },
-                {
-                  "index": {
-                    "name": "Employee_branchId_idx_d04da5bb"
-                  },
-                  "source": {
-                    "columns": [
-                      "branchId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Employee"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Branch"
-                  }
                 }
               ],
-              "indexes": [
-                {
-                  "columns": [
-                    "branchId"
-                  ],
-                  "name": "Employee_branchId_idx_d04da5bb",
-                  "prefix": "Employee_branchId_idx",
-                  "unique": false
-                }
-              ],
+              "indexes": [],
               "primaryKey": {
                 "columns": [
                   "personId"
@@ -3015,6 +2950,11 @@
             "Organization": {
               "checks": [
                 {
+                  "expression": "\"branchName\" IN ('SEVERNÍ_ČECHY', 'VÝCHODNÍ_ČECHY', 'STŘEDNÍ_MORAVA', 'PLZEŇSKÝ_KRAJ', 'JIŽNÍ_MORAVA', 'JIŽNÍ_ČECHY', 'KARLOVARSKÝ_KRAJ', 'MORAVSKOSLEZSKÝ_KRAJ', 'PRAHA')",
+                  "name": "Organization_branchName_check_a4fcb6e8",
+                  "prefix": "Organization_branchName_check"
+                },
+                {
                   "expression": "\"region\" IN ('PRAHA', 'STŘEDOČESKÝ', 'JIHOČESKÝ', 'PLZEŇSKÝ', 'KARLOVARSKÝ', 'ÚSTECKÝ', 'LIBERECKÝ', 'KRÁLOVÉHRADECKÝ', 'PARDUBICKÝ', 'JIHOMORAVSKÝ', 'OLOMOUCKÝ', 'ZLÍNSKÝ', 'MORAVSKOSLEZSKÝ', 'JIHLAVA')",
                   "name": "Organization_region_check_fbfaeec9",
                   "prefix": "Organization_region_check"
@@ -3036,10 +2976,16 @@
                   "dataType": "pg/jsonb",
                   "nullable": false
                 },
-                "branchId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": true
+                "branchName": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "BranchTypes",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -3116,18 +3062,18 @@
               "foreignKeys": [
                 {
                   "index": {
-                    "name": "Organization_branchId_idx_d04da5bb"
+                    "name": "Organization_branchName_idx_db2350bc"
                   },
                   "source": {
                     "columns": [
-                      "branchId"
+                      "branchName"
                     ],
                     "namespaceId": "public",
                     "tableName": "Organization"
                   },
                   "target": {
                     "columns": [
-                      "id"
+                      "name"
                     ],
                     "namespaceId": "public",
                     "tableName": "Branch"
@@ -3137,10 +3083,10 @@
               "indexes": [
                 {
                   "columns": [
-                    "branchId"
+                    "branchName"
                   ],
-                  "name": "Organization_branchId_idx_d04da5bb",
-                  "prefix": "Organization_branchId_idx",
+                  "name": "Organization_branchName_idx_db2350bc",
+                  "prefix": "Organization_branchName_idx",
                   "unique": false
                 }
               ],
@@ -3491,16 +3437,29 @@
               "uniques": []
             },
             "Person": {
+              "checks": [
+                {
+                  "expression": "\"branchName\" IN ('SEVERNÍ_ČECHY', 'VÝCHODNÍ_ČECHY', 'STŘEDNÍ_MORAVA', 'PLZEŇSKÝ_KRAJ', 'JIŽNÍ_MORAVA', 'JIŽNÍ_ČECHY', 'KARLOVARSKÝ_KRAJ', 'MORAVSKOSLEZSKÝ_KRAJ', 'PRAHA')",
+                  "name": "Person_branchName_check_a4fcb6e8",
+                  "prefix": "Person_branchName_check"
+                }
+              ],
               "columns": {
                 "address": {
                   "codecId": "pg/jsonb@1",
                   "dataType": "pg/jsonb",
                   "nullable": true
                 },
-                "branchId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": true
+                "branchName": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "BranchTypes",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -3583,18 +3542,18 @@
                 },
                 {
                   "index": {
-                    "name": "Person_branchId_idx_d04da5bb"
+                    "name": "Person_branchName_idx_db2350bc"
                   },
                   "source": {
                     "columns": [
-                      "branchId"
+                      "branchName"
                     ],
                     "namespaceId": "public",
                     "tableName": "Person"
                   },
                   "target": {
                     "columns": [
-                      "id"
+                      "name"
                     ],
                     "namespaceId": "public",
                     "tableName": "Branch"
@@ -3623,10 +3582,10 @@
               "indexes": [
                 {
                   "columns": [
-                    "branchId"
+                    "branchName"
                   ],
-                  "name": "Person_branchId_idx_d04da5bb",
-                  "prefix": "Person_branchId_idx",
+                  "name": "Person_branchName_idx_db2350bc",
+                  "prefix": "Person_branchName_idx",
                   "unique": false
                 },
                 {
@@ -4104,7 +4063,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "c417faf45a3bf1604cea9f3b86d0c2e67e49bcac2fac1ee7ebb307ffe8364dda"
+    "storageHash": "9fa4518d9b21781e4f42865a6f30076093550b8d2a4dcd1145597f233b4f2669"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",
