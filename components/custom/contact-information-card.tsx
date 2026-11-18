@@ -4,11 +4,12 @@ import { formatPhoneNumber, formatAddress, showToast } from "@/lib/utils";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import { Organization, Person, RoleTypes } from "@/app/types";
 import { useState } from "react";
-import { Pencil, Save, X } from "lucide-react";
+import { Mail, MapPin, Pencil, Phone, Save, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { updatePersonContactInfo, updateOrganizationContactInfo } from "@/app/details/actions";
 import { Input } from "../ui/input";
 import { Field, FieldLabel } from "../ui/field";
+import { Aoboshi_One } from "next/font/google";
 
 
 interface ContactInformationCardProps {
@@ -90,9 +91,9 @@ export function ContactInformationCard({obj, editPermissions} : ContactInformati
                         <span>Contact Information</span>
                         {editPermissions && <Button size="sm" onClick={handleEdit}><Pencil/></Button>}
                     </CardTitle>
-                    <p>Email: {obj.email ?? "Unknown"}</p>
-                    <p>Phone #: {formatPhoneNumber(obj.phone ?? "Unknown")}</p>
-                    <p>Address: {obj.address ? formatAddress(obj.address) : "Unknown"}</p>
+                    <p className="flex flex-row items-center gap-2"><Mail size={15}/> {obj.email ?? "Unknown"}</p>
+                    <p className="flex flex-row items-center gap-2"><Phone size={15}/> {formatPhoneNumber(obj.phone ?? "Unknown")}</p>
+                    <p className="flex flex-row items-center gap-2"><MapPin size={15}/> {obj.address ? formatAddress(obj.address) : "Unknown"}</p>
                 </CardContent>
             </Card>
         )    

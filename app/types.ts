@@ -18,6 +18,7 @@ export type Person = Scalars<Models.public_Person>
 export type RoleTypes = Scalars<Models.public_Employee>["role"]
 
 export type PersonRoles = Scalars<Models.public_PersonRoles>
+export type ContactTypes = Scalars<Models.public_PersonRoles>["type"]
 
 export type EmployeeAssignment = Scalars<Models.public_EmployeeAssignment>
 
@@ -62,7 +63,7 @@ export type ParticipationPerson = {
     participation: Participation
 }
 
-export type PersonWithRole = Person & { personRole: PersonRoles | null }
+export type PersonWithRole = Person & { personRole: PersonRoles[] | null }
 
 export type OrganizationPerson = {
     person: PersonWithRole,
@@ -95,3 +96,18 @@ export const REGION_TYPES = [
 export type RegionTypes = (typeof REGION_TYPES)[number]
 
 export type ActionResult = { result: "success" | "error"; message: string }
+
+
+export const CONTACT_TYPES = [ // Redundancy here; edit later
+  "TEACHER",
+  "PRINCIPAL",
+  "SCHOOL_COORDINATOR",
+  "STUDENT",
+  "HISTORIAN",
+  "GOVERNMENT_OFFICIAL",
+  "DONOR",
+  "SPONSOR",
+  "PARTNER",
+  "VOLUNTEER",
+  "OTHER",
+] as const
