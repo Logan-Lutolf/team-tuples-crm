@@ -47,11 +47,20 @@ export const studentColumns = columnHelperStudents.columns([
     columnHelperStudents.accessor("school", {
         header: "School"
     }),
-    columnHelperStudents.display({
-        id: "actions",
-        header: "",
-        cell: ({row}) => {}
-    }),
+    // columnHelperStudents.display({
+    //     id: "actions",
+    //     header: "",
+    //     cell: ({ row }) => (
+    //     <Button
+    //         variant="ghost"
+    //         size="icon"
+    //         aria-label="Remove student"
+    //         onClick={() => onDelete(row.original.name)}
+    //     >
+    //         <X className="h-4 w-4" color="var(--destructive)" />
+    //     </Button>
+    // ),
+    // }),
     
 ])
 

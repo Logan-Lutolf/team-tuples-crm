@@ -27,6 +27,7 @@ type Roles = Scalars<Models.public_Employee>["roles"]
 
 
 interface EditEmployeeFormProps {
+    id: number
     name: string,
     email: string
     phone: string,
@@ -37,14 +38,14 @@ interface EditEmployeeFormProps {
 
 
 // TODO: Add form validation
-export function EditEmployeeForm({name, email, phone, roles, onSuccess}: EditEmployeeFormProps) {    // Add actual type later T_T
+export function EditEmployeeForm({id, name, email, phone, roles, onSuccess}: EditEmployeeFormProps) {    // Add actual type later T_T
     async function handleSubmit(formData: FormData) { 
             const result = await editEmployee(formData)
-            if (result.success) {
+            if (result?.success) {
                 showToast("Employee Updated", "Employee has been updated successfully.")
                 onSuccess?.()
             } else {
-                showToast("Failed to Update Employee", result.message, "error")
+                showToast("Failed to Update Employee", result?.message ?? "", "error")
             }
     }
 
@@ -52,6 +53,10 @@ export function EditEmployeeForm({name, email, phone, roles, onSuccess}: EditEmp
         
 
         <form className="flex flex-col gap-3" action={handleSubmit}>
+            <Field>
+                <Input hidden value={id} name="employee-id"/>
+            </Field>
+            
             <Field>
                 <FieldLabel htmlFor="full-name">Full Name</FieldLabel>
                 <Input 

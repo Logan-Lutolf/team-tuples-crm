@@ -54,7 +54,7 @@ export async function createEmployee(formData: FormData) {
 }
 
 export async function editEmployee(formData: FormData) {
-    const id = formData.get("id") as string
+    const id = formData.get("employee-id") as string
     const name = formData.get("full-name") as string
     const email = formData.get("email") as string
     const phone = formData.get("phone-num") as string
@@ -68,7 +68,7 @@ export async function editEmployee(formData: FormData) {
 
     try {
         const person = await db.orm.public.Person
-            .where({email: email})
+            .where({id: Number(id)})
             .update({
                 name: name,
                 email: email,
@@ -86,8 +86,11 @@ export async function editEmployee(formData: FormData) {
             revalidatePath("/employee-management")
             return {success: true, message: "Employee updated successfully."}
         }
-        else
-            return {success: false, message: "Update employee failed. Employee not found."}
+        else {
+            if(!person) return {success: false, message: "Update employee failed. Person not found."}
+            if(!employee) return {success: false, message: "Update employee failed. Employee not found."}
+        }
+            
     }
     catch (error) {
         console.log("Update employee failed: ", error)
