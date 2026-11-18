@@ -2,7 +2,7 @@
 
 import { formatPhoneNumber, formatAddress, showToast } from "@/lib/utils";
 import { Card, CardContent, CardTitle } from "../ui/card";
-import { Organization, Person } from "@/app/types";
+import { Organization, Person, RoleTypes } from "@/app/types";
 import { useState } from "react";
 import { Pencil, Save, X } from "lucide-react";
 import { Button } from "../ui/button";
@@ -11,9 +11,15 @@ import { Input } from "../ui/input";
 import { Field, FieldLabel } from "../ui/field";
 
 
+interface ContactInformationCardProps {
+    obj: Person | Organization
+    editPermissions: boolean
+}
 
-export function ContactInformationCard({obj} : {obj: Person | Organization}) {
+
+export function ContactInformationCard({obj, editPermissions} : ContactInformationCardProps) {
     const [editing, setEditing] = useState(false)
+
 
     function handleEdit() {
         setEditing(!editing)
@@ -82,7 +88,7 @@ export function ContactInformationCard({obj} : {obj: Person | Organization}) {
                 <CardContent>
                     <CardTitle className="flex flex-row justify-between items-center">
                         <span>Contact Information</span>
-                        <Button size="sm" onClick={handleEdit}><Pencil/></Button>
+                        {editPermissions && <Button size="sm" onClick={handleEdit}><Pencil/></Button>}
                     </CardTitle>
                     <p>Email: {obj.email ?? "Unknown"}</p>
                     <p>Phone #: {formatPhoneNumber(obj.phone ?? "Unknown")}</p>
