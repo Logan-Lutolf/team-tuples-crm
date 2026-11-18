@@ -29,7 +29,7 @@ export function Search({placeholder}: {placeholder: string}) {
 
     return (
         <Field orientation="horizontal" className="*:data-[slot=field-label]:flex-none">
-            <FieldLabel htmlFor="search" className="whitespace-nowrap">Search Database</FieldLabel>
+            {/* <FieldLabel htmlFor="search" className="whitespace-nowrap">Search Database</FieldLabel> */}
 
             <Input
                 id="search"

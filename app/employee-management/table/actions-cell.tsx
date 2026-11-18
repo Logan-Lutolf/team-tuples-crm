@@ -57,6 +57,7 @@ export function ActionsCell({employee}: {employee: EmployeePerson}) {
                     <Dialog open={editOpen} onOpenChange={setEditOpen}>
                         <DialogContent>
                             <EditEmployeeForm
+                                id={employee.person.id}
                                 name={employee.person.name}
                                 email={employee.person.email ?? "Unknown"}
                                 roles={employee.employee.role}
