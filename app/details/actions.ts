@@ -5,6 +5,8 @@ import { db } from "@/prisma/db"
 import { cookies } from "next/headers"
 import { decrypt } from "../login/sessions"
 import { refresh } from "next/cache"
+import { BRANCH_TYPES, BranchTypes, REGION_TYPES, RegionTypes } from "../types"
+import z from "zod"
 
 
 export async function getUserRole() {
@@ -84,3 +86,65 @@ export async function updateOrganizationContactInfo(formData: FormData, id: numb
     }
 }
 
+export async function updatePersonOtherInfo(formData: FormData, id: number) {
+    const parsed = z.enum(BRANCH_TYPES).safeParse(formData.get("branch"))
+    if (!parsed.success) {
+        return { result: "error", message: "Please select a valid branch." }
+    }
+
+        try {
+            const person = await db.orm.public.Person
+                .where({id: id})
+                .update ({
+                    branchName: parsed.data,
+                })
+
+            if (person) {
+                refresh()
+                return {result: "success", message: "Updated person successfully."}
+            } 
+            else return {result: "error", message: "Update person failed."}
+        }
+        catch (error) {
+            console.log(error)
+            return {result: "Error", message: "" + error}
+        }
+}
+
+
+export async function updateOrganizationOtherInfo(formData: FormData, id: number) {
+    const parsed = z.object({
+        region: z.enum(REGION_TYPES),
+        branch: z.enum(BRANCH_TYPES),
+    }).safeParse({
+        region: formData.get("region"),
+        branch: formData.get("branch"),
+    })
+    if (!parsed.success) {
+        return { result: "error", message: "Please select a valid region and branch." }
+    }
+
+
+        try {
+            // Update organization
+            const organization = await db.orm.public.Organization
+            .where({id: id})
+            .update({
+                branchName: parsed.data.branch,
+                region: parsed.data.region,
+            })
+            
+            if (organization) {
+                refresh()
+                return {result: "success", message: "Updated organization successfully."}
+            } 
+            else return {result: "error", message: "Update organization failed."}
+
+            // Remove organization from branch (or does Prisma do this automatically?)
+        }
+        catch (error) {
+            console.log(error)
+            return {result: "Error", message: "" + error}
+        }
+    
+}
