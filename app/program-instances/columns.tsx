@@ -11,7 +11,6 @@ type Student = {
     name: string,
     dob: string,
     school: string
-    consent: string
 }
 
 const columnHelper = createColumnHelper<DataTableFeatures, Participation>()
@@ -22,7 +21,7 @@ export const columns = columnHelper.columns([
         header: "Name",
         cell: ({ row }) => <RecordLink type="participations" id={row.original.id}>{row.original.name}</RecordLink>,
     }),
-    columnHelper.accessor("schoolId", {
+    columnHelper.accessor("organizationId", {
         header: "School ID",
     }),
     columnHelper.accessor("startDate", {
@@ -42,14 +41,11 @@ export const studentColumns = columnHelperStudents.columns([
     columnHelperStudents.accessor("name", {
         header: "Student Name"
     }),
-    columnHelperStudents.accessor("school", {
-        header: "School"
-    }),
     columnHelperStudents.accessor("dob", {
         header: "Date of Birth"
     }),
-    columnHelperStudents.accessor("consent", {
-        header: "Consent Collected?",
+    columnHelperStudents.accessor("school", {
+        header: "School"
     }),
     columnHelperStudents.display({
         id: "actions",
@@ -68,9 +64,6 @@ export const getStudentCols = (onDelete: (id: string) => void) => columnHelperSt
     }),
     columnHelperStudents.accessor("dob", {
         header: "Date of Birth"
-    }),
-    columnHelperStudents.accessor("consent", {
-        header: "Consent Collected?",
     }),
     columnHelperStudents.display({
     id: "actions",
