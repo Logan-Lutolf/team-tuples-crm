@@ -8,17 +8,17 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { createContact } from "../actions_contacts"
 
 const roles = [
-  { label: "Teacher", value: "TEACHER" },
-  { label: "Principal", value: "PRINCIPAL" },
-  { label: "School Coordinator", value: "SCHOOL_COORDINATOR" },
-  { label: "Student", value: "STUDENT" },
-  { label: "Historian", value: "HISTORIAN" },
-  { label: "Government Official", value: "GOVERNMENT_OFFICIAL" },
-  { label: "Donor", value: "DONOR" },
-  { label: "Sponsor", value: "SPONSOR" },
-  { label: "Partner", value: "PARTNER" },
-  { label: "Volunteer", value: "VOLUNTEER" },
-  { label: "Other", value: "OTHER" },
+    { label: "Teacher", value: "TEACHER" },
+    { label: "Principal", value: "PRINCIPAL" },
+    { label: "School Coordinator", value: "SCHOOL_COORDINATOR" },
+    { label: "Student", value: "STUDENT" },
+    { label: "Historian", value: "HISTORIAN" },
+    { label: "Government Official", value: "GOVERNMENT_OFFICIAL" },
+    { label: "Donor", value: "DONOR" },
+    { label: "Sponsor", value: "SPONSOR" },
+    { label: "Partner", value: "PARTNER" },
+    { label: "Volunteer", value: "VOLUNTEER" },
+    { label: "Other", value: "OTHER" },
 ];
 
 
@@ -26,10 +26,10 @@ export function AddContactForm({
     branches,
     schools,
 }: {
-    branches: { id: number; name: string }[]
+    branches: { name: string }[]
     schools: { id: number; name: string }[]
 }) {   
-    const branchOptions = branches.map((branch) => ({ label: branch.name, value: String(branch.id) }))
+    const branchOptions = branches.map((branch) => ({ label: branch.name, value: branch.name }))
     const schoolOptions = schools.map((school) => ({ label: school.name, value: String(school.id) }))
 
     return (

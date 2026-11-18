@@ -6,6 +6,8 @@ import {columns as assignmentColumns } from '../columns/assignment-columns'
 import { DataTable } from '@/components/ui/data-table'
 import { ContactInformationCard } from '@/components/custom/contact-information-card'
 import { OtherInformationCard } from '@/components/custom/other-information-card'
+import { ContactInformationCardContainer } from '@/components/custom/contact-information-card-container'
+import { OtherInformationCardContainer } from '@/components/custom/other-information-card-container'
 
 
 interface PersonDetailsPageProps {
@@ -29,8 +31,8 @@ export function PersonDetailsPage({person, participations}: PersonDetailsPagePro
             
             {/* Contact and other information */}
             <div className="flex flex-row gap-4">
-                <ContactInformationCard obj={person}/>
-                <OtherInformationCard obj={person}/>
+                <ContactInformationCardContainer obj={person}/>
+                <OtherInformationCardContainer obj={person}/>
             </div>
 
             {/* Program Participations */} 

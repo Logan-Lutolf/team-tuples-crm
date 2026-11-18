@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 import "./globals.css";
 import { ToastProvider, Toaster } from "@/components/ui/toast";
@@ -33,14 +32,13 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} h-full antialiased`}>    
-      <body className="min-h-full flex">  
+      <body className="min-h-full flex bg-var(--background-primary)">  
         <ToastProvider>
           <div className="flex min-w-0 flex-1 flex-col">  
             <div className="flex flex-row justify-between">
               <Image src={"/Post_Bellum_logo.png"} alt={"Post Bellum Logo"} width={300} height={10}/>
               <TopNavbarContainer />
             </div>
-            
             {children}
             <Toaster />
           </div>
