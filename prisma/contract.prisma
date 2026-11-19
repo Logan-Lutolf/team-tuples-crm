@@ -279,7 +279,6 @@ model Person {
   // FKs
   employee        Employee?
   student         Student?
-  parent          Parent?
   organization    Organization? @relation(fields: [orgId], references: [id])
   orgId           Int?
   personRole      PersonRoles?
@@ -298,16 +297,14 @@ model Student {
   personId  Int @id 
   person   Person @relation(fields: [personId], references: [id])
 
-  parentId  Int?
-  parent   Parent? @relation(fields: [parentId], references: [personId])
+  email     String?
+  phone     String?
+
+  guardianEmail   String
+  guardianPhone   String
 }
 
-model Parent {
-  personId  Int @id 
-  person   Person @relation(fields: [personId], references: [id])
 
-  students Student[]
-}
 
 model Employee {
   personId  Int @id 

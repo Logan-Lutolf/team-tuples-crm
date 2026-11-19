@@ -36,10 +36,6 @@
       "model": "Organization",
       "namespace": "public"
     },
-    "Parent": {
-      "model": "Parent",
-      "namespace": "public"
-    },
     "Participation": {
       "model": "Participation",
       "namespace": "public"
@@ -1354,59 +1350,6 @@
               "table": "Organization"
             }
           },
-          "Parent": {
-            "fields": {
-              "personId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "person": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "personId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Person",
-                  "namespace": "public"
-                }
-              },
-              "students": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "personId"
-                  ],
-                  "targetFields": [
-                    "parentId"
-                  ]
-                },
-                "to": {
-                  "model": "Student",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "personId": {
-                  "column": "personId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "Parent"
-            }
-          },
           "Participation": {
             "fields": {
               "endDate": {
@@ -1863,22 +1806,6 @@
                 },
                 "to": {
                   "model": "Organization",
-                  "namespace": "public"
-                }
-              },
-              "parent": {
-                "cardinality": "1:1",
-                "nullable": true,
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "personId"
-                  ]
-                },
-                "to": {
-                  "model": "Parent",
                   "namespace": "public"
                 }
               },
@@ -2561,10 +2488,24 @@
           },
           "Student": {
             "fields": {
-              "parentId": {
+              "email": {
                 "nullable": true,
                 "type": {
-                  "codecId": "pg/int4@1",
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "guardianEmail": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "guardianPhone": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -2574,25 +2515,16 @@
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
+              },
+              "phone": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
               }
             },
             "relations": {
-              "parent": {
-                "cardinality": "N:1",
-                "nullable": true,
-                "on": {
-                  "localFields": [
-                    "parentId"
-                  ],
-                  "targetFields": [
-                    "personId"
-                  ]
-                },
-                "to": {
-                  "model": "Parent",
-                  "namespace": "public"
-                }
-              },
               "person": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -2612,11 +2544,20 @@
             },
             "storage": {
               "fields": {
-                "parentId": {
-                  "column": "parentId"
+                "email": {
+                  "column": "email"
+                },
+                "guardianEmail": {
+                  "column": "guardianEmail"
+                },
+                "guardianPhone": {
+                  "column": "guardianPhone"
                 },
                 "personId": {
                   "column": "personId"
+                },
+                "phone": {
+                  "column": "phone"
                 }
               },
               "namespaceId": "public",
@@ -3624,43 +3565,6 @@
               },
               "uniques": []
             },
-            "Parent": {
-              "columns": {
-                "personId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "index": {
-                    "primaryKey": true
-                  },
-                  "source": {
-                    "columns": [
-                      "personId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Parent"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Person"
-                  }
-                }
-              ],
-              "indexes": [],
-              "primaryKey": {
-                "columns": [
-                  "personId"
-                ]
-              },
-              "uniques": []
-            },
             "Participation": {
               "checks": [
                 {
@@ -4569,15 +4473,30 @@
             },
             "Student": {
               "columns": {
-                "parentId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
+                "email": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
                   "nullable": true
+                },
+                "guardianEmail": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "guardianPhone": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
                 },
                 "personId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
                   "nullable": false
+                },
+                "phone": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
                 }
               },
               "foreignKeys": [
@@ -4599,37 +4518,9 @@
                     "namespaceId": "public",
                     "tableName": "Person"
                   }
-                },
-                {
-                  "index": {
-                    "name": "Student_parentId_idx_6a68f597"
-                  },
-                  "source": {
-                    "columns": [
-                      "parentId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Student"
-                  },
-                  "target": {
-                    "columns": [
-                      "personId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "Parent"
-                  }
                 }
               ],
-              "indexes": [
-                {
-                  "columns": [
-                    "parentId"
-                  ],
-                  "name": "Student_parentId_idx_6a68f597",
-                  "prefix": "Student_parentId_idx",
-                  "unique": false
-                }
-              ],
+              "indexes": [],
               "primaryKey": {
                 "columns": [
                   "personId"
@@ -4813,7 +4704,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "733bdcbceb4ed30fd315072cf1701fcad36a71619f63792baf2f590603765559"
+    "storageHash": "07ac9e1cf689b3480432440240be97ced0482c7fda97dea8b120986576302e2b"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",
