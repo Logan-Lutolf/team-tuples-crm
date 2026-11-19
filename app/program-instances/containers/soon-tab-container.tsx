@@ -9,7 +9,7 @@ export async function SoonTabContainer() {
         try {
             const instances = await db.orm.public.Participation
             .where({programType: "STORIES_OF_OUR_NEIGHBORS"})
-            .all()
+            .all().toArray()
 
             if (instances)
                 return instances as Participation[]

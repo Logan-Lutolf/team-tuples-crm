@@ -1064,7 +1064,7 @@
           "Organization": {
             "fields": {
               "address": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "kind": "valueObject",
                   "name": "Address"
@@ -1119,7 +1119,7 @@
                 }
               },
               "region": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -1132,7 +1132,7 @@
                 }
               },
               "relationship": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -1145,7 +1145,7 @@
                 }
               },
               "type": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -1357,7 +1357,7 @@
                 }
               },
               "startDate": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
@@ -1615,7 +1615,7 @@
                 }
               },
               "dob": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/date-string@1",
                   "kind": "scalar"
@@ -2224,28 +2224,28 @@
           "Address": {
             "fields": {
               "city": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
               "country": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
               "street": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
               "zipCode": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -2951,7 +2951,7 @@
                 "address": {
                   "codecId": "pg/jsonb@1",
                   "dataType": "pg/jsonb",
-                  "nullable": false
+                  "nullable": true
                 },
                 "branchName": {
                   "codecId": "pg/text@1",
@@ -3000,7 +3000,7 @@
                 "region": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
-                  "nullable": false,
+                  "nullable": true,
                   "valueSet": {
                     "entityKind": "valueSet",
                     "entityName": "RegionTypes",
@@ -3011,7 +3011,7 @@
                 "relationship": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
-                  "nullable": false,
+                  "nullable": true,
                   "valueSet": {
                     "entityKind": "valueSet",
                     "entityName": "RelationshipTypes",
@@ -3022,7 +3022,7 @@
                 "type": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
-                  "nullable": false,
+                  "nullable": true,
                   "valueSet": {
                     "entityKind": "valueSet",
                     "entityName": "OrganizationTypes",
@@ -3168,7 +3168,7 @@
                 "startDate": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
-                  "nullable": false
+                  "nullable": true
                 },
                 "status": {
                   "codecId": "pg/text@1",
@@ -3450,7 +3450,7 @@
                 "dob": {
                   "codecId": "pg/date-string@1",
                   "dataType": "pg/date",
-                  "nullable": false
+                  "nullable": true
                 },
                 "email": {
                   "codecId": "pg/text@1",
@@ -4008,7 +4008,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "a963c2adc0c8a9524caf56945dbe9503d875b273ee2f08d1f3ce5fb35cb24997"
+    "storageHash": "96b66ffb5ca302abbe028ad20f3c2b1d96aa0be8caf0923693a02d6d330d2e14"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

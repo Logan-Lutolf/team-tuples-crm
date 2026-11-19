@@ -1,6 +1,7 @@
 import { DashboardTable } from '@/components/records/dashboard-table'
 import { PageActionLink } from '@/components/records/page-action-link'
 import { RecordLink } from '@/components/records/record-link'
+import { formatAddress } from '@/lib/utils'
 import { TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 
 import type { ContactFields } from "./contact-form-types";
@@ -33,7 +34,7 @@ export function ContactTable({
                         <TableCell>{contact.phone}</TableCell>
                         <TableCell>
                             {contact.address
-                                ? `${contact.address.street}, ${contact.address.zipCode}`
+                                ? formatAddress(contact.address)
                                 : "No address"}
                         </TableCell>
                         <TableCell><div className="flex flex-wrap items-center justify-center gap-2">

@@ -8,8 +8,8 @@ export async function TheatreTabContainer() {
     async function getSoonInstances() {
         try {
             const instances = await db.orm.public.Participation
-            .where({programType: "STORIES_OF_OUR_NEIGHBORS"})
-            .all()
+            .where({programType: "MEMORY_OF_NATIONS_THEATRE"})
+            .all().toArray()
 
             if (instances)
                 return instances as Participation[]

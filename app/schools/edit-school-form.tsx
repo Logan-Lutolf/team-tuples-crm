@@ -299,7 +299,7 @@ export function EditSchoolForm(school: EditSchoolFormProps) {
                         <Fragment key={participation.id}>
                             <TableRow>
                                 <TableCell className="font-medium">{participation.name} · <RecordLink type="programs" id={participation.programId}>{school.programs.find((program) => program.id === participation.programId)?.name ?? `Program ${participation.programId}`}</RecordLink></TableCell>
-                                <TableCell><LocalDateTime value={participation.startDate} /></TableCell>
+                                <TableCell>{participation.startDate ? <LocalDateTime value={participation.startDate} /> : 'Unknown'}</TableCell>
                                 <TableCell>{participation.endDate ? <LocalDateTime value={participation.endDate} /> : "—"}</TableCell>
                                 <TableCell><span className="rounded-md bg-muted px-2 py-1 text-xs">{participation.status.charAt(0) + participation.status.slice(1).toLowerCase()}</span></TableCell>
                                 <TableCell>

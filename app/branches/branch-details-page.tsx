@@ -145,7 +145,7 @@ export function BranchDetailsPage({ branchId, branchName, initialDetails }: { br
                         <TableHeader><TableRow><TableHead>School</TableHead><TableHead>Relationship status</TableHead></TableRow></TableHeader>
                         <TableBody>{details.schools.map(s => <TableRow key={s.id}>
                             <TableCell><RecordLink type="schools" id={s.id}>{s.name}</RecordLink></TableCell>
-                            <TableCell>{s.relationship.charAt(0) + s.relationship.slice(1).toLowerCase()}</TableCell>
+                            <TableCell>{s.relationship ? s.relationship.charAt(0) + s.relationship.slice(1).toLowerCase() : 'Unknown'}</TableCell>
                         </TableRow>)}{!details.schools.length && <TableRow><TableCell colSpan={2}>No schools assigned.</TableCell></TableRow>}</TableBody>
                     </Table>
                 </Section>

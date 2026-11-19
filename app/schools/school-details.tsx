@@ -57,10 +57,10 @@ export function SchoolDetails(school: Props) {
                     <Record label="School ID">{school.id}</Record>
                     <Record label="Email"><a href={`mailto:${school.email}`} className="underline">{school.email}</a></Record>
                     <Record label="Phone">{school.phone ? <a href={`tel:${school.phone}`}>{school.phone}</a> : '—'}</Record>
-                    <Record label="Street address">{school.address.street}</Record>
-                    <Record label="City">{school.address.city}</Record>
-                    <Record label="Postal code">{school.address.zipCode}</Record>
-                    <Record label="Country">{school.address.country}</Record>
+                    <Record label="Street address">{school.address?.street ?? '—'}</Record>
+                    <Record label="City">{school.address?.city ?? '—'}</Record>
+                    <Record label="Postal code">{school.address?.zipCode ?? '—'}</Record>
+                    <Record label="Country">{school.address?.country ?? '—'}</Record>
                     <Record label="Type">{school.type}</Record>
                     <Record label="Relationship">{school.relationship}</Record>
                     <Record label="Region">{school.region}</Record>

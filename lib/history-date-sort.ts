@@ -1,7 +1,7 @@
 export type HistoryDateField = 'startDate' | 'endDate'
 export type HistoryDateOrder = 'newest' | 'oldest'
 
-type HistoryRecord = { id: number; startDate: string; endDate: string | null }
+type HistoryRecord = { id: number; startDate: string | null; endDate: string | null }
 
 export function sortHistoryByDate<T extends HistoryRecord>(records: readonly T[], field: HistoryDateField, order: HistoryDateOrder): T[] {
     return [...records].sort((a, b) => {

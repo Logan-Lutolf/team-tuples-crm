@@ -112,13 +112,13 @@ function schoolData(form: FormData) {
         name: text(form, form.has("full-name") ? "full-name" : "name"),
         email: email(form),
         phone: text(form, "phone-num", false) || null,
-        type: choice<SchoolFields["type"]>(form, "type", [
+        type: choice<NonNullable<SchoolFields["type"]>>(form, "type", [
             "PRIMARY_SCHOOL", "SECONDARY_SCHOOL", "THEATRE", "CULTURAL",
         ]),
-        relationship: choice<SchoolFields["relationship"]>(form, "relationship", [
+        relationship: choice<NonNullable<SchoolFields["relationship"]>>(form, "relationship", [
             "POOR", "AVERAGE", "EXCELLENT",
         ]),
-        region: choice<SchoolFields["region"]>(form, "region", [
+        region: choice<NonNullable<SchoolFields["region"]>>(form, "region", [
             "PRAHA", "STŘEDOČESKÝ", "JIHOČESKÝ", "PLZEŇSKÝ", "KARLOVARSKÝ", "ÚSTECKÝ", "LIBERECKÝ",
             "KRÁLOVÉHRADECKÝ", "PARDUBICKÝ", "JIHOMORAVSKÝ", "OLOMOUCKÝ", "ZLÍNSKÝ", "MORAVSKOSLEZSKÝ", "JIHLAVA",
         ]),

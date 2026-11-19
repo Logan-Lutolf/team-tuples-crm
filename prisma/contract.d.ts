@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'a963c2adc0c8a9524caf56945dbe9503d875b273ee2f08d1f3ce5fb35cb24997'>;
+  StorageHashBase<'96b66ffb5ca302abbe028ad20f3c2b1d96aa0be8caf0923693a02d6d330d2e14'>;
 export type ExecutionHash =
   ExecutionHashBase<'14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9'>;
 export type ProfileHash =
@@ -232,16 +232,16 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
     : CodecTypes[CodecId]['json']
   : Encoded;
 export type AddressOutput = {
-  readonly city: CodecTypes['pg/text@1']['output'];
-  readonly country: CodecTypes['pg/text@1']['output'];
-  readonly street: CodecTypes['pg/text@1']['output'];
-  readonly zipCode: CodecTypes['pg/text@1']['output'];
+  readonly city: CodecTypes['pg/text@1']['output'] | null;
+  readonly country: CodecTypes['pg/text@1']['output'] | null;
+  readonly street: CodecTypes['pg/text@1']['output'] | null;
+  readonly zipCode: CodecTypes['pg/text@1']['output'] | null;
 };
 export type AddressInput = {
-  readonly city: CodecTypes['pg/text@1']['input'];
-  readonly country: CodecTypes['pg/text@1']['input'];
-  readonly street: CodecTypes['pg/text@1']['input'];
-  readonly zipCode: CodecTypes['pg/text@1']['input'];
+  readonly city: CodecTypes['pg/text@1']['input'] | null;
+  readonly country: CodecTypes['pg/text@1']['input'] | null;
+  readonly street: CodecTypes['pg/text@1']['input'] | null;
+  readonly zipCode: CodecTypes['pg/text@1']['input'] | null;
 };
 export type FieldOutputTypes = {
   readonly public: {
@@ -374,7 +374,7 @@ export type FieldOutputTypes = {
       readonly programId: CodecTypes['pg/int4@1']['output'];
     };
     readonly Organization: {
-      readonly address: AddressOutput;
+      readonly address: AddressOutput | null;
       readonly branchName:
         | 'SEVERNÍ_ČECHY'
         | 'VÝCHODNÍ_ČECHY'
@@ -405,9 +405,10 @@ export type FieldOutputTypes = {
         | 'OLOMOUCKÝ'
         | 'ZLÍNSKÝ'
         | 'MORAVSKOSLEZSKÝ'
-        | 'JIHLAVA';
-      readonly relationship: 'POOR' | 'AVERAGE' | 'EXCELLENT';
-      readonly type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL';
+        | 'JIHLAVA'
+        | null;
+      readonly relationship: 'POOR' | 'AVERAGE' | 'EXCELLENT' | null;
+      readonly type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL' | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Parent: { readonly personId: CodecTypes['pg/int4@1']['output'] };
@@ -424,7 +425,7 @@ export type FieldOutputTypes = {
         | 'SCHOOL_NETWORK'
         | 'EDUCATION_DEVELOPMENT'
         | 'WORKSHOPS';
-      readonly startDate: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly startDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
     };
     readonly ParticipationContacts: {
@@ -449,7 +450,7 @@ export type FieldOutputTypes = {
         | 'PRAHA'
         | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly dob: CodecTypes['pg/date-string@1']['output'];
+      readonly dob: CodecTypes['pg/date-string@1']['output'] | null;
       readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly lastContactedById: CodecTypes['pg/int4@1']['output'] | null;
@@ -627,7 +628,7 @@ export type FieldInputTypes = {
       readonly programId: CodecTypes['pg/int4@1']['input'];
     };
     readonly Organization: {
-      readonly address: AddressInput;
+      readonly address: AddressInput | null;
       readonly branchName:
         | 'SEVERNÍ_ČECHY'
         | 'VÝCHODNÍ_ČECHY'
@@ -658,9 +659,10 @@ export type FieldInputTypes = {
         | 'OLOMOUCKÝ'
         | 'ZLÍNSKÝ'
         | 'MORAVSKOSLEZSKÝ'
-        | 'JIHLAVA';
-      readonly relationship: 'POOR' | 'AVERAGE' | 'EXCELLENT';
-      readonly type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL';
+        | 'JIHLAVA'
+        | null;
+      readonly relationship: 'POOR' | 'AVERAGE' | 'EXCELLENT' | null;
+      readonly type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL' | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Parent: { readonly personId: CodecTypes['pg/int4@1']['input'] };
@@ -677,7 +679,7 @@ export type FieldInputTypes = {
         | 'SCHOOL_NETWORK'
         | 'EDUCATION_DEVELOPMENT'
         | 'WORKSHOPS';
-      readonly startDate: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly startDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
     };
     readonly ParticipationContacts: {
@@ -702,7 +704,7 @@ export type FieldInputTypes = {
         | 'PRAHA'
         | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly dob: CodecTypes['pg/date-string@1']['input'];
+      readonly dob: CodecTypes['pg/date-string@1']['input'] | null;
       readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly lastContactedById: CodecTypes['pg/int4@1']['input'] | null;
@@ -880,7 +882,7 @@ export type StorageColumnTypes = {
       readonly programId: CodecTypes['pg/int4@1']['output'];
     };
     readonly Organization: {
-      readonly address: CodecTypes['pg/jsonb@1']['output'];
+      readonly address: CodecTypes['pg/jsonb@1']['output'] | null;
       readonly branchName:
         | 'SEVERNÍ_ČECHY'
         | 'VÝCHODNÍ_ČECHY'
@@ -911,9 +913,10 @@ export type StorageColumnTypes = {
         | 'OLOMOUCKÝ'
         | 'ZLÍNSKÝ'
         | 'MORAVSKOSLEZSKÝ'
-        | 'JIHLAVA';
-      readonly relationship: 'POOR' | 'AVERAGE' | 'EXCELLENT';
-      readonly type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL';
+        | 'JIHLAVA'
+        | null;
+      readonly relationship: 'POOR' | 'AVERAGE' | 'EXCELLENT' | null;
+      readonly type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL' | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Parent: { readonly personId: CodecTypes['pg/int4@1']['output'] };
@@ -930,7 +933,7 @@ export type StorageColumnTypes = {
         | 'SCHOOL_NETWORK'
         | 'EDUCATION_DEVELOPMENT'
         | 'WORKSHOPS';
-      readonly startDate: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly startDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
     };
     readonly ParticipationContacts: {
@@ -955,7 +958,7 @@ export type StorageColumnTypes = {
         | 'PRAHA'
         | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly dob: CodecTypes['pg/date-string@1']['output'];
+      readonly dob: CodecTypes['pg/date-string@1']['output'] | null;
       readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly lastContactedById: CodecTypes['pg/int4@1']['output'] | null;
@@ -1133,7 +1136,7 @@ export type StorageColumnInputTypes = {
       readonly programId: CodecTypes['pg/int4@1']['input'];
     };
     readonly Organization: {
-      readonly address: CodecTypes['pg/jsonb@1']['input'];
+      readonly address: CodecTypes['pg/jsonb@1']['input'] | null;
       readonly branchName:
         | 'SEVERNÍ_ČECHY'
         | 'VÝCHODNÍ_ČECHY'
@@ -1164,9 +1167,10 @@ export type StorageColumnInputTypes = {
         | 'OLOMOUCKÝ'
         | 'ZLÍNSKÝ'
         | 'MORAVSKOSLEZSKÝ'
-        | 'JIHLAVA';
-      readonly relationship: 'POOR' | 'AVERAGE' | 'EXCELLENT';
-      readonly type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL';
+        | 'JIHLAVA'
+        | null;
+      readonly relationship: 'POOR' | 'AVERAGE' | 'EXCELLENT' | null;
+      readonly type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL' | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Parent: { readonly personId: CodecTypes['pg/int4@1']['input'] };
@@ -1183,7 +1187,7 @@ export type StorageColumnInputTypes = {
         | 'SCHOOL_NETWORK'
         | 'EDUCATION_DEVELOPMENT'
         | 'WORKSHOPS';
-      readonly startDate: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly startDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
     };
     readonly ParticipationContacts: {
@@ -1208,7 +1212,7 @@ export type StorageColumnInputTypes = {
         | 'PRAHA'
         | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly dob: CodecTypes['pg/date-string@1']['input'];
+      readonly dob: CodecTypes['pg/date-string@1']['input'] | null;
       readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly lastContactedById: CodecTypes['pg/int4@1']['input'] | null;
@@ -1408,7 +1412,7 @@ export namespace Models {
     readonly [RelationKeys]?: 'municipality' | 'program';
   };
   export type public_Organization = {
-    address: AddressOutput;
+    address: AddressOutput | null;
     branchName:
       | 'SEVERNÍ_ČECHY'
       | 'VÝCHODNÍ_ČECHY'
@@ -1439,9 +1443,10 @@ export namespace Models {
       | 'OLOMOUCKÝ'
       | 'ZLÍNSKÝ'
       | 'MORAVSKOSLEZSKÝ'
-      | 'JIHLAVA';
-    relationship: 'POOR' | 'AVERAGE' | 'EXCELLENT';
-    type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL';
+      | 'JIHLAVA'
+      | null;
+    relationship: 'POOR' | 'AVERAGE' | 'EXCELLENT' | null;
+    type: 'PRIMARY_SCHOOL' | 'SECONDARY_SCHOOL' | 'THEATRE' | 'CULTURAL' | null;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     branch: public_Branch | null;
     participations: public_Participation[];
@@ -1467,7 +1472,7 @@ export namespace Models {
       | 'SCHOOL_NETWORK'
       | 'EDUCATION_DEVELOPMENT'
       | 'WORKSHOPS';
-    startDate: CodecTypes['pg/timestamptz-string@1']['output'];
+    startDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
     employee: public_ParticipationEmployees[];
     organization: public_Organization | null;
@@ -1502,7 +1507,7 @@ export namespace Models {
       | 'PRAHA'
       | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    dob: CodecTypes['pg/date-string@1']['output'];
+    dob: CodecTypes['pg/date-string@1']['output'] | null;
     email: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
     lastContactedById: CodecTypes['pg/int4@1']['output'] | null;
@@ -2071,7 +2076,7 @@ type ContractBase = Omit<
                 readonly address: {
                   readonly dataType: 'pg/jsonb';
                   readonly codecId: 'pg/jsonb@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly branchName: {
@@ -2118,19 +2123,19 @@ type ContractBase = Omit<
                 readonly region: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly relationship: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly type: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly updatedAt: {
@@ -2237,7 +2242,7 @@ type ContractBase = Omit<
                 readonly startDate: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly status: {
@@ -2434,7 +2439,7 @@ type ContractBase = Omit<
                 readonly dob: {
                   readonly dataType: 'pg/date';
                   readonly codecId: 'pg/date-string@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly email: {
@@ -3354,7 +3359,7 @@ type ContractBase = Omit<
           readonly Organization: {
             readonly fields: {
               readonly address: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'valueObject'; readonly name: 'Address' };
               };
               readonly branchName: {
@@ -3385,15 +3390,15 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly region: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly relationship: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly type: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly updatedAt: {
@@ -3526,7 +3531,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly startDate: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: {
                   readonly kind: 'scalar';
                   readonly codecId: 'pg/timestamptz-string@1';
@@ -3699,7 +3704,7 @@ type ContractBase = Omit<
                 };
               };
               readonly dob: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
               };
               readonly email: {
@@ -4114,19 +4119,19 @@ type ContractBase = Omit<
           readonly Address: {
             readonly fields: {
               readonly city: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly country: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly street: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly zipCode: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
             };
@@ -4443,19 +4448,19 @@ type ContractBase = Omit<
     readonly Address: {
       readonly fields: {
         readonly city: {
-          readonly nullable: false;
+          readonly nullable: true;
           readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
         };
         readonly country: {
-          readonly nullable: false;
+          readonly nullable: true;
           readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
         };
         readonly street: {
-          readonly nullable: false;
+          readonly nullable: true;
           readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
         };
         readonly zipCode: {
-          readonly nullable: false;
+          readonly nullable: true;
           readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
         };
       };

@@ -2,10 +2,10 @@
 
 //---------------------------TYPES AND ENUMS---------------------------//
 type Address {
-  street  String
-  city    String
-  country String
-  zipCode String
+  street  String?
+  city    String?
+  country String?
+  zipCode String?
 }
 
 enum RegionTypes {
@@ -116,7 +116,7 @@ model Participation {
   id        Int      @id @default(autoincrement())
   name      String
   
-  startDate TimestamptzString
+  startDate TimestamptzString?
   endDate   TimestamptzString?
   status    ProgramStatus @default(PLANNED)
 
@@ -250,10 +250,10 @@ model Organization {
   name          String
   phone         String?
   email         String?
-  type          OrganizationTypes
-  region        RegionTypes
-  relationship  RelationshipTypes
-  address       Address
+  type          OrganizationTypes?
+  region        RegionTypes?
+  relationship  RelationshipTypes?
+  address       Address?
 
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
@@ -272,7 +272,7 @@ model Person {
   email   String? @unique
   phone   String?
   address Address?
-  dob     DateString
+  dob     DateString?
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
 

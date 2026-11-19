@@ -22,6 +22,8 @@
 
 # misc
 .DS_Store
+/.local/
+__pycache__/
 *.pem
 
 # debug

@@ -33,7 +33,7 @@ export function formatPhoneNumber(phone: string) {
 
 export function formatAddress(address: AddressOutput | null) {
     if (address == null) return "Unknown Address"
-    return address.street + ", " + address.city + ", " + address.zipCode + ", " + address.country
+    return [address.street, address.city, address.zipCode, address.country].filter(Boolean).join(", ") || "Unknown Address"
 }
 
 export function unformatAddress(address: string) {
@@ -47,7 +47,8 @@ export function unformatAddress(address: string) {
 }
 
 // needs fixing
-export function relationshipToColor(rel: string) {
+export function relationshipToColor(rel: string | null) {
+    if (!rel) return "gray"
     let color = ""
     switch (rel) {
         case "POOR":
@@ -63,7 +64,8 @@ export function relationshipToColor(rel: string) {
     return color
 }
 
-export function programParsing(program: string) {
+export function programParsing(program: string | null | undefined) {
+    if (!program) return "Unknown"
     const words = program.toLowerCase().split("_")
     
     let result = ""
@@ -74,7 +76,8 @@ export function programParsing(program: string) {
     return result
 }
 
-export function dateParsing(date: string) {
+export function dateParsing(date: string | null | undefined) {
+    if (!date) return "Unknown"
     date = date.substring(0, 10)
 
     return date.substring(8) + "/" + date.substring(5,7) + "/" + date.substring(0,4)
