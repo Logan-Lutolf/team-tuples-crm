@@ -50,7 +50,7 @@ export function OrganizationDetailsPage({organization, participations, contacts}
 
             {/* Program Participations */} 
             <div>
-                <span>Program Participations (MAKE THIS SCROLLABLE)</span>
+                <span>Program Participations</span>
                 <DataTable columns={participationColumns} data={participations} paginationEnabled={false} visibleRows={5}/>  
             </div>
 

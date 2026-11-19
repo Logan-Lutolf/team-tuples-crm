@@ -64,7 +64,7 @@ export const studentColumns = columnHelperStudents.columns([
     
 ])
 
-export const getStudentCols = (onDelete: (id: string) => void) => columnHelperStudents.columns([
+export const getStudentCols = (onDelete: (index: number) => void) => columnHelperStudents.columns([
     columnHelperStudents.accessor("name", {
         header: "Student Name"
     }),
@@ -82,7 +82,7 @@ export const getStudentCols = (onDelete: (id: string) => void) => columnHelperSt
             variant="ghost"
             size="icon"
             aria-label="Remove student"
-            onClick={() => onDelete(row.original.name)}
+            onClick={() => onDelete(row.index)}
         >
             <X className="h-4 w-4" color="var(--destructive)" />
         </Button>

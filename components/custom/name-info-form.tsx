@@ -1,12 +1,12 @@
 "use client"
 
-import { PersonWithRole } from "@/app/types";
+import { CONTACT_TYPES, PersonWithRole } from "@/app/types";
 import { Pencil, Save, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Field } from "../ui/field";
-import { SelectPersonRole } from "../custom-dropdowns";
+import { CustomSelect } from "../custom-dropdowns";
 import { updateNameAndRole } from "@/app/actions/person";
 import { showToast } from "@/lib/utils";
 
@@ -57,7 +57,7 @@ export function PersonNameAndRole({person, editPermission} : PersonNameAndRolePr
                         <Button size="sm" variant="destructive" onClick={handleEdit}><X/></Button>
                     </div>
                 </div>
-                <p className="text-base font-light italic"><SelectPersonRole /></p>
+                <p className="text-base font-light italic"><CustomSelect name={"role"} type={CONTACT_TYPES} /></p>
             </form>
         )
     }

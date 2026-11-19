@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 import { Pencil, Save, X } from "lucide-react";
 import { Field } from "../ui/field";
 import { Input } from "../ui/input";
-import { SelectBranch, SelectRegion } from "../custom-dropdowns";
+import { CustomSelect } from "../custom-dropdowns";
 import { z } from 'zod'
 
 
@@ -61,11 +61,11 @@ export function OtherInformationCard({obj, editPermissions} : OtherInformationCa
                         
                     </CardTitle>
                         <Field className="flex flex-row gap-2 justify-start">
-                            <SelectBranch/>
+                            <CustomSelect name="branch" type={BRANCH_TYPES}/>
                         </Field>
                         {"region" in obj && 
                             <Field>
-                                <SelectRegion/>
+                                <CustomSelect name="region" type={REGION_TYPES}/>
                             </Field>
                         }
                         <p>Created: {dateParsing(obj.createdAt)}</p>
@@ -81,7 +81,7 @@ export function OtherInformationCard({obj, editPermissions} : OtherInformationCa
                 <CardContent>
                     <div className="flex flex-row justify-between items-center">
                         <CardTitle>Other Information</CardTitle>
-                        {editPermissions && <Button onClick={() => setEditing(!editing)}><Pencil/></Button>}
+                        {editPermissions && <Button size="sm" onClick={() => setEditing(!editing)}><Pencil/></Button>}
                     </div>
                     <p>Branch Assigned: {obj.branchName}</p>
                     {"region" in obj && <p>Region: {programParsing(obj.region)}</p>}

@@ -34,7 +34,7 @@ export default async function EmployeeManagementPage(
 
     return (
         <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
-            <PageActionLink href="/create/schools" fullWidth>Add a School</PageActionLink>
+            <PageActionLink href="/create/schools" fullWidth>Add an Organization</PageActionLink>
 
             <Search placeholder={""}/>
 
