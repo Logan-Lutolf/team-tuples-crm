@@ -54,6 +54,10 @@ export function TopNavbar({employee, person}: TopNavbarProps) {
         <NavigationMenuItem>
           <NavigationMenuLink href="/employee-management">Employees</NavigationMenuLink>
         </NavigationMenuItem>
+        
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/program-instances">Participations</NavigationMenuLink>
+        </NavigationMenuItem>
 
         <NavigationMenuItem>
           <NavigationMenuTrigger className="cursor-pointer">

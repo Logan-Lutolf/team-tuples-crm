@@ -6,7 +6,7 @@ import type { Models } from "@/prisma/contract";
 import type { Scalars } from "@prisma/orm-postgres/components";
 
 
-type School = Scalars<Models.public_School>
+type School = Scalars<Models.public_Organization>
 export function SchoolTable({ data }: { data: School[] }) {
     return(
         <DashboardTable>
