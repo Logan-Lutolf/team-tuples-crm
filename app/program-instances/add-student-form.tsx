@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { showToast } from "@/lib/utils";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { DataTable } from "@/components/ui/data-table";
-import { studentColumns } from "./columns";
+import { getStudentCols, studentColumns } from "./columns";
+import { CustomSelect } from "@/components/custom-dropdowns";
+import { BRANCH_TYPES, CONTACT_TYPES } from "../types";
 
 type Student = {
     name: string,
@@ -21,6 +23,12 @@ interface AddStudentFormProps {
 
 
 export function AddStudentForm({students, setStudents} : AddStudentFormProps) {
+    const cols = useMemo(
+        () => getStudentCols((index) =>
+            setStudents(prev => prev.filter((_, i) => i !== index))
+        ),
+        [setStudents])
+
 
     async function handleSubmit(formData: FormData) {
         const name = formData.get("name") as string
@@ -40,6 +48,9 @@ export function AddStudentForm({students, setStudents} : AddStudentFormProps) {
                     />
                 </Field>
                 <Field>
+                    <CustomSelect name="occupation" type={CONTACT_TYPES} />
+                </Field>
+                <Field>
                     <Input 
                         name="dob"
                         type="date"
@@ -55,7 +66,7 @@ export function AddStudentForm({students, setStudents} : AddStudentFormProps) {
                 <Button type="submit">+Add to List</Button>
             </form>
             <div className="w-2/3">
-                <DataTable columns={studentColumns} data={students} paginationEnabled={false} visibleRows={3}/>
+                <DataTable columns={cols} data={students} paginationEnabled={false} visibleRows={3}/>
             </div>
             
         </div>
