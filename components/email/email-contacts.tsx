@@ -84,7 +84,6 @@ export function EmailContacts({ contacts, segments, trackingAddress, trackingCon
             <h2 className="text-lg font-semibold">Track emails with CC</h2>
             <p>CC this address when emailing contacts so the CRM can record when they were contacted.</p>
             <div className="flex flex-wrap items-center gap-3"><code className="break-all">{trackingAddress}</code><Button variant="outline" disabled={!trackingConfigured} onClick={() => copy(trackingAddress, 'Tracking address copied.')}><Copy className="size-4" />Copy CC address</Button></div>
-            {!trackingConfigured && <p role="status">Placeholder / setup incomplete. Post Bellum IT must configure a real mailbox and connect its inbound messages before tracking works.</p>}
         </section>
         {notice && <p role="status" aria-live="polite">{notice}</p>}
         {error && <p role="alert" className="text-destructive">{error}</p>}

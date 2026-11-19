@@ -10,7 +10,7 @@ export const currentEmployee = cache(async () => {
     if (!session) return null
     const payload = await decrypt(session)
     if (!payload || !Number.isSafeInteger(payload.userId) || payload.userId <= 0) return null
-    const employee = await db.orm.public.Employee.where({ id: payload.userId }).select('id', 'name', 'roles').first()
+    const employee = await db.orm.public.Employee.where({ id: payload.userId }).select('id', 'name', 'email', 'roles').first()
     if (!employee) return null
     const assignments = await db.orm.public.EmployeeAssignment.where({ employeeId: employee.id }).select('role').all().toArray()
     return { ...employee, roles: [...new Set([...employee.roles, ...assignments.map(a => a.role)])] }

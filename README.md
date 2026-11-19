@@ -2,6 +2,22 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Dashboard contact recommendations
+
+Signed-in employees see four recommendation lists. Recent activity uses logged
+interactions, verified tracked email, and participations from the past 30 days,
+plus ongoing participations. Reconnect lists use the latest recorded outreach
+across the team and prioritize the longest gaps after 90 days. The person
+reconnect list requires a current school or organization link.
+
+Eva's existing CRM account sees non-school groups, such as Divadlo Paměti národa,
+using programs with school-free participations and the contacts linked to those
+participations. Other accounts see schools and contacts. **Who to contact**
+shows up to three linked contacts per school or organization and prioritizes
+teachers, principals, and school coordinators.
+
+
+
 ### Email contacts and segments
 
 The **Email** navigation page filters contacts, copies all matching email addresses,

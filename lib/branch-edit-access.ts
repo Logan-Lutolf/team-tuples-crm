@@ -6,9 +6,11 @@ type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0]
 type Actor = { id: number; roles: readonly string[] } | null
 export type BranchEditRequest = { type: 'Contact' | 'School'; id: number; destinationBranchId?: number | null; schoolId?: number | null }
 
+export const EVA_EMAIL = 'eva.mikulaskova@postbellum.cz'
+
 export async function branchEditScope(actor: Actor, client: Pick<typeof db, 'orm'> = db): Promise<BranchEditScope> {
     if (!actor) return { restricted: true, branchIds: [] }
-    const eva = await client.orm.public.Employee.where({ email: 'eva.mikulaskova@postbellum.cz' }).select('id').first()
+    const eva = await client.orm.public.Employee.where({ email: EVA_EMAIL }).select('id').first()
     if (!eva) return { restricted: false, branchIds: [] }
     const branches = await client.orm.public.Branch.where({ chiefId: eva.id, name: 'SIX' }).select('id').all().toArray()
     const assignments = await client.orm.public.EmployeeAssignment.where({ employeeId: actor.id }).select('branchId').all().toArray()
