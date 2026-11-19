@@ -9,6 +9,7 @@ import { Dialog, DialogTrigger } from "./ui/dialog"
 import { SettingsDialog } from "./custom/settings-dialog"
 import { nameInitials } from "@/lib/utils"
 import { Employee, Person } from "@/app/types"
+import { canUseEmailContacts } from '@/lib/email-contacts'
 
 const links = [
   { href: "/employee-management", label: "Employees" },
@@ -54,6 +55,14 @@ export function TopNavbar({employee, person}: TopNavbarProps) {
         <NavigationMenuItem>
           <NavigationMenuLink href="/employee-management">Employees</NavigationMenuLink>
         </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/recommendations">Recommendations</NavigationMenuLink>
+        </NavigationMenuItem>
+
+        {canUseEmailContacts(employee.role) && <NavigationMenuItem>
+          <NavigationMenuLink href="/email">SmartEmailing / CC tracking</NavigationMenuLink>
+        </NavigationMenuItem>}
 
         <NavigationMenuItem>
           <NavigationMenuTrigger className="cursor-pointer">

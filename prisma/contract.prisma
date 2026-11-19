@@ -290,6 +290,8 @@ model Person {
   lastContactedById     Int?
   lastContactedBy       Employee? @relation(fields: [lastContactedById], references: [personId])
   lastContactedDate     DateString?
+  // Verified CC tracking is separate from newsletter activity and manual contact dates.
+  lastTrackedEmailAt    TimestamptzString?
 }
 
 model Student {
@@ -336,4 +338,69 @@ model PersonRoles {
   personId  Int @id
   person    Person @relation(fields: [personId], references: [id])
   type      ContactTypes
+}
+
+// Private snapshots use Employee.personId as their owner, not an ID supplied by a browser.
+model EmailSegment {
+  id Int @id @default(autoincrement())
+  name String
+  createdById Int
+  filtersJson String
+  contactsJson String
+  contactCount Int
+  createdAt TimestamptzString @default(now())
+
+  @@index([createdById, id])
+}
+
+// Original Message-ID prevents mailbox retries from duplicating interactions.
+model TrackedEmail {
+  id String @id
+  fingerprint String
+  fromEmail String
+  contactedAt TimestamptzString
+  recipientEmails String
+  matchedContactCount Int
+  receivedAt TimestamptzString @default(now())
+}
+
+model SmartEmailContact {
+  id Int @id
+  email String
+  listsJson String
+  hardBounced Boolean
+  softBounces Int
+  blacklisted Boolean
+  syncedAt TimestamptzString
+
+  @@index([email])
+}
+
+// Provider activity is stored separately from staff interactions.
+model SmartEmailEvent {
+  id String @id
+  email String
+  messageId String
+  type String
+  occurredAt TimestamptzString
+  campaignName String
+  subject String
+  campaignType String
+  detailsJson String
+
+  @@index([email, type, occurredAt])
+  @@index([email, messageId])
+}
+
+model SmartEmailSync {
+  id String @id
+  streamId String
+  contactOffset Int @default(0)
+  contactsStartedAt TimestamptzString?
+  contactsSyncedAt TimestamptzString?
+  eventsSyncedAt TimestamptzString?
+  lastAttemptAt TimestamptzString?
+  lastError String?
+  lockToken String?
+  lockUntil TimestamptzString?
 }

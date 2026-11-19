@@ -10,6 +10,7 @@ import { ContactInformationCardContainer } from '@/components/custom/contact-inf
 import { OtherInformationCardContainer } from '@/components/custom/other-information-card-container'
 import { PersonNameAndRole } from '@/components/custom/name-info-form'
 import { NameInfoContainer } from '@/components/custom/name-info-container'
+import { PersonEmailHistory } from '@/components/email/person-email-history'
 
 
 interface PersonDetailsPageProps {
@@ -42,6 +43,7 @@ export function PersonDetailsPage({person, participations}: PersonDetailsPagePro
             <div>
                 <span>Contact History</span>
             </div>
+            <PersonEmailHistory email={person.email} lastTrackedEmailAt={person.lastTrackedEmailAt} />
         </div>
     )
 }

@@ -8,6 +8,10 @@
       "model": "Branch",
       "namespace": "public"
     },
+    "EmailSegment": {
+      "model": "EmailSegment",
+      "namespace": "public"
+    },
     "Employee": {
       "model": "Employee",
       "namespace": "public"
@@ -64,8 +68,24 @@
       "model": "Program",
       "namespace": "public"
     },
+    "SmartEmailContact": {
+      "model": "SmartEmailContact",
+      "namespace": "public"
+    },
+    "SmartEmailEvent": {
+      "model": "SmartEmailEvent",
+      "namespace": "public"
+    },
+    "SmartEmailSync": {
+      "model": "SmartEmailSync",
+      "namespace": "public"
+    },
     "Student": {
       "model": "Student",
+      "namespace": "public"
+    },
+    "TrackedEmail": {
+      "model": "TrackedEmail",
       "namespace": "public"
     }
   },
@@ -516,6 +536,87 @@
               },
               "namespaceId": "public",
               "table": "Branch"
+            }
+          },
+          "EmailSegment": {
+            "fields": {
+              "contactCount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "contactsJson": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdById": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "filtersJson": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "contactCount": {
+                  "column": "contactCount"
+                },
+                "contactsJson": {
+                  "column": "contactsJson"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "createdById": {
+                  "column": "createdById"
+                },
+                "filtersJson": {
+                  "column": "filtersJson"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "name": {
+                  "column": "name"
+                }
+              },
+              "namespaceId": "public",
+              "table": "EmailSegment"
             }
           },
           "Employee": {
@@ -1649,6 +1750,13 @@
                   "kind": "scalar"
                 }
               },
+              "lastTrackedEmailAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "name": {
                 "nullable": false,
                 "type": {
@@ -1847,6 +1955,9 @@
                 },
                 "lastContactedDate": {
                   "column": "lastContactedDate"
+                },
+                "lastTrackedEmailAt": {
+                  "column": "lastTrackedEmailAt"
                 },
                 "name": {
                   "column": "name"
@@ -2155,6 +2266,299 @@
               "table": "Program"
             }
           },
+          "SmartEmailContact": {
+            "fields": {
+              "blacklisted": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "email": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "hardBounced": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "listsJson": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "softBounces": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "syncedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "blacklisted": {
+                  "column": "blacklisted"
+                },
+                "email": {
+                  "column": "email"
+                },
+                "hardBounced": {
+                  "column": "hardBounced"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "listsJson": {
+                  "column": "listsJson"
+                },
+                "softBounces": {
+                  "column": "softBounces"
+                },
+                "syncedAt": {
+                  "column": "syncedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "SmartEmailContact"
+            }
+          },
+          "SmartEmailEvent": {
+            "fields": {
+              "campaignName": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "campaignType": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "detailsJson": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "email": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "messageId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "occurredAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "subject": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "campaignName": {
+                  "column": "campaignName"
+                },
+                "campaignType": {
+                  "column": "campaignType"
+                },
+                "detailsJson": {
+                  "column": "detailsJson"
+                },
+                "email": {
+                  "column": "email"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "messageId": {
+                  "column": "messageId"
+                },
+                "occurredAt": {
+                  "column": "occurredAt"
+                },
+                "subject": {
+                  "column": "subject"
+                },
+                "type": {
+                  "column": "type"
+                }
+              },
+              "namespaceId": "public",
+              "table": "SmartEmailEvent"
+            }
+          },
+          "SmartEmailSync": {
+            "fields": {
+              "contactOffset": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "contactsStartedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "contactsSyncedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "eventsSyncedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "lastAttemptAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "lastError": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "lockToken": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "lockUntil": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "streamId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "contactOffset": {
+                  "column": "contactOffset"
+                },
+                "contactsStartedAt": {
+                  "column": "contactsStartedAt"
+                },
+                "contactsSyncedAt": {
+                  "column": "contactsSyncedAt"
+                },
+                "eventsSyncedAt": {
+                  "column": "eventsSyncedAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "lastAttemptAt": {
+                  "column": "lastAttemptAt"
+                },
+                "lastError": {
+                  "column": "lastError"
+                },
+                "lockToken": {
+                  "column": "lockToken"
+                },
+                "lockUntil": {
+                  "column": "lockUntil"
+                },
+                "streamId": {
+                  "column": "streamId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "SmartEmailSync"
+            }
+          },
           "Student": {
             "fields": {
               "parentId": {
@@ -2217,6 +2621,87 @@
               },
               "namespaceId": "public",
               "table": "Student"
+            }
+          },
+          "TrackedEmail": {
+            "fields": {
+              "contactedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "fingerprint": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "fromEmail": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "matchedContactCount": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "receivedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "recipientEmails": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "contactedAt": {
+                  "column": "contactedAt"
+                },
+                "fingerprint": {
+                  "column": "fingerprint"
+                },
+                "fromEmail": {
+                  "column": "fromEmail"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "matchedContactCount": {
+                  "column": "matchedContactCount"
+                },
+                "receivedAt": {
+                  "column": "receivedAt"
+                },
+                "recipientEmails": {
+                  "column": "recipientEmails"
+                }
+              },
+              "namespaceId": "public",
+              "table": "TrackedEmail"
             }
           }
         },
@@ -2344,6 +2829,71 @@
               "primaryKey": {
                 "columns": [
                   "name"
+                ]
+              },
+              "uniques": []
+            },
+            "EmailSegment": {
+              "columns": {
+                "contactCount": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "contactsJson": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "createdById": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "filtersJson": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": [
+                    "createdById",
+                    "id"
+                  ],
+                  "name": "EmailSegment_createdById_id_idx_2b066c09",
+                  "prefix": "EmailSegment_createdById_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
                 ]
               },
               "uniques": []
@@ -3476,6 +4026,11 @@
                   "dataType": "pg/date",
                   "nullable": true
                 },
+                "lastTrackedEmailAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
                 "name": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -3813,6 +4368,205 @@
               },
               "uniques": []
             },
+            "SmartEmailContact": {
+              "columns": {
+                "blacklisted": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "nullable": false
+                },
+                "email": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "hardBounced": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "listsJson": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "softBounces": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "syncedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": [
+                    "email"
+                  ],
+                  "name": "SmartEmailContact_email_idx_46df9cad",
+                  "prefix": "SmartEmailContact_email_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "SmartEmailEvent": {
+              "columns": {
+                "campaignName": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "campaignType": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "detailsJson": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "email": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "messageId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "occurredAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "subject": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": [
+                    "email",
+                    "messageId"
+                  ],
+                  "name": "SmartEmailEvent_email_messageId_idx_73ce93f2",
+                  "prefix": "SmartEmailEvent_email_messageId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "email",
+                    "type",
+                    "occurredAt"
+                  ],
+                  "name": "SmartEmailEvent_email_type_occurredAt_idx_77c7bb33",
+                  "prefix": "SmartEmailEvent_email_type_occurredAt_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "SmartEmailSync": {
+              "columns": {
+                "contactOffset": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nullable": false
+                },
+                "contactsStartedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "contactsSyncedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "eventsSyncedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "lastAttemptAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "lastError": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "lockToken": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "lockUntil": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "streamId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Student": {
               "columns": {
                 "parentId": {
@@ -3879,6 +4633,57 @@
               "primaryKey": {
                 "columns": [
                   "personId"
+                ]
+              },
+              "uniques": []
+            },
+            "TrackedEmail": {
+              "columns": {
+                "contactedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "fingerprint": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "fromEmail": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "matchedContactCount": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "receivedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "recipientEmails": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
                 ]
               },
               "uniques": []
@@ -4008,7 +4813,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "96b66ffb5ca302abbe028ad20f3c2b1d96aa0be8caf0923693a02d6d330d2e14"
+    "storageHash": "733bdcbceb4ed30fd315072cf1701fcad36a71619f63792baf2f590603765559"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

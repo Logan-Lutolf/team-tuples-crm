@@ -1,0 +1,349 @@
+diff --git master/app/email/page.tsx edit-details2/app/email/page.tsx
+index 3d288f4..8e1e2c2 100644
+--- master/app/email/page.tsx
++++ edit-details2/app/email/page.tsx
+@@ -16,7 +16,7 @@ export default async function EmailPage() {
+     ])
+     const tracking = emailTrackingSettings()
+     return <article className="m-6 grid min-w-0 gap-6 lg:m-10">
+-        <h1 className="text-2xl font-semibold">Smart emailing</h1>
++        <h1 className="text-2xl font-semibold">SmartEmailing / CC tracking</h1>
+         <EmailContacts contacts={contacts} segments={segments} trackingAddress={tracking.mailbox} trackingConfigured={tracking.configured} />
+     </article>
+ }
+diff --git master/components/email/email-contacts.tsx edit-details2/components/email/email-contacts.tsx
+index 6bfb78c..d6a397f 100644
+--- master/components/email/email-contacts.tsx
++++ edit-details2/components/email/email-contacts.tsx
+@@ -96,7 +96,7 @@ export function EmailContacts({ contacts, segments, trackingAddress, trackingCon
+                         <label className="grid gap-2 text-sm">Name<Input type="search" maxLength={200} value={filters.name} onChange={e => changeFilter('name', e.target.value)} /></label>
+                         <label className="grid gap-2 text-sm">Email<Input type="search" maxLength={200} value={filters.email} onChange={e => changeFilter('email', e.target.value)} /></label>
+                         <label className="grid gap-2 text-sm">Contact role<select className={selectClass} value={filters.role} onChange={e => changeFilter('role', e.target.value)}><option value="">All roles</option>{roles.map(role => <option key={role} value={role}>{role.replaceAll('_', ' ')}</option>)}</select></label>
+-                        <label className="grid gap-2 text-sm">School<select className={selectClass} value={filters.school} onChange={e => changeFilter('school', e.target.value)}><option value="">All schools</option><option value="none">No school assigned</option>{schools.map(([id, name]) => <option key={id} value={String(id)}>{name || 'Unnamed school'}</option>)}</select></label>
++                        <label className="grid gap-2 text-sm">School / organization<select className={selectClass} value={filters.school} onChange={e => changeFilter('school', e.target.value)}><option value="">All organizations</option><option value="none">No organization assigned</option>{schools.map(([id, name]) => <option key={id} value={String(id)}>{name || 'Unnamed organization'}</option>)}</select></label>
+                         <label className="grid gap-2 text-sm">Branch<select className={selectClass} value={filters.branch} onChange={e => changeFilter('branch', e.target.value)}><option value="">All branches</option><option value="none">No branch assigned</option>{branches.map(([id, name]) => <option key={id} value={String(id)}>{name || 'Unnamed branch'}</option>)}</select></label>
+                         <label className="grid gap-2 text-sm">Region<select className={selectClass} value={filters.region} onChange={e => changeFilter('region', e.target.value)}><option value="">All regions</option>{regions.map(region => <option key={region} value={region}>{region}</option>)}</select></label>
+                         <label className="grid gap-2 text-sm">Last email (CC or newsletter)<select className={selectClass} value={filters.lastEmail} onChange={e => changeFilter('lastEmail', e.target.value as ContactFilters['lastEmail'])}><option value="any">Any</option><option value="never">Never tracked</option><option value="contacted">Has a tracked email</option></select></label>
+diff --git master/lib/current-employee.ts edit-details2/lib/current-employee.ts
+index d36c994..31ae453 100644
+--- master/lib/current-employee.ts
++++ edit-details2/lib/current-employee.ts
+@@ -10,8 +10,11 @@ export const currentEmployee = cache(async () => {
+     if (!session) return null
+     const payload = await decrypt(session)
+     if (!payload || !Number.isSafeInteger(payload.userId) || payload.userId <= 0) return null
+-    const employee = await db.orm.public.Employee.where({ id: payload.userId }).select('id', 'name', 'email', 'roles').first()
+-    if (!employee) return null
+-    const assignments = await db.orm.public.EmployeeAssignment.where({ employeeId: employee.id }).select('role').all().toArray()
+-    return { ...employee, roles: [...new Set([...employee.roles, ...assignments.map(a => a.role)])] }
++    const [employee, person] = await Promise.all([
++        db.orm.public.Employee.where({ personId: payload.userId }).select('personId', 'role').first(),
++        db.orm.public.Person.where({ id: payload.userId }).select('id', 'name', 'email').first(),
++    ])
++    if (!employee || !person) return null
++    // Global page access uses Employee.role. A scoped assignment must not grant global access.
++    return { id: employee.personId, name: person.name, email: person.email ?? '', roles: employee.role }
+ })
+diff --git master/lib/email-contacts-server.ts edit-details2/lib/email-contacts-server.ts
+index f6fbf2d..da0da41 100644
+--- master/lib/email-contacts-server.ts
++++ edit-details2/lib/email-contacts-server.ts
+@@ -5,28 +5,29 @@ import { canUseEmailContacts, type SmartCampaignActivity, type SmartEmailFilters
+ 
+ export async function requireEmailAccess() {
+     const employee = await currentEmployee()
+-    if (!employee || !canUseEmailContacts(employee.roles)) throw new Error('Only administrators, coordinators and marketers can use email contacts.')
++    if (!employee || !canUseEmailContacts(employee.roles)) throw new Error('Only administrators and coordinators can use email contacts.')
+     return employee
+ }
+ 
+ export async function loadEmailContacts(): Promise<EmailContact[]> {
+-    const [contacts, schools, branches, activity, profiles] = await Promise.all([
+-        db.orm.public.Contact.select('id', 'name', 'email', 'contactRole', 'schoolId', 'branchId', 'region', 'lastTrackedEmailAt').orderBy(c => c.name.asc()).all().toArray(),
+-        db.orm.public.School.select('id', 'name').all().toArray(),
+-        db.orm.public.Branch.select('id', 'name').all().toArray(),
++    const [contacts, organizations, branches, roles, activity, profiles] = await Promise.all([
++        db.orm.public.Person.select('id', 'name', 'email', 'orgId', 'branchName', 'lastTrackedEmailAt').orderBy(c => c.name.asc()).all().toArray(),
++        db.orm.public.Organization.select('id', 'name', 'region').all().toArray(),
++        db.orm.public.Branch.select('name', 'region').all().toArray(),
++        db.orm.public.PersonRoles.all().toArray(),
+         db.runtime().query(db.raw.sql`SELECT e.email, e."campaignName" AS name,
+             max(e."occurredAt") FILTER (WHERE e.type = 'email.delivered')::text AS delivered,
+             COALESCE(jsonb_agg(DISTINCT to_char(e."occurredAt" AT TIME ZONE 'Europe/Prague', 'YYYY-MM-DD')) FILTER (WHERE e.type = 'email.opened'), '[]'::jsonb)::text AS opens,
+             COALESCE(jsonb_agg(DISTINCT to_char(e."occurredAt" AT TIME ZONE 'Europe/Prague', 'YYYY-MM-DD')) FILTER (WHERE e.type = 'email.clicked'), '[]'::jsonb)::text AS clicks
+             FROM public."SmartEmailEvent" e
+             WHERE e.type IN ('email.delivered', 'email.opened', 'email.clicked')
+-              AND EXISTS (SELECT 1 FROM public."Contact" c WHERE lower(trim(c.email)) = e.email)
++              AND EXISTS (SELECT 1 FROM public."Person" c WHERE lower(trim(c.email)) = e.email)
+             GROUP BY e.email, e."campaignName"`
+             .returnsRow({ email: { codecId: 'pg/text@1' }, name: { codecId: 'pg/text@1' }, delivered: { codecId: 'pg/text@1' }, opens: { codecId: 'pg/text@1' }, clicks: { codecId: 'pg/text@1' } }).build()),
+         db.runtime().query(db.raw.sql`SELECT p.email, p."listsJson" AS lists, p.blacklisted, p."hardBounced" AS hard, p."softBounces" AS soft
+             FROM public."SmartEmailContact" p JOIN public."SmartEmailSync" s ON s.id = 'smartemailing'
+             WHERE p."syncedAt" >= s."contactsSyncedAt"
+-              AND EXISTS (SELECT 1 FROM public."Contact" c WHERE lower(trim(c.email)) = p.email)
++              AND EXISTS (SELECT 1 FROM public."Person" c WHERE lower(trim(c.email)) = p.email)
+             ORDER BY p."syncedAt" DESC`
+             .returnsRow({ email: { codecId: 'pg/text@1' }, lists: { codecId: 'pg/text@1' }, blacklisted: { codecId: 'pg/bool@1' }, hard: { codecId: 'pg/bool@1' }, soft: { codecId: 'pg/int4@1' } }).build()),
+     ])
+@@ -42,15 +43,18 @@ export async function loadEmailContacts(): Promise<EmailContact[]> {
+     for (const row of profiles) {
+         if (!profilesByEmail.has(row.email)) profilesByEmail.set(row.email, { lists: JSON.parse(row.lists), blacklisted: row.blacklisted, hardBounced: row.hard, softBounces: row.soft })
+     }
+-    const schoolNames = new Map(schools.map(s => [s.id, s.name]))
+-    const branchNames = new Map(branches.map(b => [b.id, b.name]))
++    const organizationById = new Map(organizations.map(o => [o.id, o]))
++    const branchByName = new Map(branches.map(b => [b.name, b]))
++    const roleByPerson = new Map(roles.map(r => [r.personId, r.type]))
++    // Keep master's UI snapshot keys; schoolId now identifies an Organization and branchId a branch name.
+     return contacts.map(contact => ({
+-        id: contact.id, name: contact.name, email: contact.email, role: contact.contactRole,
+-        schoolId: contact.schoolId, school: schoolNames.get(contact.schoolId ?? -1) ?? '',
+-        branchId: contact.branchId, branch: branchNames.get(contact.branchId ?? -1) ?? '',
+-        region: contact.region, lastTrackedEmailAt: contact.lastTrackedEmailAt,
+-        smartEmailingLastDeliveredAt: deliveryDates.get(contact.email.trim().toLowerCase()) ?? null,
+-        smartEmailing: profilesByEmail.get(contact.email.trim().toLowerCase()) ?? null,
+-        smartCampaigns: campaignsByEmail.get(contact.email.trim().toLowerCase()) ?? [],
++        id: contact.id, name: contact.name, email: contact.email ?? '', role: roleByPerson.get(contact.id) ?? 'OTHER',
++        schoolId: contact.orgId, school: organizationById.get(contact.orgId ?? -1)?.name ?? '',
++        branchId: contact.branchName, branch: contact.branchName ?? '',
++        region: organizationById.get(contact.orgId ?? -1)?.region ?? (contact.branchName ? branchByName.get(contact.branchName)?.region : null) ?? null,
++        lastTrackedEmailAt: contact.lastTrackedEmailAt,
++        smartEmailingLastDeliveredAt: deliveryDates.get(contact.email?.trim().toLowerCase() ?? '') ?? null,
++        smartEmailing: profilesByEmail.get(contact.email?.trim().toLowerCase() ?? '') ?? null,
++        smartCampaigns: campaignsByEmail.get(contact.email?.trim().toLowerCase() ?? '') ?? [],
+     }))
+ }
+diff --git master/lib/email-contacts.ts edit-details2/lib/email-contacts.ts
+index db72bc5..9721951 100644
+--- master/lib/email-contacts.ts
++++ edit-details2/lib/email-contacts.ts
+@@ -8,7 +8,7 @@ export type SmartCampaignActivity = { name: string; deliveredAt: string | null;
+ export type EmailContact = {
+     id: number; name: string; email: string; role: string
+     schoolId: number | null; school: string
+-    branchId: number | null; branch: string; region: string | null
++    branchId: string | null; branch: string; region: string | null
+     lastTrackedEmailAt: string | null
+     smartEmailingLastDeliveredAt?: string | null
+     smartEmailing?: SmartEmailFiltersData | null
+@@ -29,7 +29,7 @@ export type SegmentSummary = { id: number; name: string; contactCount: number; c
+ export type SavedSegment = SegmentSummary & { contacts: EmailContact[]; filters: ContactFilters }
+ 
+ export function canUseEmailContacts(roles: readonly string[]) {
+-    return roles.some(role => role === 'ADMIN' || role === 'MARKETER' || role.includes('COORDINATOR'))
++    return roles.some(role => role === 'ADMIN' || role === 'COORDINATOR' || role.endsWith('_COORDINATOR'))
+ }
+ 
+ export function validEmail(value: string) {
+diff --git master/lib/email-tracking.ts edit-details2/lib/email-tracking.ts
+index bc8dfbb..9cbedf5 100644
+--- master/lib/email-tracking.ts
++++ edit-details2/lib/email-tracking.ts
+@@ -1,7 +1,7 @@
+ import 'server-only'
+ import { or } from '@prisma/orm-postgres/orm-client'
+ import { db } from '@/prisma/db'
+-import { validEmail } from '@/lib/email-contacts'
++import { emailDate, validEmail } from '@/lib/email-contacts'
+ import { EmailTrackingError, type TrackedEmailInput } from '@/lib/email-tracking-input'
+ 
+ type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0]
+@@ -17,7 +17,12 @@ export function emailTrackingSettings() {
+ }
+ 
+ export async function recordTrackedEmail(tx: Transaction, email: TrackedEmailInput, allowedSenders: readonly string[]) {
+-    const employees = await tx.orm.public.Employee.where(e => e.email.ilike(escapeLike(email.from))).select('id', 'name').limit(2).all().toArray()
++    // Email/name live on Person; only people with an Employee row are staff senders.
++    const senders = await tx.orm.public.Person.where(p => p.email.ilike(escapeLike(email.from))).select('id', 'name').limit(2).all().toArray()
++    const employees = []
++    for (const sender of senders) {
++        if (await tx.orm.public.Employee.where({ personId: sender.id }).select('personId').first()) employees.push(sender)
++    }
+     if (employees.length > 1 || (!employees.length && !allowedSenders.includes(email.from))) throw new EmailTrackingError('The original sender is not an employee or an approved organization sender.', 403)
+     const employee = employees[0]
+     await tx.query(db.raw.sql`SELECT
+@@ -27,16 +32,19 @@ export async function recordTrackedEmail(tx: Transaction, email: TrackedEmailInp
+     // This insert and all contact changes share a transaction. A duplicate Message-ID rolls back.
+     await tx.orm.public.TrackedEmail.create({ id: email.messageId, fingerprint: email.fingerprint,
+         fromEmail: email.from, contactedAt: email.contactedAt, recipientEmails: JSON.stringify(email.recipients), matchedContactCount: 0 })
+-    const contacts = email.recipients.length ? await tx.orm.public.Contact
++    const contacts = email.recipients.length ? await tx.orm.public.Person
+         .where(c => or(...email.recipients.map(address => c.email.ilike(escapeLike(address)))))
+         .orderBy(c => c.id.asc()).forUpdate().all().toArray() : []
+     for (const contact of contacts) {
+-        await tx.orm.public.Interaction.create({ contactId: contact.id, schoolId: contact.schoolId,
++        await tx.orm.public.Interaction.create({ personId: contact.id, organizationId: contact.orgId,
+             employeeId: employee?.id ?? null, contactedAt: email.contactedAt, mode: 'EMAIL' })
+-        const latest = await tx.orm.public.Interaction.where({ contactId: contact.id }).orderBy([i => i.contactedAt.desc(), i => i.id.desc()]).first()
++        const latest = await tx.orm.public.Interaction.where({ personId: contact.id }).orderBy([i => i.contactedAt.desc(), i => i.id.desc()]).first()
+         // Older mailbox notifications must not move either last-contacted date backwards.
+-        await tx.orm.public.Contact.where({ id: contact.id }).update({
+-            last_contacted: latest!.contactedAt, last_contacted_byId: latest!.employeeId,
++        const latestDate = emailDate(latest!.contactedAt)
++        const updateLastContact = !contact.lastContactedDate || latestDate >= contact.lastContactedDate
++        await tx.orm.public.Person.where({ id: contact.id }).update({
++            // The existing last-contact field is a date, not a timestamp; use Post Bellum's timezone.
++            ...(updateLastContact ? { lastContactedDate: latestDate, lastContactedById: latest!.employeeId } : {}),
+             lastTrackedEmailAt: !contact.lastTrackedEmailAt || Date.parse(email.contactedAt) > Date.parse(contact.lastTrackedEmailAt)
+                 ? email.contactedAt : contact.lastTrackedEmailAt,
+         })
+diff --git master/app/dashboard/recommendation-data.ts edit-details2/app/dashboard/recommendation-data.ts
+index 802c7af..4dccf34 100644
+--- master/app/dashboard/recommendation-data.ts
++++ edit-details2/app/dashboard/recommendation-data.ts
+@@ -7,10 +7,8 @@ const RECOMMENDATIONS_PER_SECTION = 5
+ const CONTACTS_PER_ORGANIZATION = 3
+ 
+ export async function loadRecommendations(organizationView: boolean) {
+-    // The live contract has no Organization table. School-free program participations
+-    // represent non-school groups, including Divadlo Paměti národa.
+-    // Outreach and participation are separate signals. Contact.last_contacted has a
+-    // creation-time default, so only logged interactions and verified email count.
++    // Use logged outreach and dated participation, never a record creation date.
++    // Organizations with an unknown type stay in the school view until classified.
+     return db.runtime().query(db.raw.sql`
+         WITH settings AS (
+             SELECT ${organizationView}::boolean AS organization_view,
+@@ -18,64 +16,60 @@ export async function loadRecommendations(organizationView: boolean) {
+                 now() - make_interval(days => ${RECONNECT_DAYS}::int) AS reconnect_before
+         ),
+         participations AS (
+-            SELECT id, "schoolId", "programId",
++            SELECT id, "organizationId", "programId",
+                 greatest("startDate", CASE WHEN "endDate" <= now() THEN "endDate" END) AS activity_at,
+                 (status = 'ONGOING' AND ("endDate" IS NULL OR "endDate" >= now())) AS ongoing
+             FROM public."Participation"
+             WHERE status <> 'CANCELLED' AND "startDate" <= now()
+         ),
+         organizations AS (
+-            SELECT id, name FROM public."School" WHERE NOT (SELECT organization_view FROM settings)
+-            UNION ALL
+-            SELECT id, name FROM public."Program" p WHERE (SELECT organization_view FROM settings)
+-                AND EXISTS (SELECT 1 FROM public."Participation" e
+-                    WHERE e."programId" = p.id AND e."schoolId" IS NULL AND e.status <> 'CANCELLED')
++            SELECT id, name FROM public."Organization" o
++            WHERE CASE WHEN (SELECT organization_view FROM settings)
++                THEN o.type IN ('THEATRE', 'CULTURAL')
++                ELSE o.type IS NULL OR o.type IN ('PRIMARY_SCHOOL', 'SECONDARY_SCHOOL') END
+         ),
+         memberships AS (
+-            SELECT c.id AS person_id, coalesce(c."schoolId", employment."schoolId") AS organization_id
+-            FROM public."Contact" c
++            SELECT c.id AS person_id, coalesce(c."orgId", employment."orgId") AS organization_id
++            FROM public."Person" c
+             LEFT JOIN LATERAL (
+-                SELECT "schoolId" FROM public."ContactEmployment"
+-                WHERE "contactId" = c.id AND "schoolId" IS NOT NULL
++                SELECT "orgId" FROM public."PersonEmployment"
++                WHERE "personId" = c.id AND "orgId" IS NOT NULL
+                     AND "startDate" <= now() AND ("endDate" IS NULL OR "endDate" >= now())
+                 ORDER BY "startDate" DESC, id DESC LIMIT 1
+-            ) employment ON c."schoolId" IS NULL
+-            WHERE NOT (SELECT organization_view FROM settings)
++            ) employment ON c."orgId" IS NULL
+             UNION
+-            SELECT pc."contactId", p."programId"
++            SELECT pc."personId", p."organizationId"
+             FROM public."ParticipationContacts" pc
+             JOIN participations p ON p.id = pc."participationId"
+-            WHERE (SELECT organization_view FROM settings)
+-                AND p."schoolId" IS NULL AND p."programId" IS NOT NULL
++            WHERE p."organizationId" IS NOT NULL
+         ),
+         person_outreach AS (
+-            SELECT "contactId", max("contactedAt") AS last_contact
+-            FROM public."Interaction" WHERE "contactId" IS NOT NULL AND "contactedAt" <= now()
+-            GROUP BY "contactId"
++            SELECT "personId", max("contactedAt") AS last_contact
++            FROM public."Interaction" WHERE "personId" IS NOT NULL AND "contactedAt" <= now()
++            GROUP BY "personId"
+         ),
+         person_events AS (
+-            SELECT pc."contactId", max(p.activity_at) AS activity_at, bool_or(p.ongoing) AS ongoing
++            SELECT pc."personId", max(p.activity_at) AS activity_at, bool_or(p.ongoing) AS ongoing
+             FROM public."ParticipationContacts" pc JOIN participations p ON p.id = pc."participationId"
+-            WHERE NOT (SELECT organization_view FROM settings) OR p."schoolId" IS NULL
+-            GROUP BY pc."contactId"
++            GROUP BY pc."personId"
+         ),
+         people AS (
+-            SELECT c.id, c.name, coalesce(c.email, '') AS email, c."contactRole"::text AS role,
++            SELECT c.id, c.name, coalesce(c.email, '') AS email, coalesce(role.type, 'OTHER')::text AS role,
+                 greatest(o.last_contact, CASE WHEN c."lastTrackedEmailAt" <= now()
+                     THEN c."lastTrackedEmailAt" END) AS last_contact,
+                 e.activity_at, coalesce(e.ongoing, false) AS ongoing
+-            FROM public."Contact" c
+-            LEFT JOIN person_outreach o ON o."contactId" = c.id
+-            LEFT JOIN person_events e ON e."contactId" = c.id
+-            WHERE NOT (SELECT organization_view FROM settings) OR (
+-                EXISTS (SELECT 1 FROM memberships WHERE person_id = c.id)
+-            )
++            FROM public."Person" c
++            LEFT JOIN public."PersonRoles" role ON role."personId" = c.id
++            LEFT JOIN person_outreach o ON o."personId" = c.id
++            LEFT JOIN person_events e ON e."personId" = c.id
++            WHERE EXISTS (SELECT 1 FROM memberships m JOIN organizations org ON org.id = m.organization_id WHERE m.person_id = c.id)
++                OR (NOT (SELECT organization_view FROM settings) AND c."orgId" IS NULL)
+         ),
+         organization_outreach AS (
+-            SELECT CASE WHEN s.organization_view THEN i."programId" ELSE i."schoolId" END AS id,
++            SELECT i."organizationId" AS id,
+                 i."contactedAt" AS contacted_at
+-            FROM public."Interaction" i CROSS JOIN settings s
+-            WHERE i."contactedAt" <= now() AND (NOT s.organization_view OR i."schoolId" IS NULL)
++            FROM public."Interaction" i
++            WHERE i."contactedAt" <= now()
+             UNION ALL
+             -- Contact-only outreach also counts for the contact's current organization.
+             SELECT m.organization_id, p.last_contact
+@@ -86,10 +80,9 @@ export async function loadRecommendations(organizationView: boolean) {
+             SELECT id, max(contacted_at) AS last_contact FROM organization_outreach GROUP BY id
+         ),
+         organization_events AS (
+-            SELECT CASE WHEN s.organization_view THEN p."programId" ELSE p."schoolId" END AS id,
++            SELECT p."organizationId" AS id,
+                 max(p.activity_at) AS activity_at, bool_or(p.ongoing) AS ongoing
+-            FROM participations p CROSS JOIN settings s
+-            WHERE NOT s.organization_view OR p."schoolId" IS NULL
++            FROM participations p
+             GROUP BY 1
+         ),
+         candidates AS (
+diff --git master/app/dashboard/recommendations.tsx edit-details2/app/dashboard/recommendations.tsx
+index a1253c2..ee16c03 100644
+--- master/app/dashboard/recommendations.tsx
++++ edit-details2/app/dashboard/recommendations.tsx
+@@ -55,8 +55,7 @@ export async function Recommendations({ organizationView }: { organizationView:
+                                         {records.map(record => {
+                                             const isPerson = record.kind === 'person'
+                                             const contacts: SuggestedContact[] = JSON.parse(record.contacts)
+-                                            const href = isPerson ? `/details/contacts/${record.id}`
+-                                                : organizationView ? null : `/details/schools/${record.id}`
++                                            const href = isPerson ? `/details/contacts/${record.id}` : `/details/schools/${record.id}`
+                                             return (
+                                                 <li key={record.id} className="py-3 first:pt-0 last:pb-0">
+                                                     {href ? <Link href={href} className={linkClass}>{record.name}</Link>
+diff --git master/tests/email/contacts.test.mjs edit-details2/tests/email/contacts.test.mjs
+index 85e573c..c7c75ac 100644
+--- master/tests/email/contacts.test.mjs
++++ edit-details2/tests/email/contacts.test.mjs
+@@ -30,11 +30,16 @@ test('copying uses every matching address, removes duplicates, and excludes inva
+  assert.deepEqual(contactEmails([contact,{...other,email:' jana@EXAMPLE.test '},{...other,email:'invalid'},{...other,email:'test@example.test\r\nBcc: x@example.test'}]),['Jana@example.test']);
+  assert.equal(contact.lastTrackedEmailAt,'2026-11-10T23:30:00Z');
+ });
+-test('email contacts access is limited to administrators, coordinators, and marketers',()=>{
+- for(const role of ['ADMIN','MARKETER','COORDINATOR','NEWSLETTER_COORDINATOR','SCHOOL_NETWORK_COORDINATOR'])assert.equal(canUseEmailContacts([role]),true);
+- for(const role of ['LECTURER','BRANCH_DIRECTOR','PROJECT_MANAGER'])assert.equal(canUseEmailContacts([role]),false);
++test('email contacts access follows the existing administrator and coordinator roles',()=>{
++ for(const role of ['ADMIN','COORDINATOR','NEWSLETTER_COORDINATOR','SCHOOL_NETWORK_COORDINATOR'])assert.equal(canUseEmailContacts([role]),true);
++ for(const role of ['LECTURER','BRANCH_DIRECTOR','PROJECT_MANAGER','MARKETER','FAKE_COORDINATOR_ACCESS'])assert.equal(canUseEmailContacts([role]),false);
+  assert.equal(canUseEmailContacts([]),false);
+ });
++test('branch filters use the branch name primary key',()=>{
++ const person={...contact,branchId:'PRAHA',branch:'PRAHA'};
++ assert.equal(filterEmailContacts([person],filters({branch:'PRAHA'})).length,1);
++ assert.equal(filterEmailContacts([person],filters({branch:'JIŽNÍ_MORAVA'})).length,0);
++});
+ 
+ const newsletterContact = { ...contact,
+  smartEmailing: { lists: [{id:7,name:'PNS Teachers',status:'unsubscribed'},{id:8,name:'PNS Parents',status:'confirmed'}],blacklisted:false,hardBounced:true,softBounces:0 },

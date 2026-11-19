@@ -2,6 +2,13 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### SmartEmailing, CC tracking, and Recommendations
+
+The navigation links open `/email` and `/recommendations`. These features use this
+branch's `Person`/`Organization` schema. Setup, permissions, mailbox payloads, and
+scheduled imports are documented in [the IT handover guide](docs/email-and-recommendations.md).
+The [change report](docs/email-feature-changes.md) includes before/after code and a full patch.
+
 ### Branch and interaction schema migration
 
 The migration `20261103T1944_branch_and_interaction_updates` is already prepared.

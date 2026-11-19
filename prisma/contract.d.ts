@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'96b66ffb5ca302abbe028ad20f3c2b1d96aa0be8caf0923693a02d6d330d2e14'>;
+  StorageHashBase<'733bdcbceb4ed30fd315072cf1701fcad36a71619f63792baf2f590603765559'>;
 export type ExecutionHash =
   ExecutionHashBase<'14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9'>;
 export type ProfileHash =
@@ -274,6 +274,15 @@ export type FieldOutputTypes = {
         | 'MORAVSKOSLEZSKÝ'
         | 'JIHLAVA';
     };
+    readonly EmailSegment: {
+      readonly contactCount: CodecTypes['pg/int4@1']['output'];
+      readonly contactsJson: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly createdById: CodecTypes['pg/int4@1']['output'];
+      readonly filtersJson: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+    };
     readonly Employee: {
       readonly mustChangePassword: CodecTypes['pg/bool@1']['output'];
       readonly password: CodecTypes['pg/text@1']['output'];
@@ -455,6 +464,7 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly lastContactedById: CodecTypes['pg/int4@1']['output'] | null;
       readonly lastContactedDate: CodecTypes['pg/date-string@1']['output'] | null;
+      readonly lastTrackedEmailAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly orgId: CodecTypes['pg/int4@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
@@ -491,9 +501,50 @@ export type FieldOutputTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly SmartEmailContact: {
+      readonly blacklisted: CodecTypes['pg/bool@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'];
+      readonly hardBounced: CodecTypes['pg/bool@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly listsJson: CodecTypes['pg/text@1']['output'];
+      readonly softBounces: CodecTypes['pg/int4@1']['output'];
+      readonly syncedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly SmartEmailEvent: {
+      readonly campaignName: CodecTypes['pg/text@1']['output'];
+      readonly campaignType: CodecTypes['pg/text@1']['output'];
+      readonly detailsJson: CodecTypes['pg/text@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly messageId: CodecTypes['pg/text@1']['output'];
+      readonly occurredAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly subject: CodecTypes['pg/text@1']['output'];
+      readonly type: CodecTypes['pg/text@1']['output'];
+    };
+    readonly SmartEmailSync: {
+      readonly contactOffset: CodecTypes['pg/int4@1']['output'];
+      readonly contactsStartedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly contactsSyncedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly eventsSyncedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly lastAttemptAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly lastError: CodecTypes['pg/text@1']['output'] | null;
+      readonly lockToken: CodecTypes['pg/text@1']['output'] | null;
+      readonly lockUntil: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly streamId: CodecTypes['pg/text@1']['output'];
+    };
     readonly Student: {
       readonly parentId: CodecTypes['pg/int4@1']['output'] | null;
       readonly personId: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly TrackedEmail: {
+      readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly fingerprint: CodecTypes['pg/text@1']['output'];
+      readonly fromEmail: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly matchedContactCount: CodecTypes['pg/int4@1']['output'];
+      readonly receivedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly recipientEmails: CodecTypes['pg/text@1']['output'];
     };
   };
 };
@@ -528,6 +579,15 @@ export type FieldInputTypes = {
         | 'MORAVSKOSLEZSKÝ'
         | 'JIHLAVA';
     };
+    readonly EmailSegment: {
+      readonly contactCount: CodecTypes['pg/int4@1']['input'];
+      readonly contactsJson: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly createdById: CodecTypes['pg/int4@1']['input'];
+      readonly filtersJson: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+    };
     readonly Employee: {
       readonly mustChangePassword: CodecTypes['pg/bool@1']['input'];
       readonly password: CodecTypes['pg/text@1']['input'];
@@ -709,6 +769,7 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly lastContactedById: CodecTypes['pg/int4@1']['input'] | null;
       readonly lastContactedDate: CodecTypes['pg/date-string@1']['input'] | null;
+      readonly lastTrackedEmailAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly orgId: CodecTypes['pg/int4@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
@@ -745,9 +806,50 @@ export type FieldInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly SmartEmailContact: {
+      readonly blacklisted: CodecTypes['pg/bool@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'];
+      readonly hardBounced: CodecTypes['pg/bool@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly listsJson: CodecTypes['pg/text@1']['input'];
+      readonly softBounces: CodecTypes['pg/int4@1']['input'];
+      readonly syncedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly SmartEmailEvent: {
+      readonly campaignName: CodecTypes['pg/text@1']['input'];
+      readonly campaignType: CodecTypes['pg/text@1']['input'];
+      readonly detailsJson: CodecTypes['pg/text@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly messageId: CodecTypes['pg/text@1']['input'];
+      readonly occurredAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly subject: CodecTypes['pg/text@1']['input'];
+      readonly type: CodecTypes['pg/text@1']['input'];
+    };
+    readonly SmartEmailSync: {
+      readonly contactOffset: CodecTypes['pg/int4@1']['input'];
+      readonly contactsStartedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly contactsSyncedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly eventsSyncedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly lastAttemptAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly lastError: CodecTypes['pg/text@1']['input'] | null;
+      readonly lockToken: CodecTypes['pg/text@1']['input'] | null;
+      readonly lockUntil: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly streamId: CodecTypes['pg/text@1']['input'];
+    };
     readonly Student: {
       readonly parentId: CodecTypes['pg/int4@1']['input'] | null;
       readonly personId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly TrackedEmail: {
+      readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly fingerprint: CodecTypes['pg/text@1']['input'];
+      readonly fromEmail: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly matchedContactCount: CodecTypes['pg/int4@1']['input'];
+      readonly receivedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly recipientEmails: CodecTypes['pg/text@1']['input'];
     };
   };
 };
@@ -781,6 +883,15 @@ export type StorageColumnTypes = {
         | 'ZLÍNSKÝ'
         | 'MORAVSKOSLEZSKÝ'
         | 'JIHLAVA';
+    };
+    readonly EmailSegment: {
+      readonly contactCount: CodecTypes['pg/int4@1']['output'];
+      readonly contactsJson: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly createdById: CodecTypes['pg/int4@1']['output'];
+      readonly filtersJson: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
     };
     readonly Employee: {
       readonly mustChangePassword: CodecTypes['pg/bool@1']['output'];
@@ -963,6 +1074,7 @@ export type StorageColumnTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly lastContactedById: CodecTypes['pg/int4@1']['output'] | null;
       readonly lastContactedDate: CodecTypes['pg/date-string@1']['output'] | null;
+      readonly lastTrackedEmailAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly orgId: CodecTypes['pg/int4@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
@@ -999,9 +1111,50 @@ export type StorageColumnTypes = {
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly SmartEmailContact: {
+      readonly blacklisted: CodecTypes['pg/bool@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'];
+      readonly hardBounced: CodecTypes['pg/bool@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly listsJson: CodecTypes['pg/text@1']['output'];
+      readonly softBounces: CodecTypes['pg/int4@1']['output'];
+      readonly syncedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
+    readonly SmartEmailEvent: {
+      readonly campaignName: CodecTypes['pg/text@1']['output'];
+      readonly campaignType: CodecTypes['pg/text@1']['output'];
+      readonly detailsJson: CodecTypes['pg/text@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly messageId: CodecTypes['pg/text@1']['output'];
+      readonly occurredAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly subject: CodecTypes['pg/text@1']['output'];
+      readonly type: CodecTypes['pg/text@1']['output'];
+    };
+    readonly SmartEmailSync: {
+      readonly contactOffset: CodecTypes['pg/int4@1']['output'];
+      readonly contactsStartedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly contactsSyncedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly eventsSyncedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly lastAttemptAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly lastError: CodecTypes['pg/text@1']['output'] | null;
+      readonly lockToken: CodecTypes['pg/text@1']['output'] | null;
+      readonly lockUntil: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly streamId: CodecTypes['pg/text@1']['output'];
+    };
     readonly Student: {
       readonly parentId: CodecTypes['pg/int4@1']['output'] | null;
       readonly personId: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly TrackedEmail: {
+      readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly fingerprint: CodecTypes['pg/text@1']['output'];
+      readonly fromEmail: CodecTypes['pg/text@1']['output'];
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly matchedContactCount: CodecTypes['pg/int4@1']['output'];
+      readonly receivedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly recipientEmails: CodecTypes['pg/text@1']['output'];
     };
   };
 };
@@ -1035,6 +1188,15 @@ export type StorageColumnInputTypes = {
         | 'ZLÍNSKÝ'
         | 'MORAVSKOSLEZSKÝ'
         | 'JIHLAVA';
+    };
+    readonly EmailSegment: {
+      readonly contactCount: CodecTypes['pg/int4@1']['input'];
+      readonly contactsJson: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly createdById: CodecTypes['pg/int4@1']['input'];
+      readonly filtersJson: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
     };
     readonly Employee: {
       readonly mustChangePassword: CodecTypes['pg/bool@1']['input'];
@@ -1217,6 +1379,7 @@ export type StorageColumnInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly lastContactedById: CodecTypes['pg/int4@1']['input'] | null;
       readonly lastContactedDate: CodecTypes['pg/date-string@1']['input'] | null;
+      readonly lastTrackedEmailAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly orgId: CodecTypes['pg/int4@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
@@ -1253,9 +1416,50 @@ export type StorageColumnInputTypes = {
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly SmartEmailContact: {
+      readonly blacklisted: CodecTypes['pg/bool@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'];
+      readonly hardBounced: CodecTypes['pg/bool@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly listsJson: CodecTypes['pg/text@1']['input'];
+      readonly softBounces: CodecTypes['pg/int4@1']['input'];
+      readonly syncedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
+    readonly SmartEmailEvent: {
+      readonly campaignName: CodecTypes['pg/text@1']['input'];
+      readonly campaignType: CodecTypes['pg/text@1']['input'];
+      readonly detailsJson: CodecTypes['pg/text@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly messageId: CodecTypes['pg/text@1']['input'];
+      readonly occurredAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly subject: CodecTypes['pg/text@1']['input'];
+      readonly type: CodecTypes['pg/text@1']['input'];
+    };
+    readonly SmartEmailSync: {
+      readonly contactOffset: CodecTypes['pg/int4@1']['input'];
+      readonly contactsStartedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly contactsSyncedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly eventsSyncedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly lastAttemptAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly lastError: CodecTypes['pg/text@1']['input'] | null;
+      readonly lockToken: CodecTypes['pg/text@1']['input'] | null;
+      readonly lockUntil: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly streamId: CodecTypes['pg/text@1']['input'];
+    };
     readonly Student: {
       readonly parentId: CodecTypes['pg/int4@1']['input'] | null;
       readonly personId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly TrackedEmail: {
+      readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly fingerprint: CodecTypes['pg/text@1']['input'];
+      readonly fromEmail: CodecTypes['pg/text@1']['input'];
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly matchedContactCount: CodecTypes['pg/int4@1']['input'];
+      readonly receivedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly recipientEmails: CodecTypes['pg/text@1']['input'];
     };
   };
 };
@@ -1293,6 +1497,16 @@ export namespace Models {
     organization: public_Organization[];
     people: public_Person[];
     readonly [RelationKeys]?: 'chief' | 'organization' | 'people';
+  };
+  export type public_EmailSegment = {
+    contactCount: CodecTypes['pg/int4@1']['output'];
+    contactsJson: CodecTypes['pg/text@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    createdById: CodecTypes['pg/int4@1']['output'];
+    filtersJson: CodecTypes['pg/text@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    name: CodecTypes['pg/text@1']['output'];
+    readonly [RelationKeys]?: never;
   };
   export type public_Employee = {
     mustChangePassword: CodecTypes['pg/bool@1']['output'];
@@ -1512,6 +1726,7 @@ export namespace Models {
     id: CodecTypes['pg/int4@1']['output'];
     lastContactedById: CodecTypes['pg/int4@1']['output'] | null;
     lastContactedDate: CodecTypes['pg/date-string@1']['output'] | null;
+    lastTrackedEmailAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     name: CodecTypes['pg/text@1']['output'];
     orgId: CodecTypes['pg/int4@1']['output'] | null;
     phone: CodecTypes['pg/text@1']['output'] | null;
@@ -1577,6 +1792,41 @@ export namespace Models {
     sponsor: public_MunicipalityPrograms[];
     readonly [RelationKeys]?: 'assignments' | 'interactions' | 'participations' | 'sponsor';
   };
+  export type public_SmartEmailContact = {
+    blacklisted: CodecTypes['pg/bool@1']['output'];
+    email: CodecTypes['pg/text@1']['output'];
+    hardBounced: CodecTypes['pg/bool@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    listsJson: CodecTypes['pg/text@1']['output'];
+    softBounces: CodecTypes['pg/int4@1']['output'];
+    syncedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    readonly [RelationKeys]?: never;
+  };
+  export type public_SmartEmailEvent = {
+    campaignName: CodecTypes['pg/text@1']['output'];
+    campaignType: CodecTypes['pg/text@1']['output'];
+    detailsJson: CodecTypes['pg/text@1']['output'];
+    email: CodecTypes['pg/text@1']['output'];
+    id: CodecTypes['pg/text@1']['output'];
+    messageId: CodecTypes['pg/text@1']['output'];
+    occurredAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    subject: CodecTypes['pg/text@1']['output'];
+    type: CodecTypes['pg/text@1']['output'];
+    readonly [RelationKeys]?: never;
+  };
+  export type public_SmartEmailSync = {
+    contactOffset: CodecTypes['pg/int4@1']['output'];
+    contactsStartedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    contactsSyncedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    eventsSyncedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    id: CodecTypes['pg/text@1']['output'];
+    lastAttemptAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    lastError: CodecTypes['pg/text@1']['output'] | null;
+    lockToken: CodecTypes['pg/text@1']['output'] | null;
+    lockUntil: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    streamId: CodecTypes['pg/text@1']['output'];
+    readonly [RelationKeys]?: never;
+  };
   export type public_Student = {
     parentId: CodecTypes['pg/int4@1']['output'] | null;
     personId: CodecTypes['pg/int4@1']['output'];
@@ -1584,11 +1834,22 @@ export namespace Models {
     person: public_Person;
     readonly [RelationKeys]?: 'parent' | 'person';
   };
+  export type public_TrackedEmail = {
+    contactedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    fingerprint: CodecTypes['pg/text@1']['output'];
+    fromEmail: CodecTypes['pg/text@1']['output'];
+    id: CodecTypes['pg/text@1']['output'];
+    matchedContactCount: CodecTypes['pg/int4@1']['output'];
+    receivedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    recipientEmails: CodecTypes['pg/text@1']['output'];
+    readonly [RelationKeys]?: never;
+  };
 }
 
 export declare const models: {
   public: {
     Branch: Models.public_Branch;
+    EmailSegment: Models.public_EmailSegment;
     Employee: Models.public_Employee;
     EmployeeAssignment: Models.public_EmployeeAssignment;
     Interaction: Models.public_Interaction;
@@ -1603,7 +1864,11 @@ export declare const models: {
     PersonEmployment: Models.public_PersonEmployment;
     PersonRoles: Models.public_PersonRoles;
     Program: Models.public_Program;
+    SmartEmailContact: Models.public_SmartEmailContact;
+    SmartEmailEvent: Models.public_SmartEmailEvent;
+    SmartEmailSync: Models.public_SmartEmailSync;
     Student: Models.public_Student;
+    TrackedEmail: Models.public_TrackedEmail;
   };
 };
 
@@ -1676,6 +1941,68 @@ type ContractBase = Omit<
                   };
                 },
               ];
+            };
+            readonly EmailSegment: {
+              columns: {
+                readonly contactCount: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly contactsJson: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly createdById: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly filtersJson: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly name: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'EmailSegment_createdById_id_idx_2b066c09';
+                  readonly prefix: 'EmailSegment_createdById_id_idx';
+                  readonly columns: readonly ['createdById', 'id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [];
             };
             readonly Employee: {
               columns: {
@@ -2470,6 +2797,12 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly lastTrackedEmailAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly name: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -2730,6 +3063,210 @@ type ContractBase = Omit<
               indexes: readonly [];
               foreignKeys: readonly [];
             };
+            readonly SmartEmailContact: {
+              columns: {
+                readonly blacklisted: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly email: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly hardBounced: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly listsJson: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly softBounces: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly syncedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'SmartEmailContact_email_idx_46df9cad';
+                  readonly prefix: 'SmartEmailContact_email_idx';
+                  readonly columns: readonly ['email'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [];
+            };
+            readonly SmartEmailEvent: {
+              columns: {
+                readonly campaignName: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly campaignType: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly detailsJson: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly email: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly messageId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly occurredAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly subject: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly type: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'SmartEmailEvent_email_messageId_idx_73ce93f2';
+                  readonly prefix: 'SmartEmailEvent_email_messageId_idx';
+                  readonly columns: readonly ['email', 'messageId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'SmartEmailEvent_email_type_occurredAt_idx_77c7bb33';
+                  readonly prefix: 'SmartEmailEvent_email_type_occurredAt_idx';
+                  readonly columns: readonly ['email', 'type', 'occurredAt'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [];
+            };
+            readonly SmartEmailSync: {
+              columns: {
+                readonly contactOffset: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
+                  };
+                  readonly many: false;
+                };
+                readonly contactsStartedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly contactsSyncedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly eventsSyncedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly lastAttemptAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly lastError: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly lockToken: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly lockUntil: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly streamId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [];
+            };
             readonly Student: {
               columns: {
                 readonly parentId: {
@@ -2781,6 +3318,57 @@ type ContractBase = Omit<
                   };
                 },
               ];
+            };
+            readonly TrackedEmail: {
+              columns: {
+                readonly contactedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly fingerprint: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly fromEmail: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly matchedContactCount: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly receivedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly recipientEmails: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [];
             };
           };
           readonly valueSet: {
@@ -2904,6 +3492,10 @@ type ContractBase = Omit<
   readonly targetFamily: 'sql';
   readonly roots: {
     readonly Branch: { readonly namespace: 'public' & NamespaceId; readonly model: 'Branch' };
+    readonly EmailSegment: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'EmailSegment';
+    };
     readonly Employee: { readonly namespace: 'public' & NamespaceId; readonly model: 'Employee' };
     readonly EmployeeAssignment: {
       readonly namespace: 'public' & NamespaceId;
@@ -2948,7 +3540,23 @@ type ContractBase = Omit<
       readonly model: 'PersonRoles';
     };
     readonly Program: { readonly namespace: 'public' & NamespaceId; readonly model: 'Program' };
+    readonly SmartEmailContact: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'SmartEmailContact';
+    };
+    readonly SmartEmailEvent: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'SmartEmailEvent';
+    };
+    readonly SmartEmailSync: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'SmartEmailSync';
+    };
     readonly Student: { readonly namespace: 'public' & NamespaceId; readonly model: 'Student' };
+    readonly TrackedEmail: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'TrackedEmail';
+    };
   };
   readonly domain: {
     readonly namespaces: {
@@ -3017,6 +3625,55 @@ type ContractBase = Omit<
                 readonly institute: { readonly column: 'institute' };
                 readonly name: { readonly column: 'name' };
                 readonly region: { readonly column: 'region' };
+              };
+            };
+          };
+          readonly EmailSegment: {
+            readonly fields: {
+              readonly contactCount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly contactsJson: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly createdById: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly filtersJson: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'EmailSegment';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly contactCount: { readonly column: 'contactCount' };
+                readonly contactsJson: { readonly column: 'contactsJson' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly createdById: { readonly column: 'createdById' };
+                readonly filtersJson: { readonly column: 'filtersJson' };
+                readonly id: { readonly column: 'id' };
+                readonly name: { readonly column: 'name' };
               };
             };
           };
@@ -3723,6 +4380,13 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
               };
+              readonly lastTrackedEmailAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
               readonly name: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -3863,6 +4527,7 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly lastContactedById: { readonly column: 'lastContactedById' };
                 readonly lastContactedDate: { readonly column: 'lastContactedDate' };
+                readonly lastTrackedEmailAt: { readonly column: 'lastTrackedEmailAt' };
                 readonly name: { readonly column: 'name' };
                 readonly orgId: { readonly column: 'orgId' };
                 readonly phone: { readonly column: 'phone' };
@@ -4068,6 +4733,190 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly SmartEmailContact: {
+            readonly fields: {
+              readonly blacklisted: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly email: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly hardBounced: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly listsJson: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly softBounces: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly syncedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'SmartEmailContact';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly blacklisted: { readonly column: 'blacklisted' };
+                readonly email: { readonly column: 'email' };
+                readonly hardBounced: { readonly column: 'hardBounced' };
+                readonly id: { readonly column: 'id' };
+                readonly listsJson: { readonly column: 'listsJson' };
+                readonly softBounces: { readonly column: 'softBounces' };
+                readonly syncedAt: { readonly column: 'syncedAt' };
+              };
+            };
+          };
+          readonly SmartEmailEvent: {
+            readonly fields: {
+              readonly campaignName: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly campaignType: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly detailsJson: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly email: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly messageId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly occurredAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly subject: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'SmartEmailEvent';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly campaignName: { readonly column: 'campaignName' };
+                readonly campaignType: { readonly column: 'campaignType' };
+                readonly detailsJson: { readonly column: 'detailsJson' };
+                readonly email: { readonly column: 'email' };
+                readonly id: { readonly column: 'id' };
+                readonly messageId: { readonly column: 'messageId' };
+                readonly occurredAt: { readonly column: 'occurredAt' };
+                readonly subject: { readonly column: 'subject' };
+                readonly type: { readonly column: 'type' };
+              };
+            };
+          };
+          readonly SmartEmailSync: {
+            readonly fields: {
+              readonly contactOffset: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly contactsStartedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly contactsSyncedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly eventsSyncedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly lastAttemptAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly lastError: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly lockToken: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly lockUntil: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly streamId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'SmartEmailSync';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly contactOffset: { readonly column: 'contactOffset' };
+                readonly contactsStartedAt: { readonly column: 'contactsStartedAt' };
+                readonly contactsSyncedAt: { readonly column: 'contactsSyncedAt' };
+                readonly eventsSyncedAt: { readonly column: 'eventsSyncedAt' };
+                readonly id: { readonly column: 'id' };
+                readonly lastAttemptAt: { readonly column: 'lastAttemptAt' };
+                readonly lastError: { readonly column: 'lastError' };
+                readonly lockToken: { readonly column: 'lockToken' };
+                readonly lockUntil: { readonly column: 'lockUntil' };
+                readonly streamId: { readonly column: 'streamId' };
+              };
+            };
+          };
           readonly Student: {
             readonly fields: {
               readonly parentId: {
@@ -4111,6 +4960,58 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly parentId: { readonly column: 'parentId' };
                 readonly personId: { readonly column: 'personId' };
+              };
+            };
+          };
+          readonly TrackedEmail: {
+            readonly fields: {
+              readonly contactedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly fingerprint: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly fromEmail: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly matchedContactCount: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly receivedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly recipientEmails: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'TrackedEmail';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly contactedAt: { readonly column: 'contactedAt' };
+                readonly fingerprint: { readonly column: 'fingerprint' };
+                readonly fromEmail: { readonly column: 'fromEmail' };
+                readonly id: { readonly column: 'id' };
+                readonly matchedContactCount: { readonly column: 'matchedContactCount' };
+                readonly receivedAt: { readonly column: 'receivedAt' };
+                readonly recipientEmails: { readonly column: 'recipientEmails' };
               };
             };
           };

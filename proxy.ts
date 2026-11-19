@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { decrypt } from "@/app/login/sessions"
 
 const protectedPrefixes = [
-  "/dashboard", "/employee-management",
+  "/dashboard", "/employee-management", "/email", "/recommendations",
   "/schools", "/contacts", "/branches", "/programs", "/municipalities",
 ]
 const publicRoutes = ["/login"]
