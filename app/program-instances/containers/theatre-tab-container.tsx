@@ -1,6 +1,7 @@
 import { db } from "@/prisma/db";
 import { SoonTab } from "../tabs/soon-tab";
 import { Participation } from "@/app/types";
+import { TheatreTab } from "../tabs/theatre-tab";
 
 
 
@@ -20,9 +21,9 @@ export async function TheatreTabContainer() {
         }
     }
 
-    const data = await getSoonInstances()
+    const data = await getSoonInstances()  // CHANGE THISSSS
     
     return (
-        <SoonTab data={data ?? []}/>
+        <TheatreTab data={data ?? []}/>
     )
 }

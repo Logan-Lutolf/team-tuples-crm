@@ -297,9 +297,6 @@ model Student {
   personId  Int @id 
   person   Person @relation(fields: [personId], references: [id])
 
-  email     String?
-  phone     String?
-
   guardianEmail   String
   guardianPhone   String
 }

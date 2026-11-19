@@ -48,5 +48,20 @@ export async function createStudent(formData: FormData) {
         console.log(error)
         return {result: "error", message:"Student creation failed."}
     }
+}
 
+
+// Written by Claude, modified by Charlotte
+export async function searchStudents(query: string) {
+    const q = query.trim().toLowerCase()
+    if (q.length < 2) return []
+
+    // Same pattern as your EmployeeTableContainer: load, then filter in JS.
+    // If your ORM supports a case-insensitive "contains" filter, use it instead.
+    const records = await db.orm.public.Person.include("personRole").all().toArray()
+
+    return records
+        .filter(s => s.name.toLowerCase().includes(q) && s.personRole?.type == "STUDENT")
+        .slice(0, 8)
+        .map(s => ({ id: s.id, name: s.name }))
 }

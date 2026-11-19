@@ -10,7 +10,11 @@ import { X } from 'lucide-react'
 type Student = {
     name: string,
     dob: string,
-    school: string
+    school?: string,
+    email?: string,
+    phone?: string,
+    guardianEmail: string,
+    guardianPhone?: string
 }
 
 const columnHelper = createColumnHelper<DataTableFeatures, Participation>()
@@ -42,7 +46,7 @@ export const studentColumns = columnHelperStudents.columns([
         header: "Student Name"
     }),
     columnHelperStudents.accessor("dob", {
-        header: "Date of Birth"
+        header: "Date of Birth", 
     }),
     columnHelperStudents.accessor("school", {
         header: "School"
@@ -66,16 +70,20 @@ export const studentColumns = columnHelperStudents.columns([
 
 export const getStudentCols = (onDelete: (index: number) => void) => columnHelperStudents.columns([
     columnHelperStudents.accessor("name", {
-        header: "Student Name"
+        header: "Student Name",
+        size: 50
     }),
     columnHelperStudents.accessor("school", {
-        header: "School"
+        header: "School",
+        size: 50
     }),
     columnHelperStudents.accessor("dob", {
-        header: "Date of Birth"
+        header: "Date of Birth",
+        size: 20
     }),
     columnHelperStudents.display({
     id: "actions",
+    size: 10,
     header: "",
     cell: ({ row }) => (
         <Button
@@ -87,5 +95,5 @@ export const getStudentCols = (onDelete: (index: number) => void) => columnHelpe
             <X className="h-4 w-4" color="var(--destructive)" />
         </Button>
     ),
-  }),
+    }),
 ])

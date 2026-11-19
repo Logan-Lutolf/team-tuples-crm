@@ -44,13 +44,13 @@ export function DataTable<TData extends RowData>({
                 maxHeight: `${visibleRows * ROW_HEIGHT_REM + HEADER_HEIGHT_REM}rem`,
             } : undefined}
         >
-        <DashboardTable>
+        <DashboardTable className="table-fixed">
             <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                     return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} style={{width: header.getSize()}}>
                         {header.isPlaceholder ? null : (
                         <table.FlexRender header={header} />
                         )}
@@ -68,7 +68,7 @@ export function DataTable<TData extends RowData>({
                     data-state={row.getIsSelected() && "selected"}
                 >
                     {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} style={{width: cell.column.getSize()}}>
                         <table.FlexRender cell={cell} />
                     </TableCell>
                     ))}

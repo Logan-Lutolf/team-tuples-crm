@@ -4,91 +4,224 @@ import { Dialog, BigDialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { showToast } from "@/lib/utils";
 import { CoordinatorSearch } from "@/components/custom/searches/coordinator-search";
 import { PersonSearch } from "@/components/custom/searches/person-search";
 import { OrganizationSearch } from "@/components/custom/searches/organization-search";
+import { StudentSearch } from "@/components/custom/searches/student-search";
+import { Minus, Plus } from "lucide-react";
+import { DataTable } from "@/components/ui/data-table";
+import { getStudentCols } from "../columns";
+import { Textarea } from "@/components/ui/textarea";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+
 
 type Student = {
     name: string,
     dob: string,
-    school: string
+    school?: string,
+    email?: string,
+    phone?: string,
+    guardianEmail: string,
+    guardianPhone?: string
 }
 
 
 export function AddTheatreForm() {
     const [open, setOpen] = useState(false)
+    const [createNew, setCreateNew] = useState(false)
+    const [students, setStudents] = useState<Student[]>([])
+
+    // Could probably optimize this
+    const [newName, setNewName] = useState("")
+    const [newDob, setNewDob] = useState("")
+    const [newEmail, setNewEmail] = useState("")
+    const [newPhone, setNewPhone] = useState("")
+    const [newGEmail, setNewGEmail] = useState("")
+    const [newGPhone, setNewGPhone] = useState("")
+    const [newOrg, setNewOrg] = useState("")
+
+    const cols = useMemo(
+            () => getStudentCols((index) =>
+                setStudents(prev => prev.filter((_, i) => i !== index))
+            ),
+            [setStudents])
 
 
+    function submitNewStudent() {
+        setStudents(prev => [...prev, {
+            name: newName,
+            dob: newDob,
+            school: newOrg,
+            email: newEmail,
+            phone: newPhone,
+            guardianEmail: newGEmail,
+            guardianPhone: newGPhone,
+        }])
+
+        setNewName("")
+        setNewDob("")
+        setNewEmail("")
+        setNewPhone("")
+        setNewGEmail("")
+        setNewGPhone("")
+        setNewOrg("")
+    }
 
     return (
         <Dialog>
             <DialogTrigger render={<Button onClick={() => setOpen(true)}>Add Participation</Button>} />
-            <BigDialogContent className="flex flex-col gap-4 max-h-[90vh]">
+            <BigDialogContent className="flex flex-col gap-4 max-h-[90vh] max-w-[110vh]">
                 <form className="p-5">
-                    {/* Instance name, teacher, coordinator */}
-                    <div className="flex flex-row justify-between gap-8">
-                            <FieldGroup className="w-1/2">
-                                <Field className="flex flex-row gap-2" orientation={"horizontal"}>
-                                    <FieldLabel>Name: </FieldLabel>
-                                    <Input 
-                                        name="program-name"
-                                        type="text"
-                                    />
-                                </Field>
-                                <Field className="flex flex-row gap-2" orientation={"horizontal"}>
-                                    <FieldLabel>Contact: </FieldLabel> {/* Maybe name this primary contact instead? */}
+                    <div className="grid grid-cols-2 gap-4">
+                        {/* Instance name, teacher, coordinator */}
+                        <FieldGroup className="gap-2">
+                            <Field className="flex flex-row gap-2" orientation={"horizontal"}>
+                                <FieldLabel className="w-1/4">Name: </FieldLabel>
+                                <Input 
+                                    name="program-name"
+                                    type="text"
+                                    className="w-3/4"
+                                />
+                            </Field>
+                            <Field className="flex flex-row gap-2" orientation={"horizontal"}>
+                                <FieldLabel className="w-1/4">Contact: </FieldLabel> 
+                                <div className="w-3/4">
                                     <PersonSearch />
-                                </Field>
-                                <Field className="flex flex-row gap-2" orientation={"horizontal"}>
-                                    <FieldLabel>Coordinator: </FieldLabel>
+                                </div>
+                            </Field>
+                            <Field className="flex flex-row gap-2" orientation={"horizontal"}>
+                                <FieldLabel className="w-1/4">Coordinator: </FieldLabel>
+                                <div className="w-3/4">
                                     <CoordinatorSearch/>
-                                </Field>
-                            </FieldGroup>
+                                </div>
+                            </Field>
+                        </FieldGroup>
 
-                            <FieldGroup className="w-1/2">
-                                <Field className="flex flex-row gap-2" orientation={"horizontal"}>
-                                    <FieldLabel>Start Date: </FieldLabel>
-                                    <Input 
-                                        name="start-date"
-                                        type="date"
-                                        required
-                                    />
-                                </Field>
-                                <Field className="flex flex-row gap-2" orientation={"horizontal"}>
-                                    <FieldLabel>End Date: </FieldLabel>
-                                    <Input 
-                                        name="end-date"
-                                        type="date"
-                                    />
-                                </Field>
-                                <Field className="flex flex-row gap-2" orientation={"horizontal"}>
-                                    <FieldLabel>Organization: </FieldLabel>
+                        {/* Start date, end date, and main organization? */}
+                        <FieldGroup className="gap-2">
+                            <Field className="flex flex-row gap-2" orientation={"horizontal"}>
+                                <FieldLabel className="w-1/4">Start Date: </FieldLabel>
+                                <Input 
+                                    name="start-date"
+                                    type="date"
+                                    required
+                                    className="w-3/4"
+                                />
+                            </Field>
+                            <Field className="flex flex-row gap-2" orientation={"horizontal"}>
+                                <FieldLabel className="w-1/4">End Date: </FieldLabel>
+                                <Input 
+                                    name="start-date"
+                                    type="date"
+                                    required
+                                    className="w-3/4"
+                                />
+                            </Field>
+                            <Field className="flex flex-row gap-2" orientation={"horizontal"}>
+                                <FieldLabel className="w-1/4">Org: </FieldLabel>
+                                <div className="w-3/4">
                                     <OrganizationSearch />
-                                </Field>
+                                </div>
+                            </Field>
                         </FieldGroup>
                     </div>
+
+                    <div className="flex flex-col gap-4 mt-12">
+                        <div className="flex flex-row gap-2">
+                            <StudentSearch/>
+                            <Button className="cursor-pointer" onClick={() => setCreateNew(true)}><Plus/> Create New</Button>
+                        </div>
+                        <DataTable columns={cols} data={students} paginationEnabled={false} visibleRows={3}/>
+                    </div>
+
+                    <Field className="mt-12">
+                        <FieldLabel>Notes</FieldLabel>
+                        <Textarea name="notes"/>
+                    </Field>
+
+                    <div className=" flex flex-row mt-4 justify-end">
+                        <Button className="w-1/5 cursor-pointer">Submit</Button>
+                    </div>
                     
-
-
-
+                    
+                    
                 </form>
-                
-                
 
 
 
-                {/* Start date, endDate?, organization? */}
+                <Sheet open={createNew}>
+                    <SheetContent className="px-4">
+                        <SheetHeader className="mt-2 -px-4">
+                            <SheetTitle>Create New Student</SheetTitle>
+                            <SheetDescription>This will automatically create a new student in the list below, as well as the database.</SheetDescription>
+                        </SheetHeader>
 
-
-
-
-
-
-
-
-
+                        <FieldGroup className="flex flex-col gap-2">
+                            <Field>
+                                <FieldLabel>Student Name:</FieldLabel>
+                                <Input 
+                                    value={newName}
+                                    onChange={(e) => setNewName(e.target.value)}
+                                    type="text"
+                                    required
+                                />
+                            </Field>
+                            <Field>
+                                <FieldLabel>Date of Birth:</FieldLabel>
+                                <Input 
+                                    value={newDob}
+                                    onChange={(e) => setNewDob(e.target.value)}
+                                    type="date"
+                                    required
+                                />
+                            </Field>
+                            <Field>
+                                <FieldLabel>Organization:</FieldLabel>
+                                <OrganizationSearch setNewOrg={setNewOrg}/>
+                            </Field>
+                            <Field>
+                                <FieldLabel>Email:</FieldLabel>
+                                <Input 
+                                    value={newEmail}
+                                    onChange={(e) => setNewEmail(e.target.value)}
+                                    type="text"
+                                />
+                            </Field>
+                            <Field>
+                                <FieldLabel>Phone:</FieldLabel>
+                                <Input 
+                                    value={newPhone}
+                                    type="text"
+                                    onChange={(e) => setNewPhone(e.target.value)}
+                                />
+                            </Field>
+                            <Field>
+                                <FieldLabel>Guardian Email:</FieldLabel>
+                                <Input 
+                                    value={newGEmail}
+                                    type="text"
+                                    onChange={(e) => setNewGEmail(e.target.value)}
+                                    required
+                                />
+                            </Field>
+                            <Field>
+                                <FieldLabel>Guardian Phone:</FieldLabel>
+                                <Input 
+                                    value={newGPhone}
+                                    type="text"
+                                    onChange={(e) => setNewGPhone(e.target.value)}
+                                />
+                            </Field>
+                        </FieldGroup>
+                        <div className="flex flex-row gap-2 justify-end">
+                            <Button onClick={() => setCreateNew(false)}>Cancel</Button>
+                            <Button onClick={() => {setCreateNew(false); submitNewStudent()}}>Submit</Button>
+                        </div>
+                    </SheetContent>
+                </Sheet>
             </BigDialogContent>
         </Dialog>
     )
