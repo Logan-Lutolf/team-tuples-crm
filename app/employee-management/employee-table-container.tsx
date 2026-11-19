@@ -32,7 +32,7 @@ export async function EmployeeTableContainer({search, cursor, dir} : EmployeeTab
         employee,
         role: [...new Set(mine.map((a) => a.role))].join(", "),
         globalRoles: mine
-          .filter((a) => a.branchId === null && a.programId === null && a.region === null)
+          .filter((a) => a.branchName === null && a.programId === null && a.region === null)
           .map((a) => a.role),
       }]
     })

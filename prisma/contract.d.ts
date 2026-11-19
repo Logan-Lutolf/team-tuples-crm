@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'993ee0afda0258c7a50a313d1b7ded95da0b8e02078ffe8fbe4c2d48f4e1ecf2'>;
+  StorageHashBase<'a963c2adc0c8a9524caf56945dbe9503d875b273ee2f08d1f3ce5fb35cb24997'>;
 export type ExecutionHash =
   ExecutionHashBase<'14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9'>;
 export type ProfileHash =
@@ -308,7 +308,17 @@ export type FieldOutputTypes = {
         | 'KARLOVARSKÝ_KRAJ'
         | 'MORAVSKOSLEZSKÝ_KRAJ'
         | 'PRAHA';
-      readonly branchId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly branchName:
+        | 'SEVERNÍ_ČECHY'
+        | 'VÝCHODNÍ_ČECHY'
+        | 'STŘEDNÍ_MORAVA'
+        | 'PLZEŇSKÝ_KRAJ'
+        | 'JIŽNÍ_MORAVA'
+        | 'JIŽNÍ_ČECHY'
+        | 'KARLOVARSKÝ_KRAJ'
+        | 'MORAVSKOSLEZSKÝ_KRAJ'
+        | 'PRAHA'
+        | null;
       readonly employeeId: CodecTypes['pg/int4@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly programId: CodecTypes['pg/int4@1']['output'] | null;
@@ -551,7 +561,17 @@ export type FieldInputTypes = {
         | 'KARLOVARSKÝ_KRAJ'
         | 'MORAVSKOSLEZSKÝ_KRAJ'
         | 'PRAHA';
-      readonly branchId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly branchName:
+        | 'SEVERNÍ_ČECHY'
+        | 'VÝCHODNÍ_ČECHY'
+        | 'STŘEDNÍ_MORAVA'
+        | 'PLZEŇSKÝ_KRAJ'
+        | 'JIŽNÍ_MORAVA'
+        | 'JIŽNÍ_ČECHY'
+        | 'KARLOVARSKÝ_KRAJ'
+        | 'MORAVSKOSLEZSKÝ_KRAJ'
+        | 'PRAHA'
+        | null;
       readonly employeeId: CodecTypes['pg/int4@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly programId: CodecTypes['pg/int4@1']['input'] | null;
@@ -794,7 +814,17 @@ export type StorageColumnTypes = {
         | 'KARLOVARSKÝ_KRAJ'
         | 'MORAVSKOSLEZSKÝ_KRAJ'
         | 'PRAHA';
-      readonly branchId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly branchName:
+        | 'SEVERNÍ_ČECHY'
+        | 'VÝCHODNÍ_ČECHY'
+        | 'STŘEDNÍ_MORAVA'
+        | 'PLZEŇSKÝ_KRAJ'
+        | 'JIŽNÍ_MORAVA'
+        | 'JIŽNÍ_ČECHY'
+        | 'KARLOVARSKÝ_KRAJ'
+        | 'MORAVSKOSLEZSKÝ_KRAJ'
+        | 'PRAHA'
+        | null;
       readonly employeeId: CodecTypes['pg/int4@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly programId: CodecTypes['pg/int4@1']['output'] | null;
@@ -1037,7 +1067,17 @@ export type StorageColumnInputTypes = {
         | 'KARLOVARSKÝ_KRAJ'
         | 'MORAVSKOSLEZSKÝ_KRAJ'
         | 'PRAHA';
-      readonly branchId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly branchName:
+        | 'SEVERNÍ_ČECHY'
+        | 'VÝCHODNÍ_ČECHY'
+        | 'STŘEDNÍ_MORAVA'
+        | 'PLZEŇSKÝ_KRAJ'
+        | 'JIŽNÍ_MORAVA'
+        | 'JIŽNÍ_ČECHY'
+        | 'KARLOVARSKÝ_KRAJ'
+        | 'MORAVSKOSLEZSKÝ_KRAJ'
+        | 'PRAHA'
+        | null;
       readonly employeeId: CodecTypes['pg/int4@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly programId: CodecTypes['pg/int4@1']['input'] | null;
@@ -1289,7 +1329,17 @@ export namespace Models {
       | 'KARLOVARSKÝ_KRAJ'
       | 'MORAVSKOSLEZSKÝ_KRAJ'
       | 'PRAHA';
-    branchId: CodecTypes['pg/int4@1']['output'] | null;
+    branchName:
+      | 'SEVERNÍ_ČECHY'
+      | 'VÝCHODNÍ_ČECHY'
+      | 'STŘEDNÍ_MORAVA'
+      | 'PLZEŇSKÝ_KRAJ'
+      | 'JIŽNÍ_MORAVA'
+      | 'JIŽNÍ_ČECHY'
+      | 'KARLOVARSKÝ_KRAJ'
+      | 'MORAVSKOSLEZSKÝ_KRAJ'
+      | 'PRAHA'
+      | null;
     employeeId: CodecTypes['pg/int4@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
     programId: CodecTypes['pg/int4@1']['output'] | null;
@@ -1685,9 +1735,9 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
-                readonly branchId: {
-                  readonly dataType: 'pg/int4';
-                  readonly codecId: 'pg/int4@1';
+                readonly branchName: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
                   readonly nullable: true;
                   readonly many: false;
                 };
@@ -1730,9 +1780,9 @@ type ContractBase = Omit<
               uniques: readonly [];
               indexes: readonly [
                 {
-                  readonly name: 'EmployeeAssignment_branchId_programId_idx_2ed2f029';
-                  readonly prefix: 'EmployeeAssignment_branchId_programId_idx';
-                  readonly columns: readonly ['branchId', 'programId'];
+                  readonly name: 'EmployeeAssignment_branchName_programId_idx_c00f4f6b';
+                  readonly prefix: 'EmployeeAssignment_branchName_programId_idx';
+                  readonly columns: readonly ['branchName', 'programId'];
                   readonly unique: false;
                 },
                 {
@@ -3054,9 +3104,9 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-              readonly branchId: {
+              readonly branchName: {
                 readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly employeeId: {
                 readonly nullable: false;
@@ -3110,7 +3160,7 @@ type ContractBase = Omit<
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly branch: { readonly column: 'branch' };
-                readonly branchId: { readonly column: 'branchId' };
+                readonly branchName: { readonly column: 'branchName' };
                 readonly employeeId: { readonly column: 'employeeId' };
                 readonly id: { readonly column: 'id' };
                 readonly programId: { readonly column: 'programId' };

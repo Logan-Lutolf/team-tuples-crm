@@ -665,11 +665,17 @@
                   "plane": "domain"
                 }
               },
-              "branchId": {
+              "branchName": {
                 "nullable": true,
                 "type": {
-                  "codecId": "pg/int4@1",
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "BranchTypes",
+                  "namespaceId": "public",
+                  "plane": "domain"
                 }
               },
               "employeeId": {
@@ -759,8 +765,8 @@
                 "branch": {
                   "column": "branch"
                 },
-                "branchId": {
-                  "column": "branchId"
+                "branchName": {
+                  "column": "branchName"
                 },
                 "employeeId": {
                   "column": "employeeId"
@@ -2427,6 +2433,11 @@
             "EmployeeAssignment": {
               "checks": [
                 {
+                  "expression": "\"branchName\" IN ('SEVERNÍ_ČECHY', 'VÝCHODNÍ_ČECHY', 'STŘEDNÍ_MORAVA', 'PLZEŇSKÝ_KRAJ', 'JIŽNÍ_MORAVA', 'JIŽNÍ_ČECHY', 'KARLOVARSKÝ_KRAJ', 'MORAVSKOSLEZSKÝ_KRAJ', 'PRAHA')",
+                  "name": "EmployeeAssignment_branchName_check_a4fcb6e8",
+                  "prefix": "EmployeeAssignment_branchName_check"
+                },
+                {
                   "expression": "\"branch\" IN ('SEVERNÍ_ČECHY', 'VÝCHODNÍ_ČECHY', 'STŘEDNÍ_MORAVA', 'PLZEŇSKÝ_KRAJ', 'JIŽNÍ_MORAVA', 'JIŽNÍ_ČECHY', 'KARLOVARSKÝ_KRAJ', 'MORAVSKOSLEZSKÝ_KRAJ', 'PRAHA')",
                   "name": "EmployeeAssignment_branch_check_572d22f2",
                   "prefix": "EmployeeAssignment_branch_check"
@@ -2454,10 +2465,16 @@
                     "plane": "storage"
                   }
                 },
-                "branchId": {
-                  "codecId": "pg/int4@1",
-                  "dataType": "pg/int4",
-                  "nullable": true
+                "branchName": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "BranchTypes",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "employeeId": {
                   "codecId": "pg/int4@1",
@@ -2546,11 +2563,11 @@
               "indexes": [
                 {
                   "columns": [
-                    "branchId",
+                    "branchName",
                     "programId"
                   ],
-                  "name": "EmployeeAssignment_branchId_programId_idx_2ed2f029",
-                  "prefix": "EmployeeAssignment_branchId_programId_idx",
+                  "name": "EmployeeAssignment_branchName_programId_idx_c00f4f6b",
+                  "prefix": "EmployeeAssignment_branchName_programId_idx",
                   "unique": false
                 },
                 {
@@ -3991,7 +4008,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "993ee0afda0258c7a50a313d1b7ded95da0b8e02078ffe8fbe4c2d48f4e1ecf2"
+    "storageHash": "a963c2adc0c8a9524caf56945dbe9503d875b273ee2f08d1f3ce5fb35cb24997"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

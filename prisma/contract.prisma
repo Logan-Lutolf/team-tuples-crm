@@ -136,7 +136,7 @@ model EmployeeAssignment {
   id         Int @id @default(autoincrement())
   employeeId Int
   role       RoleTypes
-  branchId   Int?  // Do we need this here? Redundant imo
+  branchName   BranchTypes?  // Do we need this here? Redundant imo
   programId  Int?
   region     RegionTypes?
 
@@ -145,7 +145,7 @@ model EmployeeAssignment {
   program  Program? @relation(fields: [programId], references: [id], onDelete: Cascade)
 
   @@index([employeeId])
-  @@index([branchId, programId])
+  @@index([branchName, programId])
 }
 
 // Each contact event is a separate row, including repeat conversations.
