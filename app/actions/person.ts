@@ -32,3 +32,18 @@ export async function updateNameAndRole(formData: FormData, id: number) {
         return {result: "error", message: "" + error}
     }
 }
+
+// Written by Claude
+export async function searchPeople(query: string) {
+    const q = query.trim().toLowerCase()
+    if (q.length < 2) return []
+
+    // Same pattern as your EmployeeTableContainer: load, then filter in JS.
+    // If your ORM supports a case-insensitive "contains" filter, use it instead.
+    const records = await db.orm.public.Person.include("employee").all().toArray()
+
+    return records
+        .filter(p => p.name.toLowerCase().includes(q) && p.employee?.personId == null)
+        .slice(0, 8)
+        .map(p => ({ id: p.id, name: p.name }))
+}
