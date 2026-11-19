@@ -2,11 +2,17 @@ import Link from 'next/link'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { loadRecommendations } from './recommendation-data'
 
-type SuggestedContact = { id: number; name: string; role: string }
+type SuggestedContact = { id: number; name: string; role: string; email: string }
 
 const linkClass = 'font-medium underline-offset-4 hover:underline focus-visible:underline'
 const formatRole = (role: string) => role.toLowerCase().replaceAll('_', ' ')
 const dateFormat = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeZone: 'Europe/Prague' })
+
+function ContactEmail({ email }: { email: string }) {
+    const address = email.trim()
+    const hasEmail = address && !address.toLowerCase().endsWith('.invalid')
+    return <p className="break-all text-muted-foreground">{hasEmail ? address : 'No email on file'}</p>
+}
 
 export async function Recommendations({ organizationView }: { organizationView: boolean }) {
     const organizationLabel = organizationView ? 'organizations' : 'schools'
@@ -24,8 +30,8 @@ export async function Recommendations({ organizationView }: { organizationView: 
     }
 
     const sections = [
-        { title: `Active ${organizationLabel}`, kind: 'organization', reconnect: false },
-        { title: 'Recently active people', kind: 'person', reconnect: false },
+        { title: `Recently contacted ${organizationLabel}`, kind: 'organization', reconnect: false },
+        { title: 'Recently contacted people', kind: 'person', reconnect: false },
         { title: `Reconnect with ${organizationLabel}`, kind: 'organization', reconnect: true },
         { title: 'Reconnect with people', kind: 'person', reconnect: true },
     ]
@@ -63,6 +69,7 @@ export async function Recommendations({ organizationView }: { organizationView: 
                                                     <p className="text-muted-foreground">
                                                         {record.reason}{record.date && <> · <time dateTime={record.date}>{dateFormat.format(new Date(record.date))}</time></>}
                                                     </p>
+                                                    {isPerson && !record.isReconnect && <ContactEmail email={record.email} />}
                                                     {!isPerson && (
                                                         <details className="mt-2">
                                                             <summary className="w-fit cursor-pointer font-medium">Who to contact</summary>
@@ -72,6 +79,7 @@ export async function Recommendations({ organizationView }: { organizationView: 
                                                                         <li key={contact.id}>
                                                                             <Link href={`/details/contacts/${contact.id}`} className={linkClass}>{contact.name}</Link>
                                                                             <span className="text-muted-foreground"> · {formatRole(contact.role)}</span>
+                                                                            <ContactEmail email={contact.email} />
                                                                         </li>
                                                                     ))}
                                                                 </ul>

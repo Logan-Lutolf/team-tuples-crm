@@ -60,7 +60,7 @@ export async function loadRecommendations(organizationView: boolean) {
             GROUP BY pc."contactId"
         ),
         people AS (
-            SELECT c.id, c.name, c."contactRole"::text AS role,
+            SELECT c.id, c.name, coalesce(c.email, '') AS email, c."contactRole"::text AS role,
                 greatest(o.last_contact, CASE WHEN c."lastTrackedEmailAt" <= now()
                     THEN c."lastTrackedEmailAt" END) AS last_contact,
                 e.activity_at, coalesce(e.ongoing, false) AS ongoing
@@ -93,13 +93,13 @@ export async function loadRecommendations(organizationView: boolean) {
             GROUP BY 1
         ),
         candidates AS (
-            SELECT 'organization' AS kind, o.id, o.name, '' AS role, '' AS organization,
+            SELECT 'organization' AS kind, o.id, o.name, '' AS email, '' AS role, '' AS organization,
                 c.last_contact, e.activity_at, coalesce(e.ongoing, false) AS ongoing
             FROM organizations o
             LEFT JOIN organization_contacts c ON c.id = o.id
             LEFT JOIN organization_events e ON e.id = o.id
             UNION ALL
-            SELECT 'person', p.id, p.name, p.role, coalesce(affiliations.names, ''),
+            SELECT 'person', p.id, p.name, p.email, p.role, coalesce(affiliations.names, ''),
                 p.last_contact, p.activity_at, p.ongoing
             FROM people p
             LEFT JOIN LATERAL (
@@ -133,15 +133,15 @@ export async function loadRecommendations(organizationView: boolean) {
                 WHERE c.last_contact <= s.reconnect_before AND (c.kind = 'organization' OR c.organization <> '')
             ) recommendation
         )
-        SELECT r.kind, r.id, r.name, r.role, r.organization, r.reason, r.is_reconnect AS "isReconnect",
+        SELECT r.kind, r.id, r.name, r.email, r.role, r.organization, r.reason, r.is_reconnect AS "isReconnect",
             coalesce(to_char(r.event_at AT TIME ZONE 'Europe/Prague', 'YYYY-MM-DD'), '') AS date,
             coalesce(suggestions.contacts, '[]'::jsonb)::text AS contacts
         FROM ranked r
         LEFT JOIN LATERAL (
-            SELECT jsonb_agg(jsonb_build_object('id', candidate.id, 'name', candidate.name, 'role', candidate.role)
+            SELECT jsonb_agg(jsonb_build_object('id', candidate.id, 'name', candidate.name, 'role', candidate.role, 'email', candidate.email)
                 ORDER BY candidate.priority, candidate.activity DESC NULLS LAST, candidate.name, candidate.id) AS contacts
             FROM (
-                SELECT p.id, p.name, p.role, greatest(p.last_contact, p.activity_at) AS activity,
+                SELECT p.id, p.name, p.email, p.role, greatest(p.last_contact, p.activity_at) AS activity,
                     CASE WHEN p.role IN ('TEACHER', 'SCHOOL_COORDINATOR', 'PRINCIPAL') THEN 0 ELSE 1 END AS priority
                 FROM memberships m JOIN people p ON p.id = m.person_id
                 WHERE r.kind = 'organization' AND m.organization_id = r.id AND p.role <> 'STUDENT'
@@ -154,6 +154,7 @@ export async function loadRecommendations(organizationView: boolean) {
         kind: { codecId: 'pg/text@1' },
         id: { codecId: 'pg/int4@1' },
         name: { codecId: 'pg/text@1' },
+        email: { codecId: 'pg/text@1' },
         role: { codecId: 'pg/text@1' },
         organization: { codecId: 'pg/text@1' },
         reason: { codecId: 'pg/text@1' },
