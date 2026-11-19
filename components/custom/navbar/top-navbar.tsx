@@ -1,15 +1,16 @@
 "use client"
 
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "./ui/navigation-menu"
-import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar"
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "../../ui/navigation-menu"
+import { Avatar, AvatarImage, AvatarFallback } from "../../ui/avatar"
 import { HelpCircle, LogOut, Settings, SettingsIcon } from "lucide-react"
 import { logout } from "@/app/login/actions"
 import { useState } from "react"
-import { Dialog, DialogTrigger } from "./ui/dialog"
-import { SettingsDialog } from "./custom/settings-dialog"
+import { Dialog, DialogTrigger } from "../../ui/dialog"
+import { SettingsDialog } from "./settings-dialog"
 import { nameInitials } from "@/lib/utils"
 import { Employee, Person } from "@/app/types"
 import { canUseEmailContacts } from '@/lib/email-contacts'
+import { TopNavbarContainer } from "./top-navbar-container"
 
 const links = [
   { href: "/employee-management", label: "Employees" },

@@ -5,7 +5,7 @@ const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 import "./globals.css";
 import { ToastProvider, Toaster } from "@/components/ui/toast";
 import Image from "next/image";
-import { TopNavbarContainer } from "@/components/top-navbar-container";
+import { TopNavbarContainer } from "@/components/custom/navbar/top-navbar-container";
 
 
 const geistSans = Geist({

@@ -1,14 +1,14 @@
 "use client"
 
 import { formatPhoneNumber, formatAddress, showToast } from "@/lib/utils";
-import { Card, CardContent, CardTitle } from "../ui/card";
+import { Card, CardContent, CardTitle } from "../../ui/card";
 import { Organization, Person, RoleTypes } from "@/app/types";
 import { useState } from "react";
 import { Mail, MapPin, Pencil, Phone, Save, X } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { updatePersonContactInfo, updateOrganizationContactInfo } from "@/app/details/actions";
-import { Input } from "../ui/input";
-import { Field, FieldLabel } from "../ui/field";
+import { Input } from "../../ui/input";
+import { Field, FieldLabel } from "../../ui/field";
 import { Aoboshi_One } from "next/font/google";
 
 

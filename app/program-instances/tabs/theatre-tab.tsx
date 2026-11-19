@@ -2,7 +2,7 @@ import { Participation } from "@/app/types";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "../columns";
 import { AddSoonForm } from "../forms/add-soon-form";
-import { Search } from "@/components/custom/search";
+import { Search } from "@/components/custom/searches/search";
 import { AddTheatreForm } from "../forms/add-theatre-form";
 
 

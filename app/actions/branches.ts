@@ -3,7 +3,7 @@ import { timeDetails } from '@/lib/detail-timing'
 
 import { revalidatePath } from "next/cache"
 import { db } from "@/prisma/db"
-import { branchData, positiveId, type BranchResult } from "./branch-data"
+import { branchData, positiveId, type BranchResult } from "../branches/branch-data"
 
 async function mutate(form: FormData, mode: "create" | "edit" | "delete"): Promise<BranchResult> {
     try {

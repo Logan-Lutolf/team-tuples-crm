@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getContactDetails } from '@/app/contacts/actions_contacts'
-import { getBranchDetails } from '@/app/branches/actions'
+import { getBranchDetails } from '@/app/actions/branches'
 import { getProgramDetails } from '@/app/programs/actions'
 import { getMunicipalityDetails, getParticipationDetails } from '@/app/municipalities/actions'
 import { timeDetails } from '@/lib/detail-timing'

@@ -3,9 +3,9 @@
 import { CONTACT_TYPES, PersonWithRole } from "@/app/types";
 import { Pencil, Save, X } from "lucide-react";
 import { useState } from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Field } from "../ui/field";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { Field } from "../../ui/field";
 import { CustomSelect } from "../custom-dropdowns";
 import { updateNameAndRole } from "@/app/actions/person";
 import { showToast } from "@/lib/utils";

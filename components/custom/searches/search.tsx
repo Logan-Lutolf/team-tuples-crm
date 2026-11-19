@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef } from "react"
-import { Input } from "../ui/input"
-import { Field, FieldLabel } from "../ui/field"
+import { Input } from "../../ui/input"
+import { Field, FieldLabel } from "../../ui/field"
 import { useSearchParams, usePathname, useRouter } from "next/navigation"
 
 

@@ -1,5 +1,5 @@
 import { BRANCH_TYPES, BranchTypes, CONTACT_TYPES, ORG_TYPES, REGION_TYPES } from "@/app/types";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { programParsing } from "@/lib/utils";
 
 interface CustomSelectProps {
