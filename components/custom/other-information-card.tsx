@@ -81,7 +81,7 @@ export function OtherInformationCard({obj, editPermissions} : OtherInformationCa
                 <CardContent>
                     <div className="flex flex-row justify-between items-center">
                         <CardTitle>Other Information</CardTitle>
-                        {editPermissions && <Button onClick={() => setEditing(!editing)}><Pencil/></Button>}
+                        {editPermissions && <Button size="sm" onClick={() => setEditing(!editing)}><Pencil/></Button>}
                     </div>
                     <p>Branch Assigned: {obj.branchName}</p>
                     {"region" in obj && <p>Region: {programParsing(obj.region)}</p>}

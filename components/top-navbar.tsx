@@ -16,7 +16,7 @@ const links = [
 ]
 
 const searchlinks = [
-  { href: "/schools", label: "Schools" },
+  { href: "/schools", label: "Organizations" },
   { href: "/contacts", label: "Contacts" },
   { href: "/branches", label: "Branches" },
   { href: "/programs", label: "Programs" },
