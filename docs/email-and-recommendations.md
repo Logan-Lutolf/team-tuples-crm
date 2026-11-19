@@ -9,8 +9,9 @@ and branch-name keys. They do not introduce the obsolete `Contact`/`School` mode
 - `/email`: CC tracking address, contact filters, address copying, private saved
   segments, and SmartEmailing list/bounce/engagement filters. Administrators and
   coordinators can use it. The navigation follows the same rule.
-- `/recommendations`: the four recommendation cards from master, with school and
+- `/dashboard`: includes the four recommendation cards from master, with school and
   other-organization views. Available to signed-in employees. No external API needed.
+  `/recommendations` redirects here to preserve existing bookmarks.
 - Person details show CC tracking time and imported newsletter history to the same
   employees who can use `/email`.
 

@@ -62,3 +62,47 @@ Run the parser tests with:
 ```sh
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/import -v
 ```
+
+## Historical email and dated project activity
+
+The follow-up activity importer uses the original `report.json` ID manifest, so
+it refuses to attach records to a different database or changed person identities.
+It creates no people and requires no schema changes.
+
+```sh
+python3 scripts/prepare-spreadsheet-activity.py \
+  .local/spreadsheet-import/source-1.csv \
+  .local/spreadsheet-import/source-2.csv \
+  .local/spreadsheet-import/activity-plan.json
+node scripts/import-spreadsheet-activity.mjs \
+  .local/spreadsheet-import/activity-plan.json \
+  .local/spreadsheet-import/report.json \
+  .local/spreadsheet-import/activity-preview.json
+node --env-file-if-exists=.env.local scripts/import-spreadsheet-activity.mjs \
+  .local/spreadsheet-import/activity-plan.json \
+  .local/spreadsheet-import/report.json \
+  .local/spreadsheet-import/activity-report.json --apply
+```
+
+- Theatre confirmation/payment-email dates use 2026, supported by registration
+  timestamps. Project dates without years use school year 2026–27, supported by
+  the explicit presentation date of 11 March 2027. These are documented assumptions.
+- Email entries are `Interaction` rows with mode `EMAIL`. They match the registration
+  email to an existing person. Sender attribution is null because the source does
+  not identify the sender. These are imported historical records, not verified CC
+  messages, so `lastTrackedEmailAt` is unchanged. Existing newer contact dates are kept.
+- Source dates have no time. Prague midnight is used for timestamp storage only;
+  it does not claim an exact send/event time.
+- Exact-dated training, meetings, workshops, recording and presentations become
+  separate participations under the existing project programme. Teacher-only
+  training links the teacher; team activities link teacher and students; recordings
+  and presentations also link the witness. The original nine groups are retained.
+- These are **scheduled participations**, not verified attendance. Their status
+  stays `PLANNED`; future activities do not become completed interactions. The
+  existing recommendation query uses past scheduled participation dates as activity.
+- Undated witness calls, ambiguous prose dates and month-only schedules are skipped.
+  The coordinator directory contains no dated activity to import.
+- Existing matching email interactions and activities are reused on reruns. Each
+  report lists original source row/column, database IDs, which rows were created,
+  and previous/new contact-date summaries for review or reversal. Keep the first
+  report; use a different output filename when verifying a rerun.

@@ -56,12 +56,8 @@ export function TopNavbar({employee, person}: TopNavbarProps) {
           <NavigationMenuLink href="/employee-management">Employees</NavigationMenuLink>
         </NavigationMenuItem>
 
-        <NavigationMenuItem>
-          <NavigationMenuLink href="/recommendations">Recommendations</NavigationMenuLink>
-        </NavigationMenuItem>
-
         {canUseEmailContacts(employee.role) && <NavigationMenuItem>
-          <NavigationMenuLink href="/email">SmartEmailing / CC tracking</NavigationMenuLink>
+          <NavigationMenuLink href="/email">Emailing</NavigationMenuLink>
         </NavigationMenuItem>}
 
         <NavigationMenuItem>

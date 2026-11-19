@@ -1,37 +1,24 @@
-import { Models } from "@/prisma/contract"
-import { Scalars } from "@prisma/orm-postgres/components"
-import { cookies } from "next/headers"
-import { decrypt } from "../login/sessions"
-import { redirect } from "next/navigation"
-import { AdminDashboardContainer } from "./containers/admin-dashboard-container"
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { currentEmployee } from '@/lib/current-employee'
+import { AdminDashboardContainer } from './containers/admin-dashboard-container'
+import { Recommendations } from './recommendations'
 
+export default async function Dashboard({ searchParams }: {
+    searchParams: Promise<{ view?: string }>
+}) {
+    const employee = await currentEmployee()
+    if (!employee) redirect('/login')
+    const organizationView = (await searchParams).view === 'organizations'
 
-
-type Roles = Scalars<Models.public_Employee>["roles"]
-
-export default async function Dashboard() {
-    console.log("Dashboard rendering.")
-    let roles: Roles | null = null
-
-    try {
-        const cookiesStore = await cookies()
-        const session = cookiesStore.get("session")?.value
-        const payload = await decrypt(session)
-
-        roles = payload?.userRoles?? null
-    }
-    catch (error) {
-        console.log("Error reading session cookie: ", error)
-    }
-
-    if (!roles) {
-        redirect("/login")
-    }
-        
-
-    return (
-        <>
-            {roles?.includes("ADMIN") && <AdminDashboardContainer/>}
-        </>
-    )
+    return <>
+        {employee.roles.includes('ADMIN') && <AdminDashboardContainer />}
+        <div className="m-6 grid gap-6 lg:m-10">
+            <nav aria-label="Recommendation view" className="flex gap-4">
+                <Link href="/dashboard" aria-current={!organizationView ? 'page' : undefined} className="underline">Schools</Link>
+                <Link href="/dashboard?view=organizations" aria-current={organizationView ? 'page' : undefined} className="underline">Other organizations</Link>
+            </nav>
+            <Recommendations organizationView={organizationView} />
+        </div>
+    </>
 }
