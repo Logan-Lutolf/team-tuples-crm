@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'07ac9e1cf689b3480432440240be97ced0482c7fda97dea8b120986576302e2b'>;
+  StorageHashBase<'1492046a3e5f3a21fb71e081358d360723deded316d292126454d2e987208562'>;
 export type ExecutionHash =
   ExecutionHashBase<'14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9'>;
 export type ProfileHash =
@@ -247,6 +247,7 @@ export type FieldOutputTypes = {
   readonly public: {
     readonly Branch: {
       readonly chiefId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
       readonly institute: CodecTypes['pg/text@1']['output'] | null;
       readonly name:
         | 'SEVERNÍ_ČECHY'
@@ -533,11 +534,9 @@ export type FieldOutputTypes = {
       readonly streamId: CodecTypes['pg/text@1']['output'];
     };
     readonly Student: {
-      readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly guardianEmail: CodecTypes['pg/text@1']['output'];
       readonly guardianPhone: CodecTypes['pg/text@1']['output'];
       readonly personId: CodecTypes['pg/int4@1']['output'];
-      readonly phone: CodecTypes['pg/text@1']['output'] | null;
     };
     readonly TrackedEmail: {
       readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -554,6 +553,7 @@ export type FieldInputTypes = {
   readonly public: {
     readonly Branch: {
       readonly chiefId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
       readonly institute: CodecTypes['pg/text@1']['input'] | null;
       readonly name:
         | 'SEVERNÍ_ČECHY'
@@ -840,11 +840,9 @@ export type FieldInputTypes = {
       readonly streamId: CodecTypes['pg/text@1']['input'];
     };
     readonly Student: {
-      readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly guardianEmail: CodecTypes['pg/text@1']['input'];
       readonly guardianPhone: CodecTypes['pg/text@1']['input'];
       readonly personId: CodecTypes['pg/int4@1']['input'];
-      readonly phone: CodecTypes['pg/text@1']['input'] | null;
     };
     readonly TrackedEmail: {
       readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -861,6 +859,7 @@ export type StorageColumnTypes = {
   readonly public: {
     readonly Branch: {
       readonly chiefId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
       readonly institute: CodecTypes['pg/text@1']['output'] | null;
       readonly name:
         | 'SEVERNÍ_ČECHY'
@@ -1147,11 +1146,9 @@ export type StorageColumnTypes = {
       readonly streamId: CodecTypes['pg/text@1']['output'];
     };
     readonly Student: {
-      readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly guardianEmail: CodecTypes['pg/text@1']['output'];
       readonly guardianPhone: CodecTypes['pg/text@1']['output'];
       readonly personId: CodecTypes['pg/int4@1']['output'];
-      readonly phone: CodecTypes['pg/text@1']['output'] | null;
     };
     readonly TrackedEmail: {
       readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1168,6 +1165,7 @@ export type StorageColumnInputTypes = {
   readonly public: {
     readonly Branch: {
       readonly chiefId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
       readonly institute: CodecTypes['pg/text@1']['input'] | null;
       readonly name:
         | 'SEVERNÍ_ČECHY'
@@ -1454,11 +1452,9 @@ export type StorageColumnInputTypes = {
       readonly streamId: CodecTypes['pg/text@1']['input'];
     };
     readonly Student: {
-      readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly guardianEmail: CodecTypes['pg/text@1']['input'];
       readonly guardianPhone: CodecTypes['pg/text@1']['input'];
       readonly personId: CodecTypes['pg/int4@1']['input'];
-      readonly phone: CodecTypes['pg/text@1']['input'] | null;
     };
     readonly TrackedEmail: {
       readonly contactedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1475,6 +1471,7 @@ export type StorageColumnInputTypes = {
 export namespace Models {
   export type public_Branch = {
     chiefId: CodecTypes['pg/int4@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
     institute: CodecTypes['pg/text@1']['output'] | null;
     name:
       | 'SEVERNÍ_ČECHY'
@@ -1828,11 +1825,9 @@ export namespace Models {
     readonly [RelationKeys]?: never;
   };
   export type public_Student = {
-    email: CodecTypes['pg/text@1']['output'] | null;
     guardianEmail: CodecTypes['pg/text@1']['output'];
     guardianPhone: CodecTypes['pg/text@1']['output'];
     personId: CodecTypes['pg/int4@1']['output'];
-    phone: CodecTypes['pg/text@1']['output'] | null;
     person: public_Person;
     readonly [RelationKeys]?: 'person';
   };
@@ -1899,6 +1894,12 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
                 readonly institute: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -1919,7 +1920,7 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['name'] };
-              uniques: readonly [];
+              uniques: readonly [{ readonly columns: readonly ['id'] }];
               indexes: readonly [
                 {
                   readonly name: 'Branch_chiefId_idx_3a71836f';
@@ -3243,12 +3244,6 @@ type ContractBase = Omit<
             };
             readonly Student: {
               columns: {
-                readonly email: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                  readonly many: false;
-                };
                 readonly guardianEmail: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -3265,12 +3260,6 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
-                  readonly many: false;
-                };
-                readonly phone: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
                   readonly many: false;
                 };
               };
@@ -3540,6 +3529,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
               readonly institute: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -3594,6 +3587,7 @@ type ContractBase = Omit<
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly chiefId: { readonly column: 'chiefId' };
+                readonly id: { readonly column: 'id' };
                 readonly institute: { readonly column: 'institute' };
                 readonly name: { readonly column: 'name' };
                 readonly region: { readonly column: 'region' };
@@ -4841,10 +4835,6 @@ type ContractBase = Omit<
           };
           readonly Student: {
             readonly fields: {
-              readonly email: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
               readonly guardianEmail: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -4856,10 +4846,6 @@ type ContractBase = Omit<
               readonly personId: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly phone: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
             };
             readonly relations: {
@@ -4880,11 +4866,9 @@ type ContractBase = Omit<
               readonly table: 'Student';
               readonly namespaceId: 'public';
               readonly fields: {
-                readonly email: { readonly column: 'email' };
                 readonly guardianEmail: { readonly column: 'guardianEmail' };
                 readonly guardianPhone: { readonly column: 'guardianPhone' };
                 readonly personId: { readonly column: 'personId' };
-                readonly phone: { readonly column: 'phone' };
               };
             };
           };

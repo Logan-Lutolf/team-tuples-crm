@@ -5,10 +5,9 @@ import { dateParsing, formatAddress, formatPhoneNumber, programParsing, relation
 import { columns as participationColumns } from '../columns/participations-columns'
 import {columns as contactColumns } from '../columns/contacts-columns'
 import { DataTable } from '@/components/ui/data-table'
-import { ContactInformationCard } from '@/components/custom/details-components/contact-information-card'
-import { OtherInformationCard } from '@/components/custom/details-components/other-information-card'
 import { ContactInformationCardContainer } from '@/components/custom/details-components/contact-information-card-container'
 import { OtherInformationCardContainer } from '@/components/custom/details-components/other-information-card-container'
+import { NameInfoContainer } from '@/components/custom/details-components/name-info-container'
 
 
 interface OrganizationsDetailsPageProps {
@@ -28,13 +27,10 @@ export function OrganizationDetailsPage({organization, participations, contacts}
     return (
         <div className="flex flex-col gap-8">
             {/* Name and status*/}
-            <div className="flex flex-col gap-2">
-                <div className="flex flex-row gap-2 items-center">
-                    <Circle fill={relationshipToColor(organization.relationship)} strokeWidth={1}/>
-                    <p className="text-3xl">{organization.name}</p>
-                </div>
-                <p className="text-base font-light italic">{organization.type}</p>
-            </div>
+            
+            {/* <Circle fill={relationshipToColor(organization.relationship)} strokeWidth={1}/> */}
+            <NameInfoContainer type={'org'} obj={organization} />
+                
             
             {/* Contact and other information */}
             <div className="flex flex-row gap-4">

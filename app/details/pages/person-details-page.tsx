@@ -8,7 +8,6 @@ import { ContactInformationCard } from '@/components/custom/details-components/c
 import { OtherInformationCard } from '@/components/custom/details-components/other-information-card'
 import { ContactInformationCardContainer } from '@/components/custom/details-components/contact-information-card-container'
 import { OtherInformationCardContainer } from '@/components/custom/details-components/other-information-card-container'
-import { PersonNameAndRole } from '@/components/custom/details-components/name-info-form'
 import { NameInfoContainer } from '@/components/custom/details-components/name-info-container'
 import { PersonEmailHistory } from '@/components/email/person-email-history'
 
@@ -25,7 +24,7 @@ export function PersonDetailsPage({person, participations}: PersonDetailsPagePro
     return (
         <div className="flex flex-col gap-8">
             {/* Name and status*/}
-            <NameInfoContainer obj={person}/>
+            <NameInfoContainer obj={person} type={'person'}/>
             
             {/* Contact and other information */}
             <div className="flex flex-row gap-4">
