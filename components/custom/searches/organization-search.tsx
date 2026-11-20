@@ -42,7 +42,7 @@ export function OrganizationSearch({ form, newOrg, setNewOrg }: OrganizationSear
             />
 
             {/* This is what the form actually submits */}
-            <input type="hidden" name="org-id" value={selected?.id ?? "N/A"} form={form} />
+            <input type="hidden" name="org-id" value={selected?.id ?? -1} form={form} />
 
             {open && results.length > 0 && (
                 <ul className="absolute z-50 mt-1 w-full rounded-md border bg-popover shadow-md">
