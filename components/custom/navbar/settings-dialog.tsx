@@ -1,12 +1,12 @@
 "use client"
 
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { DialogContent, DialogHeader } from "../ui/dialog";
-import { Input } from "../ui/input";
-import { changePFP } from "@/app/settings-actions";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { DialogContent, DialogHeader } from "../../ui/dialog";
+import { Input } from "../../ui/input";
+import { changePFP } from "@/app/actions/settings";
 import { useRouter } from "next/navigation";
 import { nameInitials, showToast } from "@/lib/utils";
-import { Separator } from "../ui/separator";
+import { Separator } from "../../ui/separator";
 import { Employee, Person } from "@/app/types";
 
 

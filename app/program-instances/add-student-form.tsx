@@ -7,7 +7,7 @@ import { showToast } from "@/lib/utils";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { getStudentCols, studentColumns } from "./columns";
-import { CustomSelect } from "@/components/custom-dropdowns";
+import { CustomSelect } from "@/components/custom/custom-dropdowns";
 import { BRANCH_TYPES, CONTACT_TYPES } from "../types";
 
 type Student = {

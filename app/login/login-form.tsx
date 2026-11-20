@@ -1,7 +1,7 @@
 "use client"
 
 import { useActionState } from "react";
-import { login } from "./actions";
+import { login } from "../actions/login";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,7 @@ export function LoginForm() {
     const [state, loginAction] = useActionState(login, undefined);
 
     return (
-        <Card className="flex flex-col justify-start w-1/3 h-full">
+        <Card className="flex flex-col justify-start w-full h-full">
             <CardContent>
                 <CardTitle>Login</CardTitle>
                 <form action={loginAction} className="flex flex-col gap-2">

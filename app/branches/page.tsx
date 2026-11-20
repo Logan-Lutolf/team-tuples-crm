@@ -3,7 +3,7 @@ import { PageActionLink } from '@/components/records/page-action-link'
 import { RecordLink } from '@/components/records/record-link'
 import Link from "next/link"
 import { db } from "@/prisma/db"
-import { Search } from "@/components/custom/search"
+import { Search } from "@/components/custom/searches/search"
 import { Suspense } from "react"
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 

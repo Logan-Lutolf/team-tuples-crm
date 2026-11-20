@@ -1,7 +1,7 @@
 import { AddEmployeeForm } from "./forms/add-employee-form";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Search } from "@/components/custom/search";
+import { Search } from "@/components/custom/searches/search";
 import { EmployeeTableContainer } from "./employee-table-container";
 import { Suspense } from "react";
 import SkeletonTable from "./loading";

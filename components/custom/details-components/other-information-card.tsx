@@ -2,13 +2,13 @@
 
 import { Person, Organization, ORG_TYPES, RELATIONSHIP_TYPES, REGION_TYPES, BRANCH_TYPES } from "@/app/types";
 import { programParsing, dateParsing, showToast } from "@/lib/utils";
-import { Card, CardContent, CardTitle } from "../ui/card";
+import { Card, CardContent, CardTitle } from "../../ui/card";
 import { useState } from "react";
 import { updateOrganizationOtherInfo, updatePersonOtherInfo } from "@/app/details/actions";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { Pencil, Save, X } from "lucide-react";
-import { Field } from "../ui/field";
-import { Input } from "../ui/input";
+import { Field } from "../../ui/field";
+import { Input } from "../../ui/input";
 import { CustomSelect } from "../custom-dropdowns";
 import { z } from 'zod'
 

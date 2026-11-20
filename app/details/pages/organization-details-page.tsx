@@ -5,10 +5,10 @@ import { dateParsing, formatAddress, formatPhoneNumber, programParsing, relation
 import { columns as participationColumns } from '../columns/participations-columns'
 import {columns as contactColumns } from '../columns/contacts-columns'
 import { DataTable } from '@/components/ui/data-table'
-import { ContactInformationCard } from '@/components/custom/contact-information-card'
-import { OtherInformationCard } from '@/components/custom/other-information-card'
-import { ContactInformationCardContainer } from '@/components/custom/contact-information-card-container'
-import { OtherInformationCardContainer } from '@/components/custom/other-information-card-container'
+import { ContactInformationCard } from '@/components/custom/details-components/contact-information-card'
+import { OtherInformationCard } from '@/components/custom/details-components/other-information-card'
+import { ContactInformationCardContainer } from '@/components/custom/details-components/contact-information-card-container'
+import { OtherInformationCardContainer } from '@/components/custom/details-components/other-information-card-container'
 
 
 interface OrganizationsDetailsPageProps {

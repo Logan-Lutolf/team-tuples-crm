@@ -7,7 +7,7 @@ import { useFormStatus } from 'react-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { editBranch, getBranchDetails, updateBranchRelationship } from './actions'
+import { editBranch, getBranchDetails, updateBranchRelationship } from '../actions/branches'
 import type { BranchResult } from './branch-data'
 
 type Details = Awaited<ReturnType<typeof getBranchDetails>>

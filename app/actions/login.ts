@@ -2,7 +2,7 @@
 
 import { db } from "@/prisma/db"
 import { and } from "@prisma/orm-postgres/orm-client"
-import { createSession, deleteSession } from "./sessions"
+import { createSession, deleteSession } from "../login/sessions"
 import { redirect } from "next/navigation"
 import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
