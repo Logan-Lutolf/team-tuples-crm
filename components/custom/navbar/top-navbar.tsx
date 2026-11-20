@@ -11,6 +11,8 @@ import { nameInitials } from "@/lib/utils"
 import { Employee, Person } from "@/app/types"
 import { canUseEmailContacts } from '@/lib/email-contacts'
 import { TopNavbarContainer } from "./top-navbar-container"
+import Image from "next/image";
+
 
 const links = [
   { href: "/employee-management", label: "Employees" },
@@ -35,7 +37,9 @@ export function TopNavbar({employee, person}: TopNavbarProps) {
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   return (
-    <>
+    <div className="flex flex-row justify-between">
+      <Image src={"/Post_Bellum_logo.png"} alt={"Post Bellum Logo"} width={300} height={10}/>
+
     <NavigationMenu orientation="horizontal" className="mt-2">
       <NavigationMenuList>
         <NavigationMenuItem>
@@ -96,6 +100,6 @@ export function TopNavbar({employee, person}: TopNavbarProps) {
     <Dialog open={settingsOpen} onOpenChange={() => setSettingsOpen(false)}>
       <SettingsDialog employee={employee} person={person}/>
     </Dialog>
-    </>
+    </div>
   )
 }
