@@ -433,6 +433,13 @@
                   "kind": "scalar"
                 }
               },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "institute": {
                 "nullable": true,
                 "type": {
@@ -519,6 +526,9 @@
               "fields": {
                 "chiefId": {
                   "column": "chiefId"
+                },
+                "id": {
+                  "column": "id"
                 },
                 "institute": {
                   "column": "institute"
@@ -1373,6 +1383,13 @@
                   "kind": "scalar"
                 }
               },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "organizationId": {
                 "nullable": true,
                 "type": {
@@ -1422,7 +1439,22 @@
               }
             },
             "relations": {
-              "employee": {
+              "contacts": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "participationId"
+                  ]
+                },
+                "to": {
+                  "model": "ParticipationContacts",
+                  "namespace": "public"
+                }
+              },
+              "employees": {
                 "cardinality": "1:N",
                 "on": {
                   "localFields": [
@@ -1480,6 +1512,9 @@
                 },
                 "name": {
                   "column": "name"
+                },
+                "notes": {
+                  "column": "notes"
                 },
                 "organizationId": {
                   "column": "organizationId"
@@ -2488,13 +2523,6 @@
           },
           "Student": {
             "fields": {
-              "email": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
               "guardianEmail": {
                 "nullable": false,
                 "type": {
@@ -2513,13 +2541,6 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "phone": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               }
@@ -2544,9 +2565,6 @@
             },
             "storage": {
               "fields": {
-                "email": {
-                  "column": "email"
-                },
                 "guardianEmail": {
                   "column": "guardianEmail"
                 },
@@ -2555,9 +2573,6 @@
                 },
                 "personId": {
                   "column": "personId"
-                },
-                "phone": {
-                  "column": "phone"
                 }
               },
               "namespaceId": "public",
@@ -2707,6 +2722,11 @@
                   "dataType": "pg/int4",
                   "nullable": true
                 },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
                 "institute": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -2772,7 +2792,13 @@
                   "name"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "id"
+                  ]
+                }
+              ]
             },
             "EmailSegment": {
               "columns": {
@@ -3597,6 +3623,11 @@
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
                 },
                 "organizationId": {
                   "codecId": "pg/int4@1",
@@ -4473,11 +4504,6 @@
             },
             "Student": {
               "columns": {
-                "email": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": true
-                },
                 "guardianEmail": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -4492,11 +4518,6 @@
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
                   "nullable": false
-                },
-                "phone": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
-                  "nullable": true
                 }
               },
               "foreignKeys": [
@@ -4704,7 +4725,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "07ac9e1cf689b3480432440240be97ced0482c7fda97dea8b120986576302e2b"
+    "storageHash": "a8e812e7016431c6982c5e0a91accb5a76da3a5c0799d0639ff7f94c22934526"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

@@ -37,12 +37,16 @@ export function OrganizationSearch({ form, newOrg, setNewOrg }: OrganizationSear
                 value={query}
                 placeholder="Search organizations..."
                 autoComplete="off"
-                onChange={e => { setQuery(e.target.value); setNewOrg?.(e.target.value); setSelected(null) }}
+                onChange={e => {
+                setQuery(e.target.value)
+                setSelected(null)
+                setNewOrg?.("")              // typing invalidates the previous selection
+            }}
                 onBlur={() => setTimeout(() => setOpen(false), 150)}  // lets the click on an item land first
             />
 
             {/* This is what the form actually submits */}
-            <input type="hidden" name="org-id" value={selected?.id ?? "N/A"} form={form} />
+            <input type="hidden" name="org" value={selected?.id ?? -1} form={form} />
 
             {open && results.length > 0 && (
                 <ul className="absolute z-50 mt-1 w-full rounded-md border bg-popover shadow-md">

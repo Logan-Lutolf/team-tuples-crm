@@ -4,6 +4,8 @@ import { timeDetails } from '@/lib/detail-timing'
 import { revalidatePath } from "next/cache"
 import { db } from "@/prisma/db"
 import { branchData, positiveId, type BranchResult } from "../branches/branch-data"
+import z from 'zod'
+import { REGION_TYPES } from '../types'
 
 async function mutate(form: FormData, mode: "create" | "edit" | "delete"): Promise<BranchResult> {
     try {
@@ -126,4 +128,35 @@ export async function updateBranchRelationship(form: FormData): Promise<BranchRe
     }
     for (const path of ['/branches', '/schools', '/contacts', '/employee-management', '/programs']) revalidatePath(path)
     return { success: true }
+}
+
+
+// CHARLOTTE'S EDITS
+
+const branchSchema = z.object({
+    name: z.string().min(1),
+    institute: z.string().or(z.literal("")).optional(), // make this validation better
+    chief: z.string().or(z.literal("")).optional(),
+    region: z.enum(REGION_TYPES)
+})
+
+const branchUpdateSchema = branchSchema.partial()
+
+
+export async function updateBranch(formData: FormData, id: number) {
+    const parsed = branchUpdateSchema.safeParse(Object.fromEntries(formData))
+    
+    if (!parsed.data) return {result: "error", message: "Branch update failed."}
+    const {...scalars } = parsed.data
+
+    try {
+        const branch = await db.orm.public.Organization.where({id: id}).update(scalars)
+        
+        if (branch) return {result: "success", message: "Branch updated successfully."}
+        else return {result: "error", message: "Branch update failed."}
+    }   
+    catch (error) {
+        console.log(error)
+        return {result: "error", message: "Branch update failed: " + error} 
+    }
 }

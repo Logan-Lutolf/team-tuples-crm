@@ -16,12 +16,13 @@ import { getStudentCols } from "../columns";
 import { Textarea } from "@/components/ui/textarea";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { addTheatreInstance } from "@/app/actions/participation";
 
 
 type Student = {
     name: string,
     dob: string,
-    school?: string,
+    org?: string,
     email?: string,
     phone?: string,
     guardianEmail: string,
@@ -54,7 +55,7 @@ export function AddTheatreForm() {
         setStudents(prev => [...prev, {
             name: newName,
             dob: newDob,
-            school: newOrg,
+            org: newOrg,
             email: newEmail,
             phone: newPhone,
             guardianEmail: newGEmail,
@@ -70,18 +71,28 @@ export function AddTheatreForm() {
         setNewOrg("")
     }
 
+    async function handleSubmit(formData: FormData) {
+        const result = await addTheatreInstance(formData)
+
+        if (result.result == "Success") showToast(result.result, result.message, "success")
+        else showToast(result.result, result.message, "error")
+    }
+
+
     return (
         <Dialog>
             <DialogTrigger render={<Button onClick={() => setOpen(true)}>Add Participation</Button>} />
             <BigDialogContent className="flex flex-col gap-4 max-h-[90vh] max-w-[110vh]">
-                <form className="p-5">
+                <form className="p-5" action={handleSubmit}>
                     <div className="grid grid-cols-2 gap-4">
                         {/* Instance name, teacher, coordinator */}
                         <FieldGroup className="gap-2">
+                            <Field><Input name="students" value={JSON.stringify(students)} hidden/></Field>
+
                             <Field className="flex flex-row gap-2" orientation={"horizontal"}>
                                 <FieldLabel className="w-1/4">Name: </FieldLabel>
                                 <Input 
-                                    name="program-name"
+                                    name="name"
                                     type="text"
                                     className="w-3/4"
                                 />
@@ -105,7 +116,7 @@ export function AddTheatreForm() {
                             <Field className="flex flex-row gap-2" orientation={"horizontal"}>
                                 <FieldLabel className="w-1/4">Start Date: </FieldLabel>
                                 <Input 
-                                    name="start-date"
+                                    name="startDate"
                                     type="date"
                                     required
                                     className="w-3/4"
@@ -114,7 +125,7 @@ export function AddTheatreForm() {
                             <Field className="flex flex-row gap-2" orientation={"horizontal"}>
                                 <FieldLabel className="w-1/4">End Date: </FieldLabel>
                                 <Input 
-                                    name="start-date"
+                                    name="endDate"
                                     type="date"
                                     required
                                     className="w-3/4"
@@ -143,7 +154,7 @@ export function AddTheatreForm() {
                     </Field>
 
                     <div className=" flex flex-row mt-4 justify-end">
-                        <Button className="w-1/5 cursor-pointer">Submit</Button>
+                        <Button className="w-1/5 cursor-pointer" type="submit">Submit</Button>
                     </div>
                     
                     

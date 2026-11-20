@@ -119,11 +119,13 @@ model Participation {
   startDate TimestamptzString?
   endDate   TimestamptzString?
   status    ProgramStatus @default(PLANNED)
+  notes String?
 
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   organizationId Int?
 
-  employee ParticipationEmployees[]
+  employees ParticipationEmployees[]
+  contacts ParticipationContacts[]
 
   program Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
   programId Int?
@@ -187,6 +189,7 @@ model Program {
 
 model Branch {
   name BranchTypes @id
+  id  Int @unique
   institute String?
   chiefId Int?
   chief Employee? @relation(fields: [chiefId], references: [personId], onDelete: SetNull)

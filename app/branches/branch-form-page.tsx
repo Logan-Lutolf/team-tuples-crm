@@ -68,7 +68,7 @@ export function BranchFormPage({ branch, employees, names, regions, mode = "crea
             </PageHeader>
             <form action={submit} className="grid gap-4">
                 <Fields>
-                    {branch && <input type="hidden" name="id" value={branch.id} />}
+                    {branch && <input type="hidden" name="name" value={branch.name} />}
                     {deleting ? <Field>
                         <FieldLabel htmlFor={`${prefix}-confirmation`}>Type delete to confirm</FieldLabel>
                         <Input id={`${prefix}-confirmation`} name="confirmation" required pattern="delete" autoComplete="off" />

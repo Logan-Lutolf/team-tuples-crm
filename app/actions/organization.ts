@@ -1,8 +1,9 @@
 "use server"
 
 import { z } from 'zod'
-import { BRANCH_TYPES, ORG_TYPES, REGION_TYPES, RELATIONSHIP_TYPES } from '../types'
+import { BRANCH_TYPES, ORG_TYPES, OrganizationTypes, REGION_TYPES, RELATIONSHIP_TYPES } from '../types'
 import { db } from '@/prisma/db'
+import { refresh } from 'next/cache'
 
 
 const organizationSchema = z.object({
@@ -18,6 +19,8 @@ const organizationSchema = z.object({
     zipCode: z.string().min(1),
     branch: z.enum(BRANCH_TYPES).or(z.literal("")).optional()
 })
+
+const orgUpdateSchema = organizationSchema.partial()
 
 export async function createOrganization(formData: FormData) {
     const parsedData = organizationSchema.safeParse(Object.fromEntries(formData))
@@ -55,6 +58,8 @@ export async function createOrganization(formData: FormData) {
     }
 }
 
+
+// Written by Claudy-poo
 export async function searchOrganizations(query: string) {
     const q = query.trim().toLowerCase()
     if (q.length < 2) return []
@@ -67,4 +72,25 @@ export async function searchOrganizations(query: string) {
         .filter(e => e.name.toLowerCase().includes(q))
         .slice(0, 8)
         .map(e => ({ id: e.id, name: e.name }))
+}
+
+
+
+
+
+export async function updateOrg(formData: FormData, id: number) {
+    const parsed = orgUpdateSchema.safeParse(Object.fromEntries(formData))
+    
+    if (!parsed.data) return 
+    const { branch, ...scalars } = parsed.data
+
+    try {
+        const org = await db.orm.public.Organization.where({id: id}).update(scalars)
+        if (org) {refresh(); return {result: "success", message: "Organization updated successfully."};}
+        else return {result: "error", message: "Organization update failed."}
+    }   
+    catch (error) {
+        console.log(error)
+        return {result: "error", message: "Organization update failed: " + error} 
+    }
 }

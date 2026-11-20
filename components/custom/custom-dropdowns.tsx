@@ -6,11 +6,12 @@ interface CustomSelectProps {
     name: string
     type: readonly string[]
     label?: string
+    defVal?: string
 }
 
-export function CustomSelect({name, type, label} : CustomSelectProps) {
+export function CustomSelect({name, type, label, defVal} : CustomSelectProps) {
     return (
-        <Select name={name}>
+        <Select name={name} defaultValue={defVal?? "Select an Option"}>
             <SelectTrigger>
                 <SelectValue/>
             </SelectTrigger>
