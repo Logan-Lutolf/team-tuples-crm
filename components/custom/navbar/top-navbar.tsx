@@ -3,7 +3,7 @@
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "../../ui/navigation-menu"
 import { Avatar, AvatarImage, AvatarFallback } from "../../ui/avatar"
 import { HelpCircle, LogOut, Settings, SettingsIcon } from "lucide-react"
-import { logout } from "@/app/login/actions"
+import { logout } from "@/app/actions/login"
 import { useState } from "react"
 import { Dialog, DialogTrigger } from "../../ui/dialog"
 import { SettingsDialog } from "./settings-dialog"

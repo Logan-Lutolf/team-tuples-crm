@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { DialogContent, DialogHeader } from "../../ui/dialog";
 import { Input } from "../../ui/input";
-import { changePFP } from "@/app/settings-actions";
+import { changePFP } from "@/app/actions/settings";
 import { useRouter } from "next/navigation";
 import { nameInitials, showToast } from "@/lib/utils";
 import { Separator } from "../../ui/separator";
