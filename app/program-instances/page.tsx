@@ -6,6 +6,7 @@ import { SoonTabContainer } from "./containers/soon-tab-container";
 import { Button } from "@/components/ui/button";
 import { AddSoonForm } from "./forms/add-soon-form";
 import { TheatreTabContainer } from "./containers/theatre-tab-container";
+import { SeminarTabContainer } from "./containers/seminar-tab-container";
 
 
 
@@ -28,7 +29,7 @@ export default async function ProgramInstancesPage() {
                 </div>
                 
                 
-                <TabsContent value="seminars"></TabsContent>
+                <TabsContent value="seminars"><SeminarTabContainer/></TabsContent>
                 <TabsContent value="soon"><SoonTabContainer/></TabsContent>
                 <TabsContent value="theatre"><TheatreTabContainer/></TabsContent>
                 <TabsContent value="storyOn"></TabsContent>
