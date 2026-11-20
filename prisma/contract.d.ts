@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'1492046a3e5f3a21fb71e081358d360723deded316d292126454d2e987208562'>;
+  StorageHashBase<'a8e812e7016431c6982c5e0a91accb5a76da3a5c0799d0639ff7f94c22934526'>;
 export type ExecutionHash =
   ExecutionHashBase<'14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9'>;
 export type ProfileHash =
@@ -425,6 +425,7 @@ export type FieldOutputTypes = {
       readonly endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
       readonly organizationId: CodecTypes['pg/int4@1']['output'] | null;
       readonly programId: CodecTypes['pg/int4@1']['output'] | null;
       readonly programType:
@@ -731,6 +732,7 @@ export type FieldInputTypes = {
       readonly endDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
       readonly organizationId: CodecTypes['pg/int4@1']['input'] | null;
       readonly programId: CodecTypes['pg/int4@1']['input'] | null;
       readonly programType:
@@ -1037,6 +1039,7 @@ export type StorageColumnTypes = {
       readonly endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
       readonly organizationId: CodecTypes['pg/int4@1']['output'] | null;
       readonly programId: CodecTypes['pg/int4@1']['output'] | null;
       readonly programType:
@@ -1343,6 +1346,7 @@ export type StorageColumnInputTypes = {
       readonly endDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
       readonly organizationId: CodecTypes['pg/int4@1']['input'] | null;
       readonly programId: CodecTypes['pg/int4@1']['input'] | null;
       readonly programType:
@@ -1676,6 +1680,7 @@ export namespace Models {
     endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
+    notes: CodecTypes['pg/text@1']['output'] | null;
     organizationId: CodecTypes['pg/int4@1']['output'] | null;
     programId: CodecTypes['pg/int4@1']['output'] | null;
     programType:
@@ -1687,10 +1692,11 @@ export namespace Models {
       | 'WORKSHOPS';
     startDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     status: 'PLANNED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
-    employee: public_ParticipationEmployees[];
+    contacts: public_ParticipationContacts[];
+    employees: public_ParticipationEmployees[];
     organization: public_Organization | null;
     program: public_Program | null;
-    readonly [RelationKeys]?: 'employee' | 'organization' | 'program';
+    readonly [RelationKeys]?: 'contacts' | 'employees' | 'organization' | 'program';
   };
   export type public_ParticipationContacts = {
     participationId: CodecTypes['pg/int4@1']['output'];
@@ -2521,6 +2527,12 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly notes: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly organizationId: {
@@ -4103,6 +4115,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly notes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly organizationId: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -4128,7 +4144,18 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
-              readonly employee: {
+              readonly contacts: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ParticipationContacts';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['participationId'];
+                };
+              };
+              readonly employees: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'ParticipationEmployees';
@@ -4171,6 +4198,7 @@ type ContractBase = Omit<
                 readonly endDate: { readonly column: 'endDate' };
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
+                readonly notes: { readonly column: 'notes' };
                 readonly organizationId: { readonly column: 'organizationId' };
                 readonly programId: { readonly column: 'programId' };
                 readonly programType: { readonly column: 'programType' };

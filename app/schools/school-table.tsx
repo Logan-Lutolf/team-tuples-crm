@@ -27,7 +27,7 @@ export function SchoolTable({ data }: { data: School[] }) {
                         <TableCell>{school.email}</TableCell>
                         <TableCell>{school.phone}</TableCell>
                         <TableCell>
-                            {school.address.street}, {school.address.zipCode}
+                            {school.address?.street}, {school.address?.zipCode}
                         </TableCell>
                         <TableCell><div className="flex flex-wrap items-center justify-center gap-2">
                             <PageActionLink href={`/details/schools/${school.id}`}>View details</PageActionLink>

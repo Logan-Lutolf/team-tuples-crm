@@ -36,7 +36,7 @@ export function CoordinatorSearch({ form }: { form?: string }) {
             />
 
             {/* This is what the form actually submits */}
-            <input type="hidden" name="coordinator-id" value={selected?.id ?? -1} form={form} />
+            <input type="hidden" name="coordinator" value={selected?.id ?? -1} form={form} />
 
             {open && results.length > 0 && (
                 <ul className="absolute z-50 mt-1 w-full rounded-md border bg-popover shadow-md">
