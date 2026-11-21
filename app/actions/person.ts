@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "@/prisma/db"
-import { CONTACT_TYPES, ContactTypes } from "../types"
+import { CONTACT_TYPES, ContactTypes, Person } from "../types"
 import { refresh } from "next/cache"
 
 
@@ -46,4 +46,41 @@ export async function searchPeople(query: string) {
         .filter(p => p.name.toLowerCase().includes(q) && p.employee?.personId == null)
         .slice(0, 8)
         .map(p => ({ id: p.id, name: p.name }))
+}
+
+
+
+
+export async function getContacts(query?: string) {
+    try {
+
+    
+        const pattern = `%${query?.replace(/[\\%_]/g, "\\$&")}%`
+        const contactQuery = query
+            ? db.orm.public.Person.include("personRole").where((contact) => contact.name.ilike(pattern))
+            : db.orm.public.Person.include("personRole")
+
+        const contacts = await contactQuery
+            .orderBy([(contact) => contact.updatedAt
+            .desc(), (contact) => contact.id.desc()])
+            .all().toArray()
+
+        const employees = await db.orm.public.Employee.all().toArray()
+
+        if (!employees) return // return smth?
+
+        const employeeIds = new Set(employees.map((e) => e.personId))
+
+        return contacts
+            .filter((p) => !employeeIds.has(p.id))
+            .map((p) => ({
+                ...p,
+                personRole: p.personRole?.type ?? null,
+            }))
+    }
+    catch (error) {
+        console.log(error)
+    }
+
+
 }

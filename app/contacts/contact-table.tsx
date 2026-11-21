@@ -5,6 +5,7 @@ import { formatAddress } from '@/lib/utils'
 import { TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 
 import type { ContactFields } from "./contact-form-types";
+import { Trash } from 'lucide-react';
 
 
 interface ContactTableProps {
@@ -39,7 +40,7 @@ export function ContactTable({
                         </TableCell>
                         <TableCell><div className="flex flex-wrap items-center justify-center gap-2">
                             <PageActionLink href={`/details/contacts/${contact.id}`}>View details</PageActionLink>
-                            <PageActionLink href={`/details/contacts/${contact.id}/delete`} destructive>Delete</PageActionLink>
+                            <PageActionLink href={`/details/contacts/${contact.id}/delete`} destructive><Trash/></PageActionLink>
 
                         </div></TableCell>
                     </TableRow>
