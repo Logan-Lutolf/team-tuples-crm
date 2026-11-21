@@ -29,7 +29,8 @@ export default async function ProgramInstancesPage() {
                 </div>
                 
                 
-                <TabsContent value="seminars"><SeminarTabContainer/></TabsContent>
+                {/* <TabsContent value="seminars"><SeminarTabContainer/></TabsContent> */}
+                <TabsContent value="seminars">This tab is under construction.</TabsContent>
                 <TabsContent value="soon"><SoonTabContainer/></TabsContent>
                 <TabsContent value="theatre"><TheatreTabContainer/></TabsContent>
                 <TabsContent value="storyOn">This tab is under construction.</TabsContent>
