@@ -6,6 +6,7 @@ import { db } from "@/prisma/db"
 import { Search } from "@/components/custom/searches/search"
 import { Suspense } from "react"
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Trash } from 'lucide-react'
 
 export default async function BranchesPage({ searchParams }: {
     searchParams?: Promise<{ search?: string; page?: string }>
@@ -40,7 +41,7 @@ export default async function BranchesPage({ searchParams }: {
                     <TableCell>{branch.institute || "—"}</TableCell><TableCell><RecordLink type="employees" id={branch.chiefId}>{branch.chiefId ? chiefs.get(branch.chiefId) ?? "Unassigned" : "Unassigned"}</RecordLink></TableCell>
                     <TableCell><div className="flex flex-wrap items-center justify-center gap-2">
                         <PageActionLink href={`/details/branches/${branch.name}`}>View details</PageActionLink>
-                        <PageActionLink href={`/details/branches/${branch.name}/delete`} destructive>Delete</PageActionLink>
+                        <PageActionLink href={`/details/branches/${branch.name}/delete`} destructive><Trash/></PageActionLink>
                     </div></TableCell>
                 </TableRow>)}
                 {!rows.length && <TableRow><TableCell colSpan={5} className="py-10 text-center text-muted-foreground">

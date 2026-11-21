@@ -4,6 +4,7 @@ import { RecordLink } from '@/components/records/record-link'
 import { TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import type { Models } from "@/prisma/contract";
 import type { Scalars } from "@prisma/orm-postgres/components";
+import { Trash } from 'lucide-react';
 
 
 type School = Scalars<Models.public_Organization>
@@ -31,7 +32,7 @@ export function SchoolTable({ data }: { data: School[] }) {
                         </TableCell>
                         <TableCell><div className="flex flex-wrap items-center justify-center gap-2">
                             <PageActionLink href={`/details/schools/${school.id}`}>View details</PageActionLink>
-                            <PageActionLink href={`/details/schools/${school.id}/delete`} destructive>Delete</PageActionLink>
+                            <PageActionLink href={`/details/schools/${school.id}/delete`} destructive><Trash/></PageActionLink>
 
                         </div></TableCell>
                     </TableRow>

@@ -8,8 +8,9 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { nameInitials } from "@/lib/utils"
 import { EmployeePerson } from '@/app/types'
-
-
+import { PageActionLink } from '@/components/records/page-action-link'
+import { Trash } from 'lucide-react'
+import { getUserRole } from '@/lib/auth'
 
 
 const columnHelper = createColumnHelper<DataTableFeatures, EmployeePerson>()
@@ -45,10 +46,20 @@ export const columns = columnHelper.columns([
         }
     }),
     columnHelper.display({
-        id: "actions",
-        header: "Actions",
-        cell: ({ row }) => {
-            return <ActionsCell employee={row.original} />
-        },
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+        <div className="flex flex-wrap items-center justify-center gap-2">
+            <PageActionLink href={`/details/employees/${row.original.person.id}`}>
+                View details
+            </PageActionLink>
+            <PageActionLink
+                href={`/details/employees/${row.original.person.id}/delete`}
+                destructive
+            >
+            <Trash />
+            </PageActionLink>
+        </div>
+        ),
     }),
 ])
