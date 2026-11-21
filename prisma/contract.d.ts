@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'a8e812e7016431c6982c5e0a91accb5a76da3a5c0799d0639ff7f94c22934526'>;
+  StorageHashBase<'a9e24fee6b157cf2a601ee540f5d6715305c8dc4c0cc3006c4e07765748eebe1'>;
 export type ExecutionHash =
   ExecutionHashBase<'14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9'>;
 export type ProfileHash =
@@ -472,13 +472,12 @@ export type FieldOutputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly PersonEmployment: {
-      readonly endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly endDate: CodecTypes['pg/date-string@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly jobTitle: CodecTypes['pg/text@1']['output'];
       readonly notes: CodecTypes['pg/text@1']['output'] | null;
       readonly orgId: CodecTypes['pg/int4@1']['output'] | null;
       readonly personId: CodecTypes['pg/int4@1']['output'];
-      readonly startDate: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly startDate: CodecTypes['pg/date-string@1']['output'];
     };
     readonly PersonRoles: {
       readonly personId: CodecTypes['pg/int4@1']['output'];
@@ -779,13 +778,12 @@ export type FieldInputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly PersonEmployment: {
-      readonly endDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly endDate: CodecTypes['pg/date-string@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly jobTitle: CodecTypes['pg/text@1']['input'];
       readonly notes: CodecTypes['pg/text@1']['input'] | null;
       readonly orgId: CodecTypes['pg/int4@1']['input'] | null;
       readonly personId: CodecTypes['pg/int4@1']['input'];
-      readonly startDate: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly startDate: CodecTypes['pg/date-string@1']['input'];
     };
     readonly PersonRoles: {
       readonly personId: CodecTypes['pg/int4@1']['input'];
@@ -1086,13 +1084,12 @@ export type StorageColumnTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly PersonEmployment: {
-      readonly endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly endDate: CodecTypes['pg/date-string@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly jobTitle: CodecTypes['pg/text@1']['output'];
       readonly notes: CodecTypes['pg/text@1']['output'] | null;
       readonly orgId: CodecTypes['pg/int4@1']['output'] | null;
       readonly personId: CodecTypes['pg/int4@1']['output'];
-      readonly startDate: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly startDate: CodecTypes['pg/date-string@1']['output'];
     };
     readonly PersonRoles: {
       readonly personId: CodecTypes['pg/int4@1']['output'];
@@ -1393,13 +1390,12 @@ export type StorageColumnInputTypes = {
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly PersonEmployment: {
-      readonly endDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly endDate: CodecTypes['pg/date-string@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly jobTitle: CodecTypes['pg/text@1']['input'];
       readonly notes: CodecTypes['pg/text@1']['input'] | null;
       readonly orgId: CodecTypes['pg/int4@1']['input'] | null;
       readonly personId: CodecTypes['pg/int4@1']['input'];
-      readonly startDate: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly startDate: CodecTypes['pg/date-string@1']['input'];
     };
     readonly PersonRoles: {
       readonly personId: CodecTypes['pg/int4@1']['input'];
@@ -1755,13 +1751,12 @@ export namespace Models {
       | 'student';
   };
   export type public_PersonEmployment = {
-    endDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    endDate: CodecTypes['pg/date-string@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
-    jobTitle: CodecTypes['pg/text@1']['output'];
     notes: CodecTypes['pg/text@1']['output'] | null;
     orgId: CodecTypes['pg/int4@1']['output'] | null;
     personId: CodecTypes['pg/int4@1']['output'];
-    startDate: CodecTypes['pg/timestamptz-string@1']['output'];
+    startDate: CodecTypes['pg/date-string@1']['output'];
     organization: public_Organization | null;
     person: public_Person;
     readonly [RelationKeys]?: 'organization' | 'person';
@@ -2879,8 +2874,8 @@ type ContractBase = Omit<
             readonly PersonEmployment: {
               columns: {
                 readonly endDate: {
-                  readonly dataType: 'pg/timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly dataType: 'pg/date';
+                  readonly codecId: 'pg/date-string@1';
                   readonly nullable: true;
                   readonly many: false;
                 };
@@ -2892,12 +2887,6 @@ type ContractBase = Omit<
                     readonly kind: 'function';
                     readonly expression: 'autoincrement()';
                   };
-                  readonly many: false;
-                };
-                readonly jobTitle: {
-                  readonly dataType: 'pg/text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
                   readonly many: false;
                 };
                 readonly notes: {
@@ -2919,9 +2908,10 @@ type ContractBase = Omit<
                   readonly many: false;
                 };
                 readonly startDate: {
-                  readonly dataType: 'pg/timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly dataType: 'pg/date';
+                  readonly codecId: 'pg/date-string@1';
                   readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
                   readonly many: false;
                 };
               };
@@ -4483,18 +4473,11 @@ type ContractBase = Omit<
             readonly fields: {
               readonly endDate: {
                 readonly nullable: true;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
               };
               readonly id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly jobTitle: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly notes: {
                 readonly nullable: true;
@@ -4510,10 +4493,7 @@ type ContractBase = Omit<
               };
               readonly startDate: {
                 readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
               };
             };
             readonly relations: {
@@ -4548,7 +4528,6 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly endDate: { readonly column: 'endDate' };
                 readonly id: { readonly column: 'id' };
-                readonly jobTitle: { readonly column: 'jobTitle' };
                 readonly notes: { readonly column: 'notes' };
                 readonly orgId: { readonly column: 'orgId' };
                 readonly personId: { readonly column: 'personId' };

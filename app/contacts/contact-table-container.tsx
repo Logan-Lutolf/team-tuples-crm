@@ -1,22 +1,20 @@
-import { db } from "@/prisma/db"
-import { ContactTable } from "./contact-table"
+import { db } from "@/prisma/db";
+import { getContacts } from "../actions/person";
+import { Person } from "../types";
+import { ContactTable } from "./contact-table";
 
-interface ContactTableContainerProps {
-    query: string
-    page: number
-}
 
-export async function ContactTableContainer({ query, page }: ContactTableContainerProps) {
-    const recordsPerPage = 20
-    const currentPage = Number.isSafeInteger(page) && page > 0 ? page : 1
-    // Escape LIKE wildcards so searching keeps its literal substring behavior.
-    const pattern = `%${query.replace(/[\\%_]/g, "\\$&")}%`
-    const contactQuery = query
-        ? db.orm.public.Person.where((contact) => contact.name.ilike(pattern))
-        : db.orm.public.Person
 
-    const contacts = await contactQuery.orderBy([(contact) => contact.updatedAt.desc(), (contact) => contact.id.desc()])
-        .offset((currentPage - 1) * recordsPerPage).limit(recordsPerPage).all().toArray()
-    return <ContactTable data={contacts} />
 
+
+
+export async function ContactTableContainer({query}: {query: string}) {
+
+    
+    const data = await getContacts(query)
+    if (!data) return <>Failed to fetch data from database.</>
+    
+    return (
+        <ContactTable data={data}/>
+    )
 }

@@ -1,8 +1,7 @@
 import { PageActionLink } from '@/components/records/page-action-link'
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Search } from "@/components/custom/searches/search";
-import { ContactTableContainer } from "./contact-table-container";
 import { Suspense } from "react";
+import { ContactTableContainer } from './contact-table-container';
 
 
 export default async function ContactManagementPage(
@@ -20,8 +19,6 @@ export default async function ContactManagementPage(
         if (query) search.set("search", query)
         return `/contacts?${search}`
     }
-    const RECORDS_PER_PAGE = 20 
-
 
     
 
@@ -29,27 +26,11 @@ export default async function ContactManagementPage(
         <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
             <PageActionLink href="/create/contacts" fullWidth>Add a Contact</PageActionLink>
 
-            <Search placeholder={""}/>
+            <Search placeholder={"Search contacts..."}/>
 
             <Suspense key={`${query}:${currentPage}`} fallback={<p role="status">Loading contacts…</p>}>
-                <ContactTableContainer query={query} page={currentPage} />
+                <ContactTableContainer query={query} />
             </Suspense>
-
-            <Pagination>
-                <PaginationContent>
-                    <PaginationItem>
-                        <PaginationPrevious href={pageHref(Math.max(1, currentPage - 1))} aria-disabled={currentPage === 1} className={currentPage === 1 ? "pointer-events-none opacity-50" : undefined} tabIndex={currentPage === 1 ? -1 : undefined} />
-                    </PaginationItem>
-
-                    <PaginationItem>
-                        <PaginationEllipsis></PaginationEllipsis>
-                    </PaginationItem>
-
-                    <PaginationItem>
-                        <PaginationNext href={pageHref(currentPage + 1)} />
-                    </PaginationItem>
-                </PaginationContent>
-            </Pagination>
         </div>
     )
 }

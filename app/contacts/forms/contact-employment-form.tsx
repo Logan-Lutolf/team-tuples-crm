@@ -5,7 +5,7 @@ import { RecordLink } from '@/components/records/record-link'
 import { useId, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ContactActionForm } from './contact-action-form'
+import { ContactActionForm } from '../../old-components/contacts/contact-action-form'
 import { addContactEmployment, editContactEmployment, deleteContactEmployment } from '../employment-actions'
 import type { getContactDetails } from '../actions_contacts'
 
@@ -22,7 +22,7 @@ function EmploymentForm({ contactId, schools, record, onSaved }: {
     }}>
         <input type="hidden" name="contact-id" value={contactId} />
         {record && <input type="hidden" name="employment-id" value={record.id} />}
-        <label htmlFor={`${prefix}-school`}>School<select id={`${prefix}-school`} name="school-id" required={!record} defaultValue={record?.schoolId ? String(record.schoolId) : ''} className="block w-full rounded-md border bg-transparent p-2">
+        <label htmlFor={`${prefix}-school`}>School<select id={`${prefix}-school`} name="school-id" required={!record} defaultValue={record?.orgId ? String(record.orgId) : ''} className="block w-full rounded-md border bg-transparent p-2">
             <option value="" disabled={!record}>No school assigned</option>{schools.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select></label>
         <label htmlFor={`${prefix}-title`}>Job title<Input id={`${prefix}-title`} name="job-title" required defaultValue={record?.jobTitle ?? ''} /></label>
@@ -38,7 +38,7 @@ function EmploymentRecord({ record, data, editing, onSaved }: { record: Employme
     const [deleting, setDeleting] = useState(false)
     const prefix = useId()
     return <article className="grid gap-3 rounded-lg border bg-muted/20 p-4">
-        <h3 className="font-semibold"><RecordLink type="schools" id={record.schoolId}>{data.schools.find(s => s.id === record.schoolId)?.name ?? (record.schoolId === null ? 'School deleted' : `School #${record.schoolId}`)}</RecordLink> · {record.jobTitle}</h3>
+        <h3 className="font-semibold"><RecordLink type="schools" id={record.orgId}>{data.schools.find(s => s.id === record.orgId)?.name ?? (record.orgId === null ? 'School deleted' : `School #${record.orgId}`)}</RecordLink> · {record.jobTitle}</h3>
         <p>{record.startDate.slice(0, 10)} – {record.endDate?.slice(0, 10) ?? 'No end date'}</p>
         {record.notes && <p className="whitespace-pre-wrap break-words">{record.notes}</p>}
         {editing && <>

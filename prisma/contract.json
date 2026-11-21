@@ -1943,7 +1943,7 @@
               "endDate": {
                 "nullable": true,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/date-string@1",
                   "kind": "scalar"
                 }
               },
@@ -1951,13 +1951,6 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "jobTitle": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -1985,7 +1978,7 @@
               "startDate": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-string@1",
+                  "codecId": "pg/date-string@1",
                   "kind": "scalar"
                 }
               }
@@ -2031,9 +2024,6 @@
                 },
                 "id": {
                   "column": "id"
-                },
-                "jobTitle": {
-                  "column": "jobTitle"
                 },
                 "notes": {
                   "column": "notes"
@@ -4088,8 +4078,8 @@
             "PersonEmployment": {
               "columns": {
                 "endDate": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "dataType": "pg/timestamptz",
+                  "codecId": "pg/date-string@1",
+                  "dataType": "pg/date",
                   "nullable": true
                 },
                 "id": {
@@ -4099,11 +4089,6 @@
                     "expression": "autoincrement()",
                     "kind": "function"
                   },
-                  "nullable": false
-                },
-                "jobTitle": {
-                  "codecId": "pg/text@1",
-                  "dataType": "pg/text",
                   "nullable": false
                 },
                 "notes": {
@@ -4122,8 +4107,12 @@
                   "nullable": false
                 },
                 "startDate": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "dataType": "pg/timestamptz",
+                  "codecId": "pg/date-string@1",
+                  "dataType": "pg/date",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nullable": false
                 }
               },
@@ -4234,6 +4223,7 @@
                   "index": {
                     "primaryKey": true
                   },
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "personId"
@@ -4525,6 +4515,7 @@
                   "index": {
                     "primaryKey": true
                   },
+                  "onDelete": "cascade",
                   "source": {
                     "columns": [
                       "personId"
@@ -4725,7 +4716,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "a8e812e7016431c6982c5e0a91accb5a76da3a5c0799d0639ff7f94c22934526"
+    "storageHash": "a9e24fee6b157cf2a601ee540f5d6715305c8dc4c0cc3006c4e07765748eebe1"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

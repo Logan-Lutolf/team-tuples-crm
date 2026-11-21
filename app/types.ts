@@ -63,7 +63,7 @@ export type ParticipationPerson = {
     participation: Participation
 }
 
-type PersonWithRole = Person & {
+export type PersonWithRole = Person & {
     personRole: Scalars<Models.public_PersonRoles>["type"] | null;
 };
 

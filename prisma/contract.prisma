@@ -223,9 +223,9 @@ model PersonEmployment {
   id Int @id @default(autoincrement())
   personId Int
   orgId Int?
-  jobTitle String
-  startDate TimestamptzString
-  endDate TimestamptzString?
+  // jobTitle String
+  startDate DateString @default(now())
+  endDate DateString?
   notes String?
 
   person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
@@ -298,7 +298,7 @@ model Person {
 
 model Student {
   personId  Int @id 
-  person   Person @relation(fields: [personId], references: [id])
+  person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
 
   guardianEmail   String
   guardianPhone   String
@@ -333,7 +333,7 @@ model ParticipationEmployees {
 
 model PersonRoles {
   personId  Int @id
-  person    Person @relation(fields: [personId], references: [id])
+  person    Person @relation(fields: [personId], references: [id], onDelete: Cascade)
   type      ContactTypes
 }
 
