@@ -124,6 +124,18 @@ export async function createPerson (formData: FormData){
             })
 
             if (!personRole) return {result: "Error", message: "Failed to create person: Error in PersonRoles database call."}
+        
+            // Students don't need employment history
+            if (role != "STUDENT") {
+                const employment = await db.orm.public.PersonEmployment.create({
+                    personId: person.id,
+                    orgId: org,
+                })
+
+                if (!employment)
+                    return {result: "Error", message: "Failed to create person: Error in PersonEmployment database call."}
+            }
+            
             return {result: "Success", message: "Contact creation successful."}
         }
     }
@@ -134,4 +146,10 @@ export async function createPerson (formData: FormData){
     }
 
 
+}
+
+
+
+export async function deleteContact(id: number) {
+    
 }

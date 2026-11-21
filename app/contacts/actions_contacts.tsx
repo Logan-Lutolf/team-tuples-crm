@@ -4,8 +4,9 @@ import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
 import { revalidatePath } from "next/cache"
 import { ContactValidationError, contactFieldLabel, contactErrorMessage } from "./contact-errors"
+import { showToast } from "@/lib/utils"
 
-type ContactFields = Scalars<Models.public_Contact>
+type ContactFields = Scalars<Models.public_Person>
 
 // TODO: Only ADMIN should be able to create new employee
 function text(form: FormData, key: string, required = true): string {
@@ -38,44 +39,44 @@ function email(form: FormData): string {
     return value
 }
 
-export async function createContact(formData: FormData) {
-    return contactAction("Create contact", async () => {
-        await db.orm.public.Contact.create({
-            ...contactData(formData),
-            address: addressData(formData),
-            schoolId: text(formData, "school-id", false) ? id(formData, "school-id") : null,
-        })
-    })
-}
 
-function contactData(form: FormData) {
-    return {
-        // this form should only include singular fields (not like multiple contacts, employees, participations related to this)
-        name: text(form, form.has("full-name") ? "full-name" : "name"),
-        email: email(form),
-        phone: text(form, "phone-num", false) || null,
-        region: text(form, "region", false) ? choice<NonNullable<ContactFields["region"]>>(form, "region", [
-            "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN",
-            "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN",
-        ]) : null,
-        branchId: text(form, "branch", false) ? id(form, "branch") : null,
-        // add contactRole
-        contactRole: choice<ContactFields["contactRole"]>(form, "contactRole", [
-            "TEACHER",
-            "PRINCIPAL",
-            "SCHOOL_COORDINATOR",
-            "STUDENT",
-            "HISTORIAN",
-            "GOVERNMENT_OFFICIAL",
-            "DONOR",
-            "SPONSOR",
-            "PARTNER",
-            "VOLUNTEER",
-            "OTHER",
-        ])
-        // done with this form
-    }
-}
+// DEPRECATED
+// export async function createContact(formData: FormData) {
+//     return contactAction("Create contact", async () => {
+//         await db.orm.public.Person.create({
+//             ...contactData(formData),
+//             address: addressData(formData),
+//             orgId: text(formData, "school-id", false) ? id(formData, "school-id") : null,
+//         })
+//     })
+// }
+
+
+// DEPRECATED
+// function contactData(form: FormData) {
+//     return {
+//         // this form should only include singular fields (not like multiple contacts, employees, participations related to this)
+//         name: text(form, form.has("full-name") ? "full-name" : "name"),
+//         email: email(form),
+//         phone: text(form, "phone-num", false) || null,
+//         branchId: text(form, "branch", false) ? id(form, "branch") : null,
+//         // add contactRole
+//         contactRole: choice<ContactFields["personRole"]>(form, "contactRole", [
+//             "TEACHER",
+//             "PRINCIPAL",
+//             "SCHOOL_COORDINATOR",
+//             "STUDENT",
+//             "HISTORIAN",
+//             "GOVERNMENT_OFFICIAL",
+//             "DONOR",
+//             "SPONSOR",
+//             "PARTNER",
+//             "VOLUNTEER",
+//             "OTHER",
+//         ])
+//         // done with this form
+//     }
+// }
 
 function addressData(form: FormData) {
     if (!["street", "city", "country", "zipCode"].some((key) => text(form, key, false))) return undefined
@@ -100,44 +101,49 @@ async function contactAction(label: string, action: () => Promise<void>) {
     return { success: true as const }
 }
 
-export async function editContact(formData: FormData) {
-    return contactAction("Update contact", async () => {
-        const contactId = id(formData, "contact-id")
-        const data = contactData(formData)
-        await db.transaction(async (tx) => {
-            const contact = await tx.orm.public.Contact.where({ id: contactId }).first()
-            if (!contact) throw new ContactValidationError("This contact no longer exists. Refresh the page.")
-            await tx.orm.public.Contact.where({ id: contactId }).update({
-                ...data,
-                address: addressData(formData),
-            })
-        })
-    })
-}
+
+// DEPRECATED
+// export async function editContact(formData: FormData) {
+//     return contactAction("Update contact", async () => {
+//         const contactId = id(formData, "contact-id")
+//         const data = contactData(formData)
+//         await db.transaction(async (tx) => {
+//             const contact = await tx.orm.public.Person.where({ id: contactId }).first()
+//             if (!contact) throw new ContactValidationError("This contact no longer exists. Refresh the page.")
+//             await tx.orm.public.Person.where({ id: contactId }).update({
+//                 ...data,
+//                 address: addressData(formData),
+//             })
+//         })
+//     })
+// }
 
 export async function deleteContact(formData: FormData) {
     return contactAction("Delete school", async () => {
         const contactId = id(formData, "school-id")
         // Let foreign-key constraints prevent deleting schools with dependent records.
-        await db.orm.public.Contact.where({ id: contactId }).delete()
+        await db.orm.public.Person.where({ id: contactId }).delete()
+        // const result = await db.orm.public.Person.where({ id: contactId }).delete()
+        // if (result)
+        //     showToast("Success", "Deletion successful.", "success")
     })
 }
 
 export async function addSchoolContact(formData: FormData) {
     return contactAction("Assign school", async () => {
-        await db.orm.public.Contact.where({
+        await db.orm.public.Person.where({
             id: id(formData, "contact-id"),
-            schoolId: null,
-        }).update({ schoolId: id(formData, "school-id") })
+            orgId: null,
+        }).update({ orgId: id(formData, "school-id") })
     })
 }
 
 export async function removeSchoolContact(formData: FormData) {
     return contactAction("Remove school", async () => {
-        await db.orm.public.Contact.where({
+        await db.orm.public.Person.where({
             id: id(formData, "contact-id"),
-            schoolId: id(formData, "school-id"),
-        }).update({ schoolId: null })
+            orgId: id(formData, "school-id"),
+        }).update({ orgId: null })
     })
 }
 export async function getContactDetails(contactId: number, editing = false, deferHistory = false) {
@@ -159,9 +165,9 @@ export async function recordContactInteraction(form: FormData) {
         const programId = text(form, 'program-id', false) ? id(form, 'program-id') : null
         const { recordInteraction } = await import('@/lib/record-interaction')
         await db.transaction(async tx => {
-            const contact = await tx.orm.public.Contact.where({ id: contactId }).forUpdate().first()
+            const contact = await tx.orm.public.Person.where({ id: contactId }).forUpdate().first()
             if (!contact) throw new ContactValidationError('This contact no longer exists.')
-            await recordInteraction(tx, { contactId, employeeId, programId, contactedAt, mode, schoolId: contact.schoolId })
+            await recordInteraction(tx, { contactId, employeeId, programId, contactedAt, mode, schoolId: contact.orgId })
         })
         revalidatePath('/schools')
         revalidatePath('/programs')

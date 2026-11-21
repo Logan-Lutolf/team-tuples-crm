@@ -1,119 +1,120 @@
-// adjust to wherever your `db` lives
+// Simple seed script. Run on an empty database (re-running will hit unique
+// constraints on Branch.id and Person.email).
+//
+//   npx tsx seed.ts
+//
+// Adjust the import below to wherever your `db` lives. If tsx can't resolve
+// the "@/..." alias, use a relative path like this one.
 
 import { db } from "@/prisma/db"
 
+// One row per BranchTypes value (the enum has 9). Each branch needs a region.
+const BRANCHES = [
+  { id: 1, name: "PRAHA", region: "PRAHA" },
+  { id: 2, name: "SEVERNÍ_ČECHY", region: "ÚSTECKÝ" },
+  { id: 3, name: "VÝCHODNÍ_ČECHY", region: "KRÁLOVÉHRADECKÝ" },
+  { id: 4, name: "STŘEDNÍ_MORAVA", region: "OLOMOUCKÝ" },
+  { id: 5, name: "PLZEŇSKÝ_KRAJ", region: "PLZEŇSKÝ" },
+  { id: 6, name: "JIŽNÍ_MORAVA", region: "JIHOMORAVSKÝ" },
+  { id: 7, name: "JIŽNÍ_ČECHY", region: "JIHOČESKÝ" },
+  { id: 8, name: "KARLOVARSKÝ_KRAJ", region: "KARLOVARSKÝ" },
+  { id: 9, name: "MORAVSKOSLEZSKÝ_KRAJ", region: "MORAVSKOSLEZSKÝ" },
+] as const
+
+// One school per RegionTypes value (all 14), attached to the closest branch.
+const SCHOOLS = [
+  { region: "PRAHA", city: "Praha", branch: "PRAHA" },
+  { region: "STŘEDOČESKÝ", city: "Kladno", branch: "PRAHA" },
+  { region: "JIHOČESKÝ", city: "České Budějovice", branch: "JIŽNÍ_ČECHY" },
+  { region: "PLZEŇSKÝ", city: "Plzeň", branch: "PLZEŇSKÝ_KRAJ" },
+  { region: "KARLOVARSKÝ", city: "Karlovy Vary", branch: "KARLOVARSKÝ_KRAJ" },
+  { region: "ÚSTECKÝ", city: "Ústí nad Labem", branch: "SEVERNÍ_ČECHY" },
+  { region: "LIBERECKÝ", city: "Liberec", branch: "SEVERNÍ_ČECHY" },
+  { region: "KRÁLOVÉHRADECKÝ", city: "Hradec Králové", branch: "VÝCHODNÍ_ČECHY" },
+  { region: "PARDUBICKÝ", city: "Pardubice", branch: "VÝCHODNÍ_ČECHY" },
+  { region: "JIHOMORAVSKÝ", city: "Brno", branch: "JIŽNÍ_MORAVA" },
+  { region: "OLOMOUCKÝ", city: "Olomouc", branch: "STŘEDNÍ_MORAVA" },
+  { region: "ZLÍNSKÝ", city: "Zlín", branch: "STŘEDNÍ_MORAVA" },
+  { region: "MORAVSKOSLEZSKÝ", city: "Ostrava", branch: "MORAVSKOSLEZSKÝ_KRAJ" },
+  { region: "JIHLAVA", city: "Jihlava", branch: "JIŽNÍ_MORAVA" },
+] as const
+
+const PROGRAMS = [
+  "Stories of Our Neighbors",
+  "Memory of Nations Theatre",
+  "Story On",
+  "School Network",
+  "Education Development",
+  "Workshops",
+]
+
+const RELATIONSHIPS = ["POOR", "AVERAGE", "EXCELLENT"] as const
+
 async function main() {
-    // 1. Branch (Organization and Person reference it by name)
+  // Branches
+  for (const b of BRANCHES) {
     await db.orm.public.Branch.create({
-        name: "PRAHA",
-        id: 1,
-        institute: "Praha Institute",
-        region: "PRAHA",
+      id: b.id,
+      name: b.name,
+      region: b.region,
+      institute: `${b.name} institute`,
+    })
+  }
+  console.log(`Created ${BRANCHES.length} branches`)
+
+  // Programs
+  for (const name of PROGRAMS) {
+    await db.orm.public.Program.create({ name, description: `${name} program` })
+  }
+  console.log(`Created ${PROGRAMS.length} programs`)
+
+  // Schools + one teacher contact each
+  for (const [i, s] of SCHOOLS.entries()) {
+    const org = await db.orm.public.Organization.create({
+      name: `Základní škola ${s.city}`,
+      email: `skola.${i + 1}@example.com`,
+      phone: `+42060000${String(i + 1).padStart(4, "0")}`,
+      type: "PRIMARY_SCHOOL",
+      region: s.region,
+      relationship: RELATIONSHIPS[i % RELATIONSHIPS.length],
+      branchName: s.branch,
     })
 
-    // 2. Program
-    const program = await db.orm.public.Program.create({
-        name: "Memory of Nations Theatre",
-        description: "Student theatre program",
-    })
-
-    // 3. Organizations
-    const school = await db.orm.public.Organization.create({
-        name: "Gymnázium Praha",
-        email: "info@gymnazium-praha.cz",
-        phone: "111222333",
-        type: "SECONDARY_SCHOOL",
-        region: "PRAHA",
-        relationship: "EXCELLENT",
-        branchName: "PRAHA",
-    })
-
-    const theatre = await db.orm.public.Organization.create({
-        name: "Divadlo Test",
-        type: "THEATRE",
-        region: "PRAHA",
-        branchName: "PRAHA",
-    })
-
-    // 4. People (employee, teacher contact, student)
-    const employeePerson = await db.orm.public.Person.create({
-        name: "Eva Coordinator",
-        email: "eva@example.com",
-        phone: "123456789",
-        branchName: "PRAHA",
-    })
-
-    const teacherPerson = await db.orm.public.Person.create({
-        name: "Tomáš Teacher",
-        email: "tomas@example.com",
-        phone: "987654321",
-        orgId: school.id,
-        branchName: "PRAHA",
-    })
-
-    const studentPerson = await db.orm.public.Person.create({
-        name: "Mira Student",
-        email: "mira@example.com",
-        dob: "2010-05-14",
-        orgId: school.id,
-        branchName: "PRAHA",
-    })
-
-    // 5. Employee / Student / PersonRoles
-    await db.orm.public.Employee.create({
-        personId: employeePerson.id,
-        password: "CHANGE_ME_hash_this", // store a real hash in practice
-        pfpImgUrl: "",
-        role: ["COORDINATOR"],
-    })
-
-    await db.orm.public.Student.create({
-        personId: studentPerson.id,
-        guardianEmail: "guardian@example.com",
-        guardianPhone: "555000111",
+    const teacher = await db.orm.public.Person.create({
+      name: `Teacher ${s.city}`,
+      email: `teacher.${i + 1}@example.com`,
+      phone: `+42070000${String(i + 1).padStart(4, "0")}`,
+      orgId: org.id,
+      branchName: s.branch,
     })
 
     await db.orm.public.PersonRoles.create({
-        personId: teacherPerson.id,
-        type: "TEACHER",
+      personId: teacher.id,
+      type: "TEACHER",
     })
+  }
+  console.log(`Created ${SCHOOLS.length} schools with one teacher each`)
 
-    await db.orm.public.PersonRoles.create({
-        personId: studentPerson.id,
-        type: "STUDENT",
-    })
-
-    // 6. Participation + links
-    const participation = await db.orm.public.Participation.create({
-        name: "Theatre 2026",
-        startDate: "2026-11-02T00:00:00Z",
-        endDate: "2026-11-09T00:00:00Z",
-        status: "PLANNED",
-        programType: "MEMORY_OF_NATIONS_THEATRE",
-        programId: program.id,
-        organizationId: theatre.id,
-        notes: "Seeded test participation",
-    })
-
-    await db.orm.public.ParticipationEmployees.create({
-        particpationId: participation.id, // (sic) matches the schema's spelling
-        employeeId: employeePerson.id,
-    })
-
-    await db.orm.public.ParticipationContacts.create({
-        participationId: participation.id,
-        personId: teacherPerson.id,
-    })
-
-    await db.orm.public.ParticipationContacts.create({
-        participationId: participation.id,
-        personId: studentPerson.id,
-    })
-
-    console.log("Seeding complete.")
+  // One admin employee (Person + Employee)
+  const adminPerson = await db.orm.public.Person.create({
+    name: "Admin User",
+    email: "admin@example.com",
+    branchName: "PRAHA",
+  })
+  await db.orm.public.Employee.create({
+    personId: adminPerson.id,
+    // Placeholder only: replace with a real hash from whatever library your
+    // login uses. This value will not match any password.
+    password: process.env.SEED_ADMIN_PASSWORD_HASH ?? "REPLACE_WITH_REAL_HASH",
+    pfpImgUrl: "",
+    role: ["ADMIN"],
+  })
+  console.log("Created admin employee")
 }
 
-main().catch((err) => {
-    console.error(err)
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error("Seed failed:", error)
     process.exit(1)
-})
+  })

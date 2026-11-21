@@ -13,7 +13,7 @@ import { deleteMunicipality } from '@/app/municipalities/actions'
 import type { RecordType } from '@/lib/record-links'
 
 function Submit() { const { pending } = useFormStatus(); return <Button variant="destructive" type="submit" disabled={pending}>{pending ? 'Deleting…' : 'Delete record'}</Button> }
-export function DeleteRecordForm({ type, id, name }: { type: Exclude<RecordType, 'employees'>; id: number; name: string }) {
+export function DeleteRecordForm({ type, id, name }: { type: Exclude<RecordType, 'employees' | 'participations'>; id: number; name: string }) {
     const router = useRouter()
     const prefix = useId()
     const [error, setError] = useState('')
@@ -29,6 +29,7 @@ export function DeleteRecordForm({ type, id, name }: { type: Exclude<RecordType,
             const result = await action(data)
             if ('error' in result) setError(result.error)
             else { router.replace(`/${type}`); router.refresh() }
+
         } catch { setError('Could not delete this record. Check your connection and try again.') }
     }}>
         <h1 className="text-2xl font-semibold">Delete {name}</h1>
