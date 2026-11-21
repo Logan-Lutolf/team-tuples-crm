@@ -32,8 +32,8 @@ export default async function ProgramInstancesPage() {
                 <TabsContent value="seminars"><SeminarTabContainer/></TabsContent>
                 <TabsContent value="soon"><SoonTabContainer/></TabsContent>
                 <TabsContent value="theatre"><TheatreTabContainer/></TabsContent>
-                <TabsContent value="storyOn"></TabsContent>
-                <TabsContent value="program5"></TabsContent>
+                <TabsContent value="storyOn">This tab is under construction.</TabsContent>
+                <TabsContent value="program5">This tab is under construction.</TabsContent>
             </Tabs>
         </div>
     )

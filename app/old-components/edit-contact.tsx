@@ -1,15 +1,15 @@
 'use client'
 import { RecordLink } from '@/components/records/record-link'
 
-import { ContactActionForm } from "./contact-action-form"
+import { ContactActionForm } from "./contacts/contact-action-form"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
     editContact, addSchoolContact, removeSchoolContact,
-   } from "../actions_contacts"
-import type { Option } from "../contact-form-types"
+   } from "../contacts/actions_contacts"
+import type { Option } from "../contacts/contact-form-types"
 import type { Scalars } from "@prisma/orm-postgres/components"
 import type { Models } from "@/prisma/contract"
 

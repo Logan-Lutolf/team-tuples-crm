@@ -7,11 +7,11 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { ContactParticipations } from './contact-participations'
-import { ContactEmploymentHistory } from './forms/contact-employment-form'
-import { EditContactForm } from './forms/edit-contact'
-import { ContactActionForm } from './forms/contact-action-form'
-import { getContactDetails, recordContactInteraction } from './actions_contacts'
+import { ContactParticipations } from '../../contacts/contact-participations'
+import { ContactEmploymentHistory } from '../../contacts/forms/contact-employment-form'
+import { EditContactForm } from '../edit-contact'
+import { ContactActionForm } from './contact-action-form'
+import { getContactDetails, recordContactInteraction } from '../../contacts/actions_contacts'
 
 type Details = Awaited<ReturnType<typeof getContactDetails>>
 function name(items: { id: number; name: string }[], id: number | null) { return id === null ? '—' : items.find(i => i.id === id)?.name ?? `#${id}` }

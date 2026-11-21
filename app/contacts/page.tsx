@@ -1,9 +1,7 @@
 import { PageActionLink } from '@/components/records/page-action-link'
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Search } from "@/components/custom/searches/search";
-import { ContactTableContainer } from "./contact-table-container";
 import { Suspense } from "react";
-import { NewContactTableContainer } from './new-contact-table-container';
+import { ContactTableContainer } from './contact-table-container';
 
 
 export default async function ContactManagementPage(
@@ -21,8 +19,6 @@ export default async function ContactManagementPage(
         if (query) search.set("search", query)
         return `/contacts?${search}`
     }
-    const RECORDS_PER_PAGE = 20 
-
 
     
 
@@ -33,7 +29,7 @@ export default async function ContactManagementPage(
             <Search placeholder={"Search contacts..."}/>
 
             <Suspense key={`${query}:${currentPage}`} fallback={<p role="status">Loading contacts…</p>}>
-                <NewContactTableContainer query={query} />
+                <ContactTableContainer query={query} />
             </Suspense>
         </div>
     )
