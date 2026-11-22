@@ -15,6 +15,12 @@ export default async function proxy(req: NextRequest) {
   const session = req.cookies.get("session")?.value
   const payload = await decrypt(session)
 
+  if (path === "/") {
+    return NextResponse.redirect(
+      new URL(payload?.userId ? "/dashboard" : "/login", req.nextUrl)
+    )
+  }
+
   if (isProtected && !payload?.userId) {
     return NextResponse.redirect(new URL("/login", req.nextUrl))
   }
