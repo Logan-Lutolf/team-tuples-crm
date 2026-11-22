@@ -1,4 +1,4 @@
-// 'use server'
+'use server'
 // import { timeDetails } from '@/lib/detail-timing'
 
 // import { revalidatePath } from "next/cache"
