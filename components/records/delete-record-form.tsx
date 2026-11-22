@@ -10,10 +10,10 @@ import { deleteContact } from '@/app/contacts/actions_contacts'
 import { deleteBranch } from '@/app/actions/branches'
 import { deleteProgram } from '@/app/programs/actions'
 import { deleteMunicipality } from '@/app/municipalities/actions'
-import type { RecordType } from '@/lib/record-links'
+import type { DeletableType } from '@/lib/record-links'
 
 function Submit() { const { pending } = useFormStatus(); return <Button variant="destructive" type="submit" disabled={pending}>{pending ? 'Deleting…' : 'Delete record'}</Button> }
-export function DeleteRecordForm({ type, id, name }: { type: Exclude<RecordType, 'employees' | 'participations'>; id: number; name: string }) {
+export function DeleteRecordForm({ type, id, name }: { type: DeletableType; id: number; name: string }) {
     const router = useRouter()
     const prefix = useId()
     const [error, setError] = useState('')

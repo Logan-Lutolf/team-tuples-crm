@@ -1,12 +1,14 @@
 import { notFound } from 'next/navigation'
 import { db } from '@/prisma/db'
-import { isRecordType } from '@/lib/record-links'
+import { isDeletableType, isRecordType } from '@/lib/record-links'
 import { DeleteRecordForm } from '@/components/records/delete-record-form'
+
+
 
 export default async function DeletePage({ params }: { params: Promise<{ type: string; id: string }> }) {
     const { type, id: rawId } = await params
     const id = Number(rawId)
-    if (!isRecordType(type) || type === 'employees' || !/^\d+$/.test(rawId) || !Number.isSafeInteger(id) || id <= 0) notFound()
+    if (!isDeletableType(type) || !/^\d+$/.test(rawId) || !Number.isSafeInteger(id) || id <= 0) notFound()
     const record = type === 'schools' ? await db.orm.public.Organization.where({ id }).select('name').first()
         : type === 'contacts' ? await db.orm.public.Person.where({ id }).select('name').first()
         : type === 'branches' ? await db.orm.public.Branch.where({ id }).select('name').first()

@@ -7,3 +7,8 @@ export function recordHref(type: RecordType, id: number) {
     if (!Number.isSafeInteger(id) || id <= 0) throw new Error('Invalid record ID')
     return `/details/${type}/${id}`
 }
+
+export type DeletableType = Exclude<RecordType, 'employees' | 'participations'>
+export function isDeletableType(value: string): value is DeletableType {
+    return isRecordType(value) && value !== 'employees' && value !== 'participations'
+}
