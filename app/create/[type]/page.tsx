@@ -4,10 +4,10 @@ import { db } from '@/prisma/db'
 import { AddSchoolForm } from '@/app/schools/add-school-form'
 import { AddContactForm } from '@/app/contacts/forms/add-contact'
 import { BranchFormPage } from '@/app/branches/branch-form-page'
-import { ProgramPageContent } from '@/app/programs/program-page-content'
 import { MunicipalityPageContent } from '@/app/municipalities/municipality-page-content'
 import { isRecordType } from '@/lib/record-links'
 import { AddOrganizationForm } from '@/app/schools/add-organization-form'
+import { ProgramDetailsPage } from '@/app/details/pages/program-details-page'
 
 export default async function CreatePage({ params }: { params: Promise<{ type: string }> }) {
     const { type } = await params
@@ -29,7 +29,7 @@ export default async function CreatePage({ params }: { params: Promise<{ type: s
         }))
 
         content = <BranchFormPage employees={employeePeople} names={[...db.enums.public.BranchTypes.values]} regions={[...db.enums.public.RegionTypes.values]} />
-    } else if (type === 'programs') content = <ProgramPageContent />
+    } else if (type === 'programs') content = <ProgramDetailsPage/>
     else content = <MunicipalityPageContent />
     return <div className="m-4 grid min-w-0 gap-6 sm:m-10"><Link className="w-fit underline" href={`/${type}`}>Back to {type}</Link>{content}</div>
 }

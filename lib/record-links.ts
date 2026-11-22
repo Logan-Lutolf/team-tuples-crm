@@ -8,7 +8,7 @@ export function recordHref(type: RecordType, id: number) {
     return `/details/${type}/${id}`
 }
 
-export type DeletableType = Exclude<RecordType, 'employees' | 'participations'>
+export type DeletableType = Exclude<RecordType, 'employees' | 'participations' | 'branches'>
 export function isDeletableType(value: string): value is DeletableType {
     return isRecordType(value) && value !== 'employees' && value !== 'participations'
 }

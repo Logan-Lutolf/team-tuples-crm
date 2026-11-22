@@ -1,7 +1,7 @@
 import { Interaction, Participation, Person, PersonWithRole } from '../../types'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { columns as participationColumns } from '../columns/participations-columns'
-import {columns as historyColumns} from '../columns/contact-history-columns'
+import {columns as historyColumns, contactColumns} from '../columns/contact-history-columns'
 import { DataTable } from '@/components/ui/data-table'
 import { ContactInformationCardContainer } from '@/components/custom/details-components/contact-information-card-container'
 import { OtherInformationCardContainer } from '@/components/custom/details-components/other-information-card-container'
@@ -44,7 +44,7 @@ export function PersonDetailsPage({person, participations, interactions}: Person
             <Card>
                 <CardContent>
                     <CardTitle>Contact History</CardTitle>
-                    <DataTable columns={historyColumns} data={interactions} paginationEnabled={false} visibleRows={5}/>
+                    <DataTable columns={contactColumns} data={interactions} paginationEnabled={false} visibleRows={5}/>
                 </CardContent>
             </Card>
 

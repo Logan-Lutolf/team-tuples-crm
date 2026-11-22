@@ -27,8 +27,8 @@ export function DeferredHistory({ type, id }: { type: 'schools' | 'contacts' | '
                 <TableBody>{data.records.map(record => <TableRow key={record.id}>
                     <TableCell>{new Date(record.contactedAt).toISOString().replace('T', ' ').slice(0, 19)}</TableCell>
                     <TableCell><RecordLink type="employees" id={record.employeeId}>{name(data.employees, record.employeeId)}</RecordLink></TableCell>
-                    <TableCell><RecordLink type="contacts" id={record.contactId}>{name(data.contacts, record.contactId)}</RecordLink></TableCell>
-                    <TableCell><RecordLink type="schools" id={record.schoolId}>{name(data.schools, record.schoolId)}</RecordLink></TableCell>
+                    <TableCell><RecordLink type="contacts" id={record.personId}>{name(data.contacts, record.personId)}</RecordLink></TableCell>
+                    <TableCell><RecordLink type="schools" id={record.organizationId}>{name(data.schools, record.organizationId)}</RecordLink></TableCell>
                     <TableCell><RecordLink type="programs" id={record.programId}>{name(data.programs, record.programId)}</RecordLink></TableCell>
                     <TableCell>{record.mode.replaceAll('_', ' ')}</TableCell>
                 </TableRow>)}{!data.records.length && <TableRow><TableCell colSpan={6}>No interactions recorded.</TableCell></TableRow>}</TableBody>
