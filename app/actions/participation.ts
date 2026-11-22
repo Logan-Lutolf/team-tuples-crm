@@ -103,7 +103,7 @@ export async function addTheatreInstance(formData: FormData) {
                 dob: s.dob,
                 email: s.email,
                 phone: s.phone,
-                orgId: s.org
+                orgId: s.org ? Number(s.org) : null,
             })
 
             if (!person) 
