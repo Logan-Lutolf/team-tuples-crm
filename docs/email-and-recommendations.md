@@ -25,6 +25,14 @@ bounce exclusions are explicit filters, not automatic suppression of copied list
 Saved segments are fixed snapshots, so they do not acquire later subscription
 changes. Send newsletters in SmartEmailing using its current subscription rules.
 
+All imported mailing lists remain available; no list allowlist has been configured.
+Subscription summaries show separate subscribed/unsubscribed list counts, followed
+by each list's own status. An unsubscribe date from event history is not attached
+to a particular list because the imported event metadata does not establish that link.
+Blacklisting is shown separately as account-wide suppression. With All lists selected,
+subscription filters mean “at least one list”; mixed contacts can match both filters.
+Select a specific mailing list to restrict the subscription filter to that membership.
+
 ## Database setup
 
 Only one field is added to an existing model: optional

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { canUseEmailContacts, contactEmails, emailDate, emptyContactFilters, filterEmailContacts, validateContactFilters } from '../../lib/email-contacts.ts';
+import { canUseEmailContacts, contactEmails, emailDate, emptyContactFilters, filterEmailContacts, validateContactFilters, smartEmailSubscriptionSummary } from '../../lib/email-contacts.ts';
 const contact = {id:1,name:'Jana Nováková',email:'Jana@example.test',role:'TEACHER',schoolId:1,school:'School A',branchId:2,branch:'TWO',region:'ONE',lastTrackedEmailAt:'2026-11-10T23:30:00Z'};
 const other = {...contact,id:2,name:'Peter',email:'peter@example.test',role:'PARTNER',schoolId:null,school:'',branchId:null,branch:'',region:'TWO',lastTrackedEmailAt:null};
 const filters = values => validateContactFilters({...emptyContactFilters,...values});
@@ -48,6 +48,24 @@ const newsletterContact = { ...contact,
   {name:'Parents October',deliveredAt:'2026-10-10T10:00:00Z',openDates:[],clickDates:['2026-10-11']},
  ],
 };
+
+test('subscription summaries preserve mixed list memberships and separate blacklisting',()=>{
+ const mixed=newsletterContact.smartEmailing;
+ assert.equal(smartEmailSubscriptionSummary(mixed),'Subscribed to 1 list; unsubscribed from 1 list');
+ assert.equal(smartEmailSubscriptionSummary({...mixed,blacklisted:true}),'Subscribed to 1 list; unsubscribed from 1 list');
+ assert.equal(smartEmailSubscriptionSummary({...mixed,lists:[]}),'No list memberships reported');
+ assert.equal(smartEmailSubscriptionSummary(null),'No current SmartEmailing contact data');
+ assert.equal(smartEmailSubscriptionSummary({...mixed,lists:[mixed.lists[1]]}),'Subscribed to 1 list; unsubscribed from 0 lists');
+ assert.equal(smartEmailSubscriptionSummary({...mixed,lists:[mixed.lists[0]]}),'Subscribed to 0 lists; unsubscribed from 1 list');
+});
+
+test('mixed subscriptions match either any-list filter but only the selected list status',()=>{
+ const find=values=>filterEmailContacts([newsletterContact],filters(values));
+ assert.equal(find({subscription:'subscribed'}).length,1);
+ assert.equal(find({subscription:'unsubscribed'}).length,1);
+ assert.equal(find({mailingList:'7',subscription:'subscribed'}).length,0);
+ assert.equal(find({mailingList:'8',subscription:'unsubscribed'}).length,0);
+});
 test('mailing list, subscription and current bounce filters combine without treating missing data as healthy',()=>{
  const find=values=>filterEmailContacts([newsletterContact,other],filters(values));
  assert.deepEqual(find({mailingList:'7',subscription:'unsubscribed',bounce:'hard'}),[newsletterContact]);
