@@ -63,9 +63,19 @@ export type ParticipationPerson = {
     participation: Participation
 }
 
-export type PersonWithRole = Person & {
-    personRole: Scalars<Models.public_PersonRoles>["type"] | null;
-};
+export type ParticipationInfo = {
+    participation: Participation,
+    coordinator: {id: number, name: string},
+    mainContact: {id: number, name: string},
+    contacts: Person[],
+    orgName: string
+}
+
+
+
+export type PersonWithRole = Omit<Person, "personRole"> & {
+    personRole: ContactTypes | null
+}
 
 export type OrganizationPerson = {
     person: PersonWithRole,
@@ -97,19 +107,42 @@ export const REGION_TYPES = [
 
 export type RegionTypes = (typeof REGION_TYPES)[number]
 
+export const STATUS_TYPES = [
+    "PLANNED",
+    "ONGOING",
+    "COMPLETED",
+    "CANCELLED"
+] as const
+
+export type StatusTypes = (typeof STATUS_TYPES)[number]
+
+
+export const PROGRAM_TYPES = [
+    "STORIES_OF_OUR_NEIGHBORS",
+    "MEMORY_OF_NATIONS_THEATRE",
+    "STORY_ON",
+    "SCHOOL_NETWORK",
+    "EDUCATION_DEVELOPMENT",
+    "WORKSHOPS"
+] as const 
+
+export type ProgramTypes = (typeof PROGRAM_TYPES)[number]
+
+
+
 export type ActionResult = { result: "success" | "error"; message: string }
 
 
 export const CONTACT_TYPES = [ // Redundancy here; edit later
-  "TEACHER",
-  "PRINCIPAL",
-  "SCHOOL_COORDINATOR",
-  "STUDENT",
-  "HISTORIAN",
-  "GOVERNMENT_OFFICIAL",
-  "DONOR",
-  "SPONSOR",
-  "PARTNER",
-  "VOLUNTEER",
-  "OTHER",
+    "TEACHER",
+    "PRINCIPAL",
+    "SCHOOL_COORDINATOR",
+    "STUDENT",
+    "HISTORIAN",
+    "GOVERNMENT_OFFICIAL",
+    "DONOR",
+    "SPONSOR",
+    "PARTNER",
+    "VOLUNTEER",
+    "OTHER",
 ] as const
