@@ -6,18 +6,18 @@ import { Interaction, Participation } from '@/app/types'
 import { camelCaseIt, dateParsing, programParsing } from '@/lib/utils'
 
 
-type InteractionRow = Interaction & { employeeName: string; programName: string }
+type InteractionRowEmp = Interaction & { personName: string; programName: string }
 
-const columnHelper = createColumnHelper<DataTableFeatures, InteractionRow>()
+const columnHelper = createColumnHelper<DataTableFeatures, InteractionRowEmp>()
 
 export const columns = columnHelper.columns([
     columnHelper.accessor("contactedAt", {
         header: "Date",
         cell: ({row}) => dateParsing(row.original.contactedAt)
     }),
-    columnHelper.accessor("employeeName", {
-        header: "Employee",
-        cell: ({ row }) => <RecordLink type="employees" id={row.original.employeeId}>{row.original.employeeName}</RecordLink>,
+    columnHelper.accessor("personName", {
+        header: "Contact",
+        cell: ({ row }) => <RecordLink type="contacts" id={row.original.employeeId}>{row.original.personName}</RecordLink>,
     }),
     columnHelper.accessor("mode", {
         header: "Mode of Communication",

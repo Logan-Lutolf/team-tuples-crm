@@ -19,7 +19,7 @@ const loaders: { [K in EntityType]: (obj: RawMap[K]) => Promise<LoadedMap[K]> } 
     },
     org: async (o) => o,
     branch: async (b) => b,
-    participation: async (p) => p
+    participation: async (p) => p,
 }
 
 export async function NameInfoContainer<K extends EntityType>({

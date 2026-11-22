@@ -154,9 +154,36 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
                 .all()
             const participations = participationRows.map((row) => row.participation)
 
-            if (person == null || assignments == null || participations == null || employee == null) return
+            const interactions = await db.orm.public.Interaction
+                .include("program")
+                .where({ employeeId: id })
+                .all()
+                .toArray()
+
+            // One query per distinct employee, not per interaction
+            const contactIds = [
+                ...new Set(interactions.map((i) => i.personId).filter((x): x is number => x != null)),
+            ]
+
+            const staff = await Promise.all(
+                contactIds.map((cid) => db.orm.public.Person.where({ id: cid }).first())
+            )
+            const nameById = new Map(
+                staff.filter((p): p is NonNullable<typeof p> => p != null).map((p) => [p.id, p.name])
+            )
+
+            const rows = interactions.map((i) => ({
+                ...i,
+                personName: i.personId != null ? nameById.get(i.personId) ?? "Unknown" : "Unknown",
+                programName: i.program?.name ?? "—",
+            }))
+
+
+
+
+            if (person == null || assignments == null || participations == null || employee == null || rows == null) return
             
-            content = <EmployeeDetailsPage person={person} employee={employee} assignments={assignments} participations={participations} />
+            content = <EmployeeDetailsPage person={person} employee={employee} assignments={assignments} participations={participations} interactions={rows} />
         
         }
     var list = type === 'employees' ? '/employee-management' : `/${type}`

@@ -54,10 +54,10 @@ export function OrganizationDetailsPage({organization, participations, contacts}
                 </CardContent>
             </Card>
 
-            {/* Contact History */}
+            {/* Contact History
             <div>
                 <span>Contact History</span>
-            </div>
+            </div> */}
         </div>
     )
 }
