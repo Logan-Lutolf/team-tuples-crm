@@ -74,6 +74,16 @@ export function programParsing(program: string | null | undefined) {
     return result
 }
 
+
+export function camelCaseIt(str: string) {
+    const words = str.toLowerCase().split("_")
+    let result = ""
+    for (let i = 0; i < words.length; i++) {
+        result += words[i].substring(0,1).toUpperCase() + words[i].substring(1) + " "
+    }
+    return result
+}
+
 export function dateParsing(date: string | null | undefined) {
     if (!date) return "Unknown"
     date = date.substring(0, 10)

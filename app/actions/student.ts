@@ -53,15 +53,30 @@ export async function createStudent(formData: FormData) {
 
 // Written by Claude, modified by Charlotte
 export async function searchStudents(query: string) {
-    const q = query.trim().toLowerCase()
-    if (q.length < 2) return []
+    const q = query.trim()
+    if (!q) return []
 
-    // Same pattern as your EmployeeTableContainer: load, then filter in JS.
-    // If your ORM supports a case-insensitive "contains" filter, use it instead.
-    const records = await db.orm.public.Person.include("personRole").all().toArray()
+    const pattern = `%${q.replace(/[\\%_]/g, "\\$&")}%`
 
-    return records
-        .filter(s => s.name.toLowerCase().includes(q) && s.personRole?.type == "STUDENT")
-        .slice(0, 8)
-        .map(s => ({ id: s.id, name: s.name }))
+    const people = await db.orm.public.Person
+        .include("student")
+        .include("organization")
+        .where((p) => p.name.ilike(pattern))
+        .all()
+        .toArray()
+
+    return people
+        .filter((p) => p.student != null)   // only people with a Student row
+        .slice(0, 10)
+        .map((p) => ({
+            id: p.id,
+            name: p.name,
+            dob: p.dob ?? "",
+            email: p.email ?? "",
+            phone: p.phone ?? "",
+            orgId: p.orgId != null ? String(p.orgId) : "",
+            orgName: p.organization?.name ?? "",
+            guardianEmail: p.student!.guardianEmail,
+            guardianPhone: p.student!.guardianPhone,
+    }))
 }

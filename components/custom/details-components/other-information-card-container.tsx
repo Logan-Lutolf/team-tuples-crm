@@ -20,8 +20,7 @@ export async function OtherInformationCardContainer({obj} : {obj: Person | Organ
     if (userRoles != undefined) {
         if (userRoles.includes("ADMIN")) permission = true // will add more roles here in the future
     }
-    console.log(userRoles)
-    console.log(permission)
+
 
     return (
         <OtherInformationCard obj={obj} editPermissions={permission}/>

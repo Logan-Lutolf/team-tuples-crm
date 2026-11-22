@@ -38,7 +38,7 @@ export function TopNavbar({employee, person}: TopNavbarProps) {
 
   return (
     <div className="flex flex-row justify-between">
-      <Image src={"/Post_Bellum_logo.png"} alt={"Post Bellum Logo"} width={300} height={10}/>
+      <Image src={"/image.png"} alt={"Post Bellum Logo"} width={300} height={10}/>
 
     <NavigationMenu orientation="horizontal" className="mt-2">
       <NavigationMenuList>

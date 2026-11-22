@@ -7,6 +7,7 @@ import { db } from '@/prisma/db'
 import { Search } from '@/components/custom/searches/search'
 import { Suspense } from 'react'
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Trash } from 'lucide-react'
 
 export default async function ProgramsPage({ searchParams }: { searchParams?: Promise<{ search?: string; page?: string }> }) {
     const params = await searchParams
@@ -27,7 +28,7 @@ export default async function ProgramsPage({ searchParams }: { searchParams?: Pr
             <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Description</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
             <TableBody>{rows.map(program => <TableRow key={program.id}>
                 <TableCell className="font-medium"><RecordLink type="programs" id={program.id}>{program.name}</RecordLink></TableCell><TableCell className="max-w-md whitespace-normal"><p className="line-clamp-3">{program.description || '—'}</p></TableCell>
-                <TableCell><div className="flex flex-wrap items-center justify-center gap-2"><PageActionLink href={`/details/programs/${program.id}`}>View details</PageActionLink><PageActionLink href={`/details/programs/${program.id}/delete`} destructive>Delete</PageActionLink></div></TableCell>
+                <TableCell><div className="flex flex-wrap items-center justify-center gap-2"><PageActionLink href={`/details/programs/${program.id}`}>View details</PageActionLink><PageActionLink href={`/details/programs/${program.id}/delete`} destructive><Trash/></PageActionLink></div></TableCell>
             </TableRow>)}{!rows.length && <TableRow><TableCell colSpan={3} className="py-10 text-center text-muted-foreground">{search ? 'No programs match your search.' : page > 1 ? 'No more programs.' : 'No programs yet. Add a program to get started.'}</TableCell></TableRow>}</TableBody>
         </DashboardTable>
         <nav aria-label="Program pagination" className="flex items-center justify-between text-sm">

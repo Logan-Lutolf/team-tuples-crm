@@ -17,7 +17,7 @@ const columnHelper = createColumnHelper<DataTableFeatures, Participation>()
 export const columns = columnHelper.columns([
     columnHelper.accessor("name", {
         header: "Name",
-        cell: ({ row }) => <RecordLink type="participations" id={row.original.programId}>{row.original.name}</RecordLink>,
+        cell: ({ row }) => <RecordLink type="participations" id={row.original.id}>{row.original.name}</RecordLink>,
     }),
     columnHelper.accessor("programType", {
         header: "Program Type",

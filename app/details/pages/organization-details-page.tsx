@@ -38,22 +38,26 @@ export function OrganizationDetailsPage({organization, participations, contacts}
                 <OtherInformationCardContainer obj={organization}/>
             </div>
 
-            {/* School Contacts */}
-            <div>
-                <span>Organization Contacts</span>
-                <DataTable columns={contactColumns} data={rows} paginationEnabled={false} visibleRows={5}/>
-            </div>
+            {/* Organization Contacts */}
+            <Card>
+                <CardContent>
+                    <CardTitle>Organization Contacts</CardTitle>
+                    <DataTable columns={contactColumns} data={rows} paginationEnabled={false} visibleRows={5}/>
+                </CardContent>
+            </Card>
 
             {/* Program Participations */} 
-            <div>
-                <span>Program Participations</span>
-                <DataTable columns={participationColumns} data={participations} paginationEnabled={false} visibleRows={5}/>  
-            </div>
+            <Card>
+                <CardContent>
+                    <CardTitle>Program Participations</CardTitle>
+                    <DataTable columns={participationColumns} data={participations} paginationEnabled={false} visibleRows={5}/>
+                </CardContent>
+            </Card>
 
-            {/* Contact History */}
+            {/* Contact History
             <div>
                 <span>Contact History</span>
-            </div>
+            </div> */}
         </div>
     )
 }

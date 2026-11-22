@@ -6,11 +6,15 @@ import { type DataTableFeatures } from "../../components/ui/data-table-features"
 import { Participation } from '../types'
 import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
+import { StudentResult } from './forms/add-theatre-form'
+import { camelCaseIt, dateParsing } from '@/lib/utils'
 
 type Student = {
+    personId?: number
     name: string,
     dob: string,
-    school?: string,
+    org?: string,        // org id as a string, matches what setNewOrg stores
+    orgName?: string,    // display only
     email?: string,
     phone?: string,
     guardianEmail: string,
@@ -30,12 +34,15 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor("startDate", {
         header: "Start Date",
+        cell: ({row}) => dateParsing(row.original.startDate)
     }),
     columnHelper.accessor("endDate", {
         header: "End Date",
+        cell: ({row}) => dateParsing(row.original.endDate)
     }),
     columnHelper.accessor("status", {
         header: "Status",
+        cell: ({row}) => camelCaseIt(row.original.status)
     }),
     
 ])
@@ -48,8 +55,8 @@ export const studentColumns = columnHelperStudents.columns([
     columnHelperStudents.accessor("dob", {
         header: "Date of Birth", 
     }),
-    columnHelperStudents.accessor("school", {
-        header: "School"
+    columnHelperStudents.accessor("orgName", {
+        header: "Organization Name"
     }),
     // columnHelperStudents.display({
     //     id: "actions",
@@ -73,8 +80,8 @@ export const getStudentCols = (onDelete: (index: number) => void) => columnHelpe
         header: "Student Name",
         size: 50
     }),
-    columnHelperStudents.accessor("school", {
-        header: "School",
+    columnHelperStudents.accessor("orgName", {
+        header: "Organization Name",
         size: 50
     }),
     columnHelperStudents.accessor("dob", {

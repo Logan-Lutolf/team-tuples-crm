@@ -1,24 +1,23 @@
-import { Circle } from 'lucide-react'
-import { EmployeeAssignment, Participation, Person, PersonWithRole } from '../../types'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Interaction, Participation, Person, PersonWithRole } from '../../types'
+import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { columns as participationColumns } from '../columns/participations-columns'
-import {columns as assignmentColumns } from '../columns/assignment-columns'
+import {columns as historyColumns} from '../columns/contact-history-columns'
 import { DataTable } from '@/components/ui/data-table'
-import { ContactInformationCard } from '@/components/custom/details-components/contact-information-card'
-import { OtherInformationCard } from '@/components/custom/details-components/other-information-card'
 import { ContactInformationCardContainer } from '@/components/custom/details-components/contact-information-card-container'
 import { OtherInformationCardContainer } from '@/components/custom/details-components/other-information-card-container'
 import { NameInfoContainer } from '@/components/custom/details-components/name-info-container'
 import { PersonEmailHistory } from '@/components/email/person-email-history'
 
+type InteractionRow = Interaction & { employeeName: string; programName: string }
 
 interface PersonDetailsPageProps {
     person: Person
     participations: Participation[]
+    interactions: InteractionRow[]
 }
 
 
-export function PersonDetailsPage({person, participations}: PersonDetailsPageProps) {
+export function PersonDetailsPage({person, participations, interactions}: PersonDetailsPageProps) {
     
     
     return (
@@ -33,15 +32,23 @@ export function PersonDetailsPage({person, participations}: PersonDetailsPagePro
             </div>
 
             {/* Program Participations */} 
-            <div>
-                <span>Program Participations</span>
-                <DataTable columns={participationColumns} data={participations} paginationEnabled={false} visibleRows={5}/>  
-            </div>
+            <Card>
+                <CardContent>
+                    <CardTitle>Program Participations</CardTitle>
+                    <DataTable columns={participationColumns} data={participations} paginationEnabled={false} visibleRows={5}/>
+                </CardContent>
+            </Card>
+
 
             {/* Contact History */}
-            <div>
-                <span>Contact History</span>
-            </div>
+            <Card>
+                <CardContent>
+                    <CardTitle>Contact History</CardTitle>
+                    <DataTable columns={historyColumns} data={interactions} paginationEnabled={false} visibleRows={5}/>
+                </CardContent>
+            </Card>
+
+            {/* Smart Emailing */}
             <PersonEmailHistory email={person.email} lastTrackedEmailAt={person.lastTrackedEmailAt} />
         </div>
     )

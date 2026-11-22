@@ -18,11 +18,11 @@ export default async function ProgramInstancesPage() {
             <Tabs>
                 <div className="flex flex-row justify-between">
                     <TabsList>
-                        <TabsTrigger value="seminars">Seminars</TabsTrigger>
                         <TabsTrigger value="soon">Stories of Our Neighbors</TabsTrigger>
                         <TabsTrigger value="theatre">Theatre Production</TabsTrigger>
                         <TabsTrigger value="storyOn">storyOn</TabsTrigger>
-                        <TabsTrigger value="program5">Program #5</TabsTrigger>
+                        <TabsTrigger value="seminars">Seminars</TabsTrigger>
+                        {/* <TabsTrigger value="program5">Program #5</TabsTrigger> */}
                     </TabsList>
 
                     
@@ -34,7 +34,7 @@ export default async function ProgramInstancesPage() {
                 <TabsContent value="soon"><SoonTabContainer/></TabsContent>
                 <TabsContent value="theatre"><TheatreTabContainer/></TabsContent>
                 <TabsContent value="storyOn">This tab is under construction.</TabsContent>
-                <TabsContent value="program5">This tab is under construction.</TabsContent>
+                {/* <TabsContent value="program5">This tab is under construction.</TabsContent> */}
             </Tabs>
         </div>
     )

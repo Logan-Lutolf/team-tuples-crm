@@ -1461,7 +1461,7 @@
                     "id"
                   ],
                   "targetFields": [
-                    "particpationId"
+                    "participationId"
                   ]
                 },
                 "to": {
@@ -1609,7 +1609,7 @@
                   "kind": "scalar"
                 }
               },
-              "particpationId": {
+              "participationId": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
@@ -1639,7 +1639,7 @@
                 "nullable": false,
                 "on": {
                   "localFields": [
-                    "particpationId"
+                    "participationId"
                   ],
                   "targetFields": [
                     "id"
@@ -1656,8 +1656,8 @@
                 "employeeId": {
                   "column": "employeeId"
                 },
-                "particpationId": {
-                  "column": "particpationId"
+                "participationId": {
+                  "column": "participationId"
                 }
               },
               "namespaceId": "public",
@@ -3816,7 +3816,7 @@
                   "dataType": "pg/int4",
                   "nullable": false
                 },
-                "particpationId": {
+                "participationId": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
                   "nullable": false
@@ -3844,11 +3844,11 @@
                 },
                 {
                   "index": {
-                    "name": "ParticipationEmployees_particpationId_idx_e40c8dee"
+                    "name": "ParticipationEmployees_participationId_idx_1840362d"
                   },
                   "source": {
                     "columns": [
-                      "particpationId"
+                      "participationId"
                     ],
                     "namespaceId": "public",
                     "tableName": "ParticipationEmployees"
@@ -3873,16 +3873,16 @@
                 },
                 {
                   "columns": [
-                    "particpationId"
+                    "participationId"
                   ],
-                  "name": "ParticipationEmployees_particpationId_idx_e40c8dee",
-                  "prefix": "ParticipationEmployees_particpationId_idx",
+                  "name": "ParticipationEmployees_participationId_idx_1840362d",
+                  "prefix": "ParticipationEmployees_participationId_idx",
                   "unique": false
                 }
               ],
               "primaryKey": {
                 "columns": [
-                  "particpationId",
+                  "participationId",
                   "employeeId"
                 ]
               },
@@ -4716,7 +4716,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "a9e24fee6b157cf2a601ee540f5d6715305c8dc4c0cc3006c4e07765748eebe1"
+    "storageHash": "030ace25acf794d173f716f4fb33969019347b940827a49b0f2e373ebc1e3d47"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

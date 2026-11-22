@@ -1,11 +1,8 @@
 'use client'
 
 import { Button } from "@/components/ui/button"
-import { ContactActionForm } from "../../old-components/contacts/contact-action-form"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createContact } from "../actions_contacts"
 import { OrganizationSearch } from "@/components/custom/searches/organization-search"
 import { CustomSelect } from "@/components/custom/custom-dropdowns"
 import { CONTACT_TYPES } from "@/app/types"

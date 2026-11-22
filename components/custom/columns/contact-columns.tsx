@@ -4,6 +4,7 @@ import { type DataTableFeatures } from "../../ui/data-table-features"
 import { PersonWithRole } from '@/app/types'
 import { Trash } from 'lucide-react'                         
 import { PageActionLink } from '@/components/records/page-action-link'           
+import { camelCaseIt } from "@/lib/utils"
 
 const columnHelper = createColumnHelper<DataTableFeatures, PersonWithRole>()
 
@@ -13,6 +14,7 @@ export const columns = columnHelper.columns([
   }),
   columnHelper.accessor("personRole", {
     header: "Role",
+    cell: ({row}) => row.original.personRole ? camelCaseIt(row.original.personRole) : "Unknown Role" 
   }),
   columnHelper.accessor("email", {
     header: "Email",
