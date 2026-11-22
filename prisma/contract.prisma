@@ -322,13 +322,13 @@ model Employee {
 }
 
 model ParticipationEmployees {
-  particpationId Int
+  participationId Int
   employeeId  Int
 
   employee Employee @relation(fields: [employeeId], references: [personId])
-  participation Participation @relation(fields: [particpationId], references: [id])
+  participation Participation @relation(fields: [participationId], references: [id])
 
-  @@id([particpationId, employeeId])
+  @@id([participationId, employeeId])
 }
 
 model PersonRoles {

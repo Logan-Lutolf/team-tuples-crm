@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'a9e24fee6b157cf2a601ee540f5d6715305c8dc4c0cc3006c4e07765748eebe1'>;
+  StorageHashBase<'030ace25acf794d173f716f4fb33969019347b940827a49b0f2e373ebc1e3d47'>;
 export type ExecutionHash =
   ExecutionHashBase<'14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9'>;
 export type ProfileHash =
@@ -444,7 +444,7 @@ export type FieldOutputTypes = {
     };
     readonly ParticipationEmployees: {
       readonly employeeId: CodecTypes['pg/int4@1']['output'];
-      readonly particpationId: CodecTypes['pg/int4@1']['output'];
+      readonly participationId: CodecTypes['pg/int4@1']['output'];
     };
     readonly Person: {
       readonly address: AddressOutput | null;
@@ -750,7 +750,7 @@ export type FieldInputTypes = {
     };
     readonly ParticipationEmployees: {
       readonly employeeId: CodecTypes['pg/int4@1']['input'];
-      readonly particpationId: CodecTypes['pg/int4@1']['input'];
+      readonly participationId: CodecTypes['pg/int4@1']['input'];
     };
     readonly Person: {
       readonly address: AddressInput | null;
@@ -1056,7 +1056,7 @@ export type StorageColumnTypes = {
     };
     readonly ParticipationEmployees: {
       readonly employeeId: CodecTypes['pg/int4@1']['output'];
-      readonly particpationId: CodecTypes['pg/int4@1']['output'];
+      readonly participationId: CodecTypes['pg/int4@1']['output'];
     };
     readonly Person: {
       readonly address: CodecTypes['pg/jsonb@1']['output'] | null;
@@ -1362,7 +1362,7 @@ export type StorageColumnInputTypes = {
     };
     readonly ParticipationEmployees: {
       readonly employeeId: CodecTypes['pg/int4@1']['input'];
-      readonly particpationId: CodecTypes['pg/int4@1']['input'];
+      readonly participationId: CodecTypes['pg/int4@1']['input'];
     };
     readonly Person: {
       readonly address: CodecTypes['pg/jsonb@1']['input'] | null;
@@ -1703,7 +1703,7 @@ export namespace Models {
   };
   export type public_ParticipationEmployees = {
     employeeId: CodecTypes['pg/int4@1']['output'];
-    particpationId: CodecTypes['pg/int4@1']['output'];
+    participationId: CodecTypes['pg/int4@1']['output'];
     employee: public_Employee;
     participation: public_Participation;
     readonly [RelationKeys]?: 'employee' | 'participation';
@@ -2674,14 +2674,14 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
-                readonly particpationId: {
+                readonly participationId: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
                   readonly many: false;
                 };
               };
-              primaryKey: { readonly columns: readonly ['particpationId', 'employeeId'] };
+              primaryKey: { readonly columns: readonly ['participationId', 'employeeId'] };
               uniques: readonly [];
               indexes: readonly [
                 {
@@ -2691,9 +2691,9 @@ type ContractBase = Omit<
                   readonly unique: false;
                 },
                 {
-                  readonly name: 'ParticipationEmployees_particpationId_idx_e40c8dee';
-                  readonly prefix: 'ParticipationEmployees_particpationId_idx';
-                  readonly columns: readonly ['particpationId'];
+                  readonly name: 'ParticipationEmployees_participationId_idx_1840362d';
+                  readonly prefix: 'ParticipationEmployees_participationId_idx';
+                  readonly columns: readonly ['participationId'];
                   readonly unique: false;
                 },
               ];
@@ -2714,7 +2714,7 @@ type ContractBase = Omit<
                   readonly source: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'ParticipationEmployees';
-                    readonly columns: readonly ['particpationId'];
+                    readonly columns: readonly ['participationId'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
@@ -4153,7 +4153,7 @@ type ContractBase = Omit<
                 readonly cardinality: '1:N';
                 readonly on: {
                   readonly localFields: readonly ['id'];
-                  readonly targetFields: readonly ['particpationId'];
+                  readonly targetFields: readonly ['participationId'];
                 };
               };
               readonly organization: {
@@ -4249,7 +4249,7 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
-              readonly particpationId: {
+              readonly participationId: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
@@ -4275,7 +4275,7 @@ type ContractBase = Omit<
                 readonly cardinality: 'N:1';
                 readonly nullable: false;
                 readonly on: {
-                  readonly localFields: readonly ['particpationId'];
+                  readonly localFields: readonly ['participationId'];
                   readonly targetFields: readonly ['id'];
                 };
               };
@@ -4285,7 +4285,7 @@ type ContractBase = Omit<
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly employeeId: { readonly column: 'employeeId' };
-                readonly particpationId: { readonly column: 'particpationId' };
+                readonly participationId: { readonly column: 'participationId' };
               };
             };
           };
