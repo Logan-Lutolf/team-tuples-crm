@@ -84,6 +84,7 @@ export function EmailContacts({ contacts, segments, trackingAddress, trackingCon
             <h2 className="text-lg font-semibold">Track emails with CC</h2>
             <p>CC this address when emailing contacts so the CRM can record when they were contacted.</p>
             <div className="flex flex-wrap items-center gap-3"><code className="break-all">{trackingAddress}</code><Button variant="outline" disabled={!trackingConfigured} onClick={() => copy(trackingAddress, 'Tracking address copied.')}><Copy className="size-4" />Copy CC address</Button></div>
+            <div><PageActionLink href="/email/tracked">View all emails</PageActionLink></div>
         </section>
         {notice && <p role="status" aria-live="polite">{notice}</p>}
         {error && <p role="alert" className="text-destructive">{error}</p>}

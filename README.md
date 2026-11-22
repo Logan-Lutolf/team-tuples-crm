@@ -7,6 +7,10 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 The navigation links open `/email` and `/recommendations`. These features use this
 branch's `Person`/`Organization` schema. Setup, permissions, mailbox payloads, and
 scheduled imports are documented in [the IT handover guide](docs/email-and-recommendations.md).
+Microsoft 365 CC tracking includes a mailbox connector: `npm run email-tracking:check`
+validates its settings and `npm run email-tracking:sync` collects verified Inbox messages.
+Mailbox provisioning, scoped Microsoft app access, and the supplied mail-flow rules
+must be configured first. Switching the CC address is a configuration change.
 The [change report](docs/email-feature-changes.md) includes before/after code and a full patch.
 
 ### Branch and interaction schema migration

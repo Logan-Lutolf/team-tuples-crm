@@ -10,8 +10,9 @@ const escapeLike = (email: string) => email.replace(/[\\%_]/g, '\\$&')
 export function emailTrackingSettings() {
     const mailbox = process.env.EMAIL_TRACKING_CC_ADDRESS?.trim().toLowerCase() ?? ''
     const secret = process.env.EMAIL_TRACKING_WEBHOOK_SECRET ?? ''
-    const validMailbox = validEmail(mailbox) && !mailbox.endsWith('.invalid')
-    return { mailbox: validMailbox ? mailbox : 'crm-tracking@example.invalid', secret,
+    // Display the requested example without treating YOUR-TENANT as a working mailbox.
+    const validMailbox = validEmail(mailbox) && !mailbox.endsWith('.invalid') && !mailbox.endsWith('@your-tenant.onmicrosoft.com')
+    return { mailbox: validMailbox ? mailbox : 'pb-tracker@YOUR-TENANT.onmicrosoft.com', secret,
         configured: validMailbox && secret.length >= 32,
         allowedSenders: (process.env.EMAIL_TRACKING_ALLOWED_SENDERS ?? '').split(',').map(email => email.trim().toLowerCase()).filter(validEmail) }
 }

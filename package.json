@@ -15,7 +15,9 @@
     "db:migrate:preview": "npm run db:migrate -- --show",
     "db:migrations:check": "node --env-file-if-exists=.env.local node_modules/prisma/dist/prisma.js migration check",
     "smartemailing:sync": "node --env-file-if-exists=.env.local scripts/sync-smartemailing.mjs",
-    "test:email": "node --test tests/email/contacts.test.mjs tests/email/smartemailing-scheduler.test.mjs",
+    "email-tracking:sync": "node --env-file-if-exists=.env.local scripts/sync-cc-mailbox.mjs",
+    "email-tracking:check": "node --env-file-if-exists=.env.local scripts/sync-cc-mailbox.mjs --check",
+    "test:email": "node --test tests/email/contacts.test.mjs tests/email/smartemailing-scheduler.test.mjs tests/email/microsoft365-connector.test.mjs",
     "test:email:integration": "node --test tests/email/features.integration.mjs"
   },
   "dependencies": {
