@@ -1,6 +1,6 @@
 "use client"
 
-import { Branch, CONTACT_TYPES, ORG_TYPES, Organization, PersonWithRole } from "@/app/types";
+import { Branch, CONTACT_TYPES, ORG_TYPES, Organization, PersonWithRole, PROGRAM_TYPES } from "@/app/types";
 import { Pencil, Save, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../ui/button";
@@ -12,6 +12,7 @@ import { showToast } from "@/lib/utils";
 import { updateOrg } from "@/app/actions/organization";
 import { updateBranch } from "@/app/actions/branches";
 import { EntityType, LoadedMap } from "./name-info-types";
+import { updateParticipationNameAndType } from "@/app/actions/participation";
 
 
 // Registry & Strategy Pattern for generic components!!!!!
@@ -32,9 +33,9 @@ type Config<T> = {
 const configs: {[K in EntityType]:  Config<LoadedMap[K]>} = {
     person: {
         getName: p => p.name,
-        getSubtitle: p => p.personRole?.[0]?.type ?? "Unknown Role",
+        getSubtitle: p => p.personRole ?? "Unknown Role",
         update: updateNameAndRole,
-        extraField: (p) => <CustomSelect name="role" type={CONTACT_TYPES} defVal={p.personRole?.[0]?.type} />,
+        extraField: (p) => <CustomSelect name="role" type={CONTACT_TYPES} defVal={p.personRole ?? "Unknown Role"} />,
     },
     org: {
         getName: o => o.name,
@@ -46,6 +47,11 @@ const configs: {[K in EntityType]:  Config<LoadedMap[K]>} = {
         getName: b => b.name,
         getSubtitle: b => b.region,
         update: updateBranch
+    },
+    participation: {
+        getName: p => p.name,
+        getSubtitle: p => p.programType,
+        update: updateParticipationNameAndType // change this later
     }
 }
 
@@ -74,6 +80,7 @@ export function NameInfo<K extends EntityType>({type, obj, editPermission}: {
         setEditing(!editing)
     }
 
+    const isParticipation: boolean = type === "participation"
 
     if (!editing) {
         return (
@@ -93,6 +100,7 @@ export function NameInfo<K extends EntityType>({type, obj, editPermission}: {
                     <Field className="max-w-1/3">
                         <Input name="name" defaultValue={config.getName(obj)}/>
                     </Field>
+
                     <div className="">
                         <Button type="submit" size="sm"><Save/></Button>
                         <Button size="sm" variant="destructive" onClick={handleEdit}><X/></Button>

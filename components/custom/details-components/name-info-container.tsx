@@ -12,13 +12,14 @@ import { EntityType, LoadedMap, RawMap } from "./name-info-types"
 // The "load" half: server-only work per entity type
 const loaders: { [K in EntityType]: (obj: RawMap[K]) => Promise<LoadedMap[K]> } = {
     person: async (p) => {
-        const personRole: PersonRoles[] = await db.orm.public.PersonRoles
+        const role = await db.orm.public.PersonRoles
             .where({ personId: p.id })
-            .all()
-        return { ...p, personRole }
+            .first()
+        return { ...p, personRole:  role?.type?? null}
     },
     org: async (o) => o,
     branch: async (b) => b,
+    participation: async (p) => p
 }
 
 export async function NameInfoContainer<K extends EntityType>({
