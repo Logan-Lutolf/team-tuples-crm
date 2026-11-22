@@ -7,6 +7,7 @@ import { Participation } from '../types'
 import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
 import { StudentResult } from './forms/add-theatre-form'
+import { camelCaseIt, dateParsing } from '@/lib/utils'
 
 type Student = {
     personId?: number
@@ -33,12 +34,15 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor("startDate", {
         header: "Start Date",
+        cell: ({row}) => dateParsing(row.original.startDate)
     }),
     columnHelper.accessor("endDate", {
         header: "End Date",
+        cell: ({row}) => dateParsing(row.original.endDate)
     }),
     columnHelper.accessor("status", {
         header: "Status",
+        cell: ({row}) => camelCaseIt(row.original.status)
     }),
     
 ])

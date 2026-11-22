@@ -1,7 +1,7 @@
 "use client"
 
 import { Person, Organization, ORG_TYPES, RELATIONSHIP_TYPES, REGION_TYPES, BRANCH_TYPES } from "@/app/types";
-import { programParsing, dateParsing, showToast } from "@/lib/utils";
+import { programParsing, dateParsing, showToast, camelCaseIt } from "@/lib/utils";
 import { Card, CardContent, CardTitle } from "../../ui/card";
 import { useState } from "react";
 import { updateOrganizationOtherInfo, updatePersonOtherInfo } from "@/app/details/actions";
@@ -83,8 +83,8 @@ export function OtherInformationCard({obj, editPermissions} : OtherInformationCa
                         <CardTitle>Other Information</CardTitle>
                         {editPermissions && <Button size="sm" onClick={() => setEditing(!editing)}><Pencil/></Button>}
                     </div>
-                    <p>Branch Assigned: {obj.branchName}</p>
-                    {"region" in obj && <p>Region: {programParsing(obj.region)}</p>}
+                    <p>Branch Assigned: {obj.branchName? camelCaseIt(obj.branchName) : "Unknown Branch"}</p>
+                    {"region" in obj && <p>Region: {obj.region? camelCaseIt(obj.region) : "Unknown Region"}</p>}
                     <p>Created: {dateParsing(obj.createdAt)}</p>
                     <p>Last Modified: {dateParsing(obj.updatedAt) ?? "Unmodified"}</p>
                 </CardContent>

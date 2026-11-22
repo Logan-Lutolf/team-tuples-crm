@@ -8,7 +8,7 @@ import { Input } from "../../ui/input";
 import { Field } from "../../ui/field";
 import { CustomSelect } from "../custom-dropdowns";
 import { updateNameAndRole } from "@/app/actions/person";
-import { showToast } from "@/lib/utils";
+import { camelCaseIt, showToast } from "@/lib/utils";
 import { updateOrg } from "@/app/actions/organization";
 import { updateBranch } from "@/app/actions/branches";
 import { EntityType, LoadedMap } from "./name-info-types";
@@ -33,24 +33,24 @@ type Config<T> = {
 const configs: {[K in EntityType]:  Config<LoadedMap[K]>} = {
     person: {
         getName: p => p.name,
-        getSubtitle: p => p.personRole ?? "Unknown Role",
+        getSubtitle: p => p.personRole? camelCaseIt(p.personRole) : "Unknown Role",
         update: updateNameAndRole,
         extraField: (p) => <CustomSelect name="role" type={CONTACT_TYPES} defVal={p.personRole ?? "Unknown Role"} />,
     },
     org: {
         getName: o => o.name,
-        getSubtitle: o => o.type ?? "Unknown Type",
+        getSubtitle: o => o.type? camelCaseIt(o.type) : "Unknown Type",
         update: updateOrg,
         extraField: (o) => <CustomSelect name="type" type={ORG_TYPES} defVal={o.type?.toString()}/>
     },
     branch: {
         getName: b => b.name,
-        getSubtitle: b => b.region,
+        getSubtitle: b => b.region? camelCaseIt(b.region) : "Unknown Region",
         update: updateBranch
     },
     participation: {
         getName: p => p.name,
-        getSubtitle: p => p.programType,
+        getSubtitle: p => p.programType? camelCaseIt(p.programType) : "Unkown Program Type",
         update: updateParticipationNameAndType // change this later
     }
 }
@@ -74,7 +74,7 @@ export function NameInfo<K extends EntityType>({type, obj, editPermission}: {
     async function handleSubmit(formData: FormData) {
         const result = await config.update(formData, obj.id)
         
-        if (result?.result == "success") showToast("Success", result.message?? "Update completed successfully.", "success")
+        if (result?.result == "Success") showToast("Success", result.message?? "Update completed successfully.", "success")
         else showToast(result?.result?? "Error", result?.message ?? "", "error")
         
         setEditing(!editing)

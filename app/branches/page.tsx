@@ -6,7 +6,8 @@ import { db } from "@/prisma/db"
 import { Search } from "@/components/custom/searches/search"
 import { Suspense } from "react"
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Trash } from 'lucide-react'
+import { Plus, Trash } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default async function BranchesPage({ searchParams }: {
     searchParams?: Promise<{ search?: string; page?: string }>
@@ -29,7 +30,8 @@ export default async function BranchesPage({ searchParams }: {
         return `/branches?${new URLSearchParams({ ...(search ? { search } : {}), page: String(next) })}`
     }
     return <div className="m-10 flex min-w-0 flex-1 flex-col gap-4">
-        <PageActionLink href="/create/branches" fullWidth>Add a Branch</PageActionLink>
+        {/* <PageActionLink href="/create/branches" fullWidth>Add a Branch</PageActionLink> */}
+        <Button disabled><Plus/> Add a Branch (disabled)</Button>
         <Suspense fallback={<p role="status">Loading search…</p>}><Search placeholder="" /></Suspense>
         <DashboardTable>
             <TableHeader><TableRow>
@@ -40,8 +42,10 @@ export default async function BranchesPage({ searchParams }: {
                     <TableCell><RecordLink type="branches" id={1}>{branch.name}</RecordLink></TableCell><TableCell>{branch.region}</TableCell>
                     <TableCell>{branch.institute || "—"}</TableCell><TableCell><RecordLink type="employees" id={branch.chiefId}>{branch.chiefId ? chiefs.get(branch.chiefId) ?? "Unassigned" : "Unassigned"}</RecordLink></TableCell>
                     <TableCell><div className="flex flex-wrap items-center justify-center gap-2">
-                        <PageActionLink href={`/details/branches/${branch.name}`}>View details</PageActionLink>
-                        <PageActionLink href={`/details/branches/${branch.name}/delete`} destructive><Trash/></PageActionLink>
+                        {/* <PageActionLink href={`/details/branches/${branch.name}`}>View details</PageActionLink> */}
+                        <Button disabled>Details (disabled)</Button>
+                        {/* <PageActionLink href={`/details/branches/${branch.name}/delete`} destructive><Trash/></PageActionLink> */}
+                        <Button disabled variant="destructive"><Trash/></Button>
                     </div></TableCell>
                 </TableRow>)}
                 {!rows.length && <TableRow><TableCell colSpan={5} className="py-10 text-center text-muted-foreground">

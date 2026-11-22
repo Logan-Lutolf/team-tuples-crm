@@ -143,19 +143,121 @@ export async function addTheatreInstance(formData: FormData) {
 
 
 
-const soonSchema = z.object({
-    name: z.string().or(z.literal("")),
-    coordinator: z.coerce.number(),
-    contact: z.coerce.number(),
-    org: z.coerce.number(),
-    students: z.array(studentSchema),
-    notes: z.string().optional(),
-    startDate: z.string(),
-    endDate: z.string().or(z.literal("")).optional()
-})
+// const soonSchema = z.object({
+//     name: z.string().or(z.literal("")),
+//     coordinator: z.coerce.number(),
+//     contact: z.coerce.number(),
+//     org: z.coerce.number(),
+//     students: z.array(studentSchema),
+//     notes: z.string().optional(),
+//     startDate: z.string(),
+//     endDate: z.string().or(z.literal("")).optional()
+// })
 
 export async function addSoonInstance(formData: FormData) {
+    // 1. Parse formData into object using schema
+    const rawData = Object.fromEntries(formData)
+    
+    let students: unknown = []
+    try {
+        students = JSON.parse(String(rawData.students ?? "[]"))
+    } catch {
+        return { result: "Error", message: "Invalid students data." }
+    }
 
+    const parsed = theatreSchema.safeParse({ ...rawData, students })
+    if (!parsed.success) {
+        console.log(parsed.error.issues)
+        return { result: "Error", message: "Failed to create stories of our neighbors participation: invalid form data." }
+    }
+
+
+    const { name, coordinator, contact, org, students: studentList, notes, startDate, endDate } = parsed.data
+    try {
+    // 2. Find necessary entities
+        // 2a. Find contact; error if not found
+        const contactResult = await db.orm.public.Person.where({id: contact}).first()
+
+        // 2b. Find coordinator; error if not found
+        const coordinatorResult = await db.orm.public.Person.where({id: coordinator}).first()
+
+        // 2c. Find organization; error if not found
+        const orgResult = await db.orm.public.Organization.where({id: org}).first()
+
+        if (!contactResult || !coordinatorResult || !orgResult) 
+            return {result: "Error", message: "Failed to create stories of our neighbors participation: org, contact, or coordinator not found."}
+    
+    // 3. Create participation
+        const participation = await db.orm.public.Participation.create({
+            name: name,
+            startDate: startDate,
+            endDate: endDate, 
+            programType: "STORIES_OF_OUR_NEIGHBORS",
+            notes: notes,
+            organizationId: orgResult.id
+        })
+
+        if (!participation) return {result: "Error", message: "Failed to create stories of our neighbors participation."}
+
+    // 4. Add coordinator to ParticipationEmployees
+        const partEmp = await db.orm.public.ParticipationEmployees.create({
+            participationId: participation.id,
+            employeeId: coordinatorResult.id
+        })
+
+        if (!partEmp) 
+            return {result: "Error", message: "Failed to create stories of our neighbors participation: Adding to ParticipationEmployees table failed."}
+
+    // 5. Add contact to ParticipationContacts
+        const partCont = await db.orm.public.ParticipationContacts.create({
+            participationId: participation.id,
+            personId: contactResult.id
+        })
+
+        if (!partCont) 
+            return {result: "Error", message: "Failed to create stories of our neighbors participation: Adding to ParticipationContacts table failed."}
+
+    // 6. Create all students (iterate through array)
+        for (const s of studentList) {
+            // 6a. Create person
+            const person = await db.orm.public.Person.create({
+                name: s.name,
+                dob: s.dob,
+                email: s.email,
+                phone: s.phone,
+                orgId: s.org ? Number(s.org) : null,
+            })
+
+            if (!person) 
+                return {result: "Error", message: "Failed to create stories of our neighbors participation: Error addding student to Person table."}
+
+            // 6b. Create student
+            const student = await db.orm.public.Student.create({
+                personId: person.id,
+                guardianEmail: s.guardianEmail,
+                guardianPhone: s.guardianPhone
+            })
+
+            if (!student)
+                return {result: "Error", message: "Failed to create stories of our neighbors participation: Error addding student to Student table."}
+
+            // 6c. Add person to ParticipationContacts
+            const studentPart = await db.orm.public.ParticipationContacts.create({
+                personId: person.id,
+                participationId: participation.id
+            })
+            
+            if (!studentPart)
+                return {result: "Error", message: "Failed to create stories of our neighbors participation: Error adding to ParticipationContacts table."}
+        }
+
+        refresh()
+        return {result: "Success", message: "Stories of Our Neighbors instance creation successfull."}
+    }
+    catch (error) {
+        console.log(error)
+        return {result: "Error", message: "" + error}
+    }
 }
 
 

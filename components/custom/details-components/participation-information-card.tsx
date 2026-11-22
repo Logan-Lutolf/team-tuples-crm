@@ -1,7 +1,7 @@
 "use client"
 
 import { Person, Organization, ORG_TYPES, RELATIONSHIP_TYPES, REGION_TYPES, BRANCH_TYPES, Participation, ParticipationInfo, STATUS_TYPES } from "@/app/types";
-import { programParsing, dateParsing, showToast } from "@/lib/utils";
+import { programParsing, dateParsing, showToast, camelCaseIt } from "@/lib/utils";
 import { Card, CardContent, CardTitle } from "../../ui/card";
 import { useState } from "react";
 import { updateOrganizationOtherInfo, updatePersonOtherInfo } from "@/app/details/actions";
@@ -169,12 +169,12 @@ export function ParticipationOtherInfoCard({obj, editPermissions} : Participatio
             <Card className="w-1/2">
                 <CardContent>
                     <div className="flex flex-row justify-between items-center">
-                        <CardTitle>Involvements</CardTitle>
+                        <CardTitle>Other Information</CardTitle>
                         {editPermissions && <Button size="sm" onClick={() => setEditing(!editing)}><Pencil/></Button>}
                     </div>
-                    <p>Status: {obj.status}</p>
-                    <p>Start Date: {obj.startDate}</p>
-                    <p>End Date: {obj.endDate?? "Not specified."}</p>
+                    <p>Status: {camelCaseIt(obj.status)}</p>
+                    <p>Start Date: {dateParsing(obj.startDate)}</p>
+                    <p>End Date: {obj.endDate? dateParsing(obj.endDate) : "Not specified."}</p>
                 </CardContent>
             </Card>
         )    

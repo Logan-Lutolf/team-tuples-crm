@@ -13,7 +13,7 @@ import { EmployeeDetailsPage } from '../../pages/employee-details-page'
 import { ProgramDetailsPage } from '../../pages/program-details-page'
 import { BranchDetailsPage } from '../../pages/branch-details-page'
 import { ParticipationDetailsPage } from '../../pages/participation-details-page'
-import { Person } from '@/app/types'
+import { OrganizationPerson, Person, PersonWithRole } from '@/app/types'
 
 
 
@@ -37,20 +37,27 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
     if (!isRecordType(type) || !/^\d+$/.test(rawId) || !Number.isSafeInteger(id) || id <= 0) notFound()
     let content
         if (type === 'schools') {
-            const org = await db.orm.public.Organization
-                .where({id: id})
-                .first()
+            const org = await db.orm.public.Organization.where({ id }).first()
+            if (!org) notFound()
 
-            const contacts = await db.orm.public.Person
-                .where({orgId: id})
+            const people = await db.orm.public.Person
                 .include("personRole")
+                .where({ orgId: id })
                 .all()
-            
-            const participations = await db.orm.public.Participation
-                .where({organizationId: id})
-                .all()
+                .toArray()
 
-            if (org == null || contacts == null || participations == null) return
+            const participations = await db.orm.public.Participation
+                .where({ organizationId: id })
+                .all()
+                .toArray()
+
+            const contacts: PersonWithRole[] = people.map((p) => ({
+                ...p,
+                personRole: p.personRole?.type ?? null,
+            }))
+
+
+            if (org == null || people == null || participations == null) return
             content = <OrganizationDetailsPage organization={org} participations={participations} contacts={contacts}/>
         } 
         

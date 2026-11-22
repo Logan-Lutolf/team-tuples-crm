@@ -4,7 +4,7 @@ import { RecordLink } from '@/components/records/record-link'
 import { createColumnHelper } from "@tanstack/react-table"
 import { type DataTableFeatures } from "../../../components/ui/data-table-features"
 import { OrganizationPerson, PersonWithStudent } from '@/app/types'
-import { dateParsing } from '@/lib/utils'
+import { camelCaseIt, dateParsing } from '@/lib/utils'
 
 
 
@@ -24,6 +24,7 @@ export const columns = columnHelper.columns([
     }),
     columnHelper.accessor("roles", {
         header: "Role",
+        cell: ({row}) => camelCaseIt(row.original.roles ?? "")
     }),
     // columnHelper.display({
     //     id: "actions",

@@ -1,6 +1,6 @@
 "use client"
 
-import { Dialog, BigDialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, BigDialogContent, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,15 +14,23 @@ import { Minus, Plus } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
 import { getStudentCols } from "../columns";
 import { Textarea } from "@/components/ui/textarea";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { addTheatreInstance } from "@/app/actions/participation";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { addSoonInstance, addTheatreInstance } from "@/app/actions/participation";
+import { set } from "zod";
 
+export type StudentResult = Required<Pick<Student, "name" | "dob" | "email" | "phone" | "guardianEmail" | "guardianPhone">> & {
+    id: number
+    orgId: string
+    orgName: string
+}
 
 type Student = {
-    personId?: number,
+    personId?: number
     name: string,
     dob: string,
-    org?: string,
+    org?: string,        // org id as a string, matches what setNewOrg stores
+    orgName?: string,    // display only
     email?: string,
     phone?: string,
     guardianEmail: string,
@@ -72,7 +80,7 @@ export function AddSoonForm() {
     }
 
     async function handleSubmit(formData: FormData) {
-        const result = await addTheatreInstance(formData)
+        const result = await addSoonInstance(formData)
 
         if (result.result == "Success") {
             setOpen(false)
@@ -81,13 +89,23 @@ export function AddSoonForm() {
         else showToast(result.result, result.message, "error")
     }
 
-    function addExistingStudent(s: { id: number; name: string }) {
-    setStudents((prev) =>
-        prev.some((p) => p.personId === s.id)
-            ? prev                                   // already in the list
-            : [...prev, { personId: s.id, name: s.name, dob: "", guardianEmail: "" }]
-    )
-}
+    // function addExistingStudent(s: StudentResult) {
+    // setStudents((prev) =>
+    //     prev.some((p) => p.personId === s.id)
+    //         ? prev
+    //         : [...prev, {
+    //             personId: s.id,
+    //             name: s.name,
+    //             dob: s.dob,
+    //             org: s.orgId,
+    //             orgName: s.orgName,
+    //             email: s.email,
+    //             phone: s.phone,
+    //             guardianEmail: s.guardianEmail,
+    //             guardianPhone: s.guardianPhone,
+    //         }]
+    //     )
+    // }
 
     return (
         <Dialog>
@@ -137,6 +155,7 @@ export function AddSoonForm() {
                                 <Input 
                                     name="endDate"
                                     type="date"
+                                    required
                                     className="w-3/4"
                                 />
                             </Field>
@@ -150,8 +169,9 @@ export function AddSoonForm() {
                     </div>
 
                     <div className="flex flex-col gap-4 mt-12">
-                        <div className="flex flex-row gap-2">
-                            <StudentSearch onAdd={addExistingStudent}/>
+                        <div className="flex flex-row gap-2 justify-between">
+                            {/* <StudentSearch onAdd={addExistingStudent}/> */}
+                            Will be an "add existing student" search here.
                             
                             <Button type="button" className="cursor-pointer" onClick={() => setCreateNew(true)}><Plus/> Create New</Button>
                         </div>
@@ -164,7 +184,7 @@ export function AddSoonForm() {
                     </Field>
 
                     <div className=" flex flex-row mt-4 justify-end">
-                        <Button className="w-1/5 cursor-pointer" type="submit">Submit</Button>
+                        <DialogClose render={<Button className="w-1/5 cursor-pointer" type="submit">Submit</Button>}></DialogClose>
                     </div>
                     
                     
