@@ -3,7 +3,8 @@
 import { RecordLink } from '@/components/records/record-link'
 import { createColumnHelper } from "@tanstack/react-table"
 import { type DataTableFeatures } from "../../../components/ui/data-table-features"
-import { OrganizationPerson } from '@/app/types'
+import { OrganizationPerson, PersonWithStudent } from '@/app/types'
+import { dateParsing } from '@/lib/utils'
 
 
 
@@ -21,10 +22,9 @@ export const columns = columnHelper.columns([
     columnHelper.accessor("person.phone", {
         header: "Phone #",
     }),
-    columnHelper.accessor("roles.type", {
+    columnHelper.accessor("roles", {
         header: "Role",
     }),
-    
     // columnHelper.display({
     //     id: "actions",
     //     header: "Actions",
@@ -32,4 +32,30 @@ export const columns = columnHelper.columns([
     //         return <ActionsCell employee={row.original} />
     //     },
     // }),
+])
+
+
+const studentColumnHelper = createColumnHelper<DataTableFeatures, PersonWithStudent>()
+
+export const studentColumns = studentColumnHelper.columns([
+    studentColumnHelper.accessor("name", {
+        header: "Student Name",
+        cell: ({ row }) => <RecordLink type="contacts" id={row.original.id}>{row.original.name}</RecordLink>
+    }),
+    studentColumnHelper.accessor("dob", {
+        header: "Date of Birth",
+        cell: ({ row }) => {dateParsing(row.original.dob) ?? row.original.dob}
+    }),
+    studentColumnHelper.accessor("email", {
+        header: "Email"
+    }),
+    studentColumnHelper.accessor("phone", {
+        header: "Phone"
+    }),
+    studentColumnHelper.accessor("student.guardianEmail", {
+        header: "Guardian Email"
+    }),
+    studentColumnHelper.accessor("student.guardianPhone", {
+        header: "Guardian Phone"
+    }),
 ])

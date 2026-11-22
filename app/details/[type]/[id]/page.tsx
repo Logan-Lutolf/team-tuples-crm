@@ -13,6 +13,7 @@ import { EmployeeDetailsPage } from '../../pages/employee-details-page'
 import { ProgramDetailsPage } from '../../pages/program-details-page'
 import { BranchDetailsPage } from '../../pages/branch-details-page'
 import { ParticipationDetailsPage } from '../../pages/participation-details-page'
+import { Person } from '@/app/types'
 
 
 
@@ -54,17 +55,45 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
         } 
         
         else if (type === 'contacts') {
-            const person = await db.orm.public.Person.include("employee").where({id: id}).first()
-            
-            const participationRows = await db.orm.public.ParticipationEmployees
-                .where({ employeeId: id })
+            const person = await db.orm.public.Person.include("employee").where({ id }).first()
+
+            // employees belong under /employees, not /contacts
+            if (!person || person.employee) notFound()   // from "next/navigation"
+
+            const participationRows = await db.orm.public.ParticipationContacts
+                .where({ personId: id })
                 .include("participation")
                 .all()
+                .toArray()
+
             const participations = participationRows.map((row) => row.participation)
 
-            if (person == null || participations == null) return
+            const interactions = await db.orm.public.Interaction
+                .include("program")
+                .where({ personId: id })
+                .all()
+                .toArray()
 
-            content = <PersonDetailsPage key={id} person={person} participations={participations} />
+            // One query per distinct employee, not per interaction
+            const employeeIds = [
+                ...new Set(interactions.map((i) => i.employeeId).filter((x): x is number => x != null)),
+            ]
+
+            const staff = await Promise.all(
+                employeeIds.map((eid) => db.orm.public.Person.where({ id: eid }).first())
+            )
+            const nameById = new Map(
+                staff.filter((p): p is NonNullable<typeof p> => p != null).map((p) => [p.id, p.name])
+            )
+
+            const rows = interactions.map((i) => ({
+                ...i,
+                employeeName: i.employeeId != null ? nameById.get(i.employeeId) ?? "Unknown" : "Unknown",
+                programName: i.program?.name ?? "—",
+            }))
+
+
+            content = <PersonDetailsPage key={id} person={person} participations={participations} interactions={rows}/>
         } 
         
         else if (type === 'branches') {
@@ -81,8 +110,27 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
             // content = <ParticipationPageContent key={id} municipality={details?.participationData} mode="view" initialDetails={details} />
             
             const participation = await db.orm.public.Participation.where({id: id}).first()
-            if (participation) {
-                content = <ParticipationDetailsPage part={participation}/>
+            const partContacts = await db.orm.public.ParticipationContacts.where({participationId: id}).all().toArray()
+
+            const people = await Promise.all(
+                partContacts.map((pc) =>
+                db.orm.public.Person
+                .include("personRole")
+                .include("student")
+                .where({ id: pc.personId })
+                .first()
+                )
+            )
+
+            const students = people
+                .filter((p): p is NonNullable<typeof p> => p != null)
+                .filter(
+                    (p): p is typeof p & { student: NonNullable<typeof p.student> } =>
+                    p.student != null
+                )
+
+            if (participation && students) {
+                content = <ParticipationDetailsPage part={participation} contacts={students}/>
             }
         } 
         else {

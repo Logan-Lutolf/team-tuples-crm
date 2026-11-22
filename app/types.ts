@@ -72,6 +72,19 @@ export type ParticipationInfo = {
 }
 
 
+export type Student = Scalars<Models.public_Student>
+
+export type Interaction = Scalars<Models.public_Interaction>
+
+
+export type PersonWithStudent = Omit<Person, "student"> & {
+    student: Student
+}
+
+
+
+
+
 
 export type PersonWithRole = Omit<Person, "personRole"> & {
     personRole: ContactTypes | null
@@ -146,3 +159,5 @@ export const CONTACT_TYPES = [ // Redundancy here; edit later
     "VOLUNTEER",
     "OTHER",
 ] as const
+
+
