@@ -1,14 +1,10 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getContactDetails } from '@/app/contacts/actions_contacts'
-import { getBranchDetails } from '@/app/actions/branches'
-import { getProgramDetails } from '@/app/programs/actions'
 import { getMunicipalityDetails, getParticipationDetails } from '@/app/municipalities/actions'
 import { timeDetails } from '@/lib/detail-timing'
 import { isRecordType } from '@/lib/record-links'
 import { ProgramPageContent } from '@/app/programs/program-page-content'
 import { MunicipalityPageContent } from '@/app/municipalities/municipality-page-content'
-import { EmployeeDetails } from '@/app/employee-management/employee-details'
 import { ParticipationPageContent } from '@/app/program-instances/instance-page-content'
 import { OrganizationDetailsPage } from '@/app/details/pages/organization-details-page'
 import { db } from '@/prisma/db'
@@ -16,6 +12,7 @@ import { PersonDetailsPage } from '../../pages/person-details-page'
 import { EmployeeDetailsPage } from '../../pages/employee-details-page'
 import { ProgramDetailsPage } from '../../pages/program-details-page'
 import { BranchDetailsPage } from '../../pages/branch-details-page'
+import { ParticipationDetailsPage } from '../../pages/participation-details-page'
 
 
 
@@ -80,8 +77,13 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
             const details = await loadRecord('municipalities', () => getMunicipalityDetails(id))
             content = <MunicipalityPageContent key={id} municipality={details.municipality} mode="view" initialDetails={details} />
         } else if (type === 'participations') {
-            const details = await loadRecord('participations', () => getParticipationDetails(id))
-            content = <ParticipationPageContent key={id} municipality={details?.participationData} mode="view" initialDetails={details} />
+            // const details = await loadRecord('participations', () => getParticipationDetails(id))
+            // content = <ParticipationPageContent key={id} municipality={details?.participationData} mode="view" initialDetails={details} />
+            
+            const participation = await db.orm.public.Participation.where({id: id}).first()
+            if (participation) {
+                content = <ParticipationDetailsPage part={participation}/>
+            }
         } 
         else {
             const person = await db.orm.public.Person.include("employee").where({id: id}).first()

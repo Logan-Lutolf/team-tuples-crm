@@ -2,87 +2,8 @@
 
 import { db } from "@/prisma/db";
 import z from "zod";
-import { EmployeeDetails } from "../employee-management/employee-details";
 import { refresh } from "next/cache";
-
-// const studentSchema = z.object({
-//     name: z.string().min(1),
-//     dob: z.string(),
-//     school: z.string(),
-// })
-
-// const soonInstanceSchema = z.object({
-//     name: z.string().or(z.literal("")),
-//     coordinator: z.string().or(z.literal("")),
-//     students: z.array(studentSchema),
-//     description: z.string(),
-//     startDate: z.string(),
-//     endDate: z.string().or(z.literal("")).optional()
-// })
-
-
-// export async function addSOONInstance(formData: FormData) {
-//     const parsed = soonInstanceSchema.safeParse(formData)
-//     if (!parsed.success) {
-//             const fieldErrors = z.flattenError(parsed.error).fieldErrors
-//             console.log("Form validaiton failed.")
-//             return { result: "error", message: `Invalid fields: ${Object.keys(fieldErrors).join(", ")}` }
-//     }
-//     const {name, coordinator, students, description, startDate, endDate } = parsed.data
-
-
-
-    
-
-    
-
-
-
-
-
-
-
-    // try {
-    //     // get employee id
-    //     let empId: number = -1
-    //     const employee = await db.orm.public.Person.include("employee").where({name: coordinator}).first()
-    //     if (employee) empId = employee.id
-
-    //     // Create students if they are not already in db
-    //         // Create person
-    //         // Create student
-
-    //     // create new participation
-    //     let participationId: number = -1
-    //     const participation = await db.orm.public.Participation.create({
-    //         name: name,
-    //         startDate: startDate,
-    //         endDate?: endDate,
-    //         programType: "STORIES_OF_OUR_NEIGHBORS"
-    //     })
-    //     if (participation) participationId = participation.id
-
-
-    //     // add participation and employee to join table
-    //     const partEmp = await db.orm.public.ParticipationEmployees.create({
-    //         particpationId: participationId,
-    //         employeeId: empId
-    //     })
-
-    //     // add students to join table
-    //     const partContact = await db.orm.public.ParticipationContacts.create({
-    //         participationId: participationId,
-    //         personId:
-
-    //     })
-    // }
-    // catch (error) {
-
-    // }
-
-
-
-// }
+import { ProgramTypes, StatusTypes } from "../types";
 
 
 
@@ -150,14 +71,15 @@ export async function addTheatreInstance(formData: FormData) {
             startDate: startDate,
             endDate: endDate, 
             programType: "MEMORY_OF_NATIONS_THEATRE",
-            notes: notes
+            notes: notes,
+            organizationId: orgResult.id
         })
 
         if (!participation) return {result: "Error", message: "Failed to create theatre participation."}
 
     // 4. Add coordinator to ParticipationEmployees
         const partEmp = await db.orm.public.ParticipationEmployees.create({
-            particpationId: participation.id,
+            participationId: participation.id,
             employeeId: coordinatorResult.id
         })
 
@@ -170,7 +92,7 @@ export async function addTheatreInstance(formData: FormData) {
             personId: contactResult.id
         })
 
-        if (!partEmp) 
+        if (!partCont) 
             return {result: "Error", message: "Failed to create theatre participation: Adding to ParticipationContacts table failed."}
 
     // 6. Create all students (iterate through array)
@@ -240,8 +162,99 @@ export async function addSoonInstance(formData: FormData) {
 
 
 
+// Update those that are involved in a participation
+export async function updateParticipationInvolvements(formData: FormData, partId: number) {
+    const newOrg = formData.get("org") as string
+    // const newContact = formData.get("contact") as string
+    // const newCoordinator = formData.get("coordinator") as string
+
+    try {
+        const participation = await db.orm.public.Participation.where({id: partId}).update({
+            organizationId: Number(newOrg),
+        })
+
+        if (participation) {
+            refresh()
+            return {result: "Success", message: "Participation update successful."}
+        }
+        else return {result: "Error", message: "Participation update error: Participation not found."}
+    }
+    catch (error) {
+        console.log(error)
+        return {result: "Error", message: "" + error}
+    }
+}
 
 
+// Update startDate, endDate, and status of participation
+export async function updateParticipationOtherInformation(formData: FormData, partId: number) {
+    const newStatus = formData.get("status") as string
+    const newStartDate = formData.get("startDate") as string
+    const newEndDate = formData.get("endDate") as string
+
+    try {
+        const participation = await db.orm.public.Participation.where({id: partId}).update({
+            status: newStatus as StatusTypes,
+            startDate: newStartDate,
+            endDate: newEndDate
+        })
+
+        if (participation) {
+            refresh()
+            return {result: "Success", message: "Participation update successful."}
+        }
+        else return {result: "Error", message: "Participation update error: Participation not found."}
+    }
+    catch (error) {
+        console.log(error)
+        return {result: "Error", message: "" + error}
+    }
+}
+
+
+
+export async function updateParticipationNotes(formData: FormData, partId: number) {
+    const notes = formData.get("notes") as string
+
+    try {
+        const participation = await db.orm.public.Participation.where({id: partId}).update({
+            notes: notes
+        })
+
+        if (participation) {
+            refresh()
+            return {result: "Success", message: "Participation update successful."}
+        }
+        else return {result: "Error", message: "Participation update error: Participation not found."}
+    }
+    catch (error) {
+        console.log(error)
+        return {result: "Error", message: "" + error}
+    }
+}
+
+
+export async function updateParticipationNameAndType(formData: FormData, partId: number) {
+    // const type = formData.get("type") as ProgramTypes
+    const name = formData.get("name") as string
+
+    try {
+        const participation = await db.orm.public.Participation.where({id: partId}).update({
+            // programType: type,
+            name: name
+        })
+
+        if (participation) {
+            refresh()
+            return {result: "Success", message: "Participation update successful."}
+        }
+        else return {result: "Error", message: "Participation update error: Participation not found."}
+    }
+    catch (error) {
+        console.log(error)
+        return {result: "Error", message: "" + error}
+    }
+}
 
 
 
