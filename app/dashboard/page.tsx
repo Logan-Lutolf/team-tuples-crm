@@ -18,6 +18,7 @@ export default async function Dashboard({ searchParams }: {
                 <Link href="/dashboard" aria-current={!organizationView ? 'page' : undefined} className="underline">Schools</Link>
                 <Link href="/dashboard?view=organizations" aria-current={organizationView ? 'page' : undefined} className="underline">Other organizations</Link>
             </nav>
+            {employee.roles.includes('ADMIN') && <Link href="/audit-log" className="w-fit underline">Edit history</Link>}
             <Recommendations organizationView={organizationView} />
         </div>
     </>
