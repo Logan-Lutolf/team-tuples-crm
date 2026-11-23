@@ -8,45 +8,49 @@ import z from "zod";
 const studentSchema = z.object({
     name: z.string().min(1),
     dob: z.string(),
-    school: z.string(),
+    org: z.preprocess(
+        v => (v === undefined || v === "" || Number(v) <= 0 ? undefined : Number(v)),
+        z.number().int().positive().optional()
+    ),
+    email: z.email().or(z.literal("")).optional(),
+    phone: z.string().or(z.literal("")).optional(),
+    guardianEmail: z.string().or(z.literal("")),
+    guardianPhone: z.string().or(z.literal(""))
 })
 
 export async function createStudent(formData: FormData) {
-    const parsed = studentSchema.safeParse(studentSchema)
+    // Parse form data into schema
+    const parsed = studentSchema.safeParse(formData)
     if (!parsed.success) {
             const fieldErrors = z.flattenError(parsed.error).fieldErrors
             console.log("Form validaiton failed.")
             return { result: "error", message: `Invalid fields: ${Object.keys(fieldErrors).join(", ")}` }
     }
-    const {name, dob, school} = parsed.data
+
+    // Deconstruct data object
+    const {  guardianEmail, guardianPhone, ...scalars} = parsed.data
+    
     // Create person
     try {
-        // Find org id
-        let orgId: number
-        const org = await db.orm.public.Organization.where({name: school}).first()
-        orgId = org?.id?? -1
-        if (org == null) return {result: "error", message:"Student creation failed."}
 
-        const person = await db.orm.public.Person.create({
-            name: name,
-            dob: dob,
-            orgId: orgId
-        })
+        const person = await db.orm.public.Person.create(scalars)
 
         // Create student
         if (person) {
             const student = await db.orm.public.Student.create({
-                personId: person.id
+                personId: person.id,
+                guardianEmail: guardianEmail,
+                guardianPhone: guardianPhone
             })
             refresh()
-            if (student) return {result: "success", message: "Student creation successful."}
+            if (student) return {result: "Success", message: "Student creation successful."}
         }
 
-        return {result: "error", message:"Student creation failed."}
+        return {result: "Error", message:"Student creation failed."}
     }
     catch (error) {
         console.log(error)
-        return {result: "error", message:"Student creation failed."}
+        return {result: "Error", message:"Student creation failed: " + error}
     }
 }
 

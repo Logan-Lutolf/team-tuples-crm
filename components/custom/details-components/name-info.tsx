@@ -8,7 +8,7 @@ import { Input } from "../../ui/input";
 import { Field } from "../../ui/field";
 import { CustomSelect } from "../custom-dropdowns";
 import { updateNameAndRole } from "@/app/actions/person";
-import { camelCaseIt, showToast } from "@/lib/utils";
+import { camelCaseIt, displayResult, showToast } from "@/lib/utils";
 import { updateOrg } from "@/app/actions/organization";
 import { updateBranch } from "@/app/actions/branches";
 import { EntityType, LoadedMap } from "./name-info-types";
@@ -74,8 +74,7 @@ export function NameInfo<K extends EntityType>({type, obj, editPermission}: {
     async function handleSubmit(formData: FormData) {
         const result = await config.update(formData, obj.id)
         
-        if (result?.result == "Success") showToast("Success", result.message?? "Update completed successfully.", "success")
-        else showToast(result?.result?? "Error", result?.message ?? "", "error")
+        displayResult(result)
         
         setEditing(!editing)
     }

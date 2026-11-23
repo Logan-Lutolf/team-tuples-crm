@@ -26,11 +26,11 @@ export async function updateNameAndRole(formData: FormData, id: number) {
         
         if (existing) {
             refresh()
-            return {result: "success", message: "Updated successfully."}
-        } else return {result: "error", message: "Person not found."}
+            return {result: "Success", message: "Updated successfully."}
+        } else return {result: "Error", message: "Person not found."}
         }
     } catch (error) {
-        return {result: "error", message: "" + error}
+        return {result: "Error", message: "" + error}
     }
 }
 
