@@ -74,3 +74,23 @@ export async function deleteBranch(branchId: number) {
         return {result: "Error", message: "Branch deletion failed: " + error}
     }
 } 
+
+export async function getBranches(query?: string) {
+    try {
+        const pattern = `%${query?.replace(/[\\%_]/g, "\\$&")}%`
+        const branchQuery = query
+            ? db.orm.public.Branch.where((b) => b.name.ilike(pattern)).all().toArray()
+            : db.orm.public.Person.all().toArray()
+
+        const branches = await branchQuery
+            
+        branches.filter((b) => b.name.toLowerCase().includes(query ?? ""))
+        
+        return branchUpdateSchema
+    }
+    catch (error) {
+        console.log(error)
+    }
+
+
+}
