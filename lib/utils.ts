@@ -92,3 +92,12 @@ export function dateParsing(date: string | null | undefined) {
 }
 
 
+type Result = {
+    result?: string | undefined;
+    message?: string | undefined;
+} | undefined
+
+export function displayResult(result: Result) {
+    if (result?.result == "Success") showToast("Success", result.message?? "Update completed successfully.", "success")
+    else showToast(result?.result?? "Error", result?.message ?? "", "error")
+}

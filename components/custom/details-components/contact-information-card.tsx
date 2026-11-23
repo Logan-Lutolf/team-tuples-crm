@@ -1,6 +1,6 @@
 "use client"
 
-import { formatPhoneNumber, formatAddress, showToast } from "@/lib/utils";
+import { formatPhoneNumber, formatAddress, showToast, displayResult } from "@/lib/utils";
 import { Card, CardContent, CardTitle } from "../../ui/card";
 import { Organization, Person, RoleTypes } from "@/app/types";
 import { useState } from "react";
@@ -34,10 +34,7 @@ export function ContactInformationCard({obj, editPermissions} : ContactInformati
         else if ("relationship" in obj)
             result = await updateOrganizationContactInfo(formData, obj.id)
         
-        if (result != null) {
-            showToast("Success", result.message, result.result as "success" | "error" | "warning" | undefined)
-        }
-        else showToast("Error", "Update Failed", "error")
+        displayResult(result ?? undefined)
 
         setEditing(!editing)
     }
