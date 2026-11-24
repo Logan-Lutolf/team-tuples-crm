@@ -1,11 +1,9 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getMunicipalityDetails, getParticipationDetails } from '@/app/municipalities/actions'
+import { getMunicipalityDetails } from '@/app/municipalities/actions'
 import { timeDetails } from '@/lib/detail-timing'
 import { isRecordType } from '@/lib/record-links'
-import { ProgramPageContent } from '@/app/programs/program-page-content'
 import { MunicipalityPageContent } from '@/app/municipalities/municipality-page-content'
-import { ParticipationPageContent } from '@/app/program-instances/instance-page-content'
 import { OrganizationDetailsPage } from '@/app/details/pages/organization-details-page'
 import { db } from '@/prisma/db'
 import { PersonDetailsPage } from '../../pages/person-details-page'
@@ -13,7 +11,7 @@ import { EmployeeDetailsPage } from '../../pages/employee-details-page'
 import { ProgramDetailsPage } from '../../pages/program-details-page'
 import { BranchDetailsPage } from '../../pages/branch-details-page'
 import { ParticipationDetailsPage } from '../../pages/participation-details-page'
-import { OrganizationPerson, Person, PersonWithRole } from '@/app/types'
+import { PersonWithRole } from '@/app/types'
 
 
 
@@ -64,8 +62,8 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
         else if (type === 'contacts') {
             const person = await db.orm.public.Person.include("employee").where({ id }).first()
 
-            // employees belong under /employees, not /contacts
-            if (!person || person.employee) notFound()   // from "next/navigation"
+        
+            if (!person || person.employee) notFound()   
 
             const participationRows = await db.orm.public.ParticipationContacts
                 .where({ personId: id })
@@ -81,8 +79,8 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
                 .all()
                 .toArray()
 
-            // One query per distinct employee, not per interaction
-            const employeeIds = [
+
+                const employeeIds = [
                 ...new Set(interactions.map((i) => i.employeeId).filter((x): x is number => x != null)),
             ]
 
@@ -96,6 +94,7 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
             const rows = interactions.map((i) => ({
                 ...i,
                 employeeName: i.employeeId != null ? nameById.get(i.employeeId) ?? "Unknown" : "Unknown",
+                personName: person.name, 
                 programName: i.program?.name ?? "—",
             }))
 
@@ -104,8 +103,36 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
         } 
         
         else if (type === 'branches') {
+            const branch = await db.orm.public.Branch.where({id: id}).first()
+            if (!branch  ) return 
+            
+            const people = await db.orm.public.Person
+                .include("employee")
+                .include("personRole")
+                .where({ branchName: branch.name })
+                .all()
+                .toArray()
 
-            content = <BranchDetailsPage />
+            const employees = people
+                .filter((p): p is typeof p & { employee: NonNullable<typeof p.employee> } =>p.employee != null
+            )
+            .map(({ employee, personRole: _r, ...person }) => {
+                const { password: _pw, ...safeEmployee } = employee
+                return { ...person, employee: safeEmployee }
+            })
+
+            const contacts: PersonWithRole[] = people
+                .filter((p) => p.employee == null)
+                .map(({ employee: _e, personRole, ...person }) => ({
+                    ...person,
+                    personRole: personRole?.type ?? null,
+                }))
+
+
+            if (!contacts || !employees) return
+
+            
+            content = <BranchDetailsPage branch={branch} employees={employees} contacts={contacts} />
         } else if (type === 'programs') {
             
             content = <ProgramDetailsPage />
@@ -113,9 +140,7 @@ export default async function RecordPage({ params }: { params: Promise<{ type: s
             const details = await loadRecord('municipalities', () => getMunicipalityDetails(id))
             content = <MunicipalityPageContent key={id} municipality={details.municipality} mode="view" initialDetails={details} />
         } else if (type === 'participations') {
-            // const details = await loadRecord('participations', () => getParticipationDetails(id))
-            // content = <ParticipationPageContent key={id} municipality={details?.participationData} mode="view" initialDetails={details} />
-            
+
             const participation = await db.orm.public.Participation.where({id: id}).first()
             const partContacts = await db.orm.public.ParticipationContacts.where({participationId: id}).all().toArray()
 

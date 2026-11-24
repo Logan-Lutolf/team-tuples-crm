@@ -13,7 +13,9 @@ export function CustomSelect({name, type, label, defVal} : CustomSelectProps) {
     return (
         <Select name={name} defaultValue={defVal?? "Select an Option"}>
             <SelectTrigger>
-                <SelectValue/>
+                <SelectValue placeholder="Select an Option">
+                    {(value: string) => programParsing(value)}
+                </SelectValue>
             </SelectTrigger>
             <SelectContent>
                 <SelectGroup>

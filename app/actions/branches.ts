@@ -8,7 +8,7 @@ import { BRANCH_TYPES, REGION_TYPES } from '../types'
 // Zod schema for branches
 const branchSchema = z.object({
     name: z.enum(BRANCH_TYPES),
-    institute: z.string().or(z.literal("")).optional(),
+    institute: z.string(),
     chiefId: z.number().or(z.literal(-1)).optional(),
     region: z.enum(REGION_TYPES)
 })
@@ -18,18 +18,21 @@ const branchUpdateSchema = branchSchema.partial()
 export async function updateBranch(formData: FormData, id: number) {
     const parsed = branchUpdateSchema.safeParse(Object.fromEntries(formData))
     
-    if (!parsed.data) return {result: "error", message: "Branch update failed."}
+    if (!parsed.data) return {result: "Error", message: "Branch update failed."}
     const {...scalars } = parsed.data
 
     try {
-        const branch = await db.orm.public.Organization.where({id: id}).update(scalars)
+        const branch = await db.orm.public.Branch.where({id: id}).update(scalars)
         
-        if (branch) return {result: "success", message: "Branch updated successfully."}
-        else return {result: "error", message: "Branch update failed."}
+        if (branch) { 
+            refresh()
+            return {result: "Success", message: "Branch updated successfully."}
+        }
+        else return {result: "Error", message: "Branch update failed."}
     }   
     catch (error) {
         console.log(error)
-        return {result: "error", message: "Branch update failed: " + error} 
+        return {result: "Error", message: "Branch update failed: " + error} 
     }
 }
 
@@ -39,7 +42,7 @@ export async function createBranch(formData: FormData) {
     const parsed = branchSchema.safeParse(Object.fromEntries(formData))
 
     // Check if parsing was successful
-    if (!parsed.data) return {result: "error", message: "Branch creation failed: Invalid inputs."}
+    if (!parsed.data) return {result: "Error", message: "Branch creation failed: Invalid inputs."}
 
     // Deconstruct data object
     const {...scalars} = parsed.data

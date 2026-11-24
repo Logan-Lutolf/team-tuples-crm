@@ -44,7 +44,7 @@ const configs: {[K in EntityType]:  Config<LoadedMap[K]>} = {
         extraField: (o) => <CustomSelect name="type" type={ORG_TYPES} defVal={o.type?.toString()}/>
     },
     branch: {
-        getName: b => b.name,
+        getName: b => camelCaseIt(b.name),
         getSubtitle: b => b.region? camelCaseIt(b.region) : "Unknown Region",
         update: updateBranch
     },
@@ -52,7 +52,7 @@ const configs: {[K in EntityType]:  Config<LoadedMap[K]>} = {
         getName: p => p.name,
         getSubtitle: p => p.programType? camelCaseIt(p.programType) : "Unkown Program Type",
         update: updateParticipationNameAndType // change this later
-    }
+    },
 }
 
 
