@@ -156,45 +156,45 @@ async function schoolAction(label: string, action: () => Promise<void>) {
 
 
 
-export async function createSchoolOld(formData: FormData) {
-    try {
-        const data = { ...schoolData(formData), address: addressData(formData) }
-        // School IDs have no database default. Retry if concurrent creation claims the same ID.
-        for (let attempt = 0; attempt < 3; attempt++) {
-            try {
-                await db.transaction(async (tx) => {
-                    const lastSchool = await tx.orm.public.Organization
-                        .orderBy((school) => school.id.desc()).first()
-                    await tx.orm.public.Organization.create({ id: (lastSchool?.id ?? 0) + 1, ...data })
-                })
-                revalidatePath("/schools")
-                return { success: true as const }
-            } catch (error) {
-                if (attempt === 2 || !(error instanceof Error) ||
-                    !("sqlState" in error) || error.sqlState !== "23505" ||
-                    !("constraint" in error) || error.constraint !== "Organization_pkey") throw error
-            }
-        }
-    } catch (error) {
-        console.error("Create organization failed:", error)
-        return { error: schoolErrorMessage(error, "Create organization") }
-    }
-}
+// export async function createSchoolOld(formData: FormData) {
+//     try {
+//         const data = { ...schoolData(formData), address: addressData(formData) }
+//         // School IDs have no database default. Retry if concurrent creation claims the same ID.
+//         for (let attempt = 0; attempt < 3; attempt++) {
+//             try {
+//                 await db.transaction(async (tx) => {
+//                     const lastSchool = await tx.orm.public.Organization
+//                         .orderBy((school) => school.id.desc()).first()
+//                     await tx.orm.public.Organization.create({ id: (lastSchool?.id ?? 0) + 1, ...data })
+//                 })
+//                 revalidatePath("/schools")
+//                 return { success: true as const }
+//             } catch (error) {
+//                 if (attempt === 2 || !(error instanceof Error) ||
+//                     !("sqlState" in error) || error.sqlState !== "23505" ||
+//                     !("constraint" in error) || error.constraint !== "Organization_pkey") throw error
+//             }
+//         }
+//     } catch (error) {
+//         console.error("Create organization failed:", error)
+//         return { error: schoolErrorMessage(error, "Create organization") }
+//     }
+// }
 
-export async function editSchool(formData: FormData) {
-    return schoolAction("Update school", async () => {
-        const schoolId = id(formData, "school-id")
-        const data = schoolData(formData)
-        await db.transaction(async (tx) => {
-            const school = await tx.orm.public.Organization.where({ id: schoolId }).first()
-            if (!school) throw new SchoolValidationError("This school no longer exists. Refresh the page.")
-            await tx.orm.public.Organization.where({ id: schoolId }).update({
-                ...data,
-                address: addressData(formData),
-            })
-        })
-    })
-}
+// export async function editSchool(formData: FormData) {
+//     return schoolAction("Update school", async () => {
+//         const schoolId = id(formData, "school-id")
+//         const data = schoolData(formData)
+//         await db.transaction(async (tx) => {
+//             const school = await tx.orm.public.Organization.where({ id: schoolId }).first()
+//             if (!school) throw new SchoolValidationError("This school no longer exists. Refresh the page.")
+//             await tx.orm.public.Organization.where({ id: schoolId }).update({
+//                 ...data,
+//                 address: addressData(formData),
+//             })
+//         })
+//     })
+// }
 
 export async function deleteSchool(formData: FormData) {
     return schoolAction("Delete school", async () => {
@@ -257,92 +257,92 @@ function participationEmployees(form: FormData) {
     }))]
 }
 
-export async function createSchoolParticipation(formData: FormData) {
-    return schoolAction("Create participation", async () => {
-        const data = { schoolId: id(formData, "school-id"), ...participationData(formData) }
-        const employeeIds = participationEmployees(formData)
-        await db.transaction(async tx => {
-            const participation = await tx.orm.public.Participation.create(data)
-            for (const employeeId of employeeIds) {
-                await tx.orm.public.ParticipationEmployees.create({ participationId: participation.id, employeeId })
-            }
-        })
-        revalidatePath('/programs')
-    })
-}
+// export async function createSchoolParticipation(formData: FormData) {
+//     return schoolAction("Create participation", async () => {
+//         const data = { schoolId: id(formData, "school-id"), ...participationData(formData) }
+//         const employeeIds = participationEmployees(formData)
+//         await db.transaction(async tx => {
+//             const participation = await tx.orm.public.Participation.create(data)
+//             for (const employeeId of employeeIds) {
+//                 await tx.orm.public.ParticipationEmployees.create({ participationId: participation.id, employeeId })
+//             }
+//         })
+//         revalidatePath('/programs')
+//     })
+// }
 
-export async function editSchoolParticipation(formData: FormData) {
-    return schoolAction("Update participation", async () => {
-        const originalSchool = formData.has('original-school-id') ? text(formData, 'original-school-id', false) : text(formData, 'school-id', false)
-        const where = { id: id(formData, "participation-id"), schoolId: originalSchool ? Number(originalSchool) : null }
-        const data = { ...participationData(formData), schoolId: text(formData, "school-id", false) ? id(formData, "school-id") : null }
-        const employeeIds = participationEmployees(formData)
-        await db.transaction(async tx => {
-            const participation = await tx.orm.public.Participation.where(where).forUpdate().first()
-            if (!participation) throw new SchoolValidationError('This participation no longer exists for this school. Refresh the page.')
-            await tx.orm.public.Participation.where(where).update(data)
-            await tx.orm.public.ParticipationEmployees.where({ participationId: participation.id }).delete()
-            for (const employeeId of employeeIds) {
-                await tx.orm.public.ParticipationEmployees.create({ participationId: participation.id, employeeId })
-            }
-        })
-        revalidatePath('/programs')
-    })
-}
+// export async function editSchoolParticipation(formData: FormData) {
+//     return schoolAction("Update participation", async () => {
+//         const originalSchool = formData.has('original-school-id') ? text(formData, 'original-school-id', false) : text(formData, 'school-id', false)
+//         const where = { id: id(formData, "participation-id"), schoolId: originalSchool ? Number(originalSchool) : null }
+//         const data = { ...participationData(formData), schoolId: text(formData, "school-id", false) ? id(formData, "school-id") : null }
+//         const employeeIds = participationEmployees(formData)
+//         await db.transaction(async tx => {
+//             const participation = await tx.orm.public.Participation.where(where).forUpdate().first()
+//             if (!participation) throw new SchoolValidationError('This participation no longer exists for this school. Refresh the page.')
+//             await tx.orm.public.Participation.where(where).update(data)
+//             await tx.orm.public.ParticipationEmployees.where({ participationId: participation.id }).delete()
+//             for (const employeeId of employeeIds) {
+//                 await tx.orm.public.ParticipationEmployees.create({ participationId: participation.id, employeeId })
+//             }
+//         })
+//         revalidatePath('/programs')
+//     })
+// }
 
-export async function deleteSchoolParticipation(formData: FormData) {
-    return schoolAction("Delete participation", async () => {
-        const participationId = id(formData, "participation-id")
-        const schoolId = text(formData, "school-id", false) ? id(formData, "school-id") : null
-        await db.transaction(async (tx) => {
-            const participation = await tx.orm.public.Participation.where({
-                id: participationId, schoolId,
-            }).first()
-            if (!participation) throw new SchoolValidationError("This participation no longer exists for this school. Refresh the page.")
-            await tx.orm.public.ParticipationContacts.where({ participationId }).delete()
-            await tx.orm.public.ParticipationEmployees.where({ participationId }).delete()
-            await tx.orm.public.Participation.where({ id: participationId, schoolId }).delete()
-        })
-    })
-}
+// export async function deleteSchoolParticipation(formData: FormData) {
+//     return schoolAction("Delete participation", async () => {
+//         const participationId = id(formData, "participation-id")
+//         const schoolId = text(formData, "school-id", false) ? id(formData, "school-id") : null
+//         await db.transaction(async (tx) => {
+//             const participation = await tx.orm.public.Participation.where({
+//                 id: participationId, schoolId,
+//             }).first()
+//             if (!participation) throw new SchoolValidationError("This participation no longer exists for this school. Refresh the page.")
+//             await tx.orm.public.ParticipationContacts.where({ participationId }).delete()
+//             await tx.orm.public.ParticipationEmployees.where({ participationId }).delete()
+//             await tx.orm.public.Participation.where({ id: participationId, schoolId }).delete()
+//         })
+//     })
+// }
 
-export async function recordSchoolInteraction(form: FormData) {
-    return schoolAction('Record interaction', async () => {
-        const schoolId = id(form, 'school-id')
-        const employeeId = id(form, 'employee-id')
-        const contactId = id(form, 'contact-id')
-        const contactedAt = date(form, 'contacted-at', true)!
-        if (Date.parse(contactedAt) > Date.now()) throw new SchoolValidationError('Contact date cannot be in the future.')
-        const mode = choice(form, 'mode', db.enums.public.CommunicationMode.values)
-        const programId = text(form, 'program-id', false) ? id(form, 'program-id') : null
-        await db.transaction(tx => recordInteraction(tx, { schoolId, employeeId, contactId, programId, contactedAt, mode }))
-        revalidatePath('/contacts')
-    })
-}
+// export async function recordSchoolInteraction(form: FormData) {
+//     return schoolAction('Record interaction', async () => {
+//         const schoolId = id(form, 'school-id')
+//         const employeeId = id(form, 'employee-id')
+//         const contactId = id(form, 'contact-id')
+//         const contactedAt = date(form, 'contacted-at', true)!
+//         if (Date.parse(contactedAt) > Date.now()) throw new SchoolValidationError('Contact date cannot be in the future.')
+//         const mode = choice(form, 'mode', db.enums.public.CommunicationMode.values)
+//         const programId = text(form, 'program-id', false) ? id(form, 'program-id') : null
+//         await db.transaction(tx => recordInteraction(tx, { schoolId, employeeId, contactId, programId, contactedAt, mode }))
+//         revalidatePath('/contacts')
+//     })
+// }
 
-export async function getSchoolDetails(schoolId: number, editing = false, deferHistory = false) {
-    if (!Number.isSafeInteger(schoolId) || schoolId <= 0) throw new Error("Invalid school ID.")
-    const { loadSchoolDetails } = await import('./load-school-details')
-    return loadSchoolDetails(schoolId, editing === true, deferHistory === true)
-}
+// export async function getSchoolDetails(schoolId: number, editing = false, deferHistory = false) {
+//     if (!Number.isSafeInteger(schoolId) || schoolId <= 0) throw new Error("Invalid school ID.")
+//     const { loadSchoolDetails } = await import('./load-school-details')
+//     return loadSchoolDetails(schoolId, editing === true, deferHistory === true)
+// }
 
-export async function createSchoolContact(form: FormData) {
-    try {
-        const schoolId = id(form, 'school-id')
-        const school = await db.orm.public.School.where({ id: schoolId }).select('id', 'branchId', 'region').first()
-        if (!school) return { error: 'This school no longer exists. Refresh the page.' }
-        // Use persisted school values, rather than trusting submitted branch/region fields.
-        const contact = new FormData()
-        for (const key of ['full-name', 'email', 'phone-num', 'contactRole']) {
-            const value = form.get(key)
-            if (typeof value === 'string') contact.set(key, value)
-        }
-        contact.set('school-id', String(school.id))
-        contact.set('branch', school.branchId === null ? '' : String(school.branchId))
-        contact.set('region', school.region)
-        const { createContact } = await import('../contacts/actions_contacts')
-        const result = await createContact(contact)
-        if ('success' in result) revalidatePath('/schools')
-        return result
-    } catch { return { error: 'Could not create this school contact. Check the fields and try again.' } }
-}
+// export async function createSchoolContact(form: FormData) {
+//     try {
+//         const schoolId = id(form, 'school-id')
+//         const school = await db.orm.public.School.where({ id: schoolId }).select('id', 'branchId', 'region').first()
+//         if (!school) return { error: 'This school no longer exists. Refresh the page.' }
+//         // Use persisted school values, rather than trusting submitted branch/region fields.
+//         const contact = new FormData()
+//         for (const key of ['full-name', 'email', 'phone-num', 'contactRole']) {
+//             const value = form.get(key)
+//             if (typeof value === 'string') contact.set(key, value)
+//         }
+//         contact.set('school-id', String(school.id))
+//         contact.set('branch', school.branchId === null ? '' : String(school.branchId))
+//         contact.set('region', school.region)
+//         const { createContact } = await import('../contacts/actions_contacts')
+//         const result = await createContact(contact)
+//         if ('success' in result) revalidatePath('/schools')
+//         return result
+//     } catch { return { error: 'Could not create this school contact. Check the fields and try again.' } }
+// }
