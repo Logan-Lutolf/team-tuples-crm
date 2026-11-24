@@ -9,8 +9,8 @@ export async function getRecordHistory(type: 'schools' | 'contacts' | 'programs'
         const records = await db.orm.public.Interaction.where(
             type === 'schools' ? { organizationId: id } : type === 'contacts' ? { personId: id } : { programId: id },
         ).orderBy([i => i.contactedAt.desc(), i => i.id.desc()]).all().toArray()
-        const ids = (field: 'personId' | 'personId' | 'orgId' | 'programId') => [...new Set(records.flatMap(r => r[field] === null ? [] : [r[field]]))]
-        const employeeIds = ids('personId'), contactIds = ids('personId'), schoolIds = ids('orgId'), programIds = ids('programId')
+        const ids = (field: 'personId' | 'personId' | 'organizationId' | 'programId') => [...new Set(records.flatMap(r => r[field] === null ? [] : [r[field]]))]
+        const employeeIds = ids('personId'), contactIds = ids('personId'), schoolIds = ids('organizationId'), programIds = ids('programId')
         const [employees, contacts, schools, programs] = await Promise.all([
             employeeIds.length ? db.orm.public.Person.where(e => e.id.in(employeeIds)).select('id', 'name').all().toArray() : [],
             contactIds.length ? db.orm.public.Person.where(c => c.id.in(contactIds)).select('id', 'name').all().toArray() : [],

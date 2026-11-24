@@ -3,7 +3,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuGro
 import { MoreHorizontal, Pencil, User, Trash } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { EditEmployeeForm } from "../forms/edit-employee-form"
+// import { EditEmployeeForm } from "../forms/edit-employee-form"
 import { Button } from "@/components/ui/button"
 import { DeleteEmployeeForm } from "../forms/delete-form"
 import { PageActionLink } from "@/components/records/page-action-link"
@@ -53,7 +53,7 @@ export function ActionsCell({employee}: {employee: EmployeePerson}) {
                 </DropdownMenu>
                 </div>
 
-                {editOpen && (
+                {/* {editOpen && (
                     <Dialog open={editOpen} onOpenChange={setEditOpen}>
                         <DialogContent>
                             <EditEmployeeForm
@@ -66,8 +66,8 @@ export function ActionsCell({employee}: {employee: EmployeePerson}) {
                             />
                         </DialogContent>
                     </Dialog>
-                )}
-                {deleteOpen && (
+                )} */}
+                {/* {deleteOpen && (
                     <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                         <DialogContent>
                             <DeleteEmployeeForm
@@ -77,7 +77,7 @@ export function ActionsCell({employee}: {employee: EmployeePerson}) {
                             />
                         </DialogContent>
                     </Dialog>
-                )}
+                )} */}
             </>
 )
 }

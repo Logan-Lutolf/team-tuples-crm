@@ -55,15 +55,15 @@ export async function getProgramDetails(programId: number, editing = false, defe
         !editing && deferHistory ? [] : db.orm.public.Interaction.where({ programId }).orderBy(i => i.contactedAt.desc()).all().toArray(),
     ]))
     if (!program) throw new Error('Program not found.')
-    const schoolIds = [...new Set(participations.map(p => p.schoolId).concat(interactions.flatMap(i => i.schoolId === null ? [] : [i.schoolId])))].filter((id): id is number => id !== null)
+    const schoolIds = [...new Set(participations.map(p => p.organizationId).concat(interactions.flatMap(i => i.organizationId === null ? [] : [i.organizationId])))].filter((id): id is number => id !== null)
     const employeeIds = [...new Set([...assignments.map(a => a.employeeId), ...interactions.map(i => i.employeeId)])].filter((id): id is number => id !== null)
     const municipalityIds = sponsors.map(s => s.municipalityId)
-    const contactIds = [...new Set(interactions.map(i => i.contactId))].filter((id): id is number => id !== null)
+    const contactIds = [...new Set(interactions.map(i => i.personId))].filter((id): id is number => id !== null)
     const [schools, employees, municipalities, contacts] = await timeDetails('programs:query-group-2', () => Promise.all([
-        editing ? db.orm.public.School.select('id', 'name').all().toArray() : schoolIds.length ? db.orm.public.School.where(s => s.id.in(schoolIds)).select('id', 'name').all().toArray() : [],
-        editing ? db.orm.public.Employee.select('id', 'name', 'email', 'phone', 'region').all().toArray() : employeeIds.length ? db.orm.public.Employee.where(e => e.id.in(employeeIds)).select('id', 'name', 'email', 'phone', 'region').all().toArray() : [],
+        editing ? db.orm.public.Organization.select('id', 'name').all().toArray() : schoolIds.length ? db.orm.public.Organization.where(s => s.id.in(schoolIds)).select('id', 'name').all().toArray() : [],
+        editing ? db.orm.public.Employee.include("person").select('personId').all().toArray() : employeeIds.length ? db.orm.public.Employee.where(e => e.personId.in(employeeIds)).select('personId').all().toArray() : [],
         editing ? db.orm.public.Municipality.select('id', 'name', 'mayor').all().toArray() : municipalityIds.length ? db.orm.public.Municipality.where(m => m.id.in(municipalityIds)).select('id', 'name', 'mayor').all().toArray() : [],
-        editing ? db.orm.public.Contact.select('id', 'name').all().toArray() : contactIds.length ? db.orm.public.Contact.where(c => c.id.in(contactIds)).select('id', 'name').all().toArray() : [],
+        editing ? db.orm.public.Person.select('id', 'name').all().toArray() : contactIds.length ? db.orm.public.Person.where(c => c.id.in(contactIds)).select('id', 'name').all().toArray() : [],
     ]))
     const [branches, participants] = await timeDetails('programs:query-group-3', () => Promise.all([
         editing ? db.orm.public.Branch.select('id', 'name').all().toArray() : [],
@@ -71,7 +71,7 @@ export async function getProgramDetails(programId: number, editing = false, defe
     ]))
     return { asOf: Date.now(), program, participations, assignments, interactions, schools, employees, municipalities: municipalities.filter(m => municipalityIds.includes(m.id)), contacts,
         availableMunicipalities: editing ? municipalities.filter(m => !municipalityIds.includes(m.id)) : [], branches, participants,
-        roles: [...db.enums.public.Role.values], regions: [...db.enums.public.Region.values], modes: [...db.enums.public.CommunicationMode.values] }
+        roles: [...db.enums.public.RoleTypes.values], regions: [...db.enums.public.RegionTypes.values], modes: [...db.enums.public.CommunicationMode.values] }
 }
 
 export async function changeProgramRelationship(form: FormData) {
@@ -88,14 +88,14 @@ export async function changeProgramRelationship(form: FormData) {
                 await tx.orm.public.EmployeeAssignment.where({ id: id(form.get('assignment-id')), programId }).delete()
             } else if (operation === 'add-assignment' || operation === 'edit-assignment') {
                 const employeeId = id(form.get('employee-id'))
-                const role = db.enums.public.Role.values.find(r => r === form.get('role'))
+                const role = db.enums.public.RoleTypes.values.find(r => r === form.get('role'))
                 const regionValue = form.get('region')
-                const region = regionValue ? db.enums.public.Region.values.find(r => r === regionValue) : null
+                const region = regionValue ? db.enums.public.RegionTypes.values.find(r => r === regionValue) : null
                 if (!role || (regionValue && !region)) throw new Error('Invalid scope')
                 const branchId = form.get('branch-id') ? id(form.get('branch-id')) : null
                 const data = { programId, employeeId, role, region: region ?? null, branchId }
                 if (operation === 'add-assignment') {
-                    if (!await tx.orm.public.EmployeeAssignment.where(data).first()) await tx.orm.public.EmployeeAssignment.create(data)
+                    // if (!await tx.orm.public.EmployeeAssignment.where(data).first()) await tx.orm.public.EmployeeAssignment.create(data)
                 } else {
                     const where = { id: id(form.get('assignment-id')), programId }
                     if (!await tx.orm.public.EmployeeAssignment.where(where).first()) throw new Error('Assignment missing')
