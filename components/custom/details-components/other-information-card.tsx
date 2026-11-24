@@ -1,7 +1,7 @@
 "use client"
 
 import { Person, Organization, ORG_TYPES, RELATIONSHIP_TYPES, REGION_TYPES, BRANCH_TYPES } from "@/app/types";
-import { programParsing, dateParsing, showToast, camelCaseIt } from "@/lib/utils";
+import { programParsing, dateParsing, showToast, camelCaseIt, displayResult } from "@/lib/utils";
 import { Card, CardContent, CardTitle } from "../../ui/card";
 import { useState } from "react";
 import { updateOrganizationOtherInfo, updatePersonOtherInfo } from "@/app/details/actions";
@@ -37,10 +37,7 @@ export function OtherInformationCard({obj, editPermissions} : OtherInformationCa
         else if ("relationship" in obj)
             result = await updateOrganizationOtherInfo(formData, obj.id) // only diff is that this has a region 
         
-        if (result != null) {
-            showToast("Success", result.message as string, result.result as "success" | "error" | "warning" | undefined)
-        }
-        else showToast("Error", "Update Failed", "error")
+        displayResult(result ?? undefined)
 
         setEditing(!editing)
     }

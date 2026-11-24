@@ -139,21 +139,6 @@ export async function addTheatreInstance(formData: FormData) {
 }
 
 
-
-
-
-
-// const soonSchema = z.object({
-//     name: z.string().or(z.literal("")),
-//     coordinator: z.coerce.number(),
-//     contact: z.coerce.number(),
-//     org: z.coerce.number(),
-//     students: z.array(studentSchema),
-//     notes: z.string().optional(),
-//     startDate: z.string(),
-//     endDate: z.string().or(z.literal("")).optional()
-// })
-
 export async function addSoonInstance(formData: FormData) {
     // 1. Parse formData into object using schema
     const rawData = Object.fromEntries(formData)

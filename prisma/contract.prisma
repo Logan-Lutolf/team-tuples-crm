@@ -189,7 +189,7 @@ model Program {
 
 model Branch {
   name BranchTypes @id
-  id  Int @unique
+  id  Int @unique @default(autoincrement())
   institute String?
   chiefId Int?
   chief Employee? @relation(fields: [chiefId], references: [personId], onDelete: SetNull)

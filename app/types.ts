@@ -81,8 +81,9 @@ export type PersonWithStudent = Omit<Person, "student"> & {
     student: Student
 }
 
-
-
+export type PersonWithEmployee = Omit<Person, "employee"> & {
+    employee: Omit<Employee, "password">
+}
 
 
 

@@ -42,12 +42,12 @@ export async function updatePersonContactInfo(formData: FormData, id: number) {
         
         refresh()
         
-        if (person) return {result: "success", message: "Contact update successful."}
-        else return {result: "error", message: "Contact update failed."}
+        if (person) return {result: "Success", message: "Contact update successful."}
+        else return {result: "Error", message: "Contact update failed."}
     }
     catch (error) {
         console.log(error)
-        return {result: "error", message: "Contact update failed."}
+        return {result: "Error", message: "Contact update failed."}
     }
 
     
@@ -77,19 +77,19 @@ export async function updateOrganizationContactInfo(formData: FormData, id: numb
 
         refresh()
 
-        if (organization) return {result: "success", message: "Organization update successfull."}
-        else return {result: "error", message: "Organization update failed."}
+        if (organization) return {result: "Success", message: "Organization update successfull."}
+        else return {result: "Error", message: "Organization update failed."}
     }
     catch (error) {
         console.log(error)
-        return {result: "error", message: "Organization update failed."}
+        return {result: "Error", message: "Organization update failed."}
     }
 }
 
 export async function updatePersonOtherInfo(formData: FormData, id: number) {
     const parsed = z.enum(BRANCH_TYPES).safeParse(formData.get("branch"))
     if (!parsed.success) {
-        return { result: "error", message: "Please select a valid branch." }
+        return { result: "Error", message: "Please select a valid branch." }
     }
 
         try {
@@ -101,9 +101,9 @@ export async function updatePersonOtherInfo(formData: FormData, id: number) {
 
             if (person) {
                 refresh()
-                return {result: "success", message: "Updated person successfully."}
+                return {result: "Success", message: "Updated person successfully."}
             } 
-            else return {result: "error", message: "Update person failed."}
+            else return {result: "Error", message: "Update person failed."}
         }
         catch (error) {
             console.log(error)
@@ -121,7 +121,7 @@ export async function updateOrganizationOtherInfo(formData: FormData, id: number
         branch: formData.get("branch"),
     })
     if (!parsed.success) {
-        return { result: "error", message: "Please select a valid region and branch." }
+        return { result: "Error", message: "Please select a valid region and branch." }
     }
 
 
@@ -136,9 +136,9 @@ export async function updateOrganizationOtherInfo(formData: FormData, id: number
             
             if (organization) {
                 refresh()
-                return {result: "success", message: "Updated organization successfully."}
+                return {result: "Success", message: "Updated organization successfully."}
             } 
-            else return {result: "error", message: "Update organization failed."}
+            else return {result: "Error", message: "Update organization failed."}
 
             // Remove organization from branch (or does Prisma do this automatically?)
         }

@@ -5,7 +5,7 @@ import { DialogClose } from "@/components/ui/dialog"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createEmployee, editEmployee } from "../actions"
+import { createEmployee, editEmployee } from "../../actions/employee"
 import { Scalars } from "@prisma/orm-postgres/components"
 import { Models } from "@/prisma/contract"
 import { showToast } from "@/lib/utils"
@@ -23,7 +23,7 @@ const rolesobj = [
     { label: "Newsletter Coordinator", value: "NEWSLETTER_COORDINATOR" },
 ] as const satisfies readonly { label: string; value: Role }[]
 
-type Roles = Scalars<Models.public_Employee>["roles"]
+type Roles = Scalars<Models.public_Employee>["role"]
 
 
 interface EditEmployeeFormProps {

@@ -3,14 +3,12 @@ import { RecordLink } from '@/components/records/record-link'
 
 import { createColumnHelper } from "@tanstack/react-table"
 import { type DataTableFeatures } from "../../../components/ui/data-table-features"
-import { ActionsCell } from "./actions-cell"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { nameInitials } from "@/lib/utils"
 import { EmployeePerson } from '@/app/types'
 import { PageActionLink } from '@/components/records/page-action-link'
 import { Trash } from 'lucide-react'
-import { getUserRole } from '@/lib/auth'
 
 
 const columnHelper = createColumnHelper<DataTableFeatures, EmployeePerson>()
