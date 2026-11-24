@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { changePassword } from "../employee-management/actions";
+import { changePassword } from "../actions/employee";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { showToast } from "@/lib/utils";
