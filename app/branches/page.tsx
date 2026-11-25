@@ -18,6 +18,7 @@ import SkeletonTable from "../employee-management/loading";
 import { AddBranchForm } from "./add-branch-form";
 import { BranchTableContainer } from "./branch-table-container";
 import { Plus } from "lucide-react";
+import { BranchGridContainer } from "./branch-grid-container";
 
 // export default async function BranchesPage({ searchParams }: {
 //     searchParams?: Promise<{ search?: string; page?: string }>
@@ -73,6 +74,36 @@ import { Plus } from "lucide-react";
 
 
 
+// export default async function BranchesPage(
+//     {searchParams} : {
+//         searchParams?: Promise<{ search?: string; cursor?: string; dir?: "prev" | "next"}>
+//     }
+// ) {
+//     const params = await searchParams
+//     const search = params?.search ?? undefined
+
+//     return (
+//         <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
+//             <Dialog>
+//                 <DialogTrigger render={<Button><Plus/> Add a Branch</Button>}/>
+
+//                 <DialogContent>
+//                     <AddBranchForm />
+//                 </DialogContent>
+//             </Dialog>
+//             <Search placeholder={"Search branches..."}/>
+
+//             <div className="min-w-0 overflow-auto">
+//                 <Suspense key={search} fallback={<SkeletonTable />}>
+//                     <BranchTableContainer search={search} />
+//                 </Suspense>
+//             </div>
+        
+//         </div>
+//     )
+// }
+
+
 export default async function BranchesPage(
     {searchParams} : {
         searchParams?: Promise<{ search?: string; cursor?: string; dir?: "prev" | "next"}>
@@ -82,22 +113,16 @@ export default async function BranchesPage(
     const search = params?.search ?? undefined
 
     return (
-        <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
-            <Dialog>
-                <DialogTrigger render={<Button><Plus/> Add a Branch</Button>}/>
-
-                <DialogContent>
-                    <AddBranchForm />
-                </DialogContent>
-            </Dialog>
-            <Search placeholder={"Search branches..."}/>
-
-            <div className="min-w-0 overflow-auto">
-                <Suspense key={search} fallback={<SkeletonTable />}>
-                    <BranchTableContainer search={search} />
-                </Suspense>
+        <div className="flex flex-col bg-primary">
+            <div className="justify-start px-20 my-8 text-primary-foreground">
+                <p className="text-3xl">Branches</p>
+                <p className="text-lg font-light">This is the branches page. Select a branch to see details.</p>
             </div>
-        
+            
+            <BranchGridContainer/>
         </div>
+        
     )
 }
+
+

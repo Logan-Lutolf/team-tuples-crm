@@ -6,10 +6,16 @@ import { Interaction, Participation } from '@/app/types'
 import { camelCaseIt, dateParsing, programParsing } from '@/lib/utils'
 
 
-type InteractionRowEmp = Interaction & { personName: string; programName: string }
-type InteractionRow = Interaction & { employeeName: string; programName: string }
+// contact-history-columns.tsx
+export type EmployeeInteractionRow = Interaction & { personName: string; programName: string }
+export type ContactInteractionRow = Interaction & { employeeName: string; programName: string }
 
-const columnHelper = createColumnHelper<DataTableFeatures, InteractionRowEmp>()
+const columnHelper = createColumnHelper<DataTableFeatures, EmployeeInteractionRow>()
+const contactColumnHelper = createColumnHelper<DataTableFeatures, ContactInteractionRow>()
+
+// type InteractionRowEmp = Interaction & { personName: string; programName: string }
+// type InteractionRow = Interaction & { employeeName: string; programName: string }
+
 
 export const columns = columnHelper.columns([
     columnHelper.accessor("contactedAt", {
@@ -29,7 +35,6 @@ export const columns = columnHelper.columns([
     }),
 ])
 
-const contactColumnHelper = createColumnHelper<DataTableFeatures, InteractionRow>()
 
 export const contactColumns = contactColumnHelper.columns([
     contactColumnHelper.accessor("contactedAt", {

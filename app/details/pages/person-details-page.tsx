@@ -8,13 +8,16 @@ import { OtherInformationCardContainer } from '@/components/custom/details-compo
 import { NameInfoContainer } from '@/components/custom/details-components/name-info-container'
 import { PersonEmailHistory } from '@/components/email/person-email-history'
 
-type InteractionRow = Interaction & { personName: string; programName: string }
-
+type EmployeeInteractionRow = Interaction & { personName: string; programName: string }
+type ContactInteractionRow = Interaction & { employeeName: string; programName: string }
 interface PersonDetailsPageProps {
     person: Person
     participations: Participation[]
-    interactions: InteractionRow[]
+    interactions: ContactInteractionRow[]
 }
+
+
+
 
 
 export function PersonDetailsPage({person, participations, interactions}: PersonDetailsPageProps) {
