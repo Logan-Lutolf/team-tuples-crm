@@ -7,6 +7,10 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 The navigation links open `/email` and `/recommendations`. These features use this
 branch's `Person`/`Organization` schema. Setup, permissions, mailbox payloads, and
 scheduled imports are documented in [the IT handover guide](docs/email-and-recommendations.md).
+Microsoft 365 CC tracking includes a mailbox connector: `npm run email-tracking:check`
+validates its settings and `npm run email-tracking:sync` collects verified Inbox messages.
+Mailbox provisioning, scoped Microsoft app access, and the supplied mail-flow rules
+must be configured first. Switching the CC address is a configuration change.
 The [change report](docs/email-feature-changes.md) includes before/after code and a full patch.
 
 ### Branch and interaction schema migration
@@ -109,3 +113,28 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+
+### Admin edit history
+
+Admins can open **Edit history** from the dashboard and filter by record type and
+name. Entries show the old and new values, Prague time, and the editor. The log
+covers program instances, programs, branches, municipalities, organizations,
+and employees, plus staff, contact, and program links edited with those records.
+Passwords are redacted. Automatically maintained timestamps are omitted.
+History starts when the SQL is installed. Writes from outside an app session
+are attributed to the PostgreSQL login used to make them.
+
+Apply [scripts/install-audit-log.sql](scripts/install-audit-log.sql) before
+deploying the feature, using the database owner or the same schema-owning role
+the app uses. The script is repeatable and keeps existing new-format audit
+entries. It uses a separate `crm_audit` schema and leaves the Prisma contract
+unchanged. If the app uses a different database role, grant it schema
+`USAGE` and table `SELECT` and `INSERT` on `crm_audit.record_edit`.
+Keep that schema outside any public API exposure. Use a direct or session-pooled
+PostgreSQL connection for the app because attribution follows its database
+connection. No new environment variables are needed.
+
+For the integration test, initialize a fresh local PostgreSQL database named
+`crm_audit_test` with the current Prisma contract and apply the audit SQL there.
+With `DATABASE_URL` pointing to that database on `127.0.0.1`, run
+`node --test tests/audit/record-edit.integration.mjs`.

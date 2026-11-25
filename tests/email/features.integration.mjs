@@ -42,7 +42,7 @@ test('email and recommendations use the Person/Organization contract', async t =
         globalThis.featureTestDb = runtime;
         client = new pg.Client({ ...config, database }); await client.connect();
         await client.query(`
-            INSERT INTO public."Branch" (name,region) VALUES ('PRAHA','PRAHA');
+            INSERT INTO public."Branch" (id,name,region) VALUES (1,'PRAHA','PRAHA');
             INSERT INTO public."Organization" (id,name,type,region,"updatedAt") VALUES
                 (1,'School','PRIMARY_SCHOOL','PRAHA',now()), (2,'Theatre','THEATRE',NULL,now()),
                 (3,'Never contacted','PRIMARY_SCHOOL',NULL,now());
@@ -166,6 +166,18 @@ test('email and recommendations use the Person/Organization contract', async t =
             await client.query(`UPDATE public."SmartEmailSync" SET "lockUntil"=now()+interval '10 minutes',"lockToken"='test-other-worker'`);
             assert.equal((await (await sync(syncRequest())).json()).busy, true);
             await client.query(`UPDATE public."SmartEmailSync" SET "lockUntil"=NULL,"lockToken"=NULL`);
+        });
+        await t.test('switching the CC address needs no code changes and preserves existing history', async () => {
+            const previousAddress = process.env.EMAIL_TRACKING_CC_ADDRESS;
+            try {
+                process.env.EMAIL_TRACKING_CC_ADDRESS = 'new-tracking@example.test';
+                assert.equal((await track(trackRequest())).status, 400);
+                const changed = { ...metadata, messageId: '<new-mailbox@example.test>', cc: ['new-tracking@example.test'] };
+                assert.equal((await track(trackRequest(changed))).status, 200);
+                assert.equal((await (await track(trackRequest(changed))).json()).duplicate, true);
+                assert.equal((await client.query('SELECT * FROM public."Interaction"')).rowCount, 3);
+                assert.equal((await client.query('SELECT * FROM public."TrackedEmail"')).rowCount, 3);
+            } finally { process.env.EMAIL_TRACKING_CC_ADDRESS = previousAddress; }
         });
         await t.test('recommendations use real outreach, school/theatre types and skip undated/cancelled participation', async () => {
             await client.query(`TRUNCATE public."Interaction";

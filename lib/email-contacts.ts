@@ -4,6 +4,15 @@ export type SmartEmailFiltersData = {
 }
 export type SmartCampaignActivity = { name: string; deliveredAt: string | null; openDates: string[]; clickDates: string[] }
 
+export function smartEmailSubscriptionSummary(profile: SmartEmailFiltersData | null) {
+    if (!profile) return 'No current SmartEmailing contact data'
+    if (!profile.lists.length) return 'No list memberships reported'
+    const subscribed = profile.lists.filter(list => list.status === 'confirmed').length
+    const unsubscribed = profile.lists.length - subscribed
+    // Mixed memberships are not an account-wide unsubscribe; show both counts.
+    return `Subscribed to ${subscribed} ${subscribed === 1 ? 'list' : 'lists'}; unsubscribed from ${unsubscribed} ${unsubscribed === 1 ? 'list' : 'lists'}`
+}
+
 // These helpers are shared by the page and snapshot actions so they filter identically.
 export type EmailContact = {
     id: number; name: string; email: string; role: string
