@@ -1,6 +1,6 @@
 "use client"
 
-import { useTable, type ColumnDef, type RowData } from "@tanstack/react-table"
+import { ColumnVisibilityState, useTable, type ColumnDef, type RowData } from "@tanstack/react-table"
 
 import {
     TableBody,
@@ -13,6 +13,9 @@ import {
 import { features, type DataTableFeatures } from "./data-table-features"
 import { Button } from "./button"
 import { DashboardTable } from "@/components/records/dashboard-table"
+import React from "react"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem } from "./dropdown-menu"
+import { ChevronDown } from "lucide-react"
 
 interface DataTableProps<TData extends RowData> {
     columns: ColumnDef<DataTableFeatures, TData>[]
@@ -30,11 +33,19 @@ export function DataTable<TData extends RowData>({
     paginationEnabled = true,
     visibleRows
 }: DataTableProps<TData>) {
+    const [columnVisibility, setColumnVisibility] = React.useState<ColumnVisibilityState>({})
+    
     const table = useTable({
         features,
         data,
         columns,
+        onColumnVisibilityChange: setColumnVisibility,
+        state: {
+            columnVisibility
+        }
     })
+
+
 
     return (
         <>
@@ -44,6 +55,35 @@ export function DataTable<TData extends RowData>({
                 maxHeight: `${visibleRows * ROW_HEIGHT_REM + HEADER_HEIGHT_REM}rem`,
             } : undefined}
         >
+            <div className="flex items-center py-4">
+            <p></p>
+            <DropdownMenu>
+            <DropdownMenuTrigger render={<Button variant="outline" className="ml-auto" />}>
+                Columns <ChevronDown/>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                {table
+                .getAllColumns()
+                .filter(
+                    (column) => column.getCanHide()
+                )
+                .map((column) => {
+                    return (
+                    <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                        }
+                    >
+                        {column.id}
+                    </DropdownMenuCheckboxItem>
+                    )
+                })}
+            </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
         <DashboardTable className="table-fixed">
             <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
