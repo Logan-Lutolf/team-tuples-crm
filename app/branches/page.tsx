@@ -114,7 +114,7 @@ export default async function BranchesPage(
 
     return (
         <div className="flex flex-col bg-primary">
-            <div className="justify-start px-30 my-8 text-primary-foreground">
+            <div className="justify-start px-20 my-8 text-primary-foreground">
                 <p className="text-3xl">Branches</p>
                 <p className="text-lg font-light">This is the branches page. Select a branch to see details.</p>
             </div>

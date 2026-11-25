@@ -194,6 +194,7 @@ model Branch {
   chiefId Int?
   chief Employee? @relation(fields: [chiefId], references: [personId], onDelete: SetNull)
   region RegionTypes
+  imgUrl String?
   
   people  Person[]
   organization Organization[]
