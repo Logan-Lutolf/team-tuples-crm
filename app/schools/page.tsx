@@ -1,9 +1,5 @@
 import { PageActionLink } from '@/components/records/page-action-link'
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Search } from "@/components/custom/searches/search";
-import { SchoolTableContainer } from "./school-table-container";
 import { Suspense } from "react";
-import { OrganizationDetailsPage } from '../details/pages/organization-details-page';
 import { OrganizationTableContainer } from './organization-table-container';
 
 
