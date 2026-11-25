@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'0d20a8b14b3ab0351252d67ec4b2385c01abfbdea876fd57f7d811d9dab82ff1'>;
+  StorageHashBase<'65df5e8ad03cc070e8c31aa984bcdd2356625b6e8a0816f2ef7b48ed18b51976'>;
 export type ExecutionHash =
   ExecutionHashBase<'14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9'>;
 export type ProfileHash =
@@ -248,6 +248,7 @@ export type FieldOutputTypes = {
     readonly Branch: {
       readonly chiefId: CodecTypes['pg/int4@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly imgUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly institute: CodecTypes['pg/text@1']['output'] | null;
       readonly name:
         | 'SEVERNÍ_ČECHY'
@@ -554,6 +555,7 @@ export type FieldInputTypes = {
     readonly Branch: {
       readonly chiefId: CodecTypes['pg/int4@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly imgUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly institute: CodecTypes['pg/text@1']['input'] | null;
       readonly name:
         | 'SEVERNÍ_ČECHY'
@@ -860,6 +862,7 @@ export type StorageColumnTypes = {
     readonly Branch: {
       readonly chiefId: CodecTypes['pg/int4@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly imgUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly institute: CodecTypes['pg/text@1']['output'] | null;
       readonly name:
         | 'SEVERNÍ_ČECHY'
@@ -1166,6 +1169,7 @@ export type StorageColumnInputTypes = {
     readonly Branch: {
       readonly chiefId: CodecTypes['pg/int4@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly imgUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly institute: CodecTypes['pg/text@1']['input'] | null;
       readonly name:
         | 'SEVERNÍ_ČECHY'
@@ -1472,6 +1476,7 @@ export namespace Models {
   export type public_Branch = {
     chiefId: CodecTypes['pg/int4@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
+    imgUrl: CodecTypes['pg/text@1']['output'] | null;
     institute: CodecTypes['pg/text@1']['output'] | null;
     name:
       | 'SEVERNÍ_ČECHY'
@@ -1903,6 +1908,12 @@ type ContractBase = Omit<
                     readonly kind: 'function';
                     readonly expression: 'autoincrement()';
                   };
+                  readonly many: false;
+                };
+                readonly imgUrl: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly institute: {
@@ -3539,6 +3550,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly imgUrl: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly institute: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -3594,6 +3609,7 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly chiefId: { readonly column: 'chiefId' };
                 readonly id: { readonly column: 'id' };
+                readonly imgUrl: { readonly column: 'imgUrl' };
                 readonly institute: { readonly column: 'institute' };
                 readonly name: { readonly column: 'name' };
                 readonly region: { readonly column: 'region' };

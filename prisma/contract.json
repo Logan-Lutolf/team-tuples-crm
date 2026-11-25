@@ -440,6 +440,13 @@
                   "kind": "scalar"
                 }
               },
+              "imgUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "institute": {
                 "nullable": true,
                 "type": {
@@ -529,6 +536,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "imgUrl": {
+                  "column": "imgUrl"
                 },
                 "institute": {
                   "column": "institute"
@@ -2721,6 +2731,11 @@
                   },
                   "nullable": false
                 },
+                "imgUrl": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "institute": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -4720,7 +4735,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "0d20a8b14b3ab0351252d67ec4b2385c01abfbdea876fd57f7d811d9dab82ff1"
+    "storageHash": "65df5e8ad03cc070e8c31aa984bcdd2356625b6e8a0816f2ef7b48ed18b51976"
   },
   "execution": {
     "executionHash": "14c7516309eafe84ffffc5c92343e7ca806a3666570a05043144ed505dc95bf9",

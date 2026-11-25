@@ -1,6 +1,6 @@
 "use client"
 
-import { useTable, type ColumnDef, type RowData } from "@tanstack/react-table"
+import { ColumnFiltersState, ColumnVisibilityState, useTable, type ColumnDef, type RowData } from "@tanstack/react-table"
 
 import {
     TableBody,
@@ -13,6 +13,10 @@ import {
 import { features, type DataTableFeatures } from "./data-table-features"
 import { Button } from "./button"
 import { DashboardTable } from "@/components/records/dashboard-table"
+import React from "react"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem } from "./dropdown-menu"
+import { ChevronDown } from "lucide-react"
+import { Input } from "./input"
 
 interface DataTableProps<TData extends RowData> {
     columns: ColumnDef<DataTableFeatures, TData>[]
@@ -30,11 +34,22 @@ export function DataTable<TData extends RowData>({
     paginationEnabled = true,
     visibleRows
 }: DataTableProps<TData>) {
+    const [columnVisibility, setColumnVisibility] = React.useState<ColumnVisibilityState>({})
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+
     const table = useTable({
         features,
         data,
         columns,
+        onColumnVisibilityChange: setColumnVisibility,
+        onColumnFiltersChange: setColumnFilters,
+        state: {
+            columnVisibility,
+            columnFilters,
+        }
     })
+
+
 
     return (
         <>
@@ -44,6 +59,54 @@ export function DataTable<TData extends RowData>({
                 maxHeight: `${visibleRows * ROW_HEIGHT_REM + HEADER_HEIGHT_REM}rem`,
             } : undefined}
         >
+            <div className="flex items-center py-4">
+                {/* Figure out how to let users select what they want to filter/search through */}
+                {/* <Input
+                    id="email-filter"
+                    placeholder="Filter emails..."
+                    value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                    onChange={(event) =>
+                        table.getColumn("email")?.setFilterValue(event.target.value)
+                    }
+                    className="max-w-sm"
+                /> */}
+                <Input
+                    id="name-filter"
+                    placeholder="Search contacts by name..."
+                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                    onChange={(event) =>
+                        table.getColumn("name")?.setFilterValue(event.target.value)
+                    }
+                    className="mr-5"
+                />
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger render={<Button variant="outline" className="ml-auto" />}>
+                        Columns <ChevronDown/>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        {table
+                        .getAllColumns()
+                        .filter(
+                            (column) => column.getCanHide()
+                        )
+                        .map((column) => {
+                            return (
+                            <DropdownMenuCheckboxItem
+                                key={column.id}
+                                className="capitalize"
+                                checked={column.getIsVisible()}
+                                onCheckedChange={(value) =>
+                                column.toggleVisibility(!!value)
+                                }
+                            >
+                                {column.id}
+                            </DropdownMenuCheckboxItem>
+                            )
+                        })}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+        </div>
         <DashboardTable className="table-fixed">
             <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
