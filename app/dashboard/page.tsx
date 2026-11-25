@@ -36,6 +36,13 @@ export default async function Dashboard({ searchParams }: {
                         <br/>
                         Let us know if you want us to add specific columns to any given table.
                     </p>
+                    <h3>25/11/2026 - Table Filtering/Search:</h3>
+                    <p>Optimized table search by using the built-in table feature rather than a search query.
+                        <br/>
+                        We will be adding more options to search by, such as email, phone, etc.
+                    </p>
+                    <h3>25/11/2026 - Organization Page:</h3>
+                    <p>Converted organization page and respective table to the correct type of data table.</p>
                 </AccordionContent>
             </AccordionItem>
         </Accordion>

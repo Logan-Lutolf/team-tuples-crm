@@ -3,6 +3,8 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import { Search } from "@/components/custom/searches/search";
 import { SchoolTableContainer } from "./school-table-container";
 import { Suspense } from "react";
+import { OrganizationDetailsPage } from '../details/pages/organization-details-page';
+import { OrganizationTableContainer } from './organization-table-container';
 
 
 // Add pagination to employee list
@@ -36,27 +38,12 @@ export default async function EmployeeManagementPage(
         <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
             <PageActionLink href="/create/schools" fullWidth>Add an Organization</PageActionLink>
 
-            <Search placeholder={""}/>
+            {/* <Search placeholder={""}/> */}
 
             <Suspense key={`${query}:${currentPage}`} fallback={<p role="status">Loading schools…</p>}>
-                <SchoolTableContainer query={query} page={currentPage} />
+                <OrganizationTableContainer query={''}/>
             </Suspense>
 
-            <Pagination>
-                <PaginationContent>
-                    <PaginationItem>
-                        <PaginationPrevious href={pageHref(Math.max(1, currentPage - 1))} aria-disabled={currentPage === 1} className={currentPage === 1 ? "pointer-events-none opacity-50" : undefined} tabIndex={currentPage === 1 ? -1 : undefined} />
-                    </PaginationItem>
-
-                    <PaginationItem>
-                        <PaginationEllipsis></PaginationEllipsis>
-                    </PaginationItem>
-
-                    <PaginationItem>
-                        <PaginationNext href={pageHref(currentPage + 1)} />
-                    </PaginationItem>
-                </PaginationContent>
-            </Pagination>
         </div>
     )
 }

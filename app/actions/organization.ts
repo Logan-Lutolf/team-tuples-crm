@@ -94,3 +94,15 @@ export async function updateOrg(formData: FormData, id: number) {
         return {result: "error", message: "Organization update failed: " + error} 
     }
 }
+
+
+export async function getAllOrganizations() {
+    try {
+        const orgs = await db.orm.public.Organization.all().toArray()
+        if(orgs) return orgs
+        else return []
+    }
+    catch (error) {
+        console.log(error)
+    }
+}

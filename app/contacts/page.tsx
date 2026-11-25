@@ -26,7 +26,7 @@ export default async function ContactManagementPage(
         <div className="flex min-w-0 flex-1 flex-col gap-4 m-10">
             <PageActionLink href="/create/contacts" fullWidth>Add a Contact</PageActionLink>
 
-            <Search placeholder={"Search contacts..."}/>
+            {/* <Search placeholder={"Search contacts..."}/> */}
 
             <Suspense key={`${query}:${currentPage}`} fallback={<p role="status">Loading contacts…</p>}>
                 <ContactTableContainer query={query} />
